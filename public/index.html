@@ -68,7 +68,6 @@
       outline: none;
       transition: transform 0.12s ease-out;
     }
-    .rm-nav-strip-btn:active { transform: scale(0.97); }
     .rm-menu-item {
       display: flex;
       align-items: center;
@@ -83,19 +82,30 @@
       border: 1px solid rgba(255, 255, 255, 0.06);
       transition: background 0.15s ease, color 0.15s ease;
     }
-    .rm-menu-item:hover, .rm-menu-item:active {
-      background: rgba(0, 220, 130, 0.16);
-      color: #ffffff;
-      border-color: rgba(0, 220, 130, 0.35);
+
+    /* Point 19: GitHub-Grade Blue-Ring Tactile Tap Feedback */
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    [role="button"]:focus-visible,
+    [tabindex]:not([tabindex="-1"]):focus-visible {
+      outline: 2px solid #2563eb !important;
+      outline-offset: 2px !important;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.40) !important;
     }
-    .glass-panel {
-      background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(11, 15, 25, 0.98) 100%);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(245, 158, 11, 0.3);
+    button:not(:disabled):active,
+    a[href]:active,
+    [role="button"]:not([aria-disabled="true"]):active,
+    .active-ring:active {
+      outline: 2px solid #2563eb !important;
+      outline-offset: 2px !important;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.40) !important;
+      transform: scale(0.97);
+      transition: transform 0.08s ease-out;
     }
-    .metric-card {
-      background: rgba(3, 7, 18, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+    @media (prefers-reduced-motion: reduce) {
+      button:not(:disabled):active, a[href]:active { transform: none !important; }
     }
   </style>
 </head>
@@ -106,7 +116,7 @@
   <!-- 1. TOP STATUS BAR / HEADER -->
   <header class="sticky top-0 z-40 bg-surface-950/80 backdrop-blur-md border-b border-slate-800/80 px-4 py-3 flex items-center justify-between">
     <div class="flex items-center space-x-3">
-      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center font-extrabold text-slate-950 text-base shadow-lg shadow-emerald-500/25 flex-shrink-0 cursor-pointer" onclick="window.location.hash='#home'">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center font-extrabold text-slate-950 text-base shadow-lg shadow-emerald-500/25 flex-shrink-0 cursor-pointer active-ring" onclick="window.location.hash='#home'">
         RM
       </div>
       <div>
@@ -141,7 +151,7 @@
 
     <!-- 3. 50 CATEGORIES NAVIGATION BAR -->
     <section class="rm-nav-strip-wrapper">
-      <button id="rm-menu-btn" class="rm-nav-strip-btn" type="button" aria-label="Open 50 Categories Menu">
+      <button id="rm-menu-btn" class="rm-nav-strip-btn active-ring" type="button" aria-label="Open 50 Categories Menu">
         <div class="flex items-center gap-2.5">
           <div style="background:#00dc82; color:#060d17; width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; font-weight:900;">
             ☰
@@ -184,11 +194,11 @@
         <span>डबल-एंट्री लेजर: सुरक्षित</span>
       </div>
       <div class="mt-4 grid grid-cols-2 gap-2.5">
-        <button type="button" onclick="openKhataModal()" class="bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-lg active:scale-95 cursor-pointer">
+        <button type="button" onclick="openKhataModal()" class="bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-lg active-ring cursor-pointer">
           <span>+</span>
           <span>नया लेन-देन (New Entry)</span>
         </button>
-        <button type="button" onclick="openKhataModal()" class="bg-slate-900/80 text-white font-semibold py-2.5 px-4 rounded-xl text-xs border border-slate-700/60 flex items-center justify-center space-x-1.5 active:scale-95 cursor-pointer">
+        <button type="button" onclick="openKhataModal()" class="bg-slate-900/80 text-white font-semibold py-2.5 px-4 rounded-xl text-xs border border-slate-700/60 flex items-center justify-center space-x-1.5 active-ring cursor-pointer">
           <span>📜</span>
           <span>खाता विवरणी</span>
         </button>
@@ -207,54 +217,54 @@
     </div>
 
     <div class="grid grid-cols-3 gap-3">
-      <div onclick="window.location.hash='#swasth-man'" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active:scale-95">
+      <div onclick="window.location.hash='#swasth-man'" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active-ring">
         <div class="w-11 h-11 rounded-2xl bg-emerald-950/60 border border-emerald-500/30 flex items-center justify-center text-2xl">🌿</div>
         <span class="text-xs font-bold text-white mt-2 leading-tight">स्वस्थ मन</span>
         <span class="text-[9px] text-slate-400 mt-0.5">वेलनेस गाइड</span>
       </div>
-      <div onclick="window.location.hash='#hunar-seekhein'" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active:scale-95">
+      <div onclick="window.location.hash='#hunar-seekhein'" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active-ring">
         <div class="w-11 h-11 rounded-2xl bg-teal-950/60 border border-teal-500/30 flex items-center justify-center text-2xl">🎓</div>
         <span class="text-xs font-bold text-white mt-2 leading-tight">हुनर सीखें</span>
         <span class="text-[9px] text-slate-400 mt-0.5">डिजिटल वर्कशॉप</span>
       </div>
-      <div onclick="openKiranaModal()" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active:scale-95">
+      <div onclick="openKiranaModal()" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active-ring">
         <div class="w-11 h-11 rounded-2xl bg-amber-950/60 border border-amber-500/30 flex items-center justify-center text-2xl">🛒</div>
         <span class="text-xs font-bold text-white mt-2 leading-tight">किराना स्टोर</span>
         <span class="text-[9px] text-slate-400 mt-0.5">0% कमीशन</span>
       </div>
-      <div onclick="window.location.hash='#cat-delivery'" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active:scale-95">
+      <div onclick="window.location.hash='#cat-delivery'" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active-ring">
         <div class="w-11 h-11 rounded-2xl bg-sky-950/60 border border-sky-500/30 flex items-center justify-center text-2xl">⚡</div>
         <span class="text-xs font-bold text-white mt-2 leading-tight">रनर डिलीवरी</span>
         <span class="text-[9px] text-slate-400 mt-0.5">हाइपरलोकल गिग</span>
       </div>
-      <div onclick="window.location.hash='#cat-business'" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active:scale-95">
+      <div onclick="window.location.hash='#cat-business'" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active-ring">
         <div class="w-11 h-11 rounded-2xl bg-indigo-950/60 border border-indigo-500/30 flex items-center justify-center text-2xl">💼</div>
         <span class="text-xs font-bold text-white mt-2 leading-tight">B2B SaaS</span>
         <span class="text-[9px] text-slate-400 mt-0.5">ऑटोमेशन किट</span>
       </div>
-      <div onclick="window.location.hash='#cat-legal'" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active:scale-95">
+      <div onclick="window.location.hash='#cat-legal'" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active-ring">
         <div class="w-11 h-11 rounded-2xl bg-violet-950/60 border border-violet-500/30 flex items-center justify-center text-2xl">⚖️</div>
         <span class="text-xs font-bold text-white mt-2 leading-tight">विशेषज्ञ सेवा</span>
         <span class="text-[9px] text-slate-400 mt-0.5">CA व विधिक सलाह</span>
       </div>
-      <div onclick="openVoucherModal()" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active:scale-95">
+      <div onclick="openVoucherModal()" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active-ring">
         <div class="w-11 h-11 rounded-2xl bg-rose-950/60 border border-rose-500/30 flex items-center justify-center text-2xl">🎟️</div>
         <span class="text-xs font-bold text-white mt-2 leading-tight">सॉवरेन वाउचर</span>
         <span class="text-[9px] text-slate-400 mt-0.5">ऑफ़लाइन सिंक</span>
       </div>
-      <div onclick="openKhataModal()" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active:scale-95">
+      <div onclick="openKhataModal()" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active-ring">
         <div class="w-11 h-11 rounded-2xl bg-emerald-950/60 border border-emerald-500/30 flex items-center justify-center text-2xl">📊</div>
         <span class="text-xs font-bold text-white mt-2 leading-tight">पारदर्शी लेजर</span>
         <span class="text-[9px] text-slate-400 mt-0.5">रियल-टाइम पास</span>
       </div>
-      <div onclick="alert('इमरजेंसी SOS सिग्नल भेजा गया।')" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active:scale-95 bg-red-950/20">
+      <div onclick="alert('इमरजेंसी SOS सिग्नल भेजा गया।')" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active-ring bg-red-950/20">
         <div class="w-11 h-11 rounded-2xl bg-red-900/50 border border-red-500/40 flex items-center justify-center text-2xl">🚨</div>
         <span class="text-xs font-bold text-red-400 mt-2 leading-tight">इमरजेंसी SOS</span>
         <span class="text-[9px] text-slate-400 mt-0.5">तुरंत सहायता</span>
       </div>
     </div>
 
-    <!-- 7. STEALTH CONSOLE TRIGGER -->
+    <!-- 7. STEALTH CONSOLE TRIGGER (Point 1: Clean Redirection) -->
     <div class="text-center pt-8 pb-4">
       <span id="stealthConsoleTrigger" class="text-[11px] text-slate-600/70 hover:text-slate-400 font-mono tracking-widest cursor-pointer px-4 py-2 rounded transition-colors duration-200">
         console
@@ -273,7 +283,7 @@
             <p class="text-[10px] text-slate-400">डबल-एंट्री लेजर • स्थानीय व सुरक्षित</p>
           </div>
         </div>
-        <button type="button" onclick="closeKhataModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 font-bold flex items-center justify-center hover:bg-slate-700 active:scale-95 cursor-pointer">✕</button>
+        <button type="button" onclick="closeKhataModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 font-bold flex items-center justify-center hover:bg-slate-700 active-ring cursor-pointer">✕</button>
       </div>
 
       <div class="grid grid-cols-2 gap-3">
@@ -287,13 +297,12 @@
         </div>
       </div>
 
-      <!-- Action Buttons Open Clean Native Forms (Zero-Prompt) -->
       <div class="grid grid-cols-2 gap-3">
-        <button type="button" onclick="openEntryForm('YOU_GAVE')" class="bg-red-500 hover:bg-red-600 text-white font-black py-3 px-4 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-lg shadow-red-500/20 active:scale-95 cursor-pointer">
+        <button type="button" onclick="openEntryForm('YOU_GAVE')" class="bg-red-500 hover:bg-red-600 text-white font-black py-3 px-4 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-lg shadow-red-500/20 active-ring cursor-pointer">
           <span>-</span>
           <span>मैंने दिए (You Gave)</span>
         </button>
-        <button type="button" onclick="openEntryForm('YOU_GOT')" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black py-3 px-4 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-lg shadow-emerald-500/20 active:scale-95 cursor-pointer">
+        <button type="button" onclick="openEntryForm('YOU_GOT')" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black py-3 px-4 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-lg shadow-emerald-500/20 active-ring cursor-pointer">
           <span>+</span>
           <span>मुझे मिले (You Got)</span>
         </button>
@@ -332,7 +341,7 @@
             <p id="entryFormSubtitle" class="text-[10px] text-slate-400">खाते में राशि जोड़ें (Double-Entry Ledger)</p>
           </div>
         </div>
-        <button type="button" onclick="closeEntryFormModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center font-bold text-sm cursor-pointer">✕</button>
+        <button type="button" onclick="closeEntryFormModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center font-bold text-sm active-ring cursor-pointer">✕</button>
       </div>
 
       <input type="hidden" id="entryFormType" value="YOU_GOT">
@@ -359,8 +368,8 @@
         <div id="entryFormError" class="text-xs text-red-400 font-bold hidden">⚠️ कृपया मान्य राशि दर्ज करें (जैसे: 500)</div>
 
         <div class="grid grid-cols-2 gap-2 pt-2">
-          <button type="button" onclick="closeEntryFormModal()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold active:scale-95 cursor-pointer">रद्द करें (Cancel)</button>
-          <button type="button" id="entrySubmitBtn" onclick="submitKhataEntry()" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 rounded-xl text-xs font-black shadow-lg active:scale-95 cursor-pointer">प्रविष्टि सुरक्षित करें</button>
+          <button type="button" onclick="closeEntryFormModal()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold active-ring cursor-pointer">रद्द करें (Cancel)</button>
+          <button type="button" id="entrySubmitBtn" onclick="submitKhataEntry()" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 rounded-xl text-xs font-black shadow-lg active-ring cursor-pointer">प्रविष्टि सुरक्षित करें</button>
         </div>
       </div>
     </div>
@@ -377,9 +386,8 @@
             <p class="text-[10px] text-slate-400">MRP से छूट • बिचौलिया मुक्त खरीदारी</p>
           </div>
         </div>
-        <button type="button" onclick="closeKiranaModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 font-bold flex items-center justify-center hover:bg-slate-700 active:scale-95 cursor-pointer">✕</button>
+        <button type="button" onclick="closeKiranaModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 font-bold flex items-center justify-center hover:bg-slate-700 active-ring cursor-pointer">✕</button>
       </div>
-
       <div class="grid grid-cols-2 gap-3" id="kiranaItemsGrid"></div>
     </div>
   </div>
@@ -395,10 +403,10 @@
             <p class="text-[10px] text-slate-400">RFC 8785 • ऑफ़लाइन क्रिप्टोग्राफ़िक टोकन</p>
           </div>
         </div>
-        <button type="button" onclick="closeVoucherModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 font-bold flex items-center justify-center hover:bg-slate-700 active:scale-95 cursor-pointer">✕</button>
+        <button type="button" onclick="closeVoucherModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 font-bold flex items-center justify-center hover:bg-slate-700 active-ring cursor-pointer">✕</button>
       </div>
 
-      <button type="button" onclick="generateOfflineVoucher()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider active:scale-95 shadow-lg shadow-emerald-500/20 cursor-pointer">
+      <button type="button" onclick="generateOfflineVoucher()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider active-ring shadow-lg shadow-emerald-500/20 cursor-pointer">
         + नया ऑफ़लाइन वाउचर बनाएँ (Generate Voucher)
       </button>
 
@@ -413,16 +421,16 @@
         <h3 style="margin:0; font-size:1.05rem; font-weight:800; color:#ffffff;">50 सफल श्रेणियाँ</h3>
         <p style="margin:2px 0 0 0; font-size:0.72rem; color:#00dc82;">राइज मित्रा संपूर्ण कैटलॉग</p>
       </div>
-      <button id="rm-drawer-close" aria-label="Close Menu" style="background:rgba(255,255,255,0.06); border:none; width:32px; height:32px; border-radius:8px; font-size:1.1rem; cursor:pointer; color:#ffffff;">✕</button>
+      <button id="rm-drawer-close" aria-label="Close Menu" class="active-ring" style="background:rgba(255,255,255,0.06); border:none; width:32px; height:32px; border-radius:8px; font-size:1.1rem; cursor:pointer; color:#ffffff;">✕</button>
     </div>
 
-    <button id="rm-tier1-toggle" type="button" onclick="toggleAcc('tier1-list', 'tier1-arrow')" style="width:100%; display:flex; justify-content:space-between; align-items:center; background:rgba(0, 220, 130, 0.1); border:1px solid rgba(0, 220, 130, 0.3); border-radius:12px; padding:0.65rem 0.9rem; color:#00dc82; font-weight:700; font-size:0.86rem; cursor:pointer; margin-top:0.5rem;">
+    <button id="rm-tier1-toggle" type="button" onclick="toggleAcc('tier1-list', 'tier1-arrow')" class="active-ring" style="width:100%; display:flex; justify-content:space-between; align-items:center; background:rgba(0, 220, 130, 0.1); border:1px solid rgba(0, 220, 130, 0.3); border-radius:12px; padding:0.65rem 0.9rem; color:#00dc82; font-weight:700; font-size:0.86rem; cursor:pointer; margin-top:0.5rem;">
       <span>💼 आजीविका (33 सेवाएं)</span>
       <span id="tier1-arrow">▼</span>
     </button>
     <div id="tier1-list" class="pt-2 pl-1 max-h-[50vh] overflow-y-auto" style="display:block;"></div>
 
-    <button id="rm-tier2-toggle" type="button" onclick="toggleAcc('tier2-list', 'tier2-arrow')" style="width:100%; display:flex; justify-content:space-between; align-items:center; background:rgba(56, 189, 248, 0.1); border:1px solid rgba(56, 189, 248, 0.3); border-radius:12px; padding:0.65rem 0.9rem; color:#38bdf8; font-weight:700; font-size:0.86rem; cursor:pointer; margin-top:0.8rem;">
+    <button id="rm-tier2-toggle" type="button" onclick="toggleAcc('tier2-list', 'tier2-arrow')" class="active-ring" style="width:100%; display:flex; justify-content:space-between; align-items:center; background:rgba(56, 189, 248, 0.1); border:1px solid rgba(56, 189, 248, 0.3); border-radius:12px; padding:0.65rem 0.9rem; color:#38bdf8; font-weight:700; font-size:0.86rem; cursor:pointer; margin-top:0.8rem;">
       <span>🎮 सुरक्षा व खेल (17 श्रेणियां)</span>
       <span id="tier2-arrow">▼</span>
     </button>
@@ -433,71 +441,24 @@
   <!-- 9. BOTTOM NAVIGATION -->
   <nav class="fixed bottom-0 inset-x-0 z-50 nav-glass px-6 py-2">
     <div class="max-w-md mx-auto flex justify-between items-center text-center">
-      <a href="#home" class="flex flex-col items-center text-emerald-400">
+      <a href="#home" class="flex flex-col items-center text-emerald-400 active-ring">
         <span class="text-lg">🏠</span>
         <span class="text-[10px] font-bold mt-0.5">होम</span>
       </a>
-      <a href="#kirana-store" onclick="openKiranaModal(); return false;" class="flex flex-col items-center text-slate-400 hover:text-slate-200">
+      <a href="#kirana-store" onclick="openKiranaModal(); return false;" class="flex flex-col items-center text-slate-400 hover:text-slate-200 active-ring">
         <span class="text-lg">🛒</span>
         <span class="text-[10px] font-semibold mt-0.5">ऑर्डर</span>
       </a>
-      <a href="#merchant-khata" onclick="openKhataModal(); return false;" class="flex flex-col items-center text-slate-400 hover:text-slate-200">
+      <a href="#merchant-khata" onclick="openKhataModal(); return false;" class="flex flex-col items-center text-slate-400 hover:text-slate-200 active-ring">
         <span class="text-lg">📖</span>
         <span class="text-[10px] font-semibold mt-0.5">खाता</span>
       </a>
-      <a href="#vouchers" onclick="openVoucherModal(); return false;" class="flex flex-col items-center text-slate-400 hover:text-slate-200">
+      <a href="#vouchers" onclick="openVoucherModal(); return false;" class="flex flex-col items-center text-slate-400 hover:text-slate-200 active-ring">
         <span class="text-lg">🎟️</span>
         <span class="text-[10px] font-semibold mt-0.5">वाउचर</span>
       </a>
     </div>
   </nav>
-
-  <!-- ================= SURFACE-B: STEALTH OWNER OVERLAY ================= -->
-  <div id="authGateModal" class="fixed inset-0 z-[300] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 hidden">
-    <div class="max-w-sm w-full glass-panel p-6 rounded-3xl border border-amber-500/40 text-center shadow-2xl font-mono">
-      <div class="w-14 h-14 mx-auto rounded-2xl bg-amber-950/80 border border-amber-500/50 flex items-center justify-center text-3xl mb-4">🔐</div>
-      <h2 class="text-base font-black text-amber-400 tracking-wider uppercase">Sovereign Gate 23</h2>
-      <p class="text-xs text-slate-400 mt-1">Owner Console Authentication Required</p>
-      <div class="mt-6 space-y-3">
-        <input type="password" id="consolePin" maxlength="12" placeholder="Enter Sovereign PIN" class="w-full bg-slate-950 text-center text-sm font-bold text-amber-300 placeholder-slate-600 border border-amber-500/30 rounded-xl px-4 py-3 focus:outline-none focus:border-amber-400">
-        <button type="button" onclick="verifyKey()" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider active:scale-95 shadow-lg shadow-amber-500/20 cursor-pointer">Unlock Console</button>
-        <button type="button" onclick="closeOwnerConsole()" class="w-full bg-slate-900/60 text-slate-400 text-[11px] py-2 rounded-lg cursor-pointer">रद्द करें (Exit)</button>
-        <p id="authError" class="text-[11px] text-red-400 font-bold hidden">⚠️ Invalid Key. Fail-Closed Armed.</p>
-      </div>
-    </div>
-  </div>
-
-  <div id="consolePanelModal" class="fixed inset-0 z-[310] bg-black/95 backdrop-blur-lg overflow-y-auto p-4 hidden font-mono">
-    <div class="max-w-2xl mx-auto space-y-4 pt-6 pb-16">
-      <header class="glass-panel p-4 rounded-2xl flex items-center justify-between border-amber-500/30">
-        <div>
-          <div class="flex items-center space-x-2">
-            <span class="text-base">🛡️</span>
-            <h2 class="text-xs font-black uppercase tracking-wider text-amber-400 leading-none">Rise Mitra Sovereign Console</h2>
-          </div>
-          <p class="text-[10px] text-slate-400 mt-1">Surface-B • Runtime Authority</p>
-        </div>
-        <span class="text-[10px] font-black bg-amber-950 text-amber-300 px-2.5 py-1 rounded-full border border-amber-700/60">ROOT-SOVEREIGN</span>
-      </header>
-      <section class="grid grid-cols-3 gap-3">
-        <div class="metric-card p-3 rounded-xl border border-slate-800 text-center">
-          <span class="text-[10px] text-slate-400">Solvency Hard-Cap</span>
-          <div class="text-sm font-black text-emerald-400 mt-1">28.00% MAX</div>
-        </div>
-        <div class="metric-card p-3 rounded-xl border border-slate-800 text-center">
-          <span class="text-[10px] text-slate-400">CoverageRatio</span>
-          <div class="text-sm font-black text-emerald-400 mt-1">1.00 LOCKED</div>
-        </div>
-        <div class="metric-card p-3 rounded-xl border border-slate-800 text-center">
-          <span class="text-[10px] text-slate-400">Target Elements</span>
-          <div class="text-sm font-black text-cyan-400 mt-1">412 / 412</div>
-        </div>
-      </section>
-      <div class="text-center pt-2">
-        <button type="button" onclick="closeOwnerConsole()" class="text-xs text-slate-400 hover:text-red-400 underline tracking-wide cursor-pointer">Lock Console & Return to Super App</button>
-      </div>
-    </div>
-  </div>
 
   <!-- ================= RUNTIME ESSENTIAL UI SCRIPTS ================= -->
   <script>
@@ -525,9 +486,9 @@
           <div>
             <div class="font-bold text-xs text-slate-100">${item.nameHi}</div>
             <div class="text-sm font-black text-emerald-400 mt-1">₹${item.price} <span class="text-[10px] line-through text-slate-500 font-normal">₹${item.mrp}</span></div>
-            <div class="text-[9px] text-sky-400 mt-0.5">0% प्लेटफॉर्म कमीशन</div>
+            <div class="text-[9px] text-sky-400 mt-0.5">0% प्लेटफ़ॉर्म कमीशन</div>
           </div>
-          <button type="button" onclick="addKiranaCart('${item.id}', '${item.nameHi}', ${item.price})" class="mt-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-2 rounded-xl text-xs active:scale-95 cursor-pointer">+ जोड़ें (Add)</button>
+          <button type="button" onclick="addKiranaCart('${item.id}', '${item.nameHi}', ${item.price})" class="mt-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-2 rounded-xl text-xs active-ring cursor-pointer">+ जोड़ें (Add)</button>
         </div>
       `).join('');
     }
@@ -640,7 +601,7 @@
       RM_CATS.forEach(([hash, icon, title, tier]) => {
         const a = document.createElement('a');
         a.href = hash;
-        a.className = 'rm-menu-item';
+        a.className = 'rm-menu-item active-ring';
         a.innerHTML = `<span style="font-size:1.1rem; line-height:1;">${icon}</span><span>${title}</span>`;
         if (hash === '#merchant-khata') {
           a.onclick = (e) => { e.preventDefault(); closeDrawer(); openKhataModal(); };
@@ -682,31 +643,7 @@
       document.body.style.overflow = '';
     }
 
-    // 4. SURFACE-B (STEALTH OWNER GATE)
-    const SOV_HASH = "202609";
-    function openAuthGate() {
-      document.getElementById("authGateModal").classList.remove("hidden");
-      document.getElementById("consolePin").focus();
-    }
-    function verifyKey() {
-      const pin = document.getElementById("consolePin").value;
-      const err = document.getElementById("authError");
-      if (pin === SOV_HASH) {
-        document.getElementById("authGateModal").classList.add("hidden");
-        document.getElementById("consolePanelModal").classList.remove("hidden");
-        err.classList.add("hidden");
-      } else {
-        err.classList.remove("hidden");
-      }
-    }
-    function closeOwnerConsole() {
-      document.getElementById("consolePin").value = "";
-      document.getElementById("authError").classList.add("hidden");
-      document.getElementById("consolePanelModal").classList.add("hidden");
-      document.getElementById("authGateModal").classList.add("hidden");
-    }
-
-    // ROUTING DISPATCHER
+    // ROUTING DISPATCHER & HARDWARE BACK HANDLING (Point 14)
     function handleRouting() {
       const h = window.location.hash;
       if (h === '#merchant-khata' && window.openKhataModal) openKhataModal();
@@ -729,16 +666,19 @@
       if (closeBtn) closeBtn.onclick = (e) => { e.preventDefault(); closeDrawer(); };
       if (backdrop) backdrop.onclick = (e) => { e.preventDefault(); closeDrawer(); };
 
+      // Point 1: Stealth Console Redirection to Surface-B
       const stealthTrigger = document.getElementById('stealthConsoleTrigger');
       let lastTap = 0;
       if (stealthTrigger) {
-        stealthTrigger.addEventListener('dblclick', openAuthGate);
+        stealthTrigger.addEventListener('dblclick', () => {
+          window.location.href = '/owner-console.html';
+        });
         stealthTrigger.addEventListener('touchend', function (e) {
           const currentTime = new Date().getTime();
           const tapLength = currentTime - lastTap;
           if (tapLength < 400 && tapLength > 0) {
             e.preventDefault();
-            openAuthGate();
+            window.location.href = '/owner-console.html';
           }
           lastTap = currentTime;
         });
@@ -752,9 +692,9 @@
     }
   </script>
 
-  <!-- Rise Mitra Modular Client Engines -->
-  <script src="/js/voucher-sync.js?v=2.2.3"></script>
-  <script src="/js/bahi-khata.js?v=2.2.3"></script>
-  <script src="/js/app.js?v=2.2.3"></script>
+  <!-- Rise Mitra Modular Client Engines (Point 13: v2.2.5 Cache-Busted) -->
+  <script src="/js/voucher-sync.js?v=2.2.5"></script>
+  <script src="/js/bahi-khata.js?v=2.2.5"></script>
+  <script src="/js/app.js?v=2.2.5"></script>
 </body>
 </html>
