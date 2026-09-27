@@ -116,11 +116,11 @@
     </div>
   </header>
 
-  <!-- 2. DPDP TRUST BANNER -->
+  <!-- 2. DPDP 2025 TRUST BANNER -->
   <div class="bg-gradient-to-r from-emerald-950/40 via-slate-900/60 to-emerald-950/40 border-b border-emerald-500/20 px-4 py-2 flex items-center justify-between text-[11px]">
     <div class="flex items-center space-x-2 text-emerald-300/90 font-medium">
       <span>🛡️</span>
-      <span>100% डेटा सुरक्षा • DPDP 2023 एन्क्रिप्टेड लेजर</span>
+      <span>100% डेटा सुरक्षा • DPDP Act 2025 एन्क्रिप्टेड लेजर</span>
     </div>
     <span class="text-[10px] text-slate-500 font-bold">ZEL-PASS</span>
   </div>
@@ -242,41 +242,10 @@
       </div>
     </div>
 
-    <!-- 7. OWNER CONSOLE (CONCEALED) -->
-    <div class="text-center pt-2">
-      <button onclick="document.getElementById('ownerConsole').classList.toggle('hidden')" class="text-[10px] text-slate-500 hover:text-slate-300 underline tracking-wide">
-        ⚙️ सॉवरेन सिस्टम कंसोल (ओनर कंट्रोल)
-      </button>
-    </div>
-
-    <div id="ownerConsole" class="hidden glass-card p-4 rounded-3xl border border-amber-500/40 space-y-3">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-        <span class="text-xs font-extrabold text-amber-400 tracking-wide">🛡️ सॉवरेन कंट्रोल पैनल (Gate 23 Mode)</span>
-        <span class="text-[9px] font-bold bg-amber-950 text-amber-300 px-2 py-0.5 rounded-full border border-amber-800">ROOT-SOVEREIGN</span>
-      </div>
-      <div class="grid grid-cols-3 gap-2 text-center text-[10px]">
-        <div class="bg-slate-950/80 p-2 rounded-xl border border-slate-800">
-          <div class="text-slate-400">Kill-Switch</div>
-          <div class="text-emerald-400 font-extrabold mt-0.5">NORMAL (L0)</div>
-        </div>
-        <div class="bg-slate-950/80 p-2 rounded-xl border border-slate-800">
-          <div class="text-slate-400">CoverageRatio</div>
-          <div class="text-emerald-400 font-extrabold mt-0.5">1.00 (PASS)</div>
-        </div>
-        <div class="bg-slate-950/80 p-2 rounded-xl border border-slate-800">
-          <div class="text-slate-400">NCR Cap</div>
-          <div class="text-emerald-400 font-extrabold mt-0.5">28.00% MAX</div>
-        </div>
-      </div>
-      <p class="text-[9px] text-slate-500 text-center font-mono">
-        412 Canonical Target Elements Verified • Fail-Closed Circuit Breaker Armed
-      </p>
-    </div>
-
     <div id="rm-view-container" class="hidden"></div>
   </main>
 
-  <!-- 8. 50 CATEGORIES ACCORDION DRAWER -->
+  <!-- 7. 50 CATEGORIES ACCORDION DRAWER -->
   <aside id="rm-drawer-menu" aria-hidden="true" style="position:fixed; top:0; left:0; bottom:0; width:310px; background:#0b0f19; border-right:1px solid rgba(255,255,255,0.1); box-shadow:4px 0 24px rgba(0,0,0,0.6); z-index:200; transform:translateX(-100%); transition:transform 0.3s ease; padding:1.25rem; overflow-y:auto;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:0.75rem;">
       <div>
@@ -302,7 +271,7 @@
   </aside>
   <div id="rm-drawer-backdrop" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:190; display:none; backdrop-filter:blur(3px); pointer-events:none;"></div>
 
-  <!-- 9. BOTTOM NAVIGATION -->
+  <!-- 8. BOTTOM NAVIGATION -->
   <nav class="fixed bottom-0 inset-x-0 z-50 nav-glass px-6 py-2">
     <div class="max-w-md mx-auto flex justify-between items-center text-center">
       <a href="#home" class="flex flex-col items-center text-emerald-400">
@@ -324,7 +293,7 @@
     </div>
   </nav>
 
-  <!-- 10. SELF-HEALING 50-CATEGORY ENGINE & RUNTIME CONTROLLER -->
+  <!-- 9. SELF-HEALING 50-CATEGORY ENGINE & RUNTIME CONTROLLER -->
   <script>
     // 50 PLAY STORE CANONICAL TAXONOMY (Zero External Network Dependency)
     const RM_CATS = [
@@ -384,7 +353,7 @@
       const t1 = document.getElementById('tier1-list');
       const t2 = document.getElementById('tier2-list');
       if (!t1 || !t2) return;
-      if (t1.children.length > 0) return; // पहले से भरे होने पर दोबारा रेंडर न करें
+      if (t1.children.length > 0) return;
 
       const f1 = document.createDocumentFragment();
       const f2 = document.createDocumentFragment();
