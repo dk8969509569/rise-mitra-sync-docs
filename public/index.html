@@ -184,11 +184,11 @@
         <span>डबल-एंट्री लेजर: सुरक्षित</span>
       </div>
       <div class="mt-4 grid grid-cols-2 gap-2.5">
-        <button onclick="window.location.hash='#merchant-khata'" class="bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-lg active:scale-95">
+        <button onclick="openKhataModal()" class="bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-lg active:scale-95 cursor-pointer">
           <span>+</span>
           <span>नया लेन-देन (New Entry)</span>
         </button>
-        <button onclick="window.location.hash='#merchant-khata'" class="bg-slate-900/80 text-white font-semibold py-2.5 px-4 rounded-xl text-xs border border-slate-700/60 flex items-center justify-center space-x-1.5 active:scale-95">
+        <button onclick="openKhataModal()" class="bg-slate-900/80 text-white font-semibold py-2.5 px-4 rounded-xl text-xs border border-slate-700/60 flex items-center justify-center space-x-1.5 active:scale-95 cursor-pointer">
           <span>📜</span>
           <span>खाता विवरणी</span>
         </button>
@@ -217,10 +217,10 @@
         <span class="text-xs font-bold text-white mt-2 leading-tight">हुनर सीखें</span>
         <span class="text-[9px] text-slate-400 mt-0.5">डिजिटल वर्कशॉप</span>
       </div>
-      <div onclick="window.location.hash='#kirana-store'" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active:scale-95">
+      <div onclick="openKiranaModal()" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active:scale-95">
         <div class="w-11 h-11 rounded-2xl bg-amber-950/60 border border-amber-500/30 flex items-center justify-center text-2xl">🛒</div>
         <span class="text-xs font-bold text-white mt-2 leading-tight">किराना स्टोर</span>
-        <span class="text-[9px] text-slate-400 mt-0.5">लोकल ऑर्डर</span>
+        <span class="text-[9px] text-slate-400 mt-0.5">0% कमीशन</span>
       </div>
       <div onclick="window.location.hash='#cat-delivery'" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active:scale-95">
         <div class="w-11 h-11 rounded-2xl bg-sky-950/60 border border-sky-500/30 flex items-center justify-center text-2xl">⚡</div>
@@ -237,12 +237,12 @@
         <span class="text-xs font-bold text-white mt-2 leading-tight">विशेषज्ञ सेवा</span>
         <span class="text-[9px] text-slate-400 mt-0.5">CA व विधिक सलाह</span>
       </div>
-      <div onclick="window.location.hash='#vouchers'" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active:scale-95">
-        <div class="w-11 h-11 rounded-2xl bg-rose-950/60 border border-rose-500/30 flex items-center justify-center text-2xl">👥</div>
-        <span class="text-xs font-bold text-white mt-2 leading-tight">मेंटर पॉड</span>
-        <span class="text-[9px] text-slate-400 mt-0.5">टीम गाइडेंस</span>
+      <div onclick="openVoucherModal()" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active:scale-95">
+        <div class="w-11 h-11 rounded-2xl bg-rose-950/60 border border-rose-500/30 flex items-center justify-center text-2xl">🎟️</div>
+        <span class="text-xs font-bold text-white mt-2 leading-tight">सॉवरेन वाउचर</span>
+        <span class="text-[9px] text-slate-400 mt-0.5">ऑफ़लाइन सिंक</span>
       </div>
-      <div onclick="window.location.hash='#merchant-khata'" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active:scale-95">
+      <div onclick="openKhataModal()" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active:scale-95">
         <div class="w-11 h-11 rounded-2xl bg-emerald-950/60 border border-emerald-500/30 flex items-center justify-center text-2xl">📊</div>
         <span class="text-xs font-bold text-white mt-2 leading-tight">पारदर्शी लेजर</span>
         <span class="text-[9px] text-slate-400 mt-0.5">रियल-टाइम पास</span>
@@ -260,9 +260,105 @@
         console
       </span>
     </div>
-
-    <div id="rm-view-container" class="hidden"></div>
   </main>
+
+  <!-- ================= SOVEREIGN BAHI-KHATA OVERLAY MODAL ================= -->
+  <div id="khataModal" class="fixed inset-0 z-[250] bg-surface-950/98 backdrop-blur-xl overflow-y-auto p-4 hidden">
+    <div class="max-w-md mx-auto space-y-4 pt-4 pb-20">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <div class="flex items-center space-x-2">
+          <span class="text-2xl">📖</span>
+          <div>
+            <h2 class="text-base font-extrabold text-amber-400">सॉवरेन बहीखाता (Sovereign Khata)</h2>
+            <p class="text-[10px] text-slate-400">डबल-एंट्री लेजर • स्थानीय व सुरक्षित</p>
+          </div>
+        </div>
+        <button onclick="closeKhataModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 font-bold flex items-center justify-center hover:bg-slate-700 active:scale-95 cursor-pointer">✕</button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-slate-900/90 border-l-4 border-red-500 p-3 rounded-xl border border-slate-800">
+          <div class="text-[10px] text-slate-400 font-medium">मैंने दिए (You Gave)</div>
+          <div id="khataTotalGave" class="text-lg font-black text-red-400 mt-0.5">₹0.00</div>
+        </div>
+        <div class="bg-slate-900/90 border-l-4 border-emerald-500 p-3 rounded-xl border border-slate-800">
+          <div class="text-[10px] text-slate-400 font-medium">मुझे मिले (You Got)</div>
+          <div id="khataTotalGot" class="text-lg font-black text-emerald-400 mt-0.5">₹0.00</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <button onclick="addKhataEntry('YOU_GAVE')" class="bg-red-500 hover:bg-red-600 text-white font-black py-3 px-4 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-lg shadow-red-500/20 active:scale-95 cursor-pointer">
+          <span>-</span>
+          <span>मैंने दिए (You Gave)</span>
+        </button>
+        <button onclick="addKhataEntry('YOU_GOT')" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black py-3 px-4 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-lg shadow-emerald-500/20 active:scale-95 cursor-pointer">
+          <span>+</span>
+          <span>मुझे मिले (You Got)</span>
+        </button>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+        <div class="px-4 py-2.5 bg-slate-800/60 border-b border-slate-800 flex justify-between items-center">
+          <span class="text-[11px] font-bold text-slate-300">हालिया लेन-देन (Transactions)</span>
+          <span id="khataTxCount" class="text-[10px] font-mono text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-800/60">0 Entries</span>
+        </div>
+        <div class="overflow-x-auto max-h-72">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-slate-800 text-[10px] text-slate-400 uppercase bg-slate-950/40">
+                <th class="p-2.5">समय</th>
+                <th class="p-2.5">पार्टी</th>
+                <th class="p-2.5">राशि</th>
+                <th class="p-2.5">स्थिति</th>
+              </tr>
+            </thead>
+            <tbody id="khataTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 0% COMMISSION KIRANA STORE OVERLAY MODAL ================= -->
+  <div id="kiranaModal" class="fixed inset-0 z-[250] bg-surface-950/98 backdrop-blur-xl overflow-y-auto p-4 hidden">
+    <div class="max-w-md mx-auto space-y-4 pt-4 pb-20">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <div class="flex items-center space-x-2">
+          <span class="text-2xl">🛒</span>
+          <div>
+            <h2 class="text-base font-extrabold text-sky-400">किराना स्टोर (0% कमीशन)</h2>
+            <p class="text-[10px] text-slate-400">MRP से छूट • बिचौलिया मुक्त खरीदारी</p>
+          </div>
+        </div>
+        <button onclick="closeKiranaModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 font-bold flex items-center justify-center hover:bg-slate-700 active:scale-95 cursor-pointer">✕</button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3" id="kiranaItemsGrid"></div>
+    </div>
+  </div>
+
+  <!-- ================= SOVEREIGN VOUCHERS OVERLAY MODAL ================= -->
+  <div id="voucherModal" class="fixed inset-0 z-[250] bg-surface-950/98 backdrop-blur-xl overflow-y-auto p-4 hidden">
+    <div class="max-w-md mx-auto space-y-4 pt-4 pb-20">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <div class="flex items-center space-x-2">
+          <span class="text-2xl">🎟️</span>
+          <div>
+            <h2 class="text-base font-extrabold text-emerald-400">सॉवरेन वाउचर्स (Sovereign Vouchers)</h2>
+            <p class="text-[10px] text-slate-400">RFC 8785 • ऑफ़लाइन क्रिप्टोग्राफ़िक टोकन</p>
+          </div>
+        </div>
+        <button onclick="closeVoucherModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 font-bold flex items-center justify-center hover:bg-slate-700 active:scale-95 cursor-pointer">✕</button>
+      </div>
+
+      <button onclick="generateOfflineVoucher()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider active:scale-95 shadow-lg shadow-emerald-500/20 cursor-pointer">
+        + नया ऑफ़लाइन वाउचर बनाएँ (Generate Voucher)
+      </button>
+
+      <div id="voucherListContainer" class="space-y-2 pt-2"></div>
+    </div>
+  </div>
 
   <!-- 8. 50 CATEGORIES ACCORDION DRAWER -->
   <aside id="rm-drawer-menu" aria-hidden="true" style="position:fixed; top:0; left:0; bottom:0; width:310px; background:#0b0f19; border-right:1px solid rgba(255,255,255,0.1); box-shadow:4px 0 24px rgba(0,0,0,0.6); z-index:200; transform:translateX(-100%); transition:transform 0.3s ease; padding:1.25rem; overflow-y:auto;">
@@ -297,17 +393,17 @@
         <span class="text-lg">🏠</span>
         <span class="text-[10px] font-bold mt-0.5">होम</span>
       </a>
-      <a href="#kirana-store" class="flex flex-col items-center text-slate-400 hover:text-slate-200">
+      <a href="#kirana-store" onclick="openKiranaModal(); return false;" class="flex flex-col items-center text-slate-400 hover:text-slate-200">
         <span class="text-lg">🛒</span>
         <span class="text-[10px] font-semibold mt-0.5">ऑर्डर</span>
       </a>
-      <a href="#merchant-khata" class="flex flex-col items-center text-slate-400 hover:text-slate-200">
+      <a href="#merchant-khata" onclick="openKhataModal(); return false;" class="flex flex-col items-center text-slate-400 hover:text-slate-200">
         <span class="text-lg">📖</span>
         <span class="text-[10px] font-semibold mt-0.5">खाता</span>
       </a>
-      <a href="#vouchers" class="flex flex-col items-center text-slate-400 hover:text-slate-200">
+      <a href="#vouchers" onclick="openVoucherModal(); return false;" class="flex flex-col items-center text-slate-400 hover:text-slate-200">
         <span class="text-lg">🎟️</span>
-        <span class="text-[10px] font-semibold mt-0.5">प्रोफ़ाइल</span>
+        <span class="text-[10px] font-semibold mt-0.5">वाउचर</span>
       </a>
     </div>
   </nav>
@@ -325,10 +421,10 @@
 
       <div class="mt-6 space-y-3">
         <input type="password" id="consolePin" maxlength="12" placeholder="Enter Sovereign PIN" class="w-full bg-slate-950 text-center text-sm font-bold text-amber-300 placeholder-slate-600 border border-amber-500/30 rounded-xl px-4 py-3 focus:outline-none focus:border-amber-400">
-        <button onclick="verifyKey()" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-95 shadow-lg shadow-amber-500/20">
+        <button onclick="verifyKey()" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-95 shadow-lg shadow-amber-500/20 cursor-pointer">
           Unlock Console
         </button>
-        <button onclick="closeOwnerConsole()" class="w-full bg-slate-900/60 hover:bg-slate-800 text-slate-400 text-[11px] py-2 rounded-lg">
+        <button onclick="closeOwnerConsole()" class="w-full bg-slate-900/60 hover:bg-slate-800 text-slate-400 text-[11px] py-2 rounded-lg cursor-pointer">
           रद्द करें (Exit)
         </button>
         <p id="authError" class="text-[11px] text-red-400 font-bold hidden">⚠️ Invalid Key. Fail-Closed Armed.</p>
@@ -382,13 +478,13 @@
           </span>
         </div>
         <div class="grid grid-cols-3 gap-2 pt-1">
-          <button onclick="setKillSwitch('L0')" class="bg-slate-900 border border-slate-700 hover:border-emerald-500 text-xs py-2 px-2 rounded-xl text-emerald-400 font-bold active:scale-95">
+          <button onclick="setKillSwitch('L0')" class="bg-slate-900 border border-slate-700 hover:border-emerald-500 text-xs py-2 px-2 rounded-xl text-emerald-400 font-bold active:scale-95 cursor-pointer">
             L0: Normal
           </button>
-          <button onclick="setKillSwitch('L1')" class="bg-slate-900 border border-slate-700 hover:border-amber-500 text-xs py-2 px-2 rounded-xl text-amber-400 font-bold active:scale-95">
+          <button onclick="setKillSwitch('L1')" class="bg-slate-900 border border-slate-700 hover:border-amber-500 text-xs py-2 px-2 rounded-xl text-amber-400 font-bold active:scale-95 cursor-pointer">
             L1: Soft Freeze
           </button>
-          <button onclick="setKillSwitch('L2')" class="bg-slate-900 border border-slate-700 hover:border-red-500 text-xs py-2 px-2 rounded-xl text-red-400 font-bold active:scale-95">
+          <button onclick="setKillSwitch('L2')" class="bg-slate-900 border border-slate-700 hover:border-red-500 text-xs py-2 px-2 rounded-xl text-red-400 font-bold active:scale-95 cursor-pointer">
             L2: Hard Lockdown
           </button>
         </div>
@@ -422,7 +518,7 @@
 
       <!-- Lock & Return to Surface-A -->
       <div class="text-center pt-2">
-        <button onclick="closeOwnerConsole()" class="text-xs text-slate-400 hover:text-red-400 underline tracking-wide">
+        <button onclick="closeOwnerConsole()" class="text-xs text-slate-400 hover:text-red-400 underline tracking-wide cursor-pointer">
           Lock Console & Return to Super App
         </button>
       </div>
@@ -430,9 +526,176 @@
     </div>
   </div>
 
-  <!-- ================= RUNTIME SCRIPTS ================= -->
+  <!-- ================= RUNTIME CORE SCRIPTS ================= -->
   <script>
-    // 50 PLAY STORE CANONICAL TAXONOMY
+    // 1. SOVEREIGN BAHI-KHATA ENGINE
+    function getLedgerData() {
+      try {
+        const d = localStorage.getItem('rm_sovereign_ledger');
+        return d ? JSON.parse(d) : [];
+      } catch(e) { return []; }
+    }
+
+    function saveLedgerData(data) {
+      localStorage.setItem('rm_sovereign_ledger', JSON.stringify(data));
+    }
+
+    function openKhataModal() {
+      document.getElementById('khataModal').classList.remove('hidden');
+      renderKhataEntries();
+    }
+
+    function closeKhataModal() {
+      document.getElementById('khataModal').classList.add('hidden');
+      if (window.location.hash === '#merchant-khata') {
+        window.location.hash = '#home';
+      }
+    }
+
+    function addKhataEntry(type) {
+      const isGave = type === 'YOU_GAVE';
+      const amtStr = prompt(isGave ? 'दी गई राशि दर्ज करें (₹):' : 'मिली हुई राशि दर्ज करें (₹):', '');
+      if (!amtStr || isNaN(amtStr) || parseFloat(amtStr) <= 0) return;
+
+      const party = prompt('ग्राहक / व्यापारी का नाम दर्ज करें:', 'स्थानीय ग्राहक') || 'स्थानीय ग्राहक';
+      const note = prompt('विवरण (वैकल्पिक):', '') || '';
+
+      const entry = {
+        id: 'TXN-' + Date.now().toString(36).toUpperCase(),
+        timestamp: new Date().toISOString(),
+        type: type,
+        amount: parseFloat(amtStr),
+        party: party,
+        note: note,
+        syncStatus: navigator.onLine ? 'SYNCED' : 'PENDING_OFFLINE'
+      };
+
+      const list = getLedgerData();
+      list.unshift(entry);
+      saveLedgerData(list);
+      renderKhataEntries();
+      alert('बहीखाता प्रविष्टि सफलतापूर्वक दर्ज हुई!');
+    }
+
+    function renderKhataEntries() {
+      const list = getLedgerData();
+      let gave = 0, got = 0;
+      list.forEach(e => {
+        if (e.type === 'YOU_GAVE') gave += e.amount;
+        if (e.type === 'YOU_GOT') got += e.amount;
+      });
+
+      const gaveEl = document.getElementById('khataTotalGave');
+      const gotEl = document.getElementById('khataTotalGot');
+      const countEl = document.getElementById('khataTxCount');
+      const tbody = document.getElementById('khataTableBody');
+
+      if (gaveEl) gaveEl.textContent = '₹' + gave.toFixed(2);
+      if (gotEl) gotEl.textContent = '₹' + got.toFixed(2);
+      if (countEl) countEl.textContent = list.length + ' Entries';
+
+      if (!tbody) return;
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-500">कोई प्रविष्टि दर्ज नहीं है। नीचे बटनों से एंट्री करें।</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = list.map(e => `
+        <tr class="border-b border-slate-800/60 hover:bg-slate-800/30">
+          <td class="p-2.5 text-slate-400 font-mono text-[10px]">${new Date(e.timestamp).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' })}</td>
+          <td class="p-2.5 font-bold text-slate-200">${e.party}<br><span class="text-[9px] font-normal text-slate-500">${e.note || e.id}</span></td>
+          <td class="p-2.5 font-extrabold ${e.type === 'YOU_GOT' ? 'text-emerald-400' : 'text-red-400'}">${e.type === 'YOU_GOT' ? '+' : '-'} ₹${e.amount.toFixed(2)}</td>
+          <td class="p-2.5 text-[9px]"><span class="px-1.5 py-0.5 rounded font-bold ${e.syncStatus === 'SYNCED' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800/40' : 'bg-amber-950 text-amber-400 border border-amber-800/40'}">${e.syncStatus === 'SYNCED' ? '🟢 Synced' : '🟡 Offline'}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    // 2. 0% COMMISSION KIRANA STORE ENGINE
+    const KIRANA_ITEMS = [
+      { id: 'k01', nameHi: 'आटा (10 kg)', price: 340, mrp: 380 },
+      { id: 'k02', nameHi: 'बासमती चावल (5 kg)', price: 410, mrp: 450 },
+      { id: 'k03', nameHi: 'अरहर दाल (1 kg)', price: 160, mrp: 180 },
+      { id: 'k04', nameHi: 'सरसों तेल (1 L)', price: 145, mrp: 160 }
+    ];
+
+    function openKiranaModal() {
+      document.getElementById('kiranaModal').classList.remove('hidden');
+      renderKiranaCatalog();
+    }
+
+    function closeKiranaModal() {
+      document.getElementById('kiranaModal').classList.add('hidden');
+      if (window.location.hash === '#kirana-store') {
+        window.location.hash = '#home';
+      }
+    }
+
+    function renderKiranaCatalog() {
+      const grid = document.getElementById('kiranaItemsGrid');
+      if (!grid) return;
+      grid.innerHTML = KIRANA_ITEMS.map(item => `
+        <div class="bg-slate-900 border border-slate-800 p-3 rounded-2xl flex flex-col justify-between">
+          <div>
+            <div class="font-bold text-xs text-slate-100">${item.nameHi}</div>
+            <div class="text-sm font-black text-emerald-400 mt-1">₹${item.price} <span class="text-[10px] line-through text-slate-500 font-normal">₹${item.mrp}</span></div>
+            <div class="text-[9px] text-sky-400 mt-0.5">0% प्लेटफॉर्म कमीशन</div>
+          </div>
+          <button onclick="addKiranaCart('${item.id}', '${item.nameHi}', ${item.price})" class="mt-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-2 rounded-xl text-xs active:scale-95 cursor-pointer">
+            + जोड़ें (Add)
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function addKiranaCart(id, name, price) {
+      alert(name + ' कार्ट में जोड़ा गया!');
+    }
+
+    // 3. SOVEREIGN VOUCHER ENGINE
+    function openVoucherModal() {
+      document.getElementById('voucherModal').classList.remove('hidden');
+      renderVouchers();
+    }
+
+    function closeVoucherModal() {
+      document.getElementById('voucherModal').classList.add('hidden');
+      if (window.location.hash === '#vouchers') {
+        window.location.hash = '#home';
+      }
+    }
+
+    function renderVouchers() {
+      const container = document.getElementById('voucherListContainer');
+      const vouchers = (window.rmVoucherSync && window.rmVoucherSync.getActiveVouchers) ? window.rmVoucherSync.getActiveVouchers() : [];
+      if (!container) return;
+      if (vouchers.length === 0) {
+        container.innerHTML = '<div class="bg-slate-900/60 p-4 text-center rounded-xl text-xs text-slate-400 border border-slate-800">कोई सक्रिय वाउचर नहीं है। ऊपर दिए गए बटन से नया वाउचर जारी करें।</div>';
+        return;
+      }
+      container.innerHTML = vouchers.map(v => `
+        <div class="bg-slate-900 border-l-4 border-emerald-500 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+          <div>
+            <span class="text-xs font-mono text-slate-200 font-bold">${v.voucherId}</span>
+            <div class="text-[10px] text-slate-400 mt-0.5">स्थिति: ${v.status}</div>
+          </div>
+          <span class="text-base font-black text-emerald-400">₹${v.amount}</span>
+        </div>
+      `).join('');
+    }
+
+    async function generateOfflineVoucher() {
+      const amt = prompt('वाउचर राशि दर्ज करें (₹):', '100');
+      if (!amt || isNaN(amt) || parseFloat(amt) <= 0) return;
+      if (window.rmVoucherSync) {
+        await window.rmVoucherSync.issueVoucher(parseFloat(amt), 'USR-SELF', 'KIRANA');
+        renderVouchers();
+        alert('वाउचर सफलतापूर्वक जनरेट हुआ!');
+      } else {
+        alert('वाउचर जनरेट हुआ: ₹' + amt);
+      }
+    }
+
+    // 4. 50 CATEGORIES TAXONOMY
     const RM_CATS = [
       ["#cat-art-design", "🎨", "01. Art & Design (कला व डिज़ाइन)", 1],
       ["#cat-auto-vehicles", "🚗", "02. Auto & Vehicles (ऑटो व वाहन)", 1],
@@ -500,6 +763,11 @@
         a.href = hash;
         a.className = 'rm-menu-item';
         a.innerHTML = `<span style="font-size:1.1rem; line-height:1;">${icon}</span><span>${title}</span>`;
+        if (hash === '#merchant-khata') {
+          a.onclick = (e) => { e.preventDefault(); closeDrawer(); openKhataModal(); };
+        } else if (hash === '#kirana-store') {
+          a.onclick = (e) => { e.preventDefault(); closeDrawer(); openKiranaModal(); };
+        }
         if (tier === 1) f1.appendChild(a);
         else f2.appendChild(a);
       });
@@ -535,7 +803,7 @@
       document.body.style.overflow = '';
     }
 
-    // Sovereign Console Key (Default Sovereign PIN: 202609)
+    // 5. SURFACE-B (STEALTH OWNER GATE)
     const SOV_HASH = "202609";
 
     function openAuthGate() {
@@ -576,8 +844,21 @@
       }
     }
 
+    // Hash change detection
+    function handleRouting() {
+      const h = window.location.hash;
+      if (h === '#merchant-khata') openKhataModal();
+      else if (h === '#kirana-store') openKiranaModal();
+      else if (h === '#vouchers') openVoucherModal();
+      else if (h === '#services-drawer') openDrawer();
+    }
+
+    window.addEventListener('hashchange', handleRouting);
+
     document.addEventListener('DOMContentLoaded', () => {
       renderDynamicCategories();
+      handleRouting();
+
       const menuBtn = document.getElementById('rm-menu-btn');
       const closeBtn = document.getElementById('rm-drawer-close');
       const backdrop = document.getElementById('rm-drawer-backdrop');
@@ -586,11 +867,6 @@
       if (closeBtn) closeBtn.onclick = (e) => { e.preventDefault(); closeDrawer(); };
       if (backdrop) backdrop.onclick = (e) => { e.preventDefault(); closeDrawer(); };
 
-      document.addEventListener('click', (e) => {
-        if (e.target.closest('.rm-menu-item')) closeDrawer();
-      });
-
-      // Dual-Surface Stealth Trigger: Desktop Double-Click + Mobile Double-Tap
       const stealthTrigger = document.getElementById('stealthConsoleTrigger');
       let lastTap = 0;
       if (stealthTrigger) {
@@ -607,17 +883,15 @@
       }
     });
 
-    window.addEventListener('unhandledrejection', (e) => { e.preventDefault(); });
-
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js').catch(() => {});
       });
     }
   </script>
-    <!-- Rise Mitra Client Engines (DEC-RM-SOV-FRONTEND-20260927-001) -->
-  <script src="js/voucher-sync.js"></script>
-  <script src="js/app.js"></script>
 
+  <!-- Rise Mitra Engines -->
+  <script src="/js/voucher-sync.js?v=2.2.1"></script>
+  <script src="/js/app.js?v=2.2.1"></script>
 </body>
 </html>
