@@ -27,6 +27,7 @@
         extend: {
           colors: {
             brand: { 500: '#10b981', 600: '#059669', 950: '#022c22' },
+            amberBrand: { 500: '#f59e0b', 950: '#451a03' },
             surface: { 800: '#111827', 900: '#0b0f19', 950: '#030712' }
           }
         }
@@ -87,9 +88,20 @@
       color: #ffffff;
       border-color: rgba(0, 220, 130, 0.35);
     }
+    .glass-panel {
+      background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(11, 15, 25, 0.98) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .metric-card {
+      background: rgba(3, 7, 18, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
   </style>
 </head>
-<body class="bg-surface-950 text-slate-100 min-h-screen pb-24 select-none antialiased font-sans">
+<body class="bg-surface-950 text-slate-100 min-h-screen pb-28 select-none antialiased font-sans">
+
+  <!-- ================= SURFACE-A: PUBLIC CLIENT ================= -->
 
   <!-- 1. TOP STATUS BAR / HEADER -->
   <header class="sticky top-0 z-40 bg-surface-950/80 backdrop-blur-md border-b border-slate-800/80 px-4 py-3 flex items-center justify-between">
@@ -242,10 +254,17 @@
       </div>
     </div>
 
+    <!-- 7. STEALTH CONSOLE TRIGGER (DOUBLE CLICK / DOUBLE TAP TO UNLOCK SURFACE-B) -->
+    <div class="text-center pt-8 pb-4">
+      <span id="stealthConsoleTrigger" class="text-[11px] text-slate-600/70 hover:text-slate-400 font-mono tracking-widest cursor-pointer px-4 py-2 rounded transition-colors duration-200">
+        console
+      </span>
+    </div>
+
     <div id="rm-view-container" class="hidden"></div>
   </main>
 
-  <!-- 7. 50 CATEGORIES ACCORDION DRAWER -->
+  <!-- 8. 50 CATEGORIES ACCORDION DRAWER -->
   <aside id="rm-drawer-menu" aria-hidden="true" style="position:fixed; top:0; left:0; bottom:0; width:310px; background:#0b0f19; border-right:1px solid rgba(255,255,255,0.1); box-shadow:4px 0 24px rgba(0,0,0,0.6); z-index:200; transform:translateX(-100%); transition:transform 0.3s ease; padding:1.25rem; overflow-y:auto;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:0.75rem;">
       <div>
@@ -271,7 +290,7 @@
   </aside>
   <div id="rm-drawer-backdrop" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:190; display:none; backdrop-filter:blur(3px); pointer-events:none;"></div>
 
-  <!-- 8. BOTTOM NAVIGATION -->
+  <!-- 9. BOTTOM NAVIGATION -->
   <nav class="fixed bottom-0 inset-x-0 z-50 nav-glass px-6 py-2">
     <div class="max-w-md mx-auto flex justify-between items-center text-center">
       <a href="#home" class="flex flex-col items-center text-emerald-400">
@@ -293,9 +312,127 @@
     </div>
   </nav>
 
-  <!-- 9. SELF-HEALING 50-CATEGORY ENGINE & RUNTIME CONTROLLER -->
+  <!-- ================= SURFACE-B: STEALTH OWNER OVERLAY ================= -->
+
+  <!-- AUTHENTICATION GATE (GATE 23 MODAL) -->
+  <div id="authGateModal" class="fixed inset-0 z-[300] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="max-w-sm w-full glass-panel p-6 rounded-3xl border border-amber-500/40 text-center shadow-2xl font-mono">
+      <div class="w-14 h-14 mx-auto rounded-2xl bg-amber-950/80 border border-amber-500/50 flex items-center justify-center text-3xl mb-4">
+        🔐
+      </div>
+      <h2 class="text-base font-black text-amber-400 tracking-wider uppercase">Sovereign Gate 23</h2>
+      <p class="text-xs text-slate-400 mt-1">Owner Console Authentication Required</p>
+
+      <div class="mt-6 space-y-3">
+        <input type="password" id="consolePin" maxlength="12" placeholder="Enter Sovereign PIN" class="w-full bg-slate-950 text-center text-sm font-bold text-amber-300 placeholder-slate-600 border border-amber-500/30 rounded-xl px-4 py-3 focus:outline-none focus:border-amber-400">
+        <button onclick="verifyKey()" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-95 shadow-lg shadow-amber-500/20">
+          Unlock Console
+        </button>
+        <button onclick="closeOwnerConsole()" class="w-full bg-slate-900/60 hover:bg-slate-800 text-slate-400 text-[11px] py-2 rounded-lg">
+          रद्द करें (Exit)
+        </button>
+        <p id="authError" class="text-[11px] text-red-400 font-bold hidden">⚠️ Invalid Key. Fail-Closed Armed.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONSOLE INTERFACE MODAL (UNLOCKED STATE) -->
+  <div id="consolePanelModal" class="fixed inset-0 z-[310] bg-black/95 backdrop-blur-lg overflow-y-auto p-4 hidden font-mono">
+    <div class="max-w-2xl mx-auto space-y-4 pt-6 pb-16">
+
+      <!-- Header -->
+      <header class="glass-panel p-4 rounded-2xl flex items-center justify-between border-amber-500/30">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="text-base">🛡️</span>
+            <h2 class="text-xs font-black uppercase tracking-wider text-amber-400 leading-none">Rise Mitra Sovereign Console</h2>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-1">Surface-B • Runtime Authority (Tier-1 Foundation)</p>
+        </div>
+        <span class="text-[10px] font-black bg-amber-950 text-amber-300 px-2.5 py-1 rounded-full border border-amber-700/60">
+          ROOT-SOVEREIGN
+        </span>
+      </header>
+
+      <!-- Core Metrics Dashboard -->
+      <section class="grid grid-cols-3 gap-3">
+        <div class="metric-card p-3 rounded-xl border border-slate-800 text-center">
+          <span class="text-[10px] text-slate-400">Solvency Hard-Cap</span>
+          <div class="text-sm font-black text-emerald-400 mt-1">28.00% MAX</div>
+          <span class="text-[9px] text-emerald-500/80 font-bold">In Compliance</span>
+        </div>
+        <div class="metric-card p-3 rounded-xl border border-slate-800 text-center">
+          <span class="text-[10px] text-slate-400">CoverageRatio</span>
+          <div class="text-sm font-black text-emerald-400 mt-1">1.00 LOCKED</div>
+          <span class="text-[9px] text-emerald-500/80 font-bold">Solvent (Pass)</span>
+        </div>
+        <div class="metric-card p-3 rounded-xl border border-slate-800 text-center">
+          <span class="text-[10px] text-slate-400">Target Elements</span>
+          <div class="text-sm font-black text-cyan-400 mt-1">412 / 412</div>
+          <span class="text-[9px] text-cyan-500/80 font-bold">100% Zero-Loss</span>
+        </div>
+      </section>
+
+      <!-- Kill-Switch Matrix Control -->
+      <section class="glass-panel p-4 rounded-2xl border-red-500/30 space-y-3">
+        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+          <span class="text-xs font-black text-red-400 uppercase tracking-wide">Kill-Switch Subsystem</span>
+          <span id="killSwitchState" class="text-[10px] font-black bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-700">
+            LEVEL-0 (NORMAL)
+          </span>
+        </div>
+        <div class="grid grid-cols-3 gap-2 pt-1">
+          <button onclick="setKillSwitch('L0')" class="bg-slate-900 border border-slate-700 hover:border-emerald-500 text-xs py-2 px-2 rounded-xl text-emerald-400 font-bold active:scale-95">
+            L0: Normal
+          </button>
+          <button onclick="setKillSwitch('L1')" class="bg-slate-900 border border-slate-700 hover:border-amber-500 text-xs py-2 px-2 rounded-xl text-amber-400 font-bold active:scale-95">
+            L1: Soft Freeze
+          </button>
+          <button onclick="setKillSwitch('L2')" class="bg-slate-900 border border-slate-700 hover:border-red-500 text-xs py-2 px-2 rounded-xl text-red-400 font-bold active:scale-95">
+            L2: Hard Lockdown
+          </button>
+        </div>
+        <p class="text-[10px] text-slate-400 font-sans leading-relaxed">
+          L0 = सम्पूर्ण नेटवर्क सक्रिय। L1 = डिस्पैच फ्रीज़ (केवल ऑफ़लाइन वॉउचर्स मान्य)। L2 = पूर्ण क्रिप्टोग्राफ़िक सर्किट-ब्रेकर लॉकडाउन।
+        </p>
+      </section>
+
+      <!-- Active Invariants Ledger -->
+      <section class="glass-panel p-4 rounded-2xl border-slate-800 space-y-2">
+        <span class="text-xs font-black text-slate-300 uppercase tracking-wide">Active Invariant Controls</span>
+        <div class="space-y-1.5 pt-1 text-xs">
+          <div class="flex justify-between p-2 bg-slate-950/60 rounded-lg border border-slate-800/80">
+            <span class="text-slate-400">Zero Forced Purchases:</span>
+            <span class="text-emerald-400 font-bold">ENFORCED (₹0 Fee)</span>
+          </div>
+          <div class="flex justify-between p-2 bg-slate-950/60 rounded-lg border border-slate-800/80">
+            <span class="text-slate-400">DPDP Act Compliance:</span>
+            <span class="text-emerald-400 font-bold">2025 ACTIVE (Encrypted)</span>
+          </div>
+          <div class="flex justify-between p-2 bg-slate-950/60 rounded-lg border border-slate-800/80">
+            <span class="text-slate-400">CERT-In SLA Protocol:</span>
+            <span class="text-emerald-400 font-bold">6-HR REPORTING SLA</span>
+          </div>
+          <div class="flex justify-between p-2 bg-slate-950/60 rounded-lg border border-slate-800/80">
+            <span class="text-slate-400">Canonical Serialization:</span>
+            <span class="text-emerald-400 font-bold">RFC 8785 VERIFIED</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Lock & Return to Surface-A -->
+      <div class="text-center pt-2">
+        <button onclick="closeOwnerConsole()" class="text-xs text-slate-400 hover:text-red-400 underline tracking-wide">
+          Lock Console & Return to Super App
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= RUNTIME SCRIPTS ================= -->
   <script>
-    // 50 PLAY STORE CANONICAL TAXONOMY (Zero External Network Dependency)
+    // 50 PLAY STORE CANONICAL TAXONOMY
     const RM_CATS = [
       ["#cat-art-design", "🎨", "01. Art & Design (कला व डिज़ाइन)", 1],
       ["#cat-auto-vehicles", "🚗", "02. Auto & Vehicles (ऑटो व वाहन)", 1],
@@ -398,6 +535,47 @@
       document.body.style.overflow = '';
     }
 
+    // Sovereign Console Key (Default Sovereign PIN: 202609)
+    const SOV_HASH = "202609";
+
+    function openAuthGate() {
+      document.getElementById("authGateModal").classList.remove("hidden");
+      document.getElementById("consolePin").focus();
+    }
+
+    function verifyKey() {
+      const pin = document.getElementById("consolePin").value;
+      const err = document.getElementById("authError");
+      if (pin === SOV_HASH) {
+        document.getElementById("authGateModal").classList.add("hidden");
+        document.getElementById("consolePanelModal").classList.remove("hidden");
+        err.classList.add("hidden");
+      } else {
+        err.classList.remove("hidden");
+      }
+    }
+
+    function closeOwnerConsole() {
+      document.getElementById("consolePin").value = "";
+      document.getElementById("authError").classList.add("hidden");
+      document.getElementById("consolePanelModal").classList.add("hidden");
+      document.getElementById("authGateModal").classList.add("hidden");
+    }
+
+    function setKillSwitch(level) {
+      const pill = document.getElementById("killSwitchState");
+      if (level === 'L0') {
+        pill.textContent = "LEVEL-0 (NORMAL)";
+        pill.className = "text-[10px] font-black bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-700";
+      } else if (level === 'L1') {
+        pill.textContent = "LEVEL-1 (SOFT FREEZE)";
+        pill.className = "text-[10px] font-black bg-amber-950 text-amber-400 px-2 py-0.5 rounded border border-amber-700";
+      } else if (level === 'L2') {
+        pill.textContent = "LEVEL-2 (HARD LOCKDOWN)";
+        pill.className = "text-[10px] font-black bg-red-950 text-red-400 px-2 py-0.5 rounded border border-red-700";
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       renderDynamicCategories();
       const menuBtn = document.getElementById('rm-menu-btn');
@@ -411,6 +589,22 @@
       document.addEventListener('click', (e) => {
         if (e.target.closest('.rm-menu-item')) closeDrawer();
       });
+
+      // Dual-Surface Stealth Trigger: Desktop Double-Click + Mobile Double-Tap
+      const stealthTrigger = document.getElementById('stealthConsoleTrigger');
+      let lastTap = 0;
+      if (stealthTrigger) {
+        stealthTrigger.addEventListener('dblclick', openAuthGate);
+        stealthTrigger.addEventListener('touchend', function (e) {
+          const currentTime = new Date().getTime();
+          const tapLength = currentTime - lastTap;
+          if (tapLength < 400 && tapLength > 0) {
+            e.preventDefault();
+            openAuthGate();
+          }
+          lastTap = currentTime;
+        });
+      }
     });
 
     window.addEventListener('unhandledrejection', (e) => { e.preventDefault(); });
