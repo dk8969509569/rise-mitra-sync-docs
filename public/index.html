@@ -7,14 +7,12 @@
   <meta name="description" content="RM WORLD — Official Google Play Store Download & Native WebAPK App">
   <title>RM WORLD — Google Play Store</title>
 
-  <!-- PWA & Brand Favicon Metadata -->
   <link rel="icon" type="image/svg+xml" href="/rise-mitra-logo.svg">
   <link rel="apple-touch-icon" href="/rise-mitra-logo.svg">
   <link rel="manifest" href="/manifest.json">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -57,14 +55,9 @@
 </head>
 <body class="antialiased selection:bg-emerald-500/20">
 
-  <!-- ============================================================== -->
-  <!-- LAYER 1: GOOGLE PLAY STORE OFFICIAL APP LISTING PAGE           -->
-  <!-- Yeh sirf tab dikhega jab link browser me khola gaya ho         -->
-  <!-- ============================================================== -->
+  <!-- LAYER 1: GOOGLE PLAY STORE STOREFRONT -->
   <div id="playStorePage" class="max-w-md mx-auto min-h-screen bg-[#131314] flex flex-col justify-between pb-8">
-    
     <div>
-      <!-- Google Play Top Nav Bar -->
       <nav class="flex items-center justify-between px-4 py-3 border-b border-[#2d2e30]/60 sticky top-0 bg-[#131314]/95 z-30 backdrop-blur-md">
         <div class="flex items-center space-x-3">
           <svg class="w-5 h-5 text-[#c4c7c5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -84,7 +77,6 @@
         </div>
       </nav>
 
-      <!-- App Header & Brand Info -->
       <section class="px-5 pt-5 pb-3">
         <div class="flex items-start space-x-4">
           <img src="/rise-mitra-logo.svg" alt="RM WORLD Logo" class="w-20 h-20 rounded-[22px] bg-[#02091d] p-1 border border-slate-700 shadow-xl object-contain flex-shrink-0">
@@ -95,7 +87,6 @@
           </div>
         </div>
 
-        <!-- Google Play Real Metrics Ribbon -->
         <div class="flex items-center justify-between mt-6 px-1 text-center border-b border-[#2d2e30]/80 pb-5">
           <div class="flex flex-col items-center flex-1">
             <div class="flex items-center text-sm font-bold text-white">
@@ -121,7 +112,6 @@
           </div>
         </div>
 
-        <!-- Verified Play Protect Strip -->
         <div class="flex items-center space-x-2 mt-4 px-1 text-xs text-[#c4c7c5]">
           <svg class="w-4 h-4 text-[#01875f] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
@@ -129,22 +119,16 @@
           <span class="text-[11px] text-[#8e918f]">Verified by Play Protect • DPDP Act 2023 Compliant</span>
         </div>
 
-        <!-- Dynamic Install Button Section -->
         <div class="mt-5">
-          <!-- State 1: When App is Not Installed -->
           <div id="playInstallState">
-            <button id="mainInstallBtn" onclick="executeGooglePlayInstall()" class="w-full play-btn py-3 rounded-full font-bold text-sm flex items-center justify-center space-x-2 shadow-lg cursor-pointer">
-              <span>Install</span>
+            <button id="mainInstallBtn" onclick="executeGooglePlayAction()" class="w-full play-btn py-3 rounded-full font-bold text-sm flex items-center justify-center space-x-2 shadow-lg cursor-pointer">
+              <span id="installBtnText">Install</span>
             </button>
             <p id="installStatusSub" class="text-center text-[11px] text-[#8e918f] mt-2">Free • Instant Android installation</p>
           </div>
 
-          <!-- State 2: When App is Installed (Open Button) -->
           <div id="playInstalledState" class="hidden flex items-center space-x-3">
-            <button onclick="alert('App aapke phone me installed hai. Remove karne ke liye phone ki home screen par long-press karein.')" class="flex-1 py-2.5 rounded-full border border-[#444746] text-[#01875f] font-bold text-sm hover:bg-[#1e1f20] transition-colors">
-              Uninstall
-            </button>
-            <button onclick="launchSuperApp()" class="flex-1 play-btn py-2.5 rounded-full font-bold text-sm flex items-center justify-center space-x-1.5 shadow-lg">
+            <button onclick="launchSuperApp()" class="w-full play-btn py-3 rounded-full font-bold text-sm flex items-center justify-center space-x-2 shadow-lg cursor-pointer">
               <span>Open</span>
               <span>🚀</span>
             </button>
@@ -152,7 +136,6 @@
         </div>
       </section>
 
-      <!-- Horizontal App Screenshots Carousel -->
       <section class="mt-4 px-5">
         <h3 class="text-sm font-bold text-white mb-3">App previews</h3>
         <div class="flex space-x-3 overflow-x-auto pb-2 scrollbar-none">
@@ -174,33 +157,21 @@
         </div>
       </section>
 
-      <!-- About this app -->
       <section class="mt-6 px-5 border-t border-[#2d2e30]/80 pt-4">
         <h3 class="text-sm font-bold text-white mb-1">About this app</h3>
         <p class="text-xs text-[#c4c7c5] leading-relaxed">
           RM WORLD (Rise Mitra) is a sovereign offline-first super app designed for businesses, merchant ledgers, and rural livelihood connectivity.
         </p>
-        <div class="flex flex-wrap gap-2 mt-3">
-          <span class="px-2.5 py-1 rounded-lg bg-[#1e1f20] border border-[#2d2e30] text-[10px] text-[#c4c7c5]">#1 Top Free Business</span>
-          <span class="px-2.5 py-1 rounded-lg bg-[#1e1f20] border border-[#2d2e30] text-[10px] text-[#c4c7c5]">Finance</span>
-          <span class="px-2.5 py-1 rounded-lg bg-[#1e1f20] border border-[#2d2e30] text-[10px] text-[#c4c7c5]">Productivity</span>
-        </div>
       </section>
     </div>
 
-    <!-- Google Play Footer -->
     <footer class="px-5 pt-8 text-center text-[10px] text-[#8e918f]">
       Google Play and the Google Play logo are trademarks of Google LLC.
     </footer>
   </div>
 
-
-  <!-- ============================================================== -->
-  <!-- LAYER 2: ASLI NATIVE RM WORLD SUPER APP (DASHBOARD)            -->
-  <!-- Yeh tabhi dikhega jab app install ho kar open ki jayegi        -->
-  <!-- ============================================================== -->
+  <!-- LAYER 2: NATIVE RM WORLD SUPER APP DASHBOARD -->
   <div id="superAppShell" class="hidden min-h-screen bg-[#030712] pb-24">
-    <!-- Top App Bar -->
     <header class="sticky top-0 z-40 bg-[#030712]/95 backdrop-blur-md border-b border-slate-800/80 px-4 py-3">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-3">
@@ -217,15 +188,12 @@
       </div>
     </header>
 
-    <!-- Main Content -->
     <main class="max-w-md mx-auto px-4 py-4 space-y-4">
-      <!-- Search Input -->
       <div class="relative">
         <input type="text" placeholder="श्रेणी, दुकान या सेवा खोजें..." class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400">
         <span class="absolute right-3 top-2.5 text-slate-500 text-sm">🔍</span>
       </div>
 
-      <!-- Wallet Hero Card -->
       <section class="wallet-card p-4 rounded-2xl space-y-3 shadow-xl">
         <div class="flex justify-between items-center text-xs">
           <span class="text-slate-300 font-medium">उपलब्ध शेष राशि (RM CASH)</span>
@@ -238,7 +206,6 @@
         </div>
       </section>
 
-      <!-- Core Verticals Grid -->
       <section class="space-y-2">
         <div class="flex justify-between items-center px-1">
           <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">9 Core Verticals</h2>
@@ -258,7 +225,6 @@
       </section>
     </main>
 
-    <!-- Bottom Nav -->
     <nav class="fixed bottom-0 left-0 right-0 nav-glass z-40 px-4 py-2 bg-[#030712]/95 border-t border-slate-800">
       <div class="max-w-md mx-auto grid grid-cols-4 gap-1 text-center">
         <button class="py-1 text-emerald-400 font-bold text-xs">🏠 होम</button>
@@ -269,95 +235,87 @@
     </nav>
   </div>
 
-
-  <!-- ============================================================== -->
-  <!-- JAVASCRIPT: STOREFRONT VS APP AUTOMATIC REDIRECT ENGINE        -->
-  <!-- ============================================================== -->
   <script>
     let pwaPrompt = null;
     const storePage = document.getElementById('playStorePage');
     const appShell = document.getElementById('superAppShell');
     const installBox = document.getElementById('playInstallState');
     const installedBox = document.getElementById('playInstalledState');
-    const installBtn = document.getElementById('mainInstallBtn');
 
-    // 1. Service Worker Register
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW:', err));
       });
     }
 
-    // 2. Capture Chrome Android Native Install Prompt Immediately
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       pwaPrompt = e;
     });
 
-    // 3. Check App Status: Is it running as Installed Standalone App?
-    function checkDisplayMode() {
+    function switchToOpenState() {
+      if (installBox) installBox.classList.add('hidden');
+      if (installedBox) installedBox.classList.remove('hidden');
+    }
+
+    async function checkAppStatus() {
       const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
                            window.navigator.standalone === true ||
+                           new URLSearchParams(window.location.search).get('app') === '1' ||
                            new URLSearchParams(window.location.search).get('pwa') === '1';
 
       if (isStandalone) {
-        // Agar installed app se khula hai -> Seedhe App Shell dikhao
         storePage.classList.add('hidden');
         appShell.classList.remove('hidden');
-      } else {
-        // Agar link browser me khula hai -> Google Play Store Page dikhao
-        storePage.classList.remove('hidden');
-        appShell.classList.add('hidden');
+        return;
+      }
 
-        // Agar user pehle install kar chuka hai
-        if (localStorage.getItem('rm_app_installed_v1') === 'true') {
-          installBox.classList.add('hidden');
-          installedBox.classList.remove('hidden');
-        }
+      if ('getInstalledRelatedApps' in navigator) {
+        try {
+          const apps = await navigator.getInstalledRelatedApps();
+          if (apps && apps.length > 0) {
+            switchToOpenState();
+            return;
+          }
+        } catch (_) {}
+      }
+
+      if (localStorage.getItem('rm_app_installed_v1') === 'true') {
+        switchToOpenState();
       }
     }
 
-    // 4. Google Play Install Button Trigger
-    async function executeGooglePlayInstall() {
+    async function executeGooglePlayAction() {
       if (pwaPrompt) {
         pwaPrompt.prompt();
         const { outcome } = await pwaPrompt.userChoice;
         if (outcome === 'accepted') {
-          installBtn.innerHTML = `
-            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <span>Installing...</span>
-          `;
+          localStorage.setItem('rm_app_installed_v1', 'true');
+          switchToOpenState();
+          setTimeout(launchSuperApp, 400);
         }
         pwaPrompt = null;
-      } else {
-        // Native fallback directly to Home Screen addition
-        installBtn.textContent = 'Installing to Home screen...';
-        setTimeout(() => {
-          installBtn.textContent = 'Install';
-        }, 2500);
+        return;
       }
+
+      // DIRECT LAUNCH: Atakne ke bajaye seedhe super app open karein
+      localStorage.setItem('rm_app_installed_v1', 'true');
+      switchToOpenState();
+      launchSuperApp();
     }
 
-    // 5. Native OS Event: Fired ONLY when Android installs the app on home screen
     window.addEventListener('appinstalled', () => {
       localStorage.setItem('rm_app_installed_v1', 'true');
-      installBox.classList.add('hidden');
-      installedBox.classList.remove('hidden');
+      switchToOpenState();
       pwaPrompt = null;
     });
 
-    // 6. Launch Super App on Open Click
     function launchSuperApp() {
       storePage.classList.add('hidden');
       appShell.classList.remove('hidden');
-      window.history.pushState(null, '', '/?pwa=1');
     }
 
-    // Initialize check on DOM load
-    window.addEventListener('DOMContentLoaded', checkDisplayMode);
+    window.addEventListener('DOMContentLoaded', checkAppStatus);
   </script>
 </body>
 </html>
