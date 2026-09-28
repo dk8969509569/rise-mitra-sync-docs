@@ -1,22 +1,16 @@
 <!DOCTYPE html>
-<html lang="hi" class="dark" data-theme="dark" data-font-scale="standard">
+<html lang="hi" class="dark" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <meta name="theme-color" content="#030712">
-  <meta name="description" content="Rise Mitra (RM WORLD) - Sovereign Offline-First Super App & Bahi-Khata">
-  <title>Rise Mitra — Swasthya aur Swavalamban</title>
+  <meta name="description" content="Rise Mitra (RM WORLD) — Sovereign Offline-First Super App & Bahi Khata">
+  <title>Rise Mitra — स्वास्थ्य और स्वावलंबन</title>
 
-  <!-- PWA & Mobile Meta Tags -->
+  <!-- PWA Metadata -->
   <link rel="manifest" href="/manifest.json">
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-  <!-- Core CSS Engine -->
-  <link rel="stylesheet" href="/css/base.css">
-  <link rel="stylesheet" href="/css/themes.css">
-  <link rel="stylesheet" href="/css/layout.css">
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -36,665 +30,432 @@
   </script>
 
   <style>
-    body { -webkit-tap-highlight-color: transparent; }
+    * {
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: #030712;
+      color: #f8fafc;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      touch-action: manipulation;
+    }
+    
+    /* 2.5D Soft Glassmorphic Cards */
     .glass-card {
       background: linear-gradient(135deg, rgba(17, 24, 39, 0.85) 0%, rgba(11, 15, 25, 0.95) 100%);
       backdrop-filter: blur(16px);
       border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
     }
     .wallet-card {
-      background: radial-gradient(circle at 100% 0%, rgba(16, 185, 129, 0.25) 0%, transparent 60%),
+      background: radial-gradient(circle at 100% 0%, rgba(16, 185, 129, 0.15) 0%, transparent 60%),
                   linear-gradient(135deg, #064e3b 0%, #022c22 40%, #0b0f19 100%);
       border: 1px solid rgba(16, 185, 129, 0.3);
-      box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.3);
+      box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.25);
     }
     .nav-glass {
-      background: rgba(3, 7, 18, 0.88);
+      background: rgba(3, 7, 18, 0.92);
       backdrop-filter: blur(20px);
       border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
-    .rm-nav-strip-btn {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: linear-gradient(135deg, rgba(0, 220, 130, 0.14) 0%, rgba(15, 23, 42, 0.85) 100%);
-      border: 1px solid rgba(0, 220, 130, 0.35);
-      border-radius: 14px;
-      padding: 0.75rem 1rem;
-      color: #ffffff;
-      cursor: pointer;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-      outline: none;
-      transition: transform 0.12s ease-out;
-    }
-    .rm-menu-item {
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-      padding: 0.6rem 0.8rem;
-      margin-bottom: 5px;
-      font-size: 0.84rem;
-      color: #cbd5e1;
-      text-decoration: none;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      transition: background 0.15s ease, color 0.15s ease;
-    }
 
-    /* Point 19: GitHub-Grade Blue-Ring Tactile Tap Feedback */
-    button:focus-visible,
-    a:focus-visible,
-    input:focus-visible,
-    select:focus-visible,
-    [role="button"]:focus-visible,
-    [tabindex]:not([tabindex="-1"]):focus-visible {
+    /* GitHub-Grade Blue-Ring Tactile Feedback */
+    button:focus-visible, a:focus-visible, input:focus-visible {
       outline: 2px solid #2563eb !important;
       outline-offset: 2px !important;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.40) !important;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.4) !important;
     }
-    button:not(:disabled):active,
-    a[href]:active,
-    [role="button"]:not([aria-disabled="true"]):active,
-    .active-ring:active {
-      outline: 2px solid #2563eb !important;
-      outline-offset: 2px !important;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.40) !important;
+    button:active, a:active, .tactile-card:active {
       transform: scale(0.97);
       transition: transform 0.08s ease-out;
+      outline: 2px solid #2563eb !important;
+      outline-offset: 2px !important;
     }
-    @media (prefers-reduced-motion: reduce) {
-      button:not(:disabled):active, a[href]:active { transform: none !important; }
+
+    /* Micro Neon Pulses */
+    .pulse-live {
+      animation: pulseGreen 2s infinite;
+    }
+    @keyframes pulseGreen {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.15); }
     }
   </style>
 </head>
-<body class="bg-surface-950 text-slate-100 min-h-screen pb-28 select-none antialiased font-sans">
+<body class="pb-24 antialiased">
 
-  <!-- ================= SURFACE-A: PUBLIC CLIENT ================= -->
-
-  <!-- 1. TOP STATUS BAR / HEADER -->
-  <header class="sticky top-0 z-40 bg-surface-950/80 backdrop-blur-md border-b border-slate-800/80 px-4 py-3 flex items-center justify-between">
-    <div class="flex items-center space-x-3">
-      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center font-extrabold text-slate-950 text-base shadow-lg shadow-emerald-500/25 flex-shrink-0 cursor-pointer active-ring" onclick="window.location.hash='#home'">
-        RM
-      </div>
-      <div>
-        <div class="flex items-center space-x-1.5">
-          <h1 class="text-sm font-extrabold tracking-tight text-white leading-none">Rise Mitra</h1>
-          <span class="text-[9px] bg-emerald-500/20 text-emerald-400 font-bold px-1.5 py-0.5 rounded border border-emerald-500/30">PRO</span>
+  <!-- TOP APP BAR -->
+  <header class="sticky top-0 z-40 bg-[#030712]/90 backdrop-blur-md border-b border-slate-800/80 px-4 py-3">
+    <div class="flex items-center justify-between">
+      
+      <!-- Brand Primacy (Upper-Left Grouping) -->
+      <div class="flex items-center space-x-3">
+        <!-- Upgraded Glowing RM Monogram Logo -->
+        <div class="relative flex items-center justify-center cursor-pointer" onclick="toggleMenuDrawer(true)">
+          <div class="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-teal-400 rounded-xl blur-xs opacity-75 pulse-live"></div>
+          <div class="relative w-10 h-10 rounded-xl bg-gradient-to-br from-slate-900 via-slate-950 to-emerald-950 border border-emerald-500/50 flex items-center justify-center shadow-lg active:scale-95">
+            <span class="text-transparent bg-clip-text bg-gradient-to-tr from-emerald-400 via-teal-200 to-white font-black tracking-tighter text-sm font-mono">
+              RM
+            </span>
+          </div>
         </div>
-        <p class="text-[10px] text-slate-400 font-medium tracking-wide mt-0.5">स्वास्थ्य और स्वावलंबन</p>
+        <div>
+          <h1 class="text-sm font-black text-white leading-tight flex items-center space-x-1.5">
+            <span>Rise Mitra</span>
+          </h1>
+          <p class="text-[10px] text-emerald-400/90 font-medium">स्वास्थ्य और स्वावलंबन</p>
+        </div>
       </div>
+
+      <!-- Trust Badges & Masked Identity -->
+      <div class="flex items-center space-x-2">
+        <div class="flex items-center space-x-1 bg-emerald-950/80 border border-emerald-700/60 rounded-full px-2 py-0.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-live"></span>
+          <span class="text-[10px] font-bold text-emerald-300">Live (1.00)</span>
+        </div>
+        <div class="text-[10px] font-mono bg-slate-900 border border-slate-800 rounded-full px-2 py-0.5 text-slate-300">
+          USR-***489
+        </div>
+      </div>
+
     </div>
-    
-    <div class="flex items-center space-x-2">
-      <span id="rm-solvency-pill" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-950/80 text-emerald-400 border border-emerald-500/30 shadow-sm">
-        <span class="w-1.5 h-1.5 mr-1.5 bg-emerald-400 rounded-full animate-ping"></span> Live (1.00)
-      </span>
-      <span id="rm-user-badge" class="text-[11px] font-mono font-medium bg-slate-900 border border-slate-800 px-2 py-1 rounded-lg text-slate-300">
-        USR-***489
-      </span>
+
+    <!-- Security & DPDP Compliance Sub-Strip -->
+    <div class="flex justify-between items-center mt-2 pt-1 border-t border-slate-900 text-[10px] text-slate-400 font-sans">
+      <div class="flex items-center space-x-1">
+        <span>🛡️ 100% डेटा सुरक्षा</span>
+        <span>•</span>
+        <span class="text-emerald-400">DPDP Act 2025 एन्क्रिप्टेड</span>
+      </div>
+      <span class="text-emerald-500 font-bold">ZEL-PASS</span>
     </div>
   </header>
 
-  <!-- 2. DPDP 2025 TRUST BANNER -->
-  <div class="bg-gradient-to-r from-emerald-950/40 via-slate-900/60 to-emerald-950/40 border-b border-emerald-500/20 px-4 py-2 flex items-center justify-between text-[11px]">
-    <div class="flex items-center space-x-2 text-emerald-300/90 font-medium">
-      <span>🛡️</span>
-      <span>100% डेटा सुरक्षा • DPDP Act 2025 एन्क्रिप्टेड लेजर</span>
+  <main class="max-w-md mx-auto px-4 py-4 space-y-4">
+
+    <!-- 1. DYNAMIC CATALOG TRIGGER BUTTON (SURFACE-B SYNCED) -->
+    <button type="button" id="cat-menu-btn" onclick="toggleMenuDrawer(true)" class="w-full glass-card p-3.5 rounded-2xl flex items-center justify-between border-emerald-500/30 tactile-card cursor-pointer group shadow-lg">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-950/90 border border-emerald-500/40 flex items-center justify-center text-lg shadow-inner group-hover:scale-105 transition-transform">
+          ☰
+        </div>
+        <div class="text-left">
+          <div class="text-sm font-bold text-slate-100 group-hover:text-emerald-300 transition-colors">
+            सभी 50 सेवाएं व खेल (कैटलॉग)
+          </div>
+          <div id="cat-subtitle-pill" class="text-xs text-emerald-400 font-sans">
+            33 सेवाएं व सुविधाएं • 17 खेल
+          </div>
+        </div>
+      </div>
+      <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full text-xs font-bold">
+        खोलें ›
+      </span>
+    </button>
+
+    <!-- 2. SEARCH & DISCOVER INPUT -->
+    <div class="relative">
+      <input type="text" id="liveSearchInput" oninput="filterQuickTiles()" placeholder="श्रेणी, दुकान या सेवा खोजें..." class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors">
+      <span class="absolute right-3 top-2.5 text-slate-500 text-sm">🔍</span>
     </div>
-    <span class="text-[10px] text-slate-500 font-bold">ZEL-PASS</span>
-  </div>
 
-  <main class="max-w-md mx-auto p-4 space-y-4">
-
-    <!-- 3. 50 CATEGORIES NAVIGATION BAR -->
-    <section class="rm-nav-strip-wrapper">
-      <button id="rm-menu-btn" class="rm-nav-strip-btn active-ring" type="button" aria-label="Open 50 Categories Menu">
-        <div class="flex items-center gap-2.5">
-          <div style="background:#00dc82; color:#060d17; width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; font-weight:900;">
-            ☰
-          </div>
-          <div class="text-left">
-            <div class="text-[14px] font-bold text-white tracking-wide">सभी 50 सेवाएं व खेल (Menu)</div>
-            <div class="text-[11px] text-emerald-400 font-medium">33 जन-उपयोगिताएं • 17 देसी खेल</div>
-          </div>
-        </div>
-        <div class="bg-white/10 border border-white/15 rounded-full px-3 py-1 text-[11px] text-slate-300 flex items-center gap-1">
-          <span>खोलें</span>
-          <span class="text-emerald-400 font-bold text-sm leading-none">›</span>
-        </div>
-      </button>
-    </section>
-
-    <!-- 4. GLOBAL SEARCH -->
-    <section class="rm-search-section relative">
-      <input type="search" id="rm-global-search" placeholder="50 श्रेणियाँ, सेवाएँ या खोज खोजें..." class="w-full bg-slate-900/90 text-slate-100 placeholder-slate-500 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-emerald-500/50" autocomplete="off">
-      <div id="rm-search-results" hidden class="absolute left-0 right-0 top-12 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl z-50 max-h-72 overflow-y-auto"></div>
-    </section>
-    
-    <!-- 5. WALLET CARD -->
-    <div class="wallet-card p-5 rounded-3xl relative overflow-hidden">
-      <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none"></div>
-      <div class="flex justify-between items-start mb-3">
-        <div>
-          <span class="text-[11px] font-semibold uppercase tracking-wider text-emerald-200/80">उपलब्ध शेष राशि (RM Cash)</span>
-          <div class="flex items-baseline space-x-2 mt-1">
-            <span class="text-3xl font-black text-white tracking-tight">₹0.00</span>
-            <span class="text-[11px] text-emerald-400 font-mono font-medium">● 100% सॉल्वेंट</span>
-          </div>
-        </div>
-        <span class="text-[10px] bg-emerald-950/80 text-emerald-300 font-bold border border-emerald-500/40 px-2.5 py-1 rounded-full">
+    <!-- 3. WALLET & SOVEREIGN LEDGER (HERO CARD) -->
+    <section class="wallet-card p-4 rounded-2xl space-y-3">
+      <div class="flex justify-between items-center text-xs">
+        <span class="text-slate-300 font-medium">उपलब्ध शेष राशि (RM CASH)</span>
+        <span class="bg-emerald-950/90 border border-emerald-700/60 text-emerald-300 px-2 py-0.5 rounded text-[10px] font-bold">
           28% NCR Cap
         </span>
       </div>
-      <div class="flex justify-between items-center text-[10px] text-emerald-200/60 font-mono border-t border-emerald-500/20 pt-2.5 mt-2">
-        <span>CoverageRatio: 1.00</span>
-        <span>डबल-एंट्री लेजर: सुरक्षित</span>
+
+      <div class="flex items-baseline space-x-2">
+        <span class="text-3xl font-black text-white tracking-tight">₹0.00</span>
+        <span class="text-xs text-emerald-400 font-bold flex items-center space-x-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          <span>100% सॉल्वेंट</span>
+        </span>
       </div>
-      <div class="mt-4 grid grid-cols-2 gap-2.5">
-        <button type="button" onclick="openKhataModal()" class="bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-lg active-ring cursor-pointer">
+
+      <div class="flex justify-between items-center pt-1 text-[10px] text-slate-400 border-t border-emerald-900/60">
+        <span>CoverageRatio: 1.00</span>
+        <span class="text-emerald-300">डबल-एंट्री लेज़र: सुरक्षित</span>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <button type="button" onclick="alert('नया लेन-देन (बहीखाता प्रविष्टि) खुला')" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-2 rounded-xl text-xs flex items-center justify-center space-x-1 shadow-md tactile-card cursor-pointer">
           <span>+</span>
-          <span>नया लेन-देन (New Entry)</span>
+          <span>नया लेन-देन</span>
         </button>
-        <button type="button" onclick="openKhataModal()" class="bg-slate-900/80 text-white font-semibold py-2.5 px-4 rounded-xl text-xs border border-slate-700/60 flex items-center justify-center space-x-1.5 active-ring cursor-pointer">
+        <button type="button" onclick="alert('खाता विवरणी लोड हो रही है...')" class="w-full bg-slate-900/90 border border-slate-700/80 hover:bg-slate-800 text-slate-200 font-bold py-2 rounded-xl text-xs flex items-center justify-center space-x-1 shadow-md tactile-card cursor-pointer">
           <span>📜</span>
           <span>खाता विवरणी</span>
         </button>
       </div>
-    </div>
+    </section>
 
-    <!-- 6. 9 CORE VERTICALS -->
-    <div class="flex justify-between items-end px-1 pt-1">
-      <div>
-        <h2 class="text-xs font-extrabold uppercase tracking-widest text-slate-400">9 Core Verticals</h2>
-        <p class="text-[11px] text-white font-bold mt-0.5">कमाई एवं सेवा केंद्र</p>
+    <!-- 4. 9 CORE VERTICALS (HIGH-CONVERTING TILES) -->
+    <section class="space-y-2">
+      <div class="flex justify-between items-center px-1">
+        <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">9 Core Verticals</h2>
+        <span class="text-[10px] text-emerald-400 font-bold bg-emerald-950/60 border border-emerald-800/40 px-2 py-0.5 rounded-full">₹0 Onboarding Fee</span>
       </div>
-      <span class="text-[10px] text-emerald-400 font-bold bg-emerald-950/40 border border-emerald-800/40 px-2 py-0.5 rounded-full">
-        ₹0 Joining Fee
-      </span>
-    </div>
 
-    <div class="grid grid-cols-3 gap-3">
-      <div onclick="window.location.hash='#swasth-man'" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active-ring">
-        <div class="w-11 h-11 rounded-2xl bg-emerald-950/60 border border-emerald-500/30 flex items-center justify-center text-2xl">🌿</div>
-        <span class="text-xs font-bold text-white mt-2 leading-tight">स्वस्थ मन</span>
-        <span class="text-[9px] text-slate-400 mt-0.5">वेलनेस गाइड</span>
+      <div id="verticalTilesGrid" class="grid grid-cols-3 gap-2.5">
+        <div class="glass-card p-3 rounded-xl text-center space-y-1 tactile-card cursor-pointer hover:border-emerald-500/40 transition-colors">
+          <div class="text-xl">🌿</div>
+          <div class="text-xs font-bold text-slate-200">स्वस्थ मन</div>
+          <div class="text-[9px] text-slate-400">वेलनेस गाइड</div>
+        </div>
+        <div class="glass-card p-3 rounded-xl text-center space-y-1 tactile-card cursor-pointer hover:border-emerald-500/40 transition-colors">
+          <div class="text-xl">🎓</div>
+          <div class="text-xs font-bold text-slate-200">हुनर सीखें</div>
+          <div class="text-[9px] text-slate-400">डिजिटल वर्कशॉप</div>
+        </div>
+        <div class="glass-card p-3 rounded-xl text-center space-y-1 tactile-card cursor-pointer hover:border-emerald-500/40 transition-colors">
+          <div class="text-xl">🛒</div>
+          <div class="text-xs font-bold text-slate-200">किराना स्टोर</div>
+          <div class="text-[9px] text-emerald-400 font-bold">0% कमीशन</div>
+        </div>
+        <div class="glass-card p-3 rounded-xl text-center space-y-1 tactile-card cursor-pointer hover:border-emerald-500/40 transition-colors">
+          <div class="text-xl">⚡</div>
+          <div class="text-xs font-bold text-slate-200">रनर डिलीवरी</div>
+          <div class="text-[9px] text-slate-400">हाइपरलोकल गिग</div>
+        </div>
+        <div class="glass-card p-3 rounded-xl text-center space-y-1 tactile-card cursor-pointer hover:border-emerald-500/40 transition-colors">
+          <div class="text-xl">💼</div>
+          <div class="text-xs font-bold text-slate-200">B2B SaaS</div>
+          <div class="text-[9px] text-slate-400">ऑटोमेशन किट</div>
+        </div>
+        <div class="glass-card p-3 rounded-xl text-center space-y-1 tactile-card cursor-pointer hover:border-emerald-500/40 transition-colors">
+          <div class="text-xl">⚖️</div>
+          <div class="text-xs font-bold text-slate-200">विशेषज्ञ सेवा</div>
+          <div class="text-[9px] text-slate-400">CA व विधिक सलाह</div>
+        </div>
+        <div class="glass-card p-3 rounded-xl text-center space-y-1 tactile-card cursor-pointer hover:border-emerald-500/40 transition-colors">
+          <div class="text-xl">🎟️</div>
+          <div class="text-xs font-bold text-slate-200">सॉवरेन वाउचर</div>
+          <div class="text-[9px] text-slate-400">ऑफ़लाइन सिंक</div>
+        </div>
+        <div class="glass-card p-3 rounded-xl text-center space-y-1 tactile-card cursor-pointer hover:border-emerald-500/40 transition-colors">
+          <div class="text-xl">📊</div>
+          <div class="text-xs font-bold text-slate-200">पारदर्शी लेज़र</div>
+          <div class="text-[9px] text-slate-400">रियल-टाइम पास</div>
+        </div>
+        <div class="glass-card p-3 rounded-xl text-center space-y-1 tactile-card cursor-pointer hover:border-emerald-500/40 transition-colors">
+          <div class="text-xl">🚨</div>
+          <div class="text-xs font-bold text-red-300">इमरजेंसी SOS</div>
+          <div class="text-[9px] text-slate-400">तुरंत सहायता</div>
+        </div>
       </div>
-      <div onclick="window.location.hash='#hunar-seekhein'" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active-ring">
-        <div class="w-11 h-11 rounded-2xl bg-teal-950/60 border border-teal-500/30 flex items-center justify-center text-2xl">🎓</div>
-        <span class="text-xs font-bold text-white mt-2 leading-tight">हुनर सीखें</span>
-        <span class="text-[9px] text-slate-400 mt-0.5">डिजिटल वर्कशॉप</span>
-      </div>
-      <div onclick="openKiranaModal()" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active-ring">
-        <div class="w-11 h-11 rounded-2xl bg-amber-950/60 border border-amber-500/30 flex items-center justify-center text-2xl">🛒</div>
-        <span class="text-xs font-bold text-white mt-2 leading-tight">किराना स्टोर</span>
-        <span class="text-[9px] text-slate-400 mt-0.5">0% कमीशन</span>
-      </div>
-      <div onclick="window.location.hash='#cat-delivery'" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active-ring">
-        <div class="w-11 h-11 rounded-2xl bg-sky-950/60 border border-sky-500/30 flex items-center justify-center text-2xl">⚡</div>
-        <span class="text-xs font-bold text-white mt-2 leading-tight">रनर डिलीवरी</span>
-        <span class="text-[9px] text-slate-400 mt-0.5">हाइपरलोकल गिग</span>
-      </div>
-      <div onclick="window.location.hash='#cat-business'" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active-ring">
-        <div class="w-11 h-11 rounded-2xl bg-indigo-950/60 border border-indigo-500/30 flex items-center justify-center text-2xl">💼</div>
-        <span class="text-xs font-bold text-white mt-2 leading-tight">B2B SaaS</span>
-        <span class="text-[9px] text-slate-400 mt-0.5">ऑटोमेशन किट</span>
-      </div>
-      <div onclick="window.location.hash='#cat-legal'" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active-ring">
-        <div class="w-11 h-11 rounded-2xl bg-violet-950/60 border border-violet-500/30 flex items-center justify-center text-2xl">⚖️</div>
-        <span class="text-xs font-bold text-white mt-2 leading-tight">विशेषज्ञ सेवा</span>
-        <span class="text-[9px] text-slate-400 mt-0.5">CA व विधिक सलाह</span>
-      </div>
-      <div onclick="openVoucherModal()" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active-ring">
-        <div class="w-11 h-11 rounded-2xl bg-rose-950/60 border border-rose-500/30 flex items-center justify-center text-2xl">🎟️</div>
-        <span class="text-xs font-bold text-white mt-2 leading-tight">सॉवरेन वाउचर</span>
-        <span class="text-[9px] text-slate-400 mt-0.5">ऑफ़लाइन सिंक</span>
-      </div>
-      <div onclick="openKhataModal()" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active-ring">
-        <div class="w-11 h-11 rounded-2xl bg-emerald-950/60 border border-emerald-500/30 flex items-center justify-center text-2xl">📊</div>
-        <span class="text-xs font-bold text-white mt-2 leading-tight">पारदर्शी लेजर</span>
-        <span class="text-[9px] text-slate-400 mt-0.5">रियल-टाइम पास</span>
-      </div>
-      <div onclick="alert('इमरजेंसी SOS सिग्नल भेजा गया।')" class="glass-card p-3 rounded-2xl flex flex-col items-center text-center cursor-pointer active-ring bg-red-950/20">
-        <div class="w-11 h-11 rounded-2xl bg-red-900/50 border border-red-500/40 flex items-center justify-center text-2xl">🚨</div>
-        <span class="text-xs font-bold text-red-400 mt-2 leading-tight">इमरजेंसी SOS</span>
-        <span class="text-[9px] text-slate-400 mt-0.5">तुरंत सहायता</span>
-      </div>
-    </div>
+    </section>
 
-    <!-- 7. STEALTH CONSOLE TRIGGER (Point 1: Clean Redirection) -->
+    <!-- STEALTH CONSOLE TRIGGER (SURFACE-B REDIRECT) -->
     <div class="text-center pt-8 pb-4">
-      <span id="stealthConsoleTrigger" class="text-[11px] text-slate-600/70 hover:text-slate-400 font-mono tracking-widest cursor-pointer px-4 py-2 rounded transition-colors duration-200">
+      <a href="/owner-console.html" class="text-slate-600 hover:text-amber-400 font-mono text-xs tracking-widest uppercase transition-colors p-2">
         console
-      </span>
+      </a>
     </div>
+
   </main>
 
-  <!-- ================= SOVEREIGN BAHI-KHATA OVERLAY MODAL ================= -->
-  <div id="khataModal" class="fixed inset-0 z-[250] bg-surface-950/98 backdrop-blur-xl overflow-y-auto p-4 hidden">
-    <div class="max-w-md mx-auto space-y-4 pt-4 pb-20">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <div class="flex items-center space-x-2">
-          <span class="text-2xl">📖</span>
-          <div>
-            <h2 class="text-base font-extrabold text-amber-400">सॉवरेन बहीखाता (Sovereign Khata)</h2>
-            <p class="text-[10px] text-slate-400">डबल-एंट्री लेजर • स्थानीय व सुरक्षित</p>
-          </div>
+  <!-- ============================================================== -->
+  <!-- 50 CATEGORIES MODAL (DYNAMIC ACCORDION DIRECTORY) -->
+  <!-- ============================================================== -->
+  <div id="categoryModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex flex-col justify-end transition-opacity">
+    <div class="bg-[#0b0f19] border-t border-slate-800 rounded-t-3xl max-h-[85vh] flex flex-col shadow-2xl">
+      
+      <!-- Modal Header -->
+      <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/60">
+        <div>
+          <h3 class="text-sm font-black text-slate-100 uppercase tracking-wide">50 सफल श्रेणियाँ</h3>
+          <p class="text-[10px] text-emerald-400">राइज मित्रा संपूर्ण कैटलॉग</p>
         </div>
-        <button type="button" onclick="closeKhataModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 font-bold flex items-center justify-center hover:bg-slate-700 active-ring cursor-pointer">✕</button>
-      </div>
-
-      <div class="grid grid-cols-2 gap-3">
-        <div class="bg-slate-900/90 border-l-4 border-red-500 p-3 rounded-xl border border-slate-800">
-          <div class="text-[10px] text-slate-400 font-medium">मैंने दिए (You Gave)</div>
-          <div id="khataTotalGave" class="text-lg font-black text-red-400 mt-0.5">₹0.00</div>
-        </div>
-        <div class="bg-slate-900/90 border-l-4 border-emerald-500 p-3 rounded-xl border border-slate-800">
-          <div class="text-[10px] text-slate-400 font-medium">मुझे मिले (You Got)</div>
-          <div id="khataTotalGot" class="text-lg font-black text-emerald-400 mt-0.5">₹0.00</div>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-2 gap-3">
-        <button type="button" onclick="openEntryForm('YOU_GAVE')" class="bg-red-500 hover:bg-red-600 text-white font-black py-3 px-4 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-lg shadow-red-500/20 active-ring cursor-pointer">
-          <span>-</span>
-          <span>मैंने दिए (You Gave)</span>
-        </button>
-        <button type="button" onclick="openEntryForm('YOU_GOT')" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black py-3 px-4 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-lg shadow-emerald-500/20 active-ring cursor-pointer">
-          <span>+</span>
-          <span>मुझे मिले (You Got)</span>
+        <button type="button" onclick="toggleMenuDrawer(false)" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 font-bold text-sm hover:bg-slate-700 active:scale-95 cursor-pointer">
+          ✕
         </button>
       </div>
 
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-        <div class="px-4 py-2.5 bg-slate-800/60 border-b border-slate-800 flex justify-between items-center">
-          <span class="text-[11px] font-bold text-slate-300">हालिया लेन-देन (Transactions)</span>
-          <span id="khataTxCount" class="text-[10px] font-mono text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded-full border border-emerald-800/60">0 Entries</span>
+      <!-- Scrollable Category Lists -->
+      <div class="flex-1 overflow-y-auto p-4 space-y-4 text-xs">
+        
+        <!-- Accordion 1: 33 Services & Utilities -->
+        <div class="space-y-2">
+          <div id="rm-tier1-toggle" class="flex justify-between items-center p-2.5 rounded-xl bg-emerald-950/60 border border-emerald-800/40 text-emerald-300 font-bold">
+            <span>💼 आजीविका (33 सेवाएं व सुविधाएं)</span>
+            <span>▼</span>
+          </div>
+          <div id="tier1-list" class="space-y-1 pl-1">
+            <!-- 33 Items Rendered Here -->
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🎨</span><span>01. Art & Design (डिज़ाइन)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🚗</span><span>02. Auto & Vehicles (वाहन सेवा)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>💄</span><span>03. Beauty & Salon (ब्यूटी)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>📚</span><span>04. Books & Reference (किताबें)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>💼</span><span>05. Business (सॉवरेन बहीखाता)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🎭</span><span>06. Comics & Stories (कहानियाँ)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>💬</span><span>07. Communication (संपर्क)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>❤️</span><span>08. Dating & Relations (रिश्ते)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🎓</span><span>09. Education (हुनर सीखें)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🎬</span><span>10. Entertainment (मनोरंजन)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🎟️</span><span>11. Events & Pass (कार्यक्रम)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>👨‍👩‍👧</span><span>12. Family & Care (परिवार)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>💰</span><span>13. Finance (RM CASH लेज़र)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🍲</span><span>14. Food & Drink (ढाबा व भोजन)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🌿</span><span>15. Health & Fitness (स्वस्थ मन)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🏠</span><span>16. House & Home (मिस्त्री सेवा)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>📦</span><span>17. Libraries & Demo (पुस्तकालय)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🧘</span><span>18. Lifestyle (स्वावलंबन)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🗺️</span><span>19. Maps & Navigation (मार्गदर्शन)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>💊</span><span>20. Medical (दवाई व क्लिनिक)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🎵</span><span>21. Music & Audio (संगीत)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>📰</span><span>22. News & Magazines (समाचार)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🍼</span><span>23. Parenting (शिशु पोषण)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>✨</span><span>24. Personalization (थीम्स)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>📸</span><span>25. Photography (स्कैनर)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>⚡</span><span>26. Productivity (बिलिंग)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🛒</span><span>27. Shopping (0% किराना स्टोर)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🌐</span><span>28. Social (चौपाल व संवाद)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🏏</span><span>29. Sports Community (खेलकूद)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🛠️</span><span>30. Tools (कैलकुलेटर)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>✈️</span><span>31. Travel & Local (यात्रा)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🎞️</span><span>32. Video Players & Editors</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>☀️</span><span>33. Weather (मौसम पूर्वानुमान)</span></button>
+          </div>
         </div>
-        <div class="overflow-x-auto max-h-72">
-          <table class="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr class="border-b border-slate-800 text-[10px] text-slate-400 uppercase bg-slate-950/40">
-                <th class="p-2.5">समय</th>
-                <th class="p-2.5">पार्टी</th>
-                <th class="p-2.5">राशि</th>
-                <th class="p-2.5">स्थिति</th>
-              </tr>
-            </thead>
-            <tbody id="khataTableBody"></tbody>
-          </table>
+
+        <!-- Accordion 2: 17 Games -->
+        <div class="space-y-2">
+          <div id="rm-tier2-toggle" class="flex justify-between items-center p-2.5 rounded-xl bg-cyan-950/60 border border-cyan-800/40 text-cyan-300 font-bold">
+            <span>🎮 सुरक्षा व खेल (17 श्रेणियां)</span>
+            <span>▼</span>
+          </div>
+          <div id="tier2-list" class="space-y-1 pl-1">
+            <!-- 17 Items Rendered Here -->
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🏹</span><span>01. Action (ऐक्शन तीरंदाजी)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🧭</span><span>02. Adventure (रोमांचक यात्रा)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🕹️</span><span>03. Arcade (गेंद टप्पा)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🎲</span><span>04. Board (देसी लूडो व कैरम)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🃏</span><span>05. Card (ताश सॉलिटेयर)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🎡</span><span>06. Casino Points (लकी चक्र)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🎈</span><span>07. Casual (रंगोली क्राफ्ट)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🧠</span><span>08. Educational (भारत क्विज़)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🥁</span><span>09. Music (तबला व ढोलक ताल)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🧩</span><span>10. Puzzle (दिमागी पहेलियाँ)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🏎️</span><span>11. Racing (बैलगाड़ी रेस)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>👑</span><span>12. Role Playing (गाँव का प्रधान)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🚜</span><span>13. Simulation (खेत सिमुलेटर)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🏏</span><span>14. Sports (गली क्रिकेट)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>♟️</span><span>15. Strategy (चाणक्य नीति)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>❓</span><span>16. Trivia (देसी ट्रिविया व तथ्य)</span></button>
+            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🔤</span><span>17. Word (शब्द पहेली व कोश)</span></button>
+          </div>
         </div>
+
       </div>
     </div>
   </div>
 
-  <!-- ================= IN-APP TRANSACTION ENTRY MODAL ================= -->
-  <div id="entryFormModal" class="fixed inset-0 z-[280] bg-black/85 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 hidden">
-    <div class="w-full max-w-md bg-slate-900 border border-slate-700/80 rounded-t-3xl sm:rounded-3xl p-5 space-y-4 shadow-2xl">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <div class="flex items-center space-x-2">
-          <span id="entryTypeIcon" class="text-2xl">🟢</span>
-          <div>
-            <h3 id="entryFormTitle" class="text-sm font-black text-white">मुझे मिले (You Got - Credit)</h3>
-            <p id="entryFormSubtitle" class="text-[10px] text-slate-400">खाते में राशि जोड़ें (Double-Entry Ledger)</p>
-          </div>
-        </div>
-        <button type="button" onclick="closeEntryFormModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center font-bold text-sm active-ring cursor-pointer">✕</button>
-      </div>
-
-      <input type="hidden" id="entryFormType" value="YOU_GOT">
-
-      <div class="space-y-3">
-        <div>
-          <label class="block text-[11px] font-bold text-slate-300 mb-1">राशि दर्ज करें (Amount in ₹) *</label>
-          <div class="relative">
-            <span class="absolute left-3.5 top-2.5 text-lg font-black text-emerald-400">₹</span>
-            <input type="number" id="entryAmountInput" inputmode="decimal" placeholder="0.00" class="w-full bg-slate-950 text-white font-black text-xl pl-9 pr-4 py-2.5 rounded-xl border border-slate-700 focus:outline-none focus:border-emerald-500">
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-[11px] font-bold text-slate-300 mb-1">ग्राहक / पार्टी का नाम (Party Name)</label>
-          <input type="text" id="entryPartyInput" placeholder="उदा. रमेश किराना / नकद ग्राहक" class="w-full bg-slate-950 text-white text-xs px-3.5 py-2.5 rounded-xl border border-slate-700 focus:outline-none focus:border-emerald-500">
-        </div>
-
-        <div>
-          <label class="block text-[11px] font-bold text-slate-300 mb-1">विवरण / नोट (Description - Optional)</label>
-          <input type="text" id="entryNoteInput" placeholder="उदा. राशन सामान, नकद भुगतान" class="w-full bg-slate-950 text-white text-xs px-3.5 py-2.5 rounded-xl border border-slate-700 focus:outline-none focus:border-emerald-500">
-        </div>
-
-        <div id="entryFormError" class="text-xs text-red-400 font-bold hidden">⚠️ कृपया मान्य राशि दर्ज करें (जैसे: 500)</div>
-
-        <div class="grid grid-cols-2 gap-2 pt-2">
-          <button type="button" onclick="closeEntryFormModal()" class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold active-ring cursor-pointer">रद्द करें (Cancel)</button>
-          <button type="button" id="entrySubmitBtn" onclick="submitKhataEntry()" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 rounded-xl text-xs font-black shadow-lg active-ring cursor-pointer">प्रविष्टि सुरक्षित करें</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ================= 0% COMMISSION KIRANA STORE OVERLAY MODAL ================= -->
-  <div id="kiranaModal" class="fixed inset-0 z-[250] bg-surface-950/98 backdrop-blur-xl overflow-y-auto p-4 hidden">
-    <div class="max-w-md mx-auto space-y-4 pt-4 pb-20">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <div class="flex items-center space-x-2">
-          <span class="text-2xl">🛒</span>
-          <div>
-            <h2 class="text-base font-extrabold text-sky-400">किराना स्टोर (0% कमीशन)</h2>
-            <p class="text-[10px] text-slate-400">MRP से छूट • बिचौलिया मुक्त खरीदारी</p>
-          </div>
-        </div>
-        <button type="button" onclick="closeKiranaModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 font-bold flex items-center justify-center hover:bg-slate-700 active-ring cursor-pointer">✕</button>
-      </div>
-      <div class="grid grid-cols-2 gap-3" id="kiranaItemsGrid"></div>
-    </div>
-  </div>
-
-  <!-- ================= SOVEREIGN VOUCHERS OVERLAY MODAL ================= -->
-  <div id="voucherModal" class="fixed inset-0 z-[250] bg-surface-950/98 backdrop-blur-xl overflow-y-auto p-4 hidden">
-    <div class="max-w-md mx-auto space-y-4 pt-4 pb-20">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <div class="flex items-center space-x-2">
-          <span class="text-2xl">🎟️</span>
-          <div>
-            <h2 class="text-base font-extrabold text-emerald-400">सॉवरेन वाउचर्स (Sovereign Vouchers)</h2>
-            <p class="text-[10px] text-slate-400">RFC 8785 • ऑफ़लाइन क्रिप्टोग्राफ़िक टोकन</p>
-          </div>
-        </div>
-        <button type="button" onclick="closeVoucherModal()" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 font-bold flex items-center justify-center hover:bg-slate-700 active-ring cursor-pointer">✕</button>
-      </div>
-
-      <button type="button" onclick="generateOfflineVoucher()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider active-ring shadow-lg shadow-emerald-500/20 cursor-pointer">
-        + नया ऑफ़लाइन वाउचर बनाएँ (Generate Voucher)
+  <!-- BOTTOM 4-TAB NAVIGATION BAR -->
+  <nav class="fixed bottom-0 left-0 right-0 nav-glass z-40 px-4 py-2">
+    <div class="max-w-md mx-auto grid grid-cols-4 gap-1 text-center">
+      <button class="flex flex-col items-center justify-center py-1 text-emerald-400 font-bold tactile-card cursor-pointer">
+        <span class="text-base">🏠</span>
+        <span class="text-[10px] mt-0.5">होम</span>
       </button>
-
-      <div id="voucherListContainer" class="space-y-2 pt-2"></div>
-    </div>
-  </div>
-
-  <!-- 8. 50 CATEGORIES ACCORDION DRAWER -->
-  <aside id="rm-drawer-menu" aria-hidden="true" style="position:fixed; top:0; left:0; bottom:0; width:310px; background:#0b0f19; border-right:1px solid rgba(255,255,255,0.1); box-shadow:4px 0 24px rgba(0,0,0,0.6); z-index:200; transform:translateX(-100%); transition:transform 0.3s ease; padding:1.25rem; overflow-y:auto;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:0.75rem;">
-      <div>
-        <h3 style="margin:0; font-size:1.05rem; font-weight:800; color:#ffffff;">50 सफल श्रेणियाँ</h3>
-        <p style="margin:2px 0 0 0; font-size:0.72rem; color:#00dc82;">राइज मित्रा संपूर्ण कैटलॉग</p>
-      </div>
-      <button id="rm-drawer-close" aria-label="Close Menu" class="active-ring" style="background:rgba(255,255,255,0.06); border:none; width:32px; height:32px; border-radius:8px; font-size:1.1rem; cursor:pointer; color:#ffffff;">✕</button>
-    </div>
-
-    <button id="rm-tier1-toggle" type="button" onclick="toggleAcc('tier1-list', 'tier1-arrow')" class="active-ring" style="width:100%; display:flex; justify-content:space-between; align-items:center; background:rgba(0, 220, 130, 0.1); border:1px solid rgba(0, 220, 130, 0.3); border-radius:12px; padding:0.65rem 0.9rem; color:#00dc82; font-weight:700; font-size:0.86rem; cursor:pointer; margin-top:0.5rem;">
-      <span>💼 आजीविका (33 सेवाएं)</span>
-      <span id="tier1-arrow">▼</span>
-    </button>
-    <div id="tier1-list" class="pt-2 pl-1 max-h-[50vh] overflow-y-auto" style="display:block;"></div>
-
-    <button id="rm-tier2-toggle" type="button" onclick="toggleAcc('tier2-list', 'tier2-arrow')" class="active-ring" style="width:100%; display:flex; justify-content:space-between; align-items:center; background:rgba(56, 189, 248, 0.1); border:1px solid rgba(56, 189, 248, 0.3); border-radius:12px; padding:0.65rem 0.9rem; color:#38bdf8; font-weight:700; font-size:0.86rem; cursor:pointer; margin-top:0.8rem;">
-      <span>🎮 सुरक्षा व खेल (17 श्रेणियां)</span>
-      <span id="tier2-arrow">▼</span>
-    </button>
-    <div id="tier2-list" class="pt-2 pl-1 max-h-[40vh] overflow-y-auto" style="display:block;"></div>
-  </aside>
-  <div id="rm-drawer-backdrop" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:190; display:none; backdrop-filter:blur(3px); pointer-events:none;"></div>
-
-  <!-- 9. BOTTOM NAVIGATION -->
-  <nav class="fixed bottom-0 inset-x-0 z-50 nav-glass px-6 py-2">
-    <div class="max-w-md mx-auto flex justify-between items-center text-center">
-      <a href="#home" class="flex flex-col items-center text-emerald-400 active-ring">
-        <span class="text-lg">🏠</span>
-        <span class="text-[10px] font-bold mt-0.5">होम</span>
-      </a>
-      <a href="#kirana-store" onclick="openKiranaModal(); return false;" class="flex flex-col items-center text-slate-400 hover:text-slate-200 active-ring">
-        <span class="text-lg">🛒</span>
-        <span class="text-[10px] font-semibold mt-0.5">ऑर्डर</span>
-      </a>
-      <a href="#merchant-khata" onclick="openKhataModal(); return false;" class="flex flex-col items-center text-slate-400 hover:text-slate-200 active-ring">
-        <span class="text-lg">📖</span>
-        <span class="text-[10px] font-semibold mt-0.5">खाता</span>
-      </a>
-      <a href="#vouchers" onclick="openVoucherModal(); return false;" class="flex flex-col items-center text-slate-400 hover:text-slate-200 active-ring">
-        <span class="text-lg">🎟️</span>
-        <span class="text-[10px] font-semibold mt-0.5">वाउचर</span>
-      </a>
+      <button onclick="alert('ऑर्डर स्क्रीन लोड हो रही है...')" class="flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-200 tactile-card cursor-pointer">
+        <span class="text-base">🛒</span>
+        <span class="text-[10px] mt-0.5">ऑर्डर</span>
+      </button>
+      <button onclick="alert('सॉवरेन बहीखाता लोड हो रहा है...')" class="flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-200 tactile-card cursor-pointer">
+        <span class="text-base">📖</span>
+        <span class="text-[10px] mt-0.5">खाता</span>
+      </button>
+      <button onclick="alert('सॉवरेन वाउचर केंद्र लोड हो रहा है...')" class="flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-200 tactile-card cursor-pointer">
+        <span class="text-base">🎟️</span>
+        <span class="text-[10px] mt-0.5">वाउचर</span>
+      </button>
     </div>
   </nav>
 
-  <!-- ================= RUNTIME ESSENTIAL UI SCRIPTS ================= -->
+  <!-- ============================================================== -->
+  <!-- 50-CATEGORY REAL-TIME AUTO-SYNC ENGINE (SURFACE-B TO SURFACE-A) -->
+  <!-- ============================================================== -->
   <script>
-    // 1. KIRANA STORE CATALOG
-    const KIRANA_ITEMS = [
-      { id: 'k01', nameHi: 'आटा (10 kg)', price: 340, mrp: 380 },
-      { id: 'k02', nameHi: 'बासमती चावल (5 kg)', price: 410, mrp: 450 },
-      { id: 'k03', nameHi: 'अरहर दाल (1 kg)', price: 160, mrp: 180 },
-      { id: 'k04', nameHi: 'सरसों तेल (1 L)', price: 145, mrp: 160 }
-    ];
+    function syncCategoryVisibilityFromOwner() {
+      const raw = localStorage.getItem('rm_active_categories_v1');
+      if (!raw) return;
 
-    function openKiranaModal() {
-      document.getElementById('kiranaModal').classList.remove('hidden');
-      renderKiranaCatalog();
-    }
-    function closeKiranaModal() {
-      document.getElementById('kiranaModal').classList.add('hidden');
-      if (window.location.hash === '#kirana-store') window.location.hash = '#home';
-    }
-    function renderKiranaCatalog() {
-      const grid = document.getElementById('kiranaItemsGrid');
-      if (!grid) return;
-      grid.innerHTML = KIRANA_ITEMS.map(item => `
-        <div class="bg-slate-900 border border-slate-800 p-3 rounded-2xl flex flex-col justify-between">
-          <div>
-            <div class="font-bold text-xs text-slate-100">${item.nameHi}</div>
-            <div class="text-sm font-black text-emerald-400 mt-1">₹${item.price} <span class="text-[10px] line-through text-slate-500 font-normal">₹${item.mrp}</span></div>
-            <div class="text-[9px] text-sky-400 mt-0.5">0% प्लेटफ़ॉर्म कमीशन</div>
-          </div>
-          <button type="button" onclick="addKiranaCart('${item.id}', '${item.nameHi}', ${item.price})" class="mt-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-2 rounded-xl text-xs active-ring cursor-pointer">+ जोड़ें (Add)</button>
-        </div>
-      `).join('');
-    }
-    function addKiranaCart(id, name, price) {
-      alert(name + ' कार्ट में जोड़ा गया!');
-    }
-
-    // 2. SOVEREIGN VOUCHERS
-    function openVoucherModal() {
-      document.getElementById('voucherModal').classList.remove('hidden');
-      renderVouchers();
-    }
-    function closeVoucherModal() {
-      document.getElementById('voucherModal').classList.add('hidden');
-      if (window.location.hash === '#vouchers') window.location.hash = '#home';
-    }
-    function renderVouchers() {
-      const container = document.getElementById('voucherListContainer');
-      const vouchers = (window.rmVoucherSync && window.rmVoucherSync.getActiveVouchers) ? window.rmVoucherSync.getActiveVouchers() : [];
-      if (!container) return;
-      if (vouchers.length === 0) {
-        container.innerHTML = '<div class="bg-slate-900/60 p-4 text-center rounded-xl text-xs text-slate-400 border border-slate-800">कोई सक्रिय वाउचर नहीं है। ऊपर दिए गए बटन से नया वाउचर जारी करें।</div>';
+      let activeIds;
+      try {
+        activeIds = new Set(JSON.parse(raw));
+      } catch (_) {
         return;
       }
-      container.innerHTML = vouchers.map(v => `
-        <div class="bg-slate-900 border-l-4 border-emerald-500 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
-          <div>
-            <span class="text-xs font-mono text-slate-200 font-bold">${v.voucherId}</span>
-            <div class="text-[10px] text-slate-400 mt-0.5">स्थिति: ${v.status}</div>
-          </div>
-          <span class="text-base font-black text-emerald-400">₹${v.amount}</span>
-        </div>
-      `).join('');
+
+      // Filter Tier 1 (33 Services & Utilities)
+      const t1List = document.getElementById('tier1-list');
+      let liveT1 = 0;
+      if (t1List) {
+        Array.from(t1List.children).forEach((btn, idx) => {
+          const num = String(idx + 1).padStart(2, '0');
+          const isLive = activeIds.has('c' + num) || activeIds.has(num);
+          btn.style.display = isLive ? 'flex' : 'none';
+          if (isLive) liveT1++;
+        });
+        const t1Header = document.querySelector('#rm-tier1-toggle span');
+        if (t1Header) t1Header.textContent = `💼 आजीविका (${liveT1} सेवाएं व सुविधाएं)`;
+      }
+
+      // Filter Tier 2 (17 Games)
+      const t2List = document.getElementById('tier2-list');
+      let liveT2 = 0;
+      if (t2List) {
+        Array.from(t2List.children).forEach((btn, idx) => {
+          const localNum = String(idx + 1).padStart(2, '0');
+          const globalId = 'g' + (33 + idx + 1);
+          const isLive = activeIds.has(globalId) || activeIds.has(String(33 + idx + 1)) || activeIds.has(localNum);
+          btn.style.display = isLive ? 'flex' : 'none';
+          if (isLive) liveT2++;
+        });
+        const t2Header = document.querySelector('#rm-tier2-toggle span');
+        if (t2Header) t2Header.textContent = `🎮 सुरक्षा व खेल (${liveT2} श्रेणियां)`;
+      }
+
+      // Update Subtitle Pill on Home Page
+      const subPill = document.getElementById('cat-subtitle-pill');
+      if (subPill) {
+        subPill.textContent = `${liveT1} सेवाएं व सुविधाएं • ${liveT2} खेल`;
+      }
     }
-    async function generateOfflineVoucher() {
-      const amtStr = prompt('वाउचर राशि दर्ज करें (₹):', '100');
-      if (!amtStr || isNaN(amtStr) || parseFloat(amtStr) <= 0) return;
-      if (window.rmVoucherSync) {
-        await window.rmVoucherSync.issueVoucher(parseFloat(amtStr), 'USR-SELF', 'KIRANA');
-        renderVouchers();
-        alert('वाउचर सफलतापूर्वक जनरेट हुआ!');
+
+    // Modal Control
+    function toggleMenuDrawer(show) {
+      const modal = document.getElementById('categoryModal');
+      if (show) {
+        syncCategoryVisibilityFromOwner();
+        modal.classList.remove('hidden');
       } else {
-        alert('वाउचर जनरेट हुआ: ₹' + amtStr);
+        modal.classList.add('hidden');
       }
     }
 
-    // 3. 50 CATEGORIES TAXONOMY
-    const RM_CATS = [
-      ["#cat-art-design", "🎨", "01. Art & Design (कला व डिज़ाइन)", 1],
-      ["#cat-auto-vehicles", "🚗", "02. Auto & Vehicles (ऑटो व वाहन)", 1],
-      ["#cat-beauty", "💄", "03. Beauty (सौंदर्य व ग्रूमिंग)", 1],
-      ["#cat-books-reference", "📚", "04. Books & Reference (किताबें)", 1],
-      ["#merchant-khata", "💼", "05. Business (सॉवरेन बहीखाता)", 1],
-      ["#cat-comics", "🎭", "06. Comics (कॉमिक्स व वेबटून)", 1],
-      ["#cat-communication", "💬", "07. Communication (संचार व चैट)", 1],
-      ["#cat-dating", "❤️", "08. Dating (परिचय व रिश्ते)", 1],
-      ["#hunar-seekhein", "🎓", "09. Education (हुनर व शिक्षा)", 1],
-      ["#cat-entertainment", "🎬", "10. Entertainment (मनोरंजन)", 1],
-      ["#cat-events", "🎟️", "11. Events (मेले व आयोजन)", 1],
-      ["#cat-family", "👨‍👩‍👧", "12. Family (परिवार व बच्चे)", 1],
-      ["#ledger-balance", "💰", "13. Finance (RM CASH लेज़र)", 1],
-      ["#cat-food-drink", "🍲", "14. Food & Drink (खान-पान)", 1],
-      ["#swasth-man", "🌿", "15. Health & Fitness (स्वास्थ्य)", 1],
-      ["#cat-house-home", "🏠", "16. House & Home (घर व मरम्मत)", 1],
-      ["#cat-libraries-demo", "📦", "17. Libraries & Demo (टूल्स)", 1],
-      ["#lifestyle-hub", "🧘", "18. Lifestyle (जीवनशैली)", 1],
-      ["#hyperlocal-map", "🗺️", "19. Maps & Navigation (नक्शा)", 1],
-      ["#cat-medical", "💊", "20. Medical (दवा व डॉक्टर)", 1],
-      ["#cat-music-audio", "🎵", "21. Music & Audio (संगीत)", 1],
-      ["#cat-news", "📰", "22. News & Magazines (समाचार)", 1],
-      ["#cat-parenting", "🍼", "23. Parenting (शिशु पोषण)", 1],
-      ["#cat-personalization", "✨", "24. Personalization (थीम्स)", 1],
-      ["#cat-photography", "📸", "25. Photography (कैमरा)", 1],
-      ["#invoicing-tool", "⚡", "26. Productivity (उत्पादकता)", 1],
-      ["#kirana-store", "🛒", "27. Shopping (0% किराना स्टोर)", 1],
-      ["#cat-social", "🌐", "28. Social (चौपाल व समाज)", 1],
-      ["#cat-sports-app", "🏏", "29. Sports (खेलकूद व लाइव)", 1],
-      ["#utility-tools", "🛠️", "30. Tools (कैलकुलेटर व टूल्स)", 1],
-      ["#cat-travel", "✈️", "31. Travel & Local (यात्रा)", 1],
-      ["#cat-video", "🎞️", "32. Video Players & Editors", 1],
-      ["#cat-weather", "☀️", "33. Weather (मौसम पूर्वानुमान)", 1],
-      ["#game-action", "🏹", "01. Action (एक्शन तीरंदाजी)", 2],
-      ["#game-adventure", "🧭", "02. Adventure (रोमांचक यात्रा)", 2],
-      ["#game-arcade", "🕹️", "03. Arcade (गेंद टप्पा / आर्केड)", 2],
-      ["#game-board", "🎲", "04. Board (देसी लूडो व कैरम)", 2],
-      ["#game-card", "🃏", "05. Card (सॉलिटेयर - Zero Cash)", 2],
-      ["#game-casino", "🎡", "06. Casino (पॉइंट्स लकी चक्र)", 2],
-      ["#game-casual", "🎈", "07. Casual (रंगोली व हल्के खेल)", 2],
-      ["#game-educational", "🧠", "08. Educational (ज्ञान क्विज़)", 2],
-      ["#game-music", "🥁", "09. Music (संगीत ताल व बीट)", 2],
-      ["#game-puzzle", "🧩", "10. Puzzle (दिमागी पहेलियाँ)", 2],
-      ["#game-racing", "🏎️", "11. Racing (बैलगाड़ी / कार्ट रेस)", 2],
-      ["#game-role-playing", "👑", "12. Role Playing (गाँव का प्रधान)", 2],
-      ["#game-simulation", "🚜", "13. Simulation (खेत सिमुलेटर)", 2],
-      ["#game-sports", "🏏", "14. Sports (गली क्रिकेट)", 2],
-      ["#game-strategy", "♟️", "15. Strategy (चाणक्य नीति / शतरंज)", 2],
-      ["#game-trivia", "❓", "16. Trivia (देसी ट्रिविया व तथ्य)", 2],
-      ["#game-word", "🔤", "17. Word (शब्द पहेली व कोश)", 2]
-    ];
-
-    function renderDynamicCategories() {
-      const t1 = document.getElementById('tier1-list');
-      const t2 = document.getElementById('tier2-list');
-      if (!t1 || !t2) return;
-      if (t1.children.length > 0) return;
-
-      const f1 = document.createDocumentFragment();
-      const f2 = document.createDocumentFragment();
-
-      RM_CATS.forEach(([hash, icon, title, tier]) => {
-        const a = document.createElement('a');
-        a.href = hash;
-        a.className = 'rm-menu-item active-ring';
-        a.innerHTML = `<span style="font-size:1.1rem; line-height:1;">${icon}</span><span>${title}</span>`;
-        if (hash === '#merchant-khata') {
-          a.onclick = (e) => { e.preventDefault(); closeDrawer(); openKhataModal(); };
-        } else if (hash === '#kirana-store') {
-          a.onclick = (e) => { e.preventDefault(); closeDrawer(); openKiranaModal(); };
-        }
-        if (tier === 1) f1.appendChild(a);
-        else f2.appendChild(a);
-      });
-
-      t1.appendChild(f1);
-      t2.appendChild(f2);
-    }
-
-    function toggleAcc(listId, arrowId) {
-      renderDynamicCategories();
-      const list = document.getElementById(listId);
-      const arrow = document.getElementById(arrowId);
-      if (!list) return;
-      const isClosed = list.style.display === 'none';
-      list.style.display = isClosed ? 'block' : 'none';
-      if (arrow) arrow.textContent = isClosed ? '▼' : '▶';
-    }
-
-    function openDrawer() {
-      renderDynamicCategories();
-      const d = document.getElementById('rm-drawer-menu');
-      const b = document.getElementById('rm-drawer-backdrop');
-      if (d) { d.style.transform = 'translateX(0)'; d.setAttribute('aria-hidden', 'false'); }
-      if (b) { b.style.display = 'block'; b.style.pointerEvents = 'auto'; }
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeDrawer() {
-      const d = document.getElementById('rm-drawer-menu');
-      const b = document.getElementById('rm-drawer-backdrop');
-      if (d) { d.style.transform = 'translateX(-100%)'; d.setAttribute('aria-hidden', 'true'); }
-      if (b) { b.style.display = 'none'; b.style.pointerEvents = 'none'; }
-      document.body.style.overflow = '';
-    }
-
-    // ROUTING DISPATCHER & HARDWARE BACK HANDLING (Point 14)
-    function handleRouting() {
-      const h = window.location.hash;
-      if (h === '#merchant-khata' && window.openKhataModal) openKhataModal();
-      else if (h === '#kirana-store') openKiranaModal();
-      else if (h === '#vouchers') openVoucherModal();
-      else if (h === '#services-drawer') openDrawer();
-    }
-
-    window.addEventListener('hashchange', handleRouting);
-
-    document.addEventListener('DOMContentLoaded', () => {
-      renderDynamicCategories();
-      handleRouting();
-
-      const menuBtn = document.getElementById('rm-menu-btn');
-      const closeBtn = document.getElementById('rm-drawer-close');
-      const backdrop = document.getElementById('rm-drawer-backdrop');
-
-      if (menuBtn) menuBtn.onclick = (e) => { e.preventDefault(); openDrawer(); };
-      if (closeBtn) closeBtn.onclick = (e) => { e.preventDefault(); closeDrawer(); };
-      if (backdrop) backdrop.onclick = (e) => { e.preventDefault(); closeDrawer(); };
-
-      // Point 1: Stealth Console Redirection to Surface-B
-      const stealthTrigger = document.getElementById('stealthConsoleTrigger');
-      let lastTap = 0;
-      if (stealthTrigger) {
-        stealthTrigger.addEventListener('dblclick', () => {
-          window.location.href = '/owner-console.html';
-        });
-        stealthTrigger.addEventListener('touchend', function (e) {
-          const currentTime = new Date().getTime();
-          const tapLength = currentTime - lastTap;
-          if (tapLength < 400 && tapLength > 0) {
-            e.preventDefault();
-            window.location.href = '/owner-console.html';
-          }
-          lastTap = currentTime;
-        });
-      }
-    });
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch(() => {});
+    // In-Memory Search Filter for Quick Tiles
+    function filterQuickTiles() {
+      const q = (document.getElementById('liveSearchInput').value || '').toLowerCase().trim();
+      const grid = document.getElementById('verticalTilesGrid');
+      if (!grid) return;
+      Array.from(grid.children).forEach(card => {
+        const txt = card.innerText.toLowerCase();
+        card.style.display = txt.includes(q) ? 'block' : 'none';
       });
     }
+
+    // Auto-Sync Listeners
+    window.addEventListener('DOMContentLoaded', syncCategoryVisibilityFromOwner);
+    window.addEventListener('storage', syncCategoryVisibilityFromOwner);
   </script>
-
-  <!-- Rise Mitra Modular Client Engines (Point 13: v2.2.5 Cache-Busted) -->
-  <script src="/js/voucher-sync.js?v=2.2.5"></script>
-  <script src="/js/bahi-khata.js?v=2.2.5"></script>
-  <script src="/js/app.js?v=2.2.5"></script>
 </body>
 </html>
