@@ -2,8 +2,8 @@
   "name": "RM WORLD — Rise Mitra",
   "short_name": "RM WORLD",
   "description": "Sovereign Offline-First Super App & Digital Bahi Khata",
-  "start_url": "/?pwa=1",
-  "id": "/?pwa=1",
+  "id": "/index.html",
+  "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#02091d",
   "theme_color": "#02091d",
@@ -12,15 +12,9 @@
   "icons": [
     {
       "src": "/rise-mitra-logo.svg",
-      "sizes": "1024x1024",
+      "sizes": "192x192 512x512 1024x1024",
       "type": "image/svg+xml",
-      "purpose": "any"
-    },
-    {
-      "src": "/rise-mitra-logo.svg",
-      "sizes": "192x192 512x512",
-      "type": "image/svg+xml",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     }
   ],
   "screenshots": [
