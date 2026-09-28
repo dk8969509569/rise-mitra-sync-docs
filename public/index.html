@@ -70,7 +70,6 @@
       box-shadow: 0 -12px 32px rgba(0, 0, 0, 0.85);
     }
 
-    /* Tactile micro-tap */
     button:active, .tactile-card:active {
       transform: scale(0.97);
       transition: transform 0.08s ease-out;
@@ -255,7 +254,7 @@
   </main>
 
   <!-- ============================================================== -->
-  <!-- 100% COMPLETE GOOGLE PLAY STORE INSTALL & LAUNCH CARD          -->
+  <!-- 100% REAL GOOGLE PLAY STORE SHEET (NO FAKE TIMER)               -->
   <!-- ============================================================== -->
   <div id="playStoreInstallBanner" class="fixed bottom-16 left-3 right-3 max-w-md mx-auto z-40 play-store-sheet rounded-2xl p-4 shadow-2xl transition-all">
     
@@ -303,20 +302,8 @@
       <span class="text-slate-500">ऑफलाइन-सक्षम</span>
     </div>
 
-    <!-- Progress Indicator (Hidden by default) -->
-    <div id="installProgressContainer" class="hidden mb-3">
-      <div class="flex justify-between text-[11px] mb-1">
-        <span id="installProgressStatus" class="text-emerald-400 font-semibold">डाउनलोड हो रहा है...</span>
-        <span id="installPercentText" class="text-slate-400 font-mono">0%</span>
-      </div>
-      <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-        <div id="installProgressBar" class="bg-[#01875f] h-full w-0 transition-all duration-300"></div>
-      </div>
-    </div>
-
-    <!-- ACTION BUTTONS: State 1 (Install) vs State 2 (Open / Uninstall) -->
+    <!-- ACTION BUTTONS: State 1 (Install) vs State 2 (Open) -->
     <div id="installActionBox" class="flex items-center space-x-2">
-      <!-- Default Install Button -->
       <button id="pwaInstallBtn" onclick="triggerPWAInstall()" class="flex-1 bg-[#01875f] hover:bg-[#059669] text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-2 shadow-lg active:scale-95 transition-transform cursor-pointer">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
           <path d="M3 20.5v-17c0-.83.67-1.5 1.5-1.5.39 0 .74.15 1.01.42l11.41 11.41-5.17 5.17-8.83-8.83V20.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5z"/>
@@ -329,10 +316,10 @@
       </button>
     </div>
 
-    <!-- State 2: When App is Installed (Google Play "Open" Button) -->
+    <!-- State 2: ONLY APPEARS WHEN ANDROID OS ACTUALLY INSTALLS APP -->
     <div id="installedActionBox" class="hidden flex items-center space-x-2">
       <button onclick="dismissPlayBanner()" class="flex-1 border border-slate-700 hover:bg-slate-800 text-slate-300 font-bold py-2.5 rounded-xl text-xs active:scale-95 transition-transform cursor-pointer">
-        अनइंस्टॉल
+        हटाएं
       </button>
       <button onclick="launchInstalledApp()" class="flex-1 bg-[#01875f] hover:bg-[#059669] text-white font-black py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-lg active:scale-95 transition-transform cursor-pointer">
         <span>खोलें (Open)</span>
@@ -396,16 +383,13 @@
     </div>
   </nav>
 
-  <!-- JAVASCRIPT CONTROLLERS & PLAY STORE INSTALL ENGINE -->
+  <!-- JAVASCRIPT CONTROLLERS & AUTHENTIC PLAY STORE INSTALL HOOKS -->
   <script>
     let deferredPrompt = null;
     const banner = document.getElementById('playStoreInstallBanner');
     const installBox = document.getElementById('installActionBox');
     const installedBox = document.getElementById('installedActionBox');
-    const progressContainer = document.getElementById('installProgressContainer');
-    const progressBar = document.getElementById('installProgressBar');
-    const progressStatus = document.getElementById('installProgressStatus');
-    const percentText = document.getElementById('installPercentText');
+    const btnText = document.getElementById('installBtnText');
 
     // 1. Service Worker Registration
     if ('serviceWorker' in navigator) {
@@ -416,7 +400,7 @@
       });
     }
 
-    // 2. Intercept Chrome Native Install Prompt
+    // 2. Intercept Android Chrome Native Install Prompt
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
@@ -425,62 +409,33 @@
       }
     });
 
-    // 3. Play Store Authentic Install Trigger with Live Progress Simulation
+    // 3. Real Install Trigger: Passes control directly to Android Play Store engine
     async function triggerPWAInstall() {
-      if (progressContainer) progressContainer.classList.remove('hidden');
-      if (installBox) installBox.classList.add('hidden');
-
-      // Simulate Play Store Download Progress
-      let p = 15;
-      progressBar.style.width = p + '%';
-      percentText.textContent = p + '%';
-      progressStatus.textContent = 'सत्यापित किया जा रहा है...';
-
-      const interval = setInterval(() => {
-        p += 25;
-        if (p > 90) p = 90;
-        progressBar.style.width = p + '%';
-        percentText.textContent = p + '%';
-        if (p >= 50) progressStatus.textContent = 'इंस्टॉल हो रहा है...';
-      }, 300);
-
       if (deferredPrompt) {
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
-        clearInterval(interval);
-        
         if (outcome === 'accepted') {
-          completePlayInstall();
-        } else {
-          // Reset if user cancelled
-          if (progressContainer) progressContainer.classList.add('hidden');
-          if (installBox) installBox.classList.remove('hidden');
+          if (btnText) btnText.textContent = 'इंस्टॉल हो रहा है...';
         }
         deferredPrompt = null;
       } else {
-        // Fallback for browsers with prompt on hold
-        setTimeout(() => {
-          clearInterval(interval);
-          completePlayInstall();
-        }, 1200);
+        // If already prompted or browser queued it, give clear button hint without fake open state
+        if (btnText) {
+          btnText.textContent = 'Chrome मेनू खोलें ›';
+          setTimeout(() => { btnText.textContent = 'इंस्टॉल करें (Install)'; }, 3000);
+        }
       }
     }
 
-    function completePlayInstall() {
-      progressBar.style.width = '100%';
-      percentText.textContent = '100%';
-      progressStatus.textContent = 'सफलतापूर्वक इंस्टॉल हुआ!';
-      
-      setTimeout(() => {
-        if (progressContainer) progressContainer.classList.add('hidden');
-        if (installBox) installBox.classList.add('hidden');
-        if (installedBox) installedBox.classList.remove('hidden');
-      }, 600);
-    }
+    // 4. Real OS Event: ONLY fires when Android OS confirms app is on Home Screen
+    window.addEventListener('appinstalled', () => {
+      if (installBox) installBox.classList.add('hidden');
+      if (installedBox) installedBox.classList.remove('hidden');
+      deferredPrompt = null;
+    });
 
-    // 4. Launch Installed App Directly
+    // 5. Open App when "खोलें (Open)" is clicked
     function launchInstalledApp() {
-      // Redirects directly to standalone app mode
       window.location.href = '/?pwa=1';
     }
 
@@ -488,13 +443,6 @@
       if (banner) banner.style.display = 'none';
     }
 
-    // 5. Automatic Detection of Installation by OS
-    window.addEventListener('appinstalled', () => {
-      completePlayInstall();
-      deferredPrompt = null;
-    });
-
-    // Hide banner completely if already running inside standalone installed app
     if (window.matchMedia('(display-mode: standalone)').matches) {
       if (banner) banner.style.display = 'none';
     }
