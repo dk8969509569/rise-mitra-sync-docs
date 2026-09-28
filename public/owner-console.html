@@ -24,7 +24,11 @@
   </script>
 
   <style>
-    body { -webkit-tap-highlight-color: transparent; }
+    body { 
+      -webkit-tap-highlight-color: transparent; 
+      user-select: none;
+      -webkit-user-select: none;
+    }
     .glass-panel {
       background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(11, 15, 25, 0.98) 100%);
       backdrop-filter: blur(20px);
@@ -34,19 +38,29 @@
       background: rgba(3, 7, 18, 0.85);
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
+    #stealthWord {
+      touch-action: manipulation;
+      cursor: pointer;
+      padding: 35px 55px;
+      transition: color 0.15s ease, transform 0.1s ease;
+    }
+    #stealthWord:active {
+      transform: scale(0.95);
+      color: #cbd5e1;
+    }
   </style>
 </head>
 <body class="bg-surface-950 text-slate-100 min-h-screen antialiased font-mono select-none flex flex-col justify-center items-center p-4">
 
-  <!-- 1. STEALTH ENTRY VIEW (ONLY "console" DISPLAYED) -->
-  <div id="stealthTriggerView" class="flex flex-col items-center justify-center min-h-[85vh] w-full cursor-default">
-    <span id="stealthWord" ondblclick="activateAuthGate()" class="text-xs text-slate-700 tracking-widest font-mono cursor-pointer transition-colors duration-200 hover:text-slate-500 py-4 px-8 rounded">
+  <!-- 1. STEALTH ENTRY VIEW (4-TAP TRIGGER) -->
+  <div id="stealthTriggerView" class="flex flex-col items-center justify-center min-h-[85vh] w-full">
+    <span id="stealthWord" class="text-xs text-slate-700 tracking-widest font-mono">
       console
     </span>
   </div>
 
-  <!-- 2. AUTHENTICATION GATE (REVEALED ON DOUBLE CLICK) -->
-  <div id="authGate" class="max-w-md w-full glass-panel p-6 rounded-3xl border border-amber-500/40 text-center shadow-2xl hidden animate-fade-in">
+  <!-- 2. AUTHENTICATION GATE (REVEALED AFTER 4 TAPS) -->
+  <div id="authGate" class="max-w-md w-full glass-panel p-6 rounded-3xl border border-amber-500/40 text-center shadow-2xl hidden">
     <div class="w-14 h-14 mx-auto rounded-2xl bg-amber-950/80 border border-amber-500/50 flex items-center justify-center text-3xl mb-4">
       🔐
     </div>
@@ -158,14 +172,61 @@
   </main>
 
   <script>
-    // Sovereign Access Key (Default Sovereign PIN: 202609)
     const SOV_HASH = "202609";
 
-    // Double-click trigger activates authentication gate
+    let tapCount = 0;
+    let tapResetTimer = null;
+    let lastTouchTime = 0;
+
+    const stealthBtn = document.getElementById("stealthWord");
+
+    function handleFourTaps(e) {
+      const now = Date.now();
+
+      if (e.type === 'click' && (now - lastTouchTime < 400)) {
+        return;
+      }
+      if (e.type === 'touchend') {
+        lastTouchTime = now;
+      }
+
+      tapCount++;
+
+      if (navigator.vibrate) {
+        try { navigator.vibrate(35); } catch (_) {}
+      }
+
+      if (stealthBtn) {
+        stealthBtn.style.color = '#cbd5e1';
+        setTimeout(() => { stealthBtn.style.color = ''; }, 120);
+      }
+
+      if (tapResetTimer) clearTimeout(tapResetTimer);
+
+      if (tapCount >= 4) {
+        tapCount = 0;
+        activateAuthGate();
+        return;
+      }
+
+      tapResetTimer = setTimeout(() => {
+        tapCount = 0;
+      }, 1200);
+    }
+
+    if (stealthBtn) {
+      stealthBtn.addEventListener("touchend", handleFourTaps, { passive: true });
+      stealthBtn.addEventListener("click", handleFourTaps);
+    }
+
     function activateAuthGate() {
       document.getElementById("stealthTriggerView").classList.add("hidden");
       document.getElementById("authGate").classList.remove("hidden");
-      document.getElementById("consolePin").focus();
+      const pin = document.getElementById("consolePin");
+      if (pin) {
+        pin.value = "";
+        setTimeout(() => pin.focus(), 100);
+      }
     }
 
     function abortToStealth() {
@@ -174,6 +235,7 @@
       document.getElementById("authGate").classList.add("hidden");
       document.getElementById("consolePanel").classList.add("hidden");
       document.getElementById("stealthTriggerView").classList.remove("hidden");
+      tapCount = 0;
     }
 
     function verifyKey() {
