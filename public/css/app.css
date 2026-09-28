@@ -1,0 +1,68 @@
+/* ==========================================================================
+   RM-UI-INTERACTION-FEEDBACK-01 | CANONICAL STYLESHEET
+   Ref: EXT_001 Part D (D-04, D-05) & DEC-RM-SOV-UX-20260929-001
+   ========================================================================== */
+
+button,
+a,
+input[type="button"],
+input[type="submit"],
+[role="button"],
+.nav-tab {
+  min-height: 48px;
+  min-width: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+button:active,
+a:active,
+[role="button"]:active,
+.nav-tab:active {
+  transform: scale(0.97) !important;
+  outline: 2px solid #10B981 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.40) !important;
+  transition: transform 0.08s ease, outline 0.08s ease, box-shadow 0.08s ease !important;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="tel"],
+input[type="search"],
+textarea,
+select {
+  min-height: 48px;
+  transform: none !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid #10B981 !important;
+  outline-offset: 1px !important;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.25) !important;
+}
+
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+.nav-tab:focus-visible {
+  outline: 2px solid #10B981 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.35) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button:active,
+  a:active,
+  [role="button"]:active,
+  .nav-tab:active {
+    transform: none !important;
+    box-shadow: none !important;
+    outline: 2px solid #10B981 !important;
+  }
+}
