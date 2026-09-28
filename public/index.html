@@ -92,9 +92,8 @@
   <header class="sticky top-0 z-40 bg-[#030712]/90 backdrop-blur-md border-b border-slate-800/80 px-4 py-3">
     <div class="flex items-center justify-between">
       
-      <!-- Brand Primacy (Upper-Left Grouping) -->
+      <!-- Brand Primacy -->
       <div class="flex items-center space-x-3">
-        <!-- Upgraded Glowing RM Monogram Logo -->
         <div class="relative flex items-center justify-center cursor-pointer" onclick="toggleMenuDrawer(true)">
           <div class="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-teal-400 rounded-xl blur-xs opacity-75 pulse-live"></div>
           <div class="relative w-10 h-10 rounded-xl bg-gradient-to-br from-slate-900 via-slate-950 to-emerald-950 border border-emerald-500/50 flex items-center justify-center shadow-lg active:scale-95">
@@ -137,7 +136,7 @@
 
   <main class="max-w-md mx-auto px-4 py-4 space-y-4">
 
-    <!-- 1. DYNAMIC CATALOG TRIGGER BUTTON (SURFACE-B SYNCED) -->
+    <!-- 1. HIGH-VALUE BRAND-LED CATALOG BUTTON (4 PILLARS & ZERO HARDCODED '50') -->
     <button type="button" id="cat-menu-btn" onclick="toggleMenuDrawer(true)" class="w-full glass-card p-3.5 rounded-2xl flex items-center justify-between border-emerald-500/30 tactile-card cursor-pointer group shadow-lg">
       <div class="flex items-center space-x-3">
         <div class="w-10 h-10 rounded-xl bg-emerald-950/90 border border-emerald-500/40 flex items-center justify-center text-lg shadow-inner group-hover:scale-105 transition-transform">
@@ -145,10 +144,10 @@
         </div>
         <div class="text-left">
           <div class="text-sm font-bold text-slate-100 group-hover:text-emerald-300 transition-colors">
-            सभी 50 सेवाएं व खेल (कैटलॉग)
+            Rise Mitra संपूर्ण सुविधा केंद्र
           </div>
           <div id="cat-subtitle-pill" class="text-xs text-emerald-400 font-sans">
-            33 सेवाएं व सुविधाएं • 17 खेल
+            🛡️ 100% सुरक्षित • Services, Utilities & Games
           </div>
         </div>
       </div>
@@ -186,7 +185,7 @@
       </div>
 
       <div class="grid grid-cols-2 gap-2 pt-1">
-        <button type="button" onclick="alert('नया लेन-देन (बहीखाता प्रविष्टि) खुला')" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-2 rounded-xl text-xs flex items-center justify-center space-x-1 shadow-md tactile-card cursor-pointer">
+        <button type="button" onclick="alert('नया लेन-देन खुला')" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-2 rounded-xl text-xs flex items-center justify-center space-x-1 shadow-md tactile-card cursor-pointer">
           <span>+</span>
           <span>नया लेन-देन</span>
         </button>
@@ -197,7 +196,7 @@
       </div>
     </section>
 
-    <!-- 4. 9 CORE VERTICALS (HIGH-CONVERTING TILES) -->
+    <!-- 4. 9 CORE VERTICALS -->
     <section class="space-y-2">
       <div class="flex justify-between items-center px-1">
         <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">9 Core Verticals</h2>
@@ -253,7 +252,7 @@
       </div>
     </section>
 
-    <!-- STEALTH CONSOLE TRIGGER (SURFACE-B REDIRECT) -->
+    <!-- STEALTH CONSOLE TRIGGER -->
     <div class="text-center pt-8 pb-4">
       <a href="/owner-console.html" class="text-slate-600 hover:text-amber-400 font-mono text-xs tracking-widest uppercase transition-colors p-2">
         console
@@ -263,7 +262,7 @@
   </main>
 
   <!-- ============================================================== -->
-  <!-- 50 CATEGORIES MODAL (DYNAMIC ACCORDION DIRECTORY) -->
+  <!-- DYNAMIC CATALOG MODAL (SMOOTH ACCORDION & ZERO HARDCODED '50') -->
   <!-- ============================================================== -->
   <div id="categoryModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex flex-col justify-end transition-opacity">
     <div class="bg-[#0b0f19] border-t border-slate-800 rounded-t-3xl max-h-[85vh] flex flex-col shadow-2xl">
@@ -271,8 +270,8 @@
       <!-- Modal Header -->
       <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/60">
         <div>
-          <h3 class="text-sm font-black text-slate-100 uppercase tracking-wide">50 सफल श्रेणियाँ</h3>
-          <p class="text-[10px] text-emerald-400">राइज मित्रा संपूर्ण कैटलॉग</p>
+          <h3 class="text-sm font-black text-slate-100 uppercase tracking-wide">राइज मित्रा सुविधा केंद्र</h3>
+          <p id="modal-catalog-count" class="text-[10px] text-emerald-400">उपलब्ध सेवाएं, सुविधाएं व खेल</p>
         </div>
         <button type="button" onclick="toggleMenuDrawer(false)" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 font-bold text-sm hover:bg-slate-700 active:scale-95 cursor-pointer">
           ✕
@@ -282,14 +281,14 @@
       <!-- Scrollable Category Lists -->
       <div class="flex-1 overflow-y-auto p-4 space-y-4 text-xs">
         
-        <!-- Accordion 1: 33 Services & Utilities -->
+        <!-- Accordion 1: Services & Utilities Dropdown -->
         <div class="space-y-2">
-          <div id="rm-tier1-toggle" class="flex justify-between items-center p-2.5 rounded-xl bg-emerald-950/60 border border-emerald-800/40 text-emerald-300 font-bold">
-            <span>💼 आजीविका (33 सेवाएं व सुविधाएं)</span>
-            <span>▼</span>
-          </div>
-          <div id="tier1-list" class="space-y-1 pl-1">
-            <!-- 33 Items Rendered Here -->
+          <button type="button" id="rm-tier1-toggle" onclick="toggleAccordion('tier1-list', this)" class="w-full flex justify-between items-center p-2.5 rounded-xl bg-emerald-950/60 border border-emerald-800/40 text-emerald-300 font-bold cursor-pointer select-none active:scale-[0.99] transition-transform">
+            <span id="tier1-header-text">💼 आजीविका (सेवाएं व सुविधाएं)</span>
+            <span class="acc-arrow text-xs font-mono">▼</span>
+          </button>
+          
+          <div id="tier1-list" class="space-y-1 pl-1 transition-all" style="display: block;">
             <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🎨</span><span>01. Art & Design (डिज़ाइन)</span></button>
             <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🚗</span><span>02. Auto & Vehicles (वाहन सेवा)</span></button>
             <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>💄</span><span>03. Beauty & Salon (ब्यूटी)</span></button>
@@ -326,14 +325,14 @@
           </div>
         </div>
 
-        <!-- Accordion 2: 17 Games -->
+        <!-- Accordion 2: Games Dropdown -->
         <div class="space-y-2">
-          <div id="rm-tier2-toggle" class="flex justify-between items-center p-2.5 rounded-xl bg-cyan-950/60 border border-cyan-800/40 text-cyan-300 font-bold">
-            <span>🎮 सुरक्षा व खेल (17 श्रेणियां)</span>
-            <span>▼</span>
-          </div>
-          <div id="tier2-list" class="space-y-1 pl-1">
-            <!-- 17 Items Rendered Here -->
+          <button type="button" id="rm-tier2-toggle" onclick="toggleAccordion('tier2-list', this)" class="w-full flex justify-between items-center p-2.5 rounded-xl bg-cyan-950/60 border border-cyan-800/40 text-cyan-300 font-bold cursor-pointer select-none active:scale-[0.99] transition-transform">
+            <span id="tier2-header-text">🎮 खेल व मनोरंजन</span>
+            <span class="acc-arrow text-xs font-mono">▼</span>
+          </button>
+          
+          <div id="tier2-list" class="space-y-1 pl-1 transition-all" style="display: block;">
             <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🏹</span><span>01. Action (ऐक्शन तीरंदाजी)</span></button>
             <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🧭</span><span>02. Adventure (रोमांचक यात्रा)</span></button>
             <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🕹️</span><span>03. Arcade (गेंद टप्पा)</span></button>
@@ -381,53 +380,98 @@
   </nav>
 
   <!-- ============================================================== -->
-  <!-- 50-CATEGORY REAL-TIME AUTO-SYNC ENGINE (SURFACE-B TO SURFACE-A) -->
+  <!-- JAVASCRIPT CONTROLLERS (WORKING ACCORDION & REAL-TIME AUTO-SYNC) -->
   <!-- ============================================================== -->
   <script>
+    // 1. Working Accordion Dropdown Function (Toggle & Arrow Fix)
+    function toggleAccordion(listId, btnEl) {
+      const list = document.getElementById(listId);
+      if (!list) return;
+      const isHidden = list.style.display === 'none';
+      list.style.display = isHidden ? 'block' : 'none';
+      const arrow = btnEl.querySelector('.acc-arrow');
+      if (arrow) {
+        arrow.textContent = isHidden ? '▼' : '▶';
+      }
+    }
+
+    // 2. Real-time Staged Launch Sync Engine
     function syncCategoryVisibilityFromOwner() {
       const raw = localStorage.getItem('rm_active_categories_v1');
-      if (!raw) return;
-
       let activeIds;
-      try {
-        activeIds = new Set(JSON.parse(raw));
-      } catch (_) {
-        return;
+      if (!raw) {
+        activeIds = new Set(['c05', 'c13', 'c27', '05', '13', '27']);
+      } else {
+        try {
+          activeIds = new Set(JSON.parse(raw));
+        } catch (_) {
+          activeIds = new Set(['c05', 'c13', 'c27', '05', '13', '27']);
+        }
       }
 
-      // Filter Tier 1 (33 Services & Utilities)
+      // Filter Services & Utilities (Tier 1)
       const t1List = document.getElementById('tier1-list');
       let liveT1 = 0;
       if (t1List) {
         Array.from(t1List.children).forEach((btn, idx) => {
+          if (btn.classList.contains('zero-state-msg')) return;
           const num = String(idx + 1).padStart(2, '0');
           const isLive = activeIds.has('c' + num) || activeIds.has(num);
           btn.style.display = isLive ? 'flex' : 'none';
           if (isLive) liveT1++;
         });
-        const t1Header = document.querySelector('#rm-tier1-toggle span');
-        if (t1Header) t1Header.textContent = `💼 आजीविका (${liveT1} सेवाएं व सुविधाएं)`;
+
+        let msg1 = t1List.querySelector('.zero-state-msg');
+        if (liveT1 === 0) {
+          if (!msg1) {
+            msg1 = document.createElement('div');
+            msg1.className = 'zero-state-msg p-3 text-center text-xs text-slate-400 font-sans bg-slate-900/60 rounded-lg';
+            msg1.textContent = '🚀 सेवाएं जल्द ही लाइव की जाएंगी (Coming Soon)';
+            t1List.appendChild(msg1);
+          }
+          msg1.style.display = 'block';
+        } else if (msg1) {
+          msg1.style.display = 'none';
+        }
+
+        const t1Header = document.getElementById('tier1-header-text');
+        if (t1Header) t1Header.textContent = `💼 आजीविका (${liveT1} सेवाएं उपलब्ध)`;
       }
 
-      // Filter Tier 2 (17 Games)
+      // Filter Games (Tier 2)
       const t2List = document.getElementById('tier2-list');
       let liveT2 = 0;
       if (t2List) {
         Array.from(t2List.children).forEach((btn, idx) => {
+          if (btn.classList.contains('zero-state-msg')) return;
           const localNum = String(idx + 1).padStart(2, '0');
           const globalId = 'g' + (33 + idx + 1);
           const isLive = activeIds.has(globalId) || activeIds.has(String(33 + idx + 1)) || activeIds.has(localNum);
           btn.style.display = isLive ? 'flex' : 'none';
           if (isLive) liveT2++;
         });
-        const t2Header = document.querySelector('#rm-tier2-toggle span');
-        if (t2Header) t2Header.textContent = `🎮 सुरक्षा व खेल (${liveT2} श्रेणियां)`;
+
+        let msg2 = t2List.querySelector('.zero-state-msg');
+        if (liveT2 === 0) {
+          if (!msg2) {
+            msg2 = document.createElement('div');
+            msg2.className = 'zero-state-msg p-3 text-center text-xs text-cyan-300/80 font-sans bg-slate-900/60 rounded-lg';
+            msg2.textContent = '🎮 नए खेल जल्द लाइव किए जा रहे हैं (Coming Soon)';
+            t2List.appendChild(msg2);
+          }
+          msg2.style.display = 'block';
+        } else if (msg2) {
+          msg2.style.display = 'none';
+        }
+
+        const t2Header = document.getElementById('tier2-header-text');
+        if (t2Header) t2Header.textContent = `🎮 खेल व मनोरंजन (${liveT2} श्रेणियां उपलब्ध)`;
       }
 
-      // Update Subtitle Pill on Home Page
-      const subPill = document.getElementById('cat-subtitle-pill');
-      if (subPill) {
-        subPill.textContent = `${liveT1} सेवाएं व सुविधाएं • ${liveT2} खेल`;
+      // Dynamic Modal Subtitle
+      const modalCount = document.getElementById('modal-catalog-count');
+      if (modalCount) {
+        modalCount.textContent = `कुल ${liveT1 + liveT2} सुविधाएं उपलब्ध`;
       }
     }
 
@@ -442,7 +486,7 @@
       }
     }
 
-    // In-Memory Search Filter for Quick Tiles
+    // Search Filter for Verticals
     function filterQuickTiles() {
       const q = (document.getElementById('liveSearchInput').value || '').toLowerCase().trim();
       const grid = document.getElementById('verticalTilesGrid');
@@ -453,7 +497,7 @@
       });
     }
 
-    // Auto-Sync Listeners
+    // Event Listeners
     window.addEventListener('DOMContentLoaded', syncCategoryVisibilityFromOwner);
     window.addEventListener('storage', syncCategoryVisibilityFromOwner);
   </script>
