@@ -51,12 +51,17 @@
       background: linear-gradient(135deg, #064e3b 0%, #022c22 40%, #0b0f19 100%);
       border: 1px solid rgba(16, 185, 129, 0.3);
     }
+    .nav-glass {
+      background: rgba(3, 7, 18, 0.95);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
   </style>
 </head>
 <body class="antialiased selection:bg-emerald-500/20">
 
   <!-- LAYER 1: GOOGLE PLAY STORE STOREFRONT -->
-  <div id="playStorePage" class="max-w-md mx-auto min-h-screen bg-[#131314] flex flex-col justify-between pb-8">
+  <div id="playStorePage" class="max-w-md mx-auto min-h-screen bg-[#131314] flex flex-col justify-between pb-12">
     <div>
       <nav class="flex items-center justify-between px-4 py-3 border-b border-[#2d2e30]/60 sticky top-0 bg-[#131314]/95 z-30 backdrop-blur-md">
         <div class="flex items-center space-x-3">
@@ -165,13 +170,20 @@
       </section>
     </div>
 
-    <footer class="px-5 pt-8 text-center text-[10px] text-[#8e918f]">
+    <!-- CONSOLE LINK ON STOREFRONT -->
+    <div class="text-center pt-6 pb-2">
+      <a href="/owner-console.html" class="text-slate-600 hover:text-amber-400 font-mono text-xs tracking-widest uppercase transition-colors p-2">
+        console
+      </a>
+    </div>
+
+    <footer class="px-5 text-center text-[10px] text-[#8e918f]">
       Google Play and the Google Play logo are trademarks of Google LLC.
     </footer>
   </div>
 
   <!-- LAYER 2: NATIVE RM WORLD SUPER APP DASHBOARD -->
-  <div id="superAppShell" class="hidden min-h-screen bg-[#030712] pb-24">
+  <div id="superAppShell" class="hidden min-h-screen bg-[#030712] pb-32">
     <header class="sticky top-0 z-40 bg-[#030712]/95 backdrop-blur-md border-b border-slate-800/80 px-4 py-3">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-3">
@@ -223,9 +235,17 @@
           <div class="glass-card p-3 rounded-xl text-center space-y-1"><div class="text-xl">🚨</div><div class="text-xs font-bold text-red-300">आपात सहायता</div></div>
         </div>
       </section>
+
+      <!-- CONSOLE LINK IN SUPER APP DASHBOARD -->
+      <div class="text-center pt-6 pb-12">
+        <a href="/owner-console.html" class="text-slate-600 hover:text-amber-400 font-mono text-xs tracking-widest uppercase transition-colors p-2 inline-block">
+          console
+        </a>
+      </div>
     </main>
 
-    <nav class="fixed bottom-0 left-0 right-0 nav-glass z-40 px-4 py-2 bg-[#030712]/95 border-t border-slate-800">
+    <!-- Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 nav-glass z-40 px-4 py-2">
       <div class="max-w-md mx-auto grid grid-cols-4 gap-1 text-center">
         <button class="py-1 text-emerald-400 font-bold text-xs">🏠 होम</button>
         <button class="py-1 text-slate-400 text-xs">🛒 ऑर्डर</button>
@@ -298,7 +318,7 @@
         return;
       }
 
-      // DIRECT LAUNCH: Atakne ke bajaye seedhe super app open karein
+      // DIRECT LAUNCH
       localStorage.setItem('rm_app_installed_v1', 'true');
       switchToOpenState();
       launchSuperApp();
