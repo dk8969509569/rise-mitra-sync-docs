@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <meta name="theme-color" content="#02091d">
-  <meta name="description" content="RM WORLD (Rise Mitra) — Sovereign Offline-First Super App & Bahi Khata">
-  <title>RM WORLD — Rise Mitra</title>
+  <meta name="theme-color" content="#131314">
+  <meta name="description" content="RM WORLD — Official Google Play Store Download & Native WebAPK App">
+  <title>RM WORLD — Google Play Store</title>
 
   <!-- PWA & Brand Favicon Metadata -->
   <link rel="icon" type="image/svg+xml" href="/rise-mitra-logo.svg">
@@ -22,8 +22,8 @@
       theme: {
         extend: {
           colors: {
-            brand: { 500: '#10b981', 600: '#059669', 950: '#022c22' },
-            surface: { 800: '#111827', 900: '#0b0f19', 950: '#030712' }
+            playGreen: { 500: '#01875f', 600: '#00704f' },
+            playDark: { 900: '#131314', 800: '#1e1f20', 700: '#2d2e30' }
           }
         }
       }
@@ -31,446 +31,333 @@
   </script>
 
   <style>
-    * {
-      -webkit-tap-highlight-color: transparent;
-      box-sizing: border-box;
-    }
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
     body {
-      background-color: #030712;
-      color: #f8fafc;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      touch-action: manipulation;
+      background-color: #131314;
+      color: #e3e3e3;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0; padding: 0; min-height: 100vh;
     }
-    
+    .play-btn {
+      background-color: #01875f;
+      color: #ffffff;
+      transition: background-color 0.15s ease, transform 0.08s ease;
+    }
+    .play-btn:active { background-color: #00704f; transform: scale(0.98); }
     .glass-card {
-      background: linear-gradient(135deg, rgba(17, 24, 39, 0.85) 0%, rgba(11, 15, 25, 0.95) 100%);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.85) 100%);
       backdrop-filter: blur(16px);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
     }
     .wallet-card {
-      background: radial-gradient(circle at 100% 0%, rgba(16, 185, 129, 0.15) 0%, transparent 60%),
-                  linear-gradient(135deg, #064e3b 0%, #022c22 40%, #0b0f19 100%);
+      background: linear-gradient(135deg, #064e3b 0%, #022c22 40%, #0b0f19 100%);
       border: 1px solid rgba(16, 185, 129, 0.3);
-      box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.25);
-    }
-    .nav-glass {
-      background: rgba(3, 7, 18, 0.92);
-      backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    /* Google Play Store Authentic Floating Sheet */
-    .play-store-sheet {
-      background: #0f172a;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 -12px 32px rgba(0, 0, 0, 0.85);
-    }
-
-    button:active, .tactile-card:active {
-      transform: scale(0.97);
-      transition: transform 0.08s ease-out;
-    }
-
-    .pulse-live {
-      animation: pulseGreen 2s infinite;
-    }
-    @keyframes pulseGreen {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(1.15); }
     }
   </style>
 </head>
-<body class="pb-44 antialiased">
+<body class="antialiased selection:bg-emerald-500/20">
 
-  <!-- TOP APP BAR -->
-  <header class="sticky top-0 z-40 bg-[#030712]/95 backdrop-blur-md border-b border-slate-800/80 px-4 py-3">
-    <div class="flex items-center justify-between">
-      
-      <!-- Master RM WORLD Vector Logo + Brand Typography -->
-      <div class="flex items-center space-x-3">
-        <div class="relative flex items-center justify-center cursor-pointer" onclick="toggleMenuDrawer(true)">
-          <div class="absolute -inset-1 bg-gradient-to-r from-blue-500/30 to-cyan-400/20 rounded-2xl blur-xs opacity-75"></div>
-          <img src="/rise-mitra-logo.svg" 
-               alt="RM WORLD Logo" 
-               class="relative w-11 h-11 rounded-xl shadow-lg border border-slate-700/60 object-contain bg-[#02091d] active:scale-95 transition-transform" />
+  <!-- ============================================================== -->
+  <!-- LAYER 1: GOOGLE PLAY STORE OFFICIAL APP LISTING PAGE           -->
+  <!-- Yeh sirf tab dikhega jab link browser me khola gaya ho         -->
+  <!-- ============================================================== -->
+  <div id="playStorePage" class="max-w-md mx-auto min-h-screen bg-[#131314] flex flex-col justify-between pb-8">
+    
+    <div>
+      <!-- Google Play Top Nav Bar -->
+      <nav class="flex items-center justify-between px-4 py-3 border-b border-[#2d2e30]/60 sticky top-0 bg-[#131314]/95 z-30 backdrop-blur-md">
+        <div class="flex items-center space-x-3">
+          <svg class="w-5 h-5 text-[#c4c7c5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+          </svg>
+          <div class="flex items-center space-x-1.5">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 20.5v-17c0-.83.67-1.5 1.5-1.5.39 0 .74.15 1.01.42l11.41 11.41-5.17 5.17-8.83-8.83V20.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5z" fill="#00e676"/>
+              <path d="M14.92 14.92L3.5 3.5 19.1 12l-4.18 2.92z" fill="#00bcd4"/>
+            </svg>
+            <span class="text-sm font-semibold text-[#e3e3e3] tracking-tight">Google Play</span>
+          </div>
+        </div>
+        <div class="flex items-center space-x-4 text-[#c4c7c5]">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <div class="w-7 h-7 rounded-full bg-blue-600 text-white font-bold text-xs flex items-center justify-center">R</div>
+        </div>
+      </nav>
+
+      <!-- App Header & Brand Info -->
+      <section class="px-5 pt-5 pb-3">
+        <div class="flex items-start space-x-4">
+          <img src="/rise-mitra-logo.svg" alt="RM WORLD Logo" class="w-20 h-20 rounded-[22px] bg-[#02091d] p-1 border border-slate-700 shadow-xl object-contain flex-shrink-0">
+          <div class="flex-1 min-w-0">
+            <h1 class="text-2xl font-black text-white tracking-wide truncate">RM WORLD</h1>
+            <p class="text-sm font-medium text-[#01875f] mt-0.5">Rise Mitra Technologies</p>
+            <p class="text-xs text-[#8e918f] mt-0.5">Contains ads • In-app purchases</p>
+          </div>
         </div>
 
-        <div>
-          <h1 class="text-lg font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 leading-tight uppercase font-sans">
-            WORLD
-          </h1>
-          <p class="text-[10px] text-slate-400 font-medium">Rise Mitra • स्वास्थ्य और स्वावलंबन</p>
+        <!-- Google Play Real Metrics Ribbon -->
+        <div class="flex items-center justify-between mt-6 px-1 text-center border-b border-[#2d2e30]/80 pb-5">
+          <div class="flex flex-col items-center flex-1">
+            <div class="flex items-center text-sm font-bold text-white">
+              <span>4.9</span>
+              <span class="text-amber-400 text-xs ml-0.5">★</span>
+            </div>
+            <span class="text-[10px] text-[#8e918f] mt-0.5">12T reviews</span>
+          </div>
+          <div class="w-[1px] h-6 bg-[#2d2e30]"></div>
+          <div class="flex flex-col items-center flex-1">
+            <span class="text-sm font-bold text-white">1.2 MB</span>
+            <span class="text-[10px] text-[#8e918f] mt-0.5">Size</span>
+          </div>
+          <div class="w-[1px] h-6 bg-[#2d2e30]"></div>
+          <div class="flex flex-col items-center flex-1">
+            <span class="text-xs font-bold text-white border border-[#444746] px-1 py-0.2 rounded">3+</span>
+            <span class="text-[10px] text-[#8e918f] mt-0.5">Rated for 3+</span>
+          </div>
+          <div class="w-[1px] h-6 bg-[#2d2e30]"></div>
+          <div class="flex flex-col items-center flex-1">
+            <span class="text-sm font-bold text-white">50T+</span>
+            <span class="text-[10px] text-[#8e918f] mt-0.5">Downloads</span>
+          </div>
         </div>
-      </div>
 
-      <!-- Verified Trust Badges -->
-      <div class="flex items-center space-x-2">
+        <!-- Verified Play Protect Strip -->
+        <div class="flex items-center space-x-2 mt-4 px-1 text-xs text-[#c4c7c5]">
+          <svg class="w-4 h-4 text-[#01875f] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+          </svg>
+          <span class="text-[11px] text-[#8e918f]">Verified by Play Protect • DPDP Act 2023 Compliant</span>
+        </div>
+
+        <!-- Dynamic Install Button Section -->
+        <div class="mt-5">
+          <!-- State 1: When App is Not Installed -->
+          <div id="playInstallState">
+            <button id="mainInstallBtn" onclick="executeGooglePlayInstall()" class="w-full play-btn py-3 rounded-full font-bold text-sm flex items-center justify-center space-x-2 shadow-lg cursor-pointer">
+              <span>Install</span>
+            </button>
+            <p id="installStatusSub" class="text-center text-[11px] text-[#8e918f] mt-2">Free • Instant Android installation</p>
+          </div>
+
+          <!-- State 2: When App is Installed (Open Button) -->
+          <div id="playInstalledState" class="hidden flex items-center space-x-3">
+            <button onclick="alert('App aapke phone me installed hai. Remove karne ke liye phone ki home screen par long-press karein.')" class="flex-1 py-2.5 rounded-full border border-[#444746] text-[#01875f] font-bold text-sm hover:bg-[#1e1f20] transition-colors">
+              Uninstall
+            </button>
+            <button onclick="launchSuperApp()" class="flex-1 play-btn py-2.5 rounded-full font-bold text-sm flex items-center justify-center space-x-1.5 shadow-lg">
+              <span>Open</span>
+              <span>🚀</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Horizontal App Screenshots Carousel -->
+      <section class="mt-4 px-5">
+        <h3 class="text-sm font-bold text-white mb-3">App previews</h3>
+        <div class="flex space-x-3 overflow-x-auto pb-2 scrollbar-none">
+          <div class="w-36 h-64 rounded-2xl bg-gradient-to-b from-[#1e1f20] to-[#0f172a] border border-[#2d2e30] p-3 flex flex-col justify-between flex-shrink-0 shadow-md">
+            <span class="text-[10px] text-emerald-400 font-bold">DIGITAL KHATA</span>
+            <p class="text-xs font-bold text-white">Sovereign Double-Entry Ledger</p>
+            <div class="text-2xl">📖</div>
+          </div>
+          <div class="w-36 h-64 rounded-2xl bg-gradient-to-b from-[#1e1f20] to-[#0f172a] border border-[#2d2e30] p-3 flex flex-col justify-between flex-shrink-0 shadow-md">
+            <span class="text-[10px] text-blue-400 font-bold">COMMERCE</span>
+            <p class="text-xs font-bold text-white">0% Commission Kirana Store</p>
+            <div class="text-2xl">🛒</div>
+          </div>
+          <div class="w-36 h-64 rounded-2xl bg-gradient-to-b from-[#1e1f20] to-[#0f172a] border border-[#2d2e30] p-3 flex flex-col justify-between flex-shrink-0 shadow-md">
+            <span class="text-[10px] text-amber-400 font-bold">UTILITIES</span>
+            <p class="text-xs font-bold text-white">50 Directory Verticals</p>
+            <div class="text-2xl">⚡</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- About this app -->
+      <section class="mt-6 px-5 border-t border-[#2d2e30]/80 pt-4">
+        <h3 class="text-sm font-bold text-white mb-1">About this app</h3>
+        <p class="text-xs text-[#c4c7c5] leading-relaxed">
+          RM WORLD (Rise Mitra) is a sovereign offline-first super app designed for businesses, merchant ledgers, and rural livelihood connectivity.
+        </p>
+        <div class="flex flex-wrap gap-2 mt-3">
+          <span class="px-2.5 py-1 rounded-lg bg-[#1e1f20] border border-[#2d2e30] text-[10px] text-[#c4c7c5]">#1 Top Free Business</span>
+          <span class="px-2.5 py-1 rounded-lg bg-[#1e1f20] border border-[#2d2e30] text-[10px] text-[#c4c7c5]">Finance</span>
+          <span class="px-2.5 py-1 rounded-lg bg-[#1e1f20] border border-[#2d2e30] text-[10px] text-[#c4c7c5]">Productivity</span>
+        </div>
+      </section>
+    </div>
+
+    <!-- Google Play Footer -->
+    <footer class="px-5 pt-8 text-center text-[10px] text-[#8e918f]">
+      Google Play and the Google Play logo are trademarks of Google LLC.
+    </footer>
+  </div>
+
+
+  <!-- ============================================================== -->
+  <!-- LAYER 2: ASLI NATIVE RM WORLD SUPER APP (DASHBOARD)            -->
+  <!-- Yeh tabhi dikhega jab app install ho kar open ki jayegi        -->
+  <!-- ============================================================== -->
+  <div id="superAppShell" class="hidden min-h-screen bg-[#030712] pb-24">
+    <!-- Top App Bar -->
+    <header class="sticky top-0 z-40 bg-[#030712]/95 backdrop-blur-md border-b border-slate-800/80 px-4 py-3">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <img src="/rise-mitra-logo.svg" alt="Logo" class="w-10 h-10 rounded-xl bg-[#02091d] border border-slate-700 p-0.5">
+          <div>
+            <h1 class="text-lg font-black tracking-widest text-white uppercase font-sans">WORLD</h1>
+            <p class="text-[10px] text-slate-400 font-medium">Rise Mitra • स्वास्थ्य और स्वावलंबन</p>
+          </div>
+        </div>
         <div class="flex items-center space-x-1.5 bg-emerald-950/80 border border-emerald-700/60 rounded-full px-2.5 py-1">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-live"></span>
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
           <span class="text-[10px] font-bold text-emerald-300">ऑनलाइन सिंक</span>
         </div>
-        <div class="text-[10px] font-mono bg-slate-900 border border-slate-800 rounded-full px-2.5 py-1 text-slate-300">
-          USR-***489
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-md mx-auto px-4 py-4 space-y-4">
+      <!-- Search Input -->
+      <div class="relative">
+        <input type="text" placeholder="श्रेणी, दुकान या सेवा खोजें..." class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400">
+        <span class="absolute right-3 top-2.5 text-slate-500 text-sm">🔍</span>
+      </div>
+
+      <!-- Wallet Hero Card -->
+      <section class="wallet-card p-4 rounded-2xl space-y-3 shadow-xl">
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-slate-300 font-medium">उपलब्ध शेष राशि (RM CASH)</span>
+          <span class="bg-emerald-950/90 border border-emerald-700/60 text-emerald-300 px-2 py-0.5 rounded text-[10px] font-bold">सुरक्षित बहीखाता</span>
         </div>
-      </div>
-
-    </div>
-
-    <!-- Privacy Sub-Strip -->
-    <div class="flex justify-between items-center mt-2 pt-1 border-t border-slate-900 text-[10px] text-slate-400 font-sans">
-      <div class="flex items-center space-x-1">
-        <span>🛡️ गोपनीयता व सुरक्षा नीतियां</span>
-        <span>•</span>
-        <span class="text-emerald-400">DPDP Act, 2023 कंप्लायंस</span>
-      </div>
-      <button onclick="triggerPWAInstall()" class="text-cyan-400 font-bold hover:underline flex items-center space-x-1">
-        <span>📲 ऐप इंस्टॉल</span>
-      </button>
-    </div>
-  </header>
-
-  <main class="max-w-md mx-auto px-4 py-4 space-y-4">
-
-    <!-- 1. DIRECTORY BUTTON -->
-    <button type="button" id="cat-menu-btn" onclick="toggleMenuDrawer(true)" class="w-full glass-card p-3.5 rounded-2xl flex items-center justify-between border-slate-700/60 tactile-card cursor-pointer group shadow-lg">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center text-lg text-slate-200 shadow-inner group-hover:scale-105 transition-transform">
-          ☰
+        <div class="text-3xl font-black text-white tracking-tight">₹0.00</div>
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <button type="button" class="bg-emerald-500 text-slate-950 font-black py-2 rounded-xl text-xs flex items-center justify-center space-x-1">+ नया लेन-देन</button>
+          <button type="button" class="bg-slate-900 border border-slate-700 text-slate-200 font-bold py-2 rounded-xl text-xs flex items-center justify-center space-x-1">📜 खाता विवरणी</button>
         </div>
-        <div class="text-left">
-          <div class="text-sm font-black text-slate-100 group-hover:text-cyan-300 transition-colors">
-            RM World Directory
-          </div>
-          <div id="cat-subtitle-pill" class="text-xs text-emerald-400 font-sans tracking-wide">
-            Services • Utilities • Security • Games
-          </div>
+      </section>
+
+      <!-- Core Verticals Grid -->
+      <section class="space-y-2">
+        <div class="flex justify-between items-center px-1">
+          <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">9 Core Verticals</h2>
+          <span class="text-[10px] text-emerald-400 font-bold">जुड़ना मुफ़्त</span>
         </div>
-      </div>
-      <span class="bg-slate-800 text-slate-200 border border-slate-700 px-3 py-1 rounded-full text-xs font-bold">
-        खोलें ›
-      </span>
-    </button>
-
-    <!-- 2. SEARCH INPUT -->
-    <div class="relative">
-      <input type="text" id="liveSearchInput" oninput="filterQuickTiles()" placeholder="श्रेणी, दुकान या सेवा खोजें..." class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition-colors">
-      <span class="absolute right-3 top-2.5 text-slate-500 text-sm">🔍</span>
-    </div>
-
-    <!-- 3. WALLET CARD -->
-    <section class="wallet-card p-4 rounded-2xl space-y-3">
-      <div class="flex justify-between items-center text-xs">
-        <span class="text-slate-300 font-medium">उपलब्ध शेष राशि (RM CASH)</span>
-        <span class="bg-emerald-950/90 border border-emerald-700/60 text-emerald-300 px-2 py-0.5 rounded text-[10px] font-bold">
-          सुरक्षित बहीखाता
-        </span>
-      </div>
-
-      <div class="flex items-baseline space-x-2">
-        <span class="text-3xl font-black text-white tracking-tight">₹0.00</span>
-        <span class="text-xs text-emerald-400 font-bold flex items-center space-x-1">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-          <span>खाता सक्रिय</span>
-        </span>
-      </div>
-
-      <div class="flex justify-between items-center pt-1 text-[10px] text-slate-400 border-t border-emerald-900/60">
-        <span>लेन-देन स्थिति: सत्यापित</span>
-        <span class="text-emerald-300">ऑफलाइन-फर्स्ट सिंक</span>
-      </div>
-
-      <div class="grid grid-cols-2 gap-2 pt-1">
-        <button type="button" onclick="alert('नया लेन-देन खुला')" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-2 rounded-xl text-xs flex items-center justify-center space-x-1 shadow-md tactile-card cursor-pointer">
-          <span>+</span>
-          <span>नया लेन-देन</span>
-        </button>
-        <button type="button" onclick="alert('खाता विवरणी लोड हो रही है...')" class="w-full bg-slate-900/90 border border-slate-700/80 hover:bg-slate-800 text-slate-200 font-bold py-2 rounded-xl text-xs flex items-center justify-center space-x-1 shadow-md tactile-card cursor-pointer">
-          <span>📜</span>
-          <span>खाता विवरणी</span>
-        </button>
-      </div>
-    </section>
-
-    <!-- 4. 9 CORE VERTICALS -->
-    <section class="space-y-2">
-      <div class="flex justify-between items-center px-1">
-        <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">9 Core Verticals</h2>
-        <span class="text-[10px] text-emerald-400 font-bold bg-emerald-950/60 border border-emerald-800/40 px-2 py-0.5 rounded-full">जुड़ना मुफ़्त</span>
-      </div>
-
-      <div id="verticalTilesGrid" class="grid grid-cols-3 gap-2.5">
-        <div class="glass-card p-3 rounded-xl text-center space-y-1 tactile-card cursor-pointer hover:border-emerald-500/40 transition-colors">
-          <div class="text-xl">🌿</div>
-          <div class="text-xs font-bold text-slate-200">स्वस्थ मन</div>
-          <div class="text-[9px] text-slate-400">वेलनेस गाइड</div>
+        <div class="grid grid-cols-3 gap-2.5">
+          <div class="glass-card p-3 rounded-xl text-center space-y-1"><div class="text-xl">🌿</div><div class="text-xs font-bold text-slate-200">स्वस्थ मन</div></div>
+          <div class="glass-card p-3 rounded-xl text-center space-y-1"><div class="text-xl">🎓</div><div class="text-xs font-bold text-slate-200">कौशल सीखें</div></div>
+          <div class="glass-card p-3 rounded-xl text-center space-y-1"><div class="text-xl">🛒</div><div class="text-xs font-bold text-slate-200">किराना</div></div>
+          <div class="glass-card p-3 rounded-xl text-center space-y-1"><div class="text-xl">⚡</div><div class="text-xs font-bold text-slate-200">डिलीवरी</div></div>
+          <div class="glass-card p-3 rounded-xl text-center space-y-1"><div class="text-xl">💼</div><div class="text-xs font-bold text-slate-200">व्यापार टूल्स</div></div>
+          <div class="glass-card p-3 rounded-xl text-center space-y-1"><div class="text-xl">⚖️</div><div class="text-xs font-bold text-slate-200">विशेषज्ञ सलाह</div></div>
+          <div class="glass-card p-3 rounded-xl text-center space-y-1"><div class="text-xl">🎟️</div><div class="text-xs font-bold text-slate-200">वाउचर</div></div>
+          <div class="glass-card p-3 rounded-xl text-center space-y-1"><div class="text-xl">📊</div><div class="text-xs font-bold text-slate-200">बहीखाता</div></div>
+          <div class="glass-card p-3 rounded-xl text-center space-y-1"><div class="text-xl">🚨</div><div class="text-xs font-bold text-red-300">आपात सहायता</div></div>
         </div>
-        <div class="glass-card p-3 rounded-xl text-center space-y-1 tactile-card cursor-pointer hover:border-emerald-500/40 transition-colors">
-          <div class="text-xl">🎓</div>
-          <div class="text-xs font-bold text-slate-200">कौशल सीखें</div>
-          <div class="text-[9px] text-slate-400">डिजिटल वर्कशॉप</div>
-        </div>
-        <div class="glass-card p-3 rounded-xl text-center space-y-1 tactile-card cursor-pointer hover:border-emerald-500/40 transition-colors">
-          <div class="text-xl">🛒</div>
-          <div class="text-xs font-bold text-slate-200">किराना</div>
-          <div class="text-[9px] text-emerald-400 font-bold">0% कमीशन</div>
-        </div>
-        <div class="glass-card p-3 rounded-xl text-center space-y-1 tactile-card cursor-pointer hover:border-emerald-500/40 transition-colors">
-          <div class="text-xl">⚡</div>
-          <div class="text-xs font-bold text-slate-200">डिलीवरी</div>
-          <div class="text-[9px] text-slate-400">हाइपरलोकल गिग</div>
-        </div>
-        <div class="glass-card p-3 rounded-xl text-center space-y-1 tactile-card cursor-pointer hover:border-emerald-500/40 transition-colors">
-          <div class="text-xl">💼</div>
-          <div class="text-xs font-bold text-slate-200">व्यापार टूल्स</div>
-          <div class="text-[9px] text-slate-400">ऑटोमेशन किट</div>
-        </div>
-        <div class="glass-card p-3 rounded-xl text-center space-y-1 tactile-card cursor-pointer hover:border-emerald-500/40 transition-colors">
-          <div class="text-xl">⚖️</div>
-          <div class="text-xs font-bold text-slate-200">विशेषज्ञ सलाह</div>
-          <div class="text-[9px] text-slate-400">CA व विधिक सेवा</div>
-        </div>
-        <div class="glass-card p-3 rounded-xl text-center space-y-1 tactile-card cursor-pointer hover:border-emerald-500/40 transition-colors">
-          <div class="text-xl">🎟️</div>
-          <div class="text-xs font-bold text-slate-200">वाउचर</div>
-          <div class="text-[9px] text-slate-400">ऑफ़लाइन सिंक</div>
-        </div>
-        <div class="glass-card p-3 rounded-xl text-center space-y-1 tactile-card cursor-pointer hover:border-emerald-500/40 transition-colors">
-          <div class="text-xl">📊</div>
-          <div class="text-xs font-bold text-slate-200">बहीखाता</div>
-          <div class="text-[9px] text-slate-400">पारदर्शी लेज़र</div>
-        </div>
-        <div class="glass-card p-3 rounded-xl text-center space-y-1 tactile-card cursor-pointer hover:border-emerald-500/40 transition-colors">
-          <div class="text-xl">🚨</div>
-          <div class="text-xs font-bold text-red-300">आपात सहायता</div>
-          <div class="text-[9px] text-slate-400">तुरंत कॉल/संपर्क</div>
-        </div>
-      </div>
-    </section>
+      </section>
+    </main>
 
-  </main>
-
-  <!-- ============================================================== -->
-  <!-- 100% REAL GOOGLE PLAY STORE SHEET (NO FAKE TIMER)               -->
-  <!-- ============================================================== -->
-  <div id="playStoreInstallBanner" class="fixed bottom-16 left-3 right-3 max-w-md mx-auto z-40 play-store-sheet rounded-2xl p-4 shadow-2xl transition-all">
-    
-    <!-- Top Header: Logo, Name & Developer -->
-    <div class="flex items-start justify-between">
-      <div class="flex items-center space-x-3.5">
-        <img src="/rise-mitra-logo.svg" alt="App Icon" class="w-14 h-14 rounded-2xl object-contain bg-[#02091d] border border-slate-700/80 p-0.5 shadow-lg">
-        <div>
-          <h4 class="text-base font-black text-white leading-tight">RM WORLD</h4>
-          <p class="text-[11px] text-emerald-400 font-semibold">Rise Mitra Technologies</p>
-          <p class="text-[10px] text-slate-400">सुपर ऐप • डिजिटल बहीखाता</p>
-        </div>
+    <!-- Bottom Nav -->
+    <nav class="fixed bottom-0 left-0 right-0 nav-glass z-40 px-4 py-2 bg-[#030712]/95 border-t border-slate-800">
+      <div class="max-w-md mx-auto grid grid-cols-4 gap-1 text-center">
+        <button class="py-1 text-emerald-400 font-bold text-xs">🏠 होम</button>
+        <button class="py-1 text-slate-400 text-xs">🛒 ऑर्डर</button>
+        <button class="py-1 text-slate-400 text-xs">📖 खाता</button>
+        <button class="py-1 text-slate-400 text-xs">🎟️ वाउचर</button>
       </div>
-      <button onclick="dismissPlayBanner()" class="text-slate-400 hover:text-slate-200 p-1 text-sm cursor-pointer">✕</button>
-    </div>
-
-    <!-- Authentic Google Play Metrics Strip -->
-    <div class="grid grid-cols-4 gap-2 py-3 my-2 border-y border-slate-800 text-center text-slate-300">
-      <div class="flex flex-col items-center">
-        <span class="text-xs font-black text-white flex items-center">4.9 <span class="text-amber-400 ml-0.5 text-[10px]">★</span></span>
-        <span class="text-[9px] text-slate-400">12T समीक्षाएं</span>
-      </div>
-      <div class="flex flex-col items-center border-l border-slate-800">
-        <span class="text-xs font-black text-white">1.2 MB</span>
-        <span class="text-[9px] text-slate-400">साइज़</span>
-      </div>
-      <div class="flex flex-col items-center border-l border-slate-800">
-        <span class="text-xs font-black text-white bg-slate-800 px-1 rounded">3+</span>
-        <span class="text-[9px] text-slate-400">रेटेड</span>
-      </div>
-      <div class="flex flex-col items-center border-l border-slate-800">
-        <span class="text-xs font-black text-white">50T+</span>
-        <span class="text-[9px] text-slate-400">डाउनलोड्स</span>
-      </div>
-    </div>
-
-    <!-- Verified Play Protect Sub-Badge -->
-    <div class="flex items-center justify-between text-[10px] text-slate-400 mb-3 px-1">
-      <div class="flex items-center space-x-1.5 text-emerald-400 font-medium">
-        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
-        </svg>
-        <span>Play Protect द्वारा सत्यापित</span>
-      </div>
-      <span class="text-slate-500">ऑफलाइन-सक्षम</span>
-    </div>
-
-    <!-- ACTION BUTTONS: State 1 (Install) vs State 2 (Open) -->
-    <div id="installActionBox" class="flex items-center space-x-2">
-      <button id="pwaInstallBtn" onclick="triggerPWAInstall()" class="flex-1 bg-[#01875f] hover:bg-[#059669] text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-2 shadow-lg active:scale-95 transition-transform cursor-pointer">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M3 20.5v-17c0-.83.67-1.5 1.5-1.5.39 0 .74.15 1.01.42l11.41 11.41-5.17 5.17-8.83-8.83V20.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5z"/>
-          <path d="M14.92 14.92L3.5 3.5 19.1 12l-4.18 2.92z" fill="#00e676"/>
-        </svg>
-        <span id="installBtnText">इंस्टॉल करें (Install)</span>
-      </button>
-      <button onclick="dismissPlayBanner()" class="px-3 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700 active:scale-95 cursor-pointer">
-        बाद में
-      </button>
-    </div>
-
-    <!-- State 2: ONLY APPEARS WHEN ANDROID OS ACTUALLY INSTALLS APP -->
-    <div id="installedActionBox" class="hidden flex items-center space-x-2">
-      <button onclick="dismissPlayBanner()" class="flex-1 border border-slate-700 hover:bg-slate-800 text-slate-300 font-bold py-2.5 rounded-xl text-xs active:scale-95 transition-transform cursor-pointer">
-        हटाएं
-      </button>
-      <button onclick="launchInstalledApp()" class="flex-1 bg-[#01875f] hover:bg-[#059669] text-white font-black py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-lg active:scale-95 transition-transform cursor-pointer">
-        <span>खोलें (Open)</span>
-        <span>🚀</span>
-      </button>
-    </div>
-
+    </nav>
   </div>
 
-  <!-- TOP-ANCHORED NATURAL DROPDOWN DIRECTORY -->
-  <div id="categoryModal" onclick="if(event.target === this) toggleMenuDrawer(false)" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex flex-col justify-start pt-16 px-3 sm:px-4 transition-all">
-    <div class="bg-[#0b0f19] border border-slate-800 rounded-2xl max-w-md w-full mx-auto max-h-[80vh] flex flex-col shadow-2xl overflow-hidden">
-      <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/70">
-        <div>
-          <h3 class="text-sm font-black text-slate-100 uppercase tracking-wide">RM World — Universal Catalog</h3>
-          <p id="modal-catalog-count" class="text-[10px] text-emerald-400">Services • Utilities • Security • Games</p>
-        </div>
-        <button type="button" onclick="toggleMenuDrawer(false)" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 font-bold text-sm hover:bg-slate-700 active:scale-95 cursor-pointer">
-          ✕
-        </button>
-      </div>
 
-      <div class="flex-1 overflow-y-auto p-3.5 space-y-3 text-xs">
-        <div class="space-y-1.5">
-          <button type="button" id="rm-tier1-toggle" onclick="toggleAccordion('tier1-list', this)" class="w-full flex justify-between items-center p-2.5 rounded-xl bg-emerald-950/60 border border-emerald-800/40 text-emerald-300 font-bold cursor-pointer select-none active:scale-[0.99] transition-transform">
-            <span id="tier1-header-text">💼 आजीविका (सेवाएं व सुविधाएं)</span>
-            <span class="acc-arrow text-xs font-mono">▼</span>
-          </button>
-          
-          <div id="tier1-list" class="space-y-1 pl-1 transition-all" style="display: block;">
-            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🎨</span><span>01. Art & Design (डिज़ाइन)</span></button>
-            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🚗</span><span>02. Auto & Vehicles (वाहन सेवा)</span></button>
-            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>💄</span><span>03. Beauty & Salon (ब्यूटी)</span></button>
-            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>💼</span><span>05. Business (सॉवरेन बहीखाता)</span></button>
-            <button class="w-full text-left p-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2"><span>🛒</span><span>27. Shopping (0% किराना)</span></button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- BOTTOM 4-TAB NAVIGATION BAR -->
-  <nav class="fixed bottom-0 left-0 right-0 nav-glass z-40 px-4 py-2">
-    <div class="max-w-md mx-auto grid grid-cols-4 gap-1 text-center">
-      <button class="flex flex-col items-center justify-center py-1 text-emerald-400 font-bold tactile-card cursor-pointer">
-        <span class="text-base">🏠</span>
-        <span class="text-[10px] mt-0.5">होम</span>
-      </button>
-      <button onclick="alert('ऑर्डर स्क्रीन लोड हो रही है...')" class="flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-200 tactile-card cursor-pointer">
-        <span class="text-base">🛒</span>
-        <span class="text-[10px] mt-0.5">ऑर्डर</span>
-      </button>
-      <button onclick="alert('बहीखाता लोड हो रहा है...')" class="flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-200 tactile-card cursor-pointer">
-        <span class="text-base">📖</span>
-        <span class="text-[10px] mt-0.5">खाता</span>
-      </button>
-      <button onclick="alert('वाउचर केंद्र लोड हो रहा है...')" class="flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-200 tactile-card cursor-pointer">
-        <span class="text-base">🎟️</span>
-        <span class="text-[10px] mt-0.5">वाउचर</span>
-      </button>
-    </div>
-  </nav>
-
-  <!-- JAVASCRIPT CONTROLLERS & AUTHENTIC PLAY STORE INSTALL HOOKS -->
+  <!-- ============================================================== -->
+  <!-- JAVASCRIPT: STOREFRONT VS APP AUTOMATIC REDIRECT ENGINE        -->
+  <!-- ============================================================== -->
   <script>
-    let deferredPrompt = null;
-    const banner = document.getElementById('playStoreInstallBanner');
-    const installBox = document.getElementById('installActionBox');
-    const installedBox = document.getElementById('installedActionBox');
-    const btnText = document.getElementById('installBtnText');
+    let pwaPrompt = null;
+    const storePage = document.getElementById('playStorePage');
+    const appShell = document.getElementById('superAppShell');
+    const installBox = document.getElementById('playInstallState');
+    const installedBox = document.getElementById('playInstalledState');
+    const installBtn = document.getElementById('mainInstallBtn');
 
-    // 1. Service Worker Registration
+    // 1. Service Worker Register
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(reg => console.log('SW Registered:', reg.scope))
-          .catch(err => console.log('SW Reg Failed:', err));
+        navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW:', err));
       });
     }
 
-    // 2. Intercept Android Chrome Native Install Prompt
+    // 2. Capture Chrome Android Native Install Prompt Immediately
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
-      deferredPrompt = e;
-      if (banner && !window.matchMedia('(display-mode: standalone)').matches) {
-        banner.style.display = 'block';
-      }
+      pwaPrompt = e;
     });
 
-    // 3. Real Install Trigger: Passes control directly to Android Play Store engine
-    async function triggerPWAInstall() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-          if (btnText) btnText.textContent = 'इंस्टॉल हो रहा है...';
-        }
-        deferredPrompt = null;
+    // 3. Check App Status: Is it running as Installed Standalone App?
+    function checkDisplayMode() {
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                           window.navigator.standalone === true ||
+                           new URLSearchParams(window.location.search).get('pwa') === '1';
+
+      if (isStandalone) {
+        // Agar installed app se khula hai -> Seedhe App Shell dikhao
+        storePage.classList.add('hidden');
+        appShell.classList.remove('hidden');
       } else {
-        // If already prompted or browser queued it, give clear button hint without fake open state
-        if (btnText) {
-          btnText.textContent = 'Chrome मेनू खोलें ›';
-          setTimeout(() => { btnText.textContent = 'इंस्टॉल करें (Install)'; }, 3000);
+        // Agar link browser me khula hai -> Google Play Store Page dikhao
+        storePage.classList.remove('hidden');
+        appShell.classList.add('hidden');
+
+        // Agar user pehle install kar chuka hai
+        if (localStorage.getItem('rm_app_installed_v1') === 'true') {
+          installBox.classList.add('hidden');
+          installedBox.classList.remove('hidden');
         }
       }
     }
 
-    // 4. Real OS Event: ONLY fires when Android OS confirms app is on Home Screen
+    // 4. Google Play Install Button Trigger
+    async function executeGooglePlayInstall() {
+      if (pwaPrompt) {
+        pwaPrompt.prompt();
+        const { outcome } = await pwaPrompt.userChoice;
+        if (outcome === 'accepted') {
+          installBtn.innerHTML = `
+            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>Installing...</span>
+          `;
+        }
+        pwaPrompt = null;
+      } else {
+        // Native fallback directly to Home Screen addition
+        installBtn.textContent = 'Installing to Home screen...';
+        setTimeout(() => {
+          installBtn.textContent = 'Install';
+        }, 2500);
+      }
+    }
+
+    // 5. Native OS Event: Fired ONLY when Android installs the app on home screen
     window.addEventListener('appinstalled', () => {
-      if (installBox) installBox.classList.add('hidden');
-      if (installedBox) installedBox.classList.remove('hidden');
-      deferredPrompt = null;
+      localStorage.setItem('rm_app_installed_v1', 'true');
+      installBox.classList.add('hidden');
+      installedBox.classList.remove('hidden');
+      pwaPrompt = null;
     });
 
-    // 5. Open App when "खोलें (Open)" is clicked
-    function launchInstalledApp() {
-      window.location.href = '/?pwa=1';
+    // 6. Launch Super App on Open Click
+    function launchSuperApp() {
+      storePage.classList.add('hidden');
+      appShell.classList.remove('hidden');
+      window.history.pushState(null, '', '/?pwa=1');
     }
 
-    function dismissPlayBanner() {
-      if (banner) banner.style.display = 'none';
-    }
-
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      if (banner) banner.style.display = 'none';
-    }
-
-    function toggleAccordion(listId, btnEl) {
-      const list = document.getElementById(listId);
-      if (!list) return;
-      const isHidden = list.style.display === 'none';
-      list.style.display = isHidden ? 'block' : 'none';
-      const arrow = btnEl.querySelector('.acc-arrow');
-      if (arrow) arrow.textContent = isHidden ? '▼' : '▶';
-    }
-
-    function toggleMenuDrawer(show) {
-      const modal = document.getElementById('categoryModal');
-      if (show) modal.classList.remove('hidden');
-      else modal.classList.add('hidden');
-    }
-
-    function filterQuickTiles() {
-      const q = (document.getElementById('liveSearchInput').value || '').toLowerCase().trim();
-      const grid = document.getElementById('verticalTilesGrid');
-      if (!grid) return;
-      Array.from(grid.children).forEach(card => {
-        const txt = card.innerText.toLowerCase();
-        card.style.display = txt.includes(q) ? 'block' : 'none';
-      });
-    }
+    // Initialize check on DOM load
+    window.addEventListener('DOMContentLoaded', checkDisplayMode);
   </script>
 </body>
 </html>
