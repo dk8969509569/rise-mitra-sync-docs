@@ -55,110 +55,104 @@
     </filter>
   </defs>
 
-  <!-- Opaque navy background -->
+  <!-- Full Bleed Navy Background (Canvas mask fill) -->
   <rect width="1024" height="1024" fill="#02091d"/>
 
-  <!-- Badge outer bounds: x=180 to x=844 -->
-  <rect x="180" y="116" width="664" height="664" rx="145"
-        fill="#092665"/>
+  <!-- Centered Safe Zone Wrapper (Scale 0.74 guarantees 0% edge clipping on any Android launcher) -->
+  <g transform="translate(512 512) scale(0.74) translate(-512 -515)">
 
-  <!-- White perimeter -->
-  <rect x="188" y="124" width="648" height="648" rx="137"
-        fill="#ffffff"/>
+    <!-- Badge outer bounds: x=180 to x=844 -->
+    <rect x="180" y="116" width="664" height="664" rx="145" fill="#092665"/>
 
-  <!-- Navy inset -->
-  <rect x="204" y="140" width="616" height="616" rx="122"
-        fill="#052052"/>
+    <!-- White perimeter -->
+    <rect x="188" y="124" width="648" height="648" rx="137" fill="#ffffff"/>
 
-  <!-- Blue face and surface light -->
-  <rect x="208" y="144" width="608" height="608" rx="118"
-        fill="url(#blue)"/>
-  <rect x="208" y="144" width="608" height="608" rx="118"
-        fill="url(#light)"/>
+    <!-- Navy inset -->
+    <rect x="204" y="140" width="616" height="616" rx="122" fill="#052052"/>
 
-  <!-- Controlled cyan inner edge -->
-  <rect x="210" y="146" width="604" height="604" rx="116"
-        fill="none" stroke="url(#cyanEdge)" stroke-width="4"/>
+    <!-- Blue face and surface light -->
+    <rect x="208" y="144" width="608" height="608" rx="118" fill="url(#blue)"/>
+    <rect x="208" y="144" width="608" height="608" rx="118" fill="url(#light)"/>
 
-  <!-- RM monogram -->
-  <g transform="translate(305 332) skewX(-14)"
-     fill="url(#silver)"
-     stroke="url(#letterEdge)"
-     stroke-width="2"
-     stroke-linejoin="round"
-     filter="url(#shadow)">
+    <!-- Controlled cyan inner edge -->
+    <rect x="210" y="146" width="604" height="604" rx="116" fill="none" stroke="url(#cyanEdge)" stroke-width="4"/>
 
-    <!-- R -->
-    <path d="
-      M 0 0 H 158
-      C 199 0 218 19 218 53
-      C 218 94 194 119 151 125
-      L 224 240 H 153
-      L 80 140 H 62 V 240 H 0
-      V 70 H 62 V 104 H 143
-      C 161 104 172 94 172 77
-      C 172 61 163 53 146 53
-      H 0 Z"/>
+    <!-- RM monogram -->
+    <g transform="translate(305 332) skewX(-14)"
+       fill="url(#silver)"
+       stroke="url(#letterEdge)"
+       stroke-width="2"
+       stroke-linejoin="round"
+       filter="url(#shadow)">
 
-    <!-- M -->
-    <path d="
-      M 238 240 V 0 H 280
-      L 354 108 L 428 0 H 482
-      V 240 H 423 V 110
-      L 355 204 L 297 111
-      V 240 Z"/>
-  </g>
+      <!-- R -->
+      <path d="
+        M 0 0 H 158
+        C 199 0 218 19 218 53
+        C 218 94 194 119 151 125
+        L 224 240 H 153
+        L 80 140 H 62 V 240 H 0
+        V 70 H 62 V 104 H 143
+        C 161 104 172 94 172 77
+        C 172 61 163 53 146 53
+        H 0 Z"/>
 
-  <!--
-    WORLD: font-independent vector lettering.
-    Local width 664; global bounds x=180 to x=844.
-    Top y=815; bottom y=915.
-  -->
-  <g transform="translate(180 815)" fill="#ffffff">
+      <!-- M -->
+      <path d="
+        M 238 240 V 0 H 280
+        L 354 108 L 428 0 H 482
+        V 240 H 423 V 110
+        L 355 204 L 297 111
+        V 240 Z"/>
+    </g>
 
-    <!-- W: x=0 to x=150 -->
-    <path d="
-      M 0 0 H 30 L 45 63
-      L 61 0 H 89 L 105 63
-      L 120 0 H 150 L 124 100
-      H 91 L 75 45 L 59 100
-      H 26 Z"/>
+    <!-- WORLD: font-independent vector lettering aligned with badge -->
+    <g transform="translate(180 815)" fill="#ffffff">
+      <!-- W -->
+      <path d="
+        M 0 0 H 30 L 45 63
+        L 61 0 H 89 L 105 63
+        L 120 0 H 150 L 124 100
+        H 91 L 75 45 L 59 100
+        H 26 Z"/>
 
-    <!-- O: x=167 to x=277 -->
-    <path fill-rule="evenodd" d="
-      M 222 0
-      C 185 0 167 17 167 50
-      C 167 83 185 100 222 100
-      C 259 100 277 83 277 50
-      C 277 17 259 0 222 0 Z
-      M 222 25
-      C 206 25 198 33 198 50
-      C 198 67 206 75 222 75
-      C 238 75 246 67 246 50
-      C 246 33 238 25 222 25 Z"/>
+      <!-- O -->
+      <path fill-rule="evenodd" d="
+        M 222 0
+        C 185 0 167 17 167 50
+        C 167 83 185 100 222 100
+        C 259 100 277 83 277 50
+        C 277 17 259 0 222 0 Z
+        M 222 25
+        C 206 25 198 33 198 50
+        C 198 67 206 75 222 75
+        C 238 75 246 67 246 50
+        C 246 33 238 25 222 25 Z"/>
 
-    <!-- R: x=294 to x=411 -->
-    <path fill-rule="evenodd" d="
-      M 294 0 H 360
-      C 391 0 405 12 405 34
-      C 405 50 397 60 381 65
-      L 411 100 H 373 L 348 69
-      H 325 V 100 H 294 Z
-      M 325 24 V 46 H 357
-      C 368 46 374 43 374 35
-      C 374 27 368 24 357 24 Z"/>
+      <!-- R -->
+      <path fill-rule="evenodd" d="
+        M 294 0 H 360
+        C 391 0 405 12 405 34
+        C 405 50 397 60 381 65
+        L 411 100 H 373 L 348 69
+        H 325 V 100 H 294 Z
+        M 325 24 V 46 H 357
+        C 368 46 374 43 374 35
+        C 374 27 368 24 357 24 Z"/>
 
-    <!-- L: x=428 to x=523 -->
-    <path d="M 428 0 H 460 V 74 H 523 V 100 H 428 Z"/>
+      <!-- L -->
+      <path d="M 428 0 H 460 V 74 H 523 V 100 H 428 Z"/>
 
-    <!-- D: x=540 to x=664 -->
-    <path fill-rule="evenodd" d="
-      M 540 0 H 599
-      C 642 0 664 17 664 50
-      C 664 83 642 100 599 100
-      H 540 Z
-      M 572 25 V 75 H 597
-      C 620 75 631 67 631 50
-      C 631 33 620 25 597 25 Z"/>
+      <!-- D -->
+      <path fill-rule="evenodd" d="
+        M 540 0 H 599
+        C 642 0 664 17 664 50
+        C 664 83 642 100 599 100
+        H 540 Z
+        M 572 25 V 75 H 597
+        C 620 75 631 67 631 50
+        C 631 33 620 25 597 25 Z"/>
+    </g>
+
   </g>
 </svg>
