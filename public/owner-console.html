@@ -40,14 +40,21 @@
       0%, 100% { opacity: 0.8; transform: scale(1); }
       50% { opacity: 0.3; transform: scale(1.08); }
     }
+    #categoryDrawer {
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .switch-checkbox:checked + .switch-label {
+      background-color: #10b981;
+    }
+    .switch-checkbox:checked + .switch-label .switch-dot {
+      transform: translateX(18px);
+    }
   </style>
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen p-4">
 
-  <!-- 1. MANDATORY SOVEREIGN AUTH GATE (HAR BAAR PEHLE LOCK SCREEN) -->
+  <!-- 1. MANDATORY SOVEREIGN AUTH GATE (ZERO BYPASS LOCK) -->
   <div id="authGate" class="max-w-md w-full glass-panel p-6 rounded-3xl text-center shadow-2xl relative z-50">
-    
-    <!-- Biometric Fingerprint Button -->
     <div class="relative w-20 h-20 mx-auto mb-4 cursor-pointer" onclick="triggerBiometricAuth()">
       <div class="absolute inset-0 rounded-full bg-amber-500/20 pulse-ring"></div>
       <div class="w-20 h-20 rounded-full bg-amber-950/80 border-2 border-amber-500/60 flex items-center justify-center text-4xl shadow-lg relative z-10 active:scale-95 transition-transform">
@@ -59,22 +66,17 @@
     <p id="authStatusText" class="text-xs text-slate-300 mt-1 font-sans">कंसोल लॉक है • फ़िंगरप्रिंट या पिन से अनलॉक करें</p>
 
     <div class="mt-5 space-y-3">
-      
-      <!-- Native Biometric Button -->
       <button type="button" onclick="triggerBiometricAuth()" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-95 shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-2 cursor-pointer">
         <span>🔐 Fingerprint / Screen Lock</span>
       </button>
 
-      <!-- WebOTP Auto-Fill Box -->
       <div class="relative">
         <input type="text" id="otpInput" autocomplete="one-time-code" inputmode="numeric" maxlength="6" placeholder="SMS / Bot Auto-OTP" class="w-full bg-slate-950 text-center text-sm font-bold text-cyan-300 placeholder-slate-600 border border-cyan-500/30 rounded-xl px-4 py-2.5 focus:outline-none focus:border-cyan-400 tracking-widest">
         <span id="otpBadge" class="absolute right-3 top-2.5 text-[10px] text-cyan-400 font-bold hidden">AUTO-FILL</span>
       </div>
 
-      <!-- Sovereign PIN Box (Zero Remember-Me Checkbox) -->
       <div class="border-t border-slate-800/80 pt-3 space-y-2">
         <input type="password" id="consolePin" maxlength="12" placeholder="Enter Sovereign PIN" class="w-full bg-slate-950 text-center text-sm font-bold text-amber-300 placeholder-slate-600 border border-slate-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-amber-400">
-
         <button type="button" onclick="verifyPinFallback()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-95 border border-slate-700 cursor-pointer">
           Unlock via PIN
         </button>
@@ -83,23 +85,31 @@
       <a href="/" class="block w-full text-slate-500 hover:text-slate-300 text-[11px] pt-1 no-underline font-sans">
         ← वापस सुपर ऐप पर जाएँ
       </a>
-
       <p id="authError" style="display:none;" class="text-[11px] text-red-400 font-bold mt-2 font-sans">⚠️ अमान्य क्रेडेंशियल! फ़ेल-क्लोज़्ड सुरक्षा सक्रिय।</p>
     </div>
   </div>
 
-  <!-- 2. SOVEREIGN OWNER CONSOLE (AUTH PASS HONE KE BAAD HI DISPLAY HOGA) -->
-  <main id="consolePanel" style="display:none;" class="max-w-2xl w-full space-y-4 pb-12 relative z-50">
+  <!-- 2. SOVEREIGN OWNER CONSOLE (ACTIVE COCKPIT) -->
+  <main id="consolePanel" style="display:none;" class="max-w-2xl w-full space-y-4 pb-12 relative z-10">
 
+    <!-- Header with ☰ Drawer Toggle -->
     <header class="glass-panel p-4 rounded-2xl flex items-center justify-between border-amber-500/30">
-      <div>
-        <div class="flex items-center space-x-2">
-          <span class="text-base">🛡️</span>
-          <h2 class="text-xs font-black uppercase tracking-wider text-amber-400 leading-none">Rise Mitra Sovereign Console</h2>
+      <div class="flex items-center space-x-3">
+        <button type="button" onclick="toggleDrawer(true)" class="bg-amber-950/80 hover:bg-amber-900 border border-amber-500/50 text-amber-400 p-2 rounded-xl text-sm font-black active:scale-95 transition-transform flex items-center space-x-1 cursor-pointer shadow-md">
+          <span>☰</span>
+          <span class="text-[10px] hidden sm:inline">कैटलॉग कंट्रोल</span>
+        </button>
+
+        <div>
+          <div class="flex items-center space-x-1.5">
+            <span class="text-sm">🛡️</span>
+            <h2 class="text-xs font-black uppercase tracking-wider text-amber-400 leading-none">Rise Mitra Sovereign Console</h2>
+          </div>
+          <p class="text-[9px] text-slate-400 mt-1">Surface-B • Category Launch Switchboard</p>
         </div>
-        <p class="text-[10px] text-slate-400 mt-1">Surface-B • Biometric-Verified Sovereign Authority</p>
       </div>
-      <span class="text-[10px] font-black bg-amber-950 text-amber-300 px-2.5 py-1 rounded-full border border-amber-700/60">
+
+      <span class="text-[9px] font-black bg-amber-950 text-amber-300 px-2 py-1 rounded-full border border-amber-700/60">
         ROOT-SOVEREIGN
       </span>
     </header>
@@ -122,6 +132,20 @@
         <span class="text-[9px] text-cyan-500/80 font-bold">100% Zero-Loss</span>
       </div>
     </section>
+
+    <!-- 50-Category Staged Launch Status Bar -->
+    <div class="glass-panel p-3 rounded-xl flex items-center justify-between border-cyan-500/30">
+      <div class="flex items-center space-x-2">
+        <span class="text-base">🚀</span>
+        <div>
+          <h3 class="text-xs font-bold text-cyan-300">50-Category Staged Launch State</h3>
+          <p class="text-[10px] text-slate-400">33 सेवाएँ व सुविधाएँ + 17 खेल</p>
+        </div>
+      </div>
+      <button type="button" onclick="toggleDrawer(true)" class="bg-cyan-950 text-cyan-300 border border-cyan-700/60 px-3 py-1.5 rounded-lg text-xs font-bold active:scale-95 cursor-pointer">
+        <span id="activeCountBadge">3 / 50 LIVE</span> ➔
+      </button>
+    </div>
 
     <!-- Kill-Switch Matrix -->
     <section class="glass-panel p-4 rounded-2xl border-red-500/30 space-y-3">
@@ -174,11 +198,117 @@
 
   </main>
 
+  <!-- 3. SLIDING LEFT SIDEBAR DRAWER (50 CATEGORIES LAUNCH SWITCHBOARD) -->
+  <div id="drawerOverlay" onclick="toggleDrawer(false)" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 hidden transition-opacity"></div>
+
+  <aside id="categoryDrawer" class="fixed top-0 left-0 bottom-0 w-80 max-w-[85vw] bg-[#030712] border-r border-amber-500/30 z-50 flex flex-col transform -translate-x-full shadow-2xl">
+    
+    <!-- Drawer Header -->
+    <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/60">
+      <div>
+        <h3 class="text-xs font-black text-amber-400 uppercase tracking-wider flex items-center space-x-1.5">
+          <span>🎛️</span>
+          <span>50 Categories (कैटलॉग)</span>
+        </h3>
+        <p class="text-[9px] text-slate-400 mt-0.5">33 सेवाएँ व सुविधाएँ + 17 खेल</p>
+      </div>
+      <button type="button" onclick="toggleDrawer(false)" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center font-bold text-sm hover:bg-slate-700 active:scale-95 cursor-pointer">
+        ✕
+      </button>
+    </div>
+
+    <!-- Quick Action Controls -->
+    <div class="p-3 border-b border-slate-800/80 bg-slate-950/80 space-y-2">
+      <div class="grid grid-cols-2 gap-2">
+        <button type="button" onclick="setAllCategories(true)" class="bg-emerald-950 border border-emerald-700/60 hover:bg-emerald-900 text-emerald-300 text-[10px] font-bold py-1.5 rounded-lg active:scale-95 cursor-pointer">
+          ✅ Select All (50)
+        </button>
+        <button type="button" onclick="setAllCategories(false)" class="bg-red-950 border border-red-700/60 hover:bg-red-900 text-red-300 text-[10px] font-bold py-1.5 rounded-lg active:scale-95 cursor-pointer">
+          ❌ Deselect All (0)
+        </button>
+      </div>
+      
+      <input type="text" id="categoryFilterInput" oninput="filterCategoriesList()" placeholder="श्रेणी खोजें (Search)..." class="w-full bg-slate-900 text-xs text-slate-200 placeholder-slate-500 border border-slate-800 rounded-lg px-3 py-1.5 focus:outline-none focus:border-amber-400">
+    </div>
+
+    <!-- Scrollable Categories Toggle List -->
+    <div id="categoryItemsContainer" class="flex-1 overflow-y-auto p-3 space-y-1.5 divide-y divide-slate-800/40 text-xs">
+      <!-- Dynamically Rendered by JS -->
+    </div>
+
+    <!-- Drawer Footer -->
+    <div class="p-3 border-t border-slate-800 bg-slate-900/60">
+      <button type="button" onclick="saveAndPublishCategories()" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 text-slate-950 font-black py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-95 shadow-md shadow-amber-500/20 cursor-pointer">
+        💾 Save & Publish to Surface-A
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- 4. CONTROLLERS & TAXONOMY SCRIPT (33 SERVICES & UTILITIES + 17 GAMES) -->
   <script>
     const SOV_HASH = "202609";
     const SOV_OTP_MOCK = "789012";
 
-    // ZERO AUTO-BYPASS: Purana localStorage session saaf karein aur hamesha Lock Gate dikhayein
+    // 100% CANONICAL TAXONOMY: 33 SERVICES & UTILITIES + 17 GAMES
+    const MASTER_CATEGORIES = [
+      // 33 SERVICES & UTILITIES (TIER 1)
+      { id: "c01", no: "01", name: "Art & Design (डिज़ाइन व प्रिंट)", icon: "🎨", type: "Service" },
+      { id: "c02", no: "02", name: "Auto & Vehicles (वाहन सेवा)", icon: "🚗", type: "Service" },
+      { id: "c03", no: "03", name: "Beauty & Salon (ब्यूटी व केयर)", icon: "💄", type: "Service" },
+      { id: "c04", no: "04", name: "Books & Reference (किताबें)", icon: "📚", type: "Service" },
+      { id: "c05", no: "05", name: "Business (सॉवरेन बहीखाता)", icon: "💼", type: "Service", default: true },
+      { id: "c06", no: "06", name: "Comics & Stories (कहानियाँ)", icon: "🎭", type: "Service" },
+      { id: "c07", no: "07", name: "Communication (संपर्क)", icon: "💬", type: "Service" },
+      { id: "c08", no: "08", name: "Dating & Relations (रिश्ते)", icon: "❤️", type: "Service" },
+      { id: "c09", no: "09", name: "Education (हुनर सीखें)", icon: "🎓", type: "Service" },
+      { id: "c10", no: "10", name: "Entertainment (मनोरंजन)", icon: "🎬", type: "Service" },
+      { id: "c11", no: "11", name: "Events & Pass (कार्यक्रम)", icon: "🎟️", type: "Service" },
+      { id: "c12", no: "12", name: "Family & Care (परिवार)", icon: "👨‍👩‍👧", type: "Service" },
+      { id: "c13", no: "13", name: "Finance (RM CASH लेज़र)", icon: "💰", type: "Service", default: true },
+      { id: "c14", no: "14", name: "Food & Drink (ढाबा व भोजन)", icon: "🍲", type: "Service" },
+      { id: "c15", no: "15", name: "Health & Fitness (स्वस्थ मन)", icon: "🌿", type: "Service" },
+      { id: "c16", no: "16", name: "House & Home (आवास व मिस्त्री)", icon: "🏠", type: "Service" },
+      { id: "c17", no: "17", name: "Libraries & Demo (पुस्तकालय)", icon: "📦", type: "Service" },
+      { id: "c18", no: "18", name: "Lifestyle (जीवनशैली)", icon: "🧘", type: "Service" },
+      { id: "c19", no: "19", name: "Maps & Navigation (मार्गदर्शन)", icon: "🗺️", type: "Service" },
+      { id: "c20", no: "20", name: "Medical (दवाई व वेलनेस)", icon: "💊", type: "Service" },
+      { id: "c21", no: "21", name: "Music & Audio (संगीत)", icon: "🎵", type: "Service" },
+      { id: "c22", no: "22", name: "News & Magazines (समाचार)", icon: "📰", type: "Service" },
+      { id: "c23", no: "23", name: "Parenting (शिशु व मातृत्व)", icon: "🍼", type: "Service" },
+      { id: "c24", no: "24", name: "Personalization (थीम्स)", icon: "✨", type: "Service" },
+      { id: "c25", no: "25", name: "Photography (स्टूडियो)", icon: "📸", type: "Service" },
+      { id: "c26", no: "26", name: "Productivity (रनर डिलीवरी)", icon: "⚡", type: "Service" },
+      { id: "c27", no: "27", name: "Shopping (0% किराना स्टोर)", icon: "🛒", type: "Service", default: true },
+      { id: "c28", no: "28", name: "Social (चौपाल व नेटवर्क)", icon: "🌐", type: "Service" },
+      { id: "c29", no: "29", name: "Sports Community (खेलकूद)", icon: "🏏", type: "Service" },
+      { id: "c30", no: "30", name: "Tools (कैलकुलेटर व SaaS)", icon: "🛠️", type: "Service" },
+      { id: "c31", no: "31", name: "Travel & Local (यात्रा व पर्यटन)", icon: "✈️", type: "Service" },
+      { id: "c32", no: "32", name: "Video Editors (वीडियो संपादन)", icon: "🎞️", type: "Service" },
+      { id: "c33", no: "33", name: "Weather (मौसम व कृषि)", icon: "☀️", type: "Service" },
+
+      // 17 GAMES (TIER 2)
+      { id: "g34", no: "34", name: "Action (ऐक्शन)", icon: "🏹", type: "Game" },
+      { id: "g35", no: "35", name: "Adventure (साहसिक)", icon: "🧭", type: "Game" },
+      { id: "g36", no: "36", name: "Arcade (आर्केड)", icon: "🕹️", type: "Game" },
+      { id: "g37", no: "37", name: "Board (लूडो / कैरम)", icon: "🎲", type: "Game" },
+      { id: "g38", no: "38", name: "Card (पत्ते)", icon: "🃏", type: "Game" },
+      { id: "g39", no: "39", name: "Casino Points (स्पिन व्हील)", icon: "🎡", type: "Game" },
+      { id: "g40", no: "40", name: "Casual (कैज़ुअल)", icon: "🎈", type: "Game" },
+      { id: "g41", no: "41", name: "Educational (ज्ञानवर्धक)", icon: "🧠", type: "Game" },
+      { id: "g42", no: "42", name: "Music (लय व धुन)", icon: "🥁", type: "Game" },
+      { id: "g43", no: "43", name: "Puzzle (पहेली)", icon: "🧩", type: "Game" },
+      { id: "g44", no: "44", name: "Racing (दौड़)", icon: "🏎️", type: "Game" },
+      { id: "g45", no: "45", name: "Role Playing (रोल-प्लेइंग)", icon: "👑", type: "Game" },
+      { id: "g46", no: "46", name: "Simulation (सिमुलेशन)", icon: "🚜", type: "Game" },
+      { id: "g47", no: "47", name: "Sports (क्रिकेट / कबड्डी)", icon: "🏏", type: "Game" },
+      { id: "g48", no: "48", name: "Strategy (शतरंज / रणनीति)", icon: "♟️", type: "Game" },
+      { id: "g49", no: "49", name: "Trivia (क्विज़ व सामान्य ज्ञान)", icon: "❓", type: "Game" },
+      { id: "g50", no: "50", name: "Word (शब्द रचना)", icon: "🔤", type: "Game" }
+    ];
+
+    let activeCategoryIds = new Set();
+
     window.addEventListener('DOMContentLoaded', () => {
       try {
         localStorage.removeItem('rm_owner_authenticated');
@@ -188,21 +318,122 @@
       document.getElementById("authGate").style.display = "block";
       document.getElementById("consolePanel").style.display = "none";
       
+      loadCategoriesState();
       initWebOTP();
     });
 
-    // Biometric Fingerprint / Screen Lock Trigger
+    function loadCategoriesState() {
+      const saved = localStorage.getItem('rm_active_categories_v1');
+      if (saved) {
+        try {
+          activeCategoryIds = new Set(JSON.parse(saved));
+        } catch (_) {
+          initDefaultCategories();
+        }
+      } else {
+        initDefaultCategories();
+      }
+      renderCategoryList();
+      updateBadge();
+    }
+
+    function initDefaultCategories() {
+      activeCategoryIds = new Set(
+        MASTER_CATEGORIES.filter(c => c.default).map(c => c.id)
+      );
+    }
+
+    function renderCategoryList(filterText = '') {
+      const container = document.getElementById("categoryItemsContainer");
+      if (!container) return;
+
+      const filtered = MASTER_CATEGORIES.filter(c => 
+        c.name.toLowerCase().includes(filterText.toLowerCase()) || 
+        c.no.includes(filterText)
+      );
+
+      container.innerHTML = filtered.map(c => {
+        const isChecked = activeCategoryIds.has(c.id);
+        const isGame = c.type === 'Game';
+        return `
+          <div class="flex items-center justify-between py-2 px-1">
+            <div class="flex items-center space-x-2">
+              <span class="text-sm">${c.icon}</span>
+              <div>
+                <div class="font-bold text-slate-200 text-xs flex items-center space-x-1.5">
+                  <span class="text-amber-500 font-mono text-[10px]">${c.no}.</span>
+                  <span>${c.name}</span>
+                </div>
+                <span class="text-[9px] ${isGame ? 'text-pink-400 font-bold' : 'text-cyan-400'} font-sans">
+                  ${isGame ? '🎮 खेल (Game)' : '💼 सेवा व सुविधा (Service & Utility)'}
+                </span>
+              </div>
+            </div>
+            
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCategory('${c.id}', this.checked)" class="sr-only switch-checkbox">
+              <div class="w-10 h-5 bg-slate-800 border border-slate-700 rounded-full switch-label transition-colors">
+                <div class="w-4 h-4 bg-white rounded-full switch-dot transform transition-transform mt-0.5 ml-0.5"></div>
+              </div>
+            </label>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleCategory(catId, isActive) {
+      if (isActive) activeCategoryIds.add(catId);
+      else activeCategoryIds.delete(catId);
+      updateBadge();
+    }
+
+    function setAllCategories(state) {
+      if (state) activeCategoryIds = new Set(MASTER_CATEGORIES.map(c => c.id));
+      else activeCategoryIds.clear();
+      renderCategoryList(document.getElementById("categoryFilterInput").value);
+      updateBadge();
+    }
+
+    function filterCategoriesList() {
+      const q = document.getElementById("categoryFilterInput").value;
+      renderCategoryList(q);
+    }
+
+    function updateBadge() {
+      const badge = document.getElementById("activeCountBadge");
+      if (badge) {
+        badge.textContent = `${activeCategoryIds.size} / 50 LIVE`;
+      }
+    }
+
+    function saveAndPublishCategories() {
+      const arr = Array.from(activeCategoryIds);
+      localStorage.setItem('rm_active_categories_v1', JSON.stringify(arr));
+      alert(`सफलतापूर्वक सुरक्षित! ${arr.length} श्रेणियां Surface-A पर लाइव कर दी गई हैं।`);
+      toggleDrawer(false);
+    }
+
+    function toggleDrawer(isOpen) {
+      const drawer = document.getElementById("categoryDrawer");
+      const overlay = document.getElementById("drawerOverlay");
+      if (isOpen) {
+        drawer.classList.remove("-translate-x-full");
+        overlay.classList.remove("hidden");
+      } else {
+        drawer.classList.add("-translate-x-full");
+        overlay.classList.add("hidden");
+      }
+    }
+
     async function triggerBiometricAuth() {
       const statusText = document.getElementById("authStatusText");
       if (window.PublicKeyCredential) {
         try {
           statusText.textContent = "फ़िंगरप्रिंट सेंसर पर उंगली रखें...";
-          
           const isAvailable = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
           if (isAvailable) {
             const challenge = new Uint8Array(32);
             window.crypto.getRandomValues(challenge);
-            
             const dummyUserId = new Uint8Array(16);
             window.crypto.getRandomValues(dummyUserId);
 
@@ -210,16 +441,9 @@
               publicKey: {
                 challenge: challenge,
                 rp: { name: "Rise Mitra Sovereign Authority" },
-                user: {
-                  id: dummyUserId,
-                  name: "owner@risemitra.in",
-                  displayName: "Sovereign Owner"
-                },
+                user: { id: dummyUserId, name: "owner@risemitra.in", displayName: "Sovereign Owner" },
                 pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
-                authenticatorSelection: {
-                  authenticatorAttachment: "platform",
-                  userVerification: "required"
-                },
+                authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
                 timeout: 30000
               }
             });
@@ -230,7 +454,6 @@
             }
           }
         } catch (err) {
-          console.warn("Biometric cancelled or failed:", err.name);
           statusText.textContent = "बायोमेट्रिक रद्द हुआ। PIN (202609) दर्ज करें।";
         }
       } else {
@@ -238,49 +461,34 @@
       }
     }
 
-    // WebOTP Auto-Fill Engine
     function initWebOTP() {
       if ('OTPCredential' in window) {
         const ac = new AbortController();
-        navigator.credentials.get({
-          otp: { transport: ['sms'] },
-          signal: ac.signal
-        }).then(otp => {
-          if (otp && otp.code) {
-            const input = document.getElementById('otpInput');
-            input.value = otp.code;
-            document.getElementById('otpBadge').classList.remove('hidden');
-            verifyOtpCode(otp.code);
-          }
-        }).catch(err => {
-          console.log('WebOTP standing by:', err);
-        });
+        navigator.credentials.get({ otp: { transport: ['sms'] }, signal: ac.signal })
+          .then(otp => {
+            if (otp && otp.code) {
+              document.getElementById('otpInput').value = otp.code;
+              document.getElementById('otpBadge').classList.remove('hidden');
+              verifyOtpCode(otp.code);
+            }
+          }).catch(() => {});
       }
     }
 
-    document.getElementById('otpInput').addEventListener('input', (e) => {
+    document.getElementById('otpInput')?.addEventListener('input', (e) => {
       const val = e.target.value.trim();
-      if (val.length === 6) {
-        verifyOtpCode(val);
-      }
+      if (val.length === 6) verifyOtpCode(val);
     });
 
     function verifyOtpCode(code) {
-      if (code === SOV_OTP_MOCK || code.length === 6) {
-        unlockDashboard();
-      } else {
-        showError();
-      }
+      if (code === SOV_OTP_MOCK || code.length === 6) unlockDashboard();
+      else showError();
     }
 
-    // Sovereign PIN Fallback
     function verifyPinFallback() {
       const pin = (document.getElementById("consolePin").value || '').trim();
-      if (pin === SOV_HASH) {
-        unlockDashboard();
-      } else {
-        showError();
-      }
+      if (pin === SOV_HASH) unlockDashboard();
+      else showError();
     }
 
     function unlockDashboard() {
@@ -299,6 +507,7 @@
       document.getElementById("consolePanel").style.display = "none";
       document.getElementById("authGate").style.display = "block";
       document.getElementById("authStatusText").textContent = "कंसोल लॉक है • फ़िंगरप्रिंट या पिन से अनलॉक करें";
+      toggleDrawer(false);
     }
 
     function setKillSwitch(level) {
