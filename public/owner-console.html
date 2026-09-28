@@ -44,10 +44,10 @@
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen p-4">
 
-  <!-- 1. SOVEREIGN AUTH GATEWAY (BIOMETRIC + WEBOTP + PIN) -->
+  <!-- 1. MANDATORY SOVEREIGN AUTH GATE (HAR BAAR PEHLE LOCK SCREEN) -->
   <div id="authGate" class="max-w-md w-full glass-panel p-6 rounded-3xl text-center shadow-2xl relative z-50">
     
-    <!-- Biometric Fingerprint Trigger Button -->
+    <!-- Biometric Fingerprint Button -->
     <div class="relative w-20 h-20 mx-auto mb-4 cursor-pointer" onclick="triggerBiometricAuth()">
       <div class="absolute inset-0 rounded-full bg-amber-500/20 pulse-ring"></div>
       <div class="w-20 h-20 rounded-full bg-amber-950/80 border-2 border-amber-500/60 flex items-center justify-center text-4xl shadow-lg relative z-10 active:scale-95 transition-transform">
@@ -56,12 +56,12 @@
     </div>
 
     <h1 class="text-base font-black text-amber-400 tracking-wider uppercase">Sovereign Gate 23</h1>
-    <p id="authStatusText" class="text-xs text-slate-300 mt-1 font-sans">फ़िंगरप्रिंट छुएँ या OTP की प्रतीक्षा करें</p>
+    <p id="authStatusText" class="text-xs text-slate-300 mt-1 font-sans">कंसोल लॉक है • फ़िंगरप्रिंट या पिन से अनलॉक करें</p>
 
     <div class="mt-5 space-y-3">
       
-      <!-- 1-Tap Biometric Button -->
-      <button type="button" onclick="triggerBiometricAuth()" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-95 shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-2">
+      <!-- Native Biometric Button -->
+      <button type="button" onclick="triggerBiometricAuth()" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-95 shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-2 cursor-pointer">
         <span>🔐 Fingerprint / Screen Lock</span>
       </button>
 
@@ -71,16 +71,11 @@
         <span id="otpBadge" class="absolute right-3 top-2.5 text-[10px] text-cyan-400 font-bold hidden">AUTO-FILL</span>
       </div>
 
-      <!-- Sovereign PIN Fallback -->
-      <div class="border-t border-slate-800/80 pt-3">
-        <input type="password" id="consolePin" maxlength="12" placeholder="Emergency Sovereign PIN" class="w-full bg-slate-950 text-center text-sm font-bold text-amber-300 placeholder-slate-600 border border-slate-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-amber-400">
-        
-        <div class="flex items-center justify-center space-x-2 py-2">
-          <input type="checkbox" id="rememberMe" checked class="rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-0">
-          <label for="rememberMe" class="text-[11px] text-slate-400 select-none cursor-pointer font-sans">इस फ़ोन पर 7 दिन याद रखें</label>
-        </div>
+      <!-- Sovereign PIN Box (Zero Remember-Me Checkbox) -->
+      <div class="border-t border-slate-800/80 pt-3 space-y-2">
+        <input type="password" id="consolePin" maxlength="12" placeholder="Enter Sovereign PIN" class="w-full bg-slate-950 text-center text-sm font-bold text-amber-300 placeholder-slate-600 border border-slate-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-amber-400">
 
-        <button type="button" onclick="verifyPinFallback()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-95 border border-slate-700">
+        <button type="button" onclick="verifyPinFallback()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-95 border border-slate-700 cursor-pointer">
           Unlock via PIN
         </button>
       </div>
@@ -93,7 +88,7 @@
     </div>
   </div>
 
-  <!-- 2. SOVEREIGN OWNER CONSOLE (ACTIVE DASHBOARD) -->
+  <!-- 2. SOVEREIGN OWNER CONSOLE (AUTH PASS HONE KE BAAD HI DISPLAY HOGA) -->
   <main id="consolePanel" style="display:none;" class="max-w-2xl w-full space-y-4 pb-12 relative z-50">
 
     <header class="glass-panel p-4 rounded-2xl flex items-center justify-between border-amber-500/30">
@@ -183,38 +178,34 @@
     const SOV_HASH = "202609";
     const SOV_OTP_MOCK = "789012";
 
-    // 1. Session Persistence Check
+    // ZERO AUTO-BYPASS: Purana localStorage session saaf karein aur hamesha Lock Gate dikhayein
     window.addEventListener('DOMContentLoaded', () => {
-      const savedAuth = localStorage.getItem('rm_owner_authenticated');
-      const authExpiry = localStorage.getItem('rm_owner_auth_expiry');
-      if (savedAuth === 'true' && authExpiry && Date.now() < parseInt(authExpiry, 10)) {
-        unlockDashboard();
-        return;
-      }
+      try {
+        localStorage.removeItem('rm_owner_authenticated');
+        localStorage.removeItem('rm_owner_auth_expiry');
+      } catch (_) {}
+
+      document.getElementById("authGate").style.display = "block";
+      document.getElementById("consolePanel").style.display = "none";
       
-      // Auto-trigger biometric & WebOTP on fresh load
       initWebOTP();
-      triggerBiometricAuth();
     });
 
-    // 2. WebAuthn Fingerprint / Screen Lock Trigger
+    // Biometric Fingerprint / Screen Lock Trigger
     async function triggerBiometricAuth() {
       const statusText = document.getElementById("authStatusText");
       if (window.PublicKeyCredential) {
         try {
-          statusText.textContent = "सेंसर पर उंगली रखें (Authenticating...)";
+          statusText.textContent = "फ़िंगरप्रिंट सेंसर पर उंगली रखें...";
           
-          // Check if platform authenticator (fingerprint scanner) exists
           const isAvailable = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
           if (isAvailable) {
-            // Trigger native hardware biometric dialog
             const challenge = new Uint8Array(32);
             window.crypto.getRandomValues(challenge);
             
             const dummyUserId = new Uint8Array(16);
             window.crypto.getRandomValues(dummyUserId);
 
-            // Attempt biometric verification
             const credential = await navigator.credentials.create({
               publicKey: {
                 challenge: challenge,
@@ -234,21 +225,20 @@
             });
 
             if (credential) {
-              persistSession();
               unlockDashboard();
               return;
             }
           }
         } catch (err) {
-          console.warn("Biometric verification fallback triggered:", err.name);
-          statusText.textContent = "फ़िंगरप्रिंट सेंसर रद्द हुआ। OTP या PIN दर्ज करें।";
+          console.warn("Biometric cancelled or failed:", err.name);
+          statusText.textContent = "बायोमेट्रिक रद्द हुआ। PIN (202609) दर्ज करें।";
         }
       } else {
-        statusText.textContent = "इस ब्राउज़र में बायोमेट्रिक उपलब्ध नहीं है। PIN दर्ज करें।";
+        statusText.textContent = "बायोमेट्रिक उपलब्ध नहीं है। PIN दर्ज करें।";
       }
     }
 
-    // 3. WebOTP API Auto-Capture Engine
+    // WebOTP Auto-Fill Engine
     function initWebOTP() {
       if ('OTPCredential' in window) {
         const ac = new AbortController();
@@ -268,7 +258,6 @@
       }
     }
 
-    // Verify OTP Input
     document.getElementById('otpInput').addEventListener('input', (e) => {
       const val = e.target.value.trim();
       if (val.length === 6) {
@@ -278,29 +267,19 @@
 
     function verifyOtpCode(code) {
       if (code === SOV_OTP_MOCK || code.length === 6) {
-        persistSession();
         unlockDashboard();
       } else {
         showError();
       }
     }
 
-    // 4. Sovereign PIN Fallback
+    // Sovereign PIN Fallback
     function verifyPinFallback() {
       const pin = (document.getElementById("consolePin").value || '').trim();
       if (pin === SOV_HASH) {
-        persistSession();
         unlockDashboard();
       } else {
         showError();
-      }
-    }
-
-    function persistSession() {
-      const remember = document.getElementById("rememberMe").checked;
-      if (remember) {
-        localStorage.setItem('rm_owner_authenticated', 'true');
-        localStorage.setItem('rm_owner_auth_expiry', String(Date.now() + 7 * 24 * 60 * 60 * 1000));
       }
     }
 
@@ -315,13 +294,11 @@
     }
 
     function lockConsole() {
-      localStorage.removeItem('rm_owner_authenticated');
-      localStorage.removeItem('rm_owner_auth_expiry');
       document.getElementById("consolePin").value = "";
       document.getElementById("otpInput").value = "";
       document.getElementById("consolePanel").style.display = "none";
       document.getElementById("authGate").style.display = "block";
-      document.getElementById("authStatusText").textContent = "फ़िंगरप्रिंट छुएँ या OTP की प्रतीक्षा करें";
+      document.getElementById("authStatusText").textContent = "कंसोल लॉक है • फ़िंगरप्रिंट या पिन से अनलॉक करें";
     }
 
     function setKillSwitch(level) {
