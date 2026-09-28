@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <meta name="theme-color" content="#030712">
-  <meta name="description" content="Rise Mitra (RM WORLD) — Sovereign Offline-First Super App & Bahi Khata">
-  <title>Rise Mitra — स्वास्थ्य और स्वावलंबन</title>
+  <meta name="description" content="WORLD (Rise Mitra) — Sovereign Offline-First Super App & Bahi Khata">
+  <title>WORLD — Rise Mitra</title>
 
   <!-- PWA Metadata -->
   <link rel="manifest" href="/manifest.json">
@@ -63,6 +63,19 @@
       border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
 
+    /* Metallic Silver / Titanium Chrome 3D Logo Frame */
+    .steel-logo-frame {
+      background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 25%, #94a3b8 50%, #cbd5e1 75%, #475569 100%);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 0 16px rgba(226, 232, 240, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.9);
+    }
+    .steel-monogram-text {
+      background: linear-gradient(180deg, #0f172a 0%, #1e293b 65%, #334155 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 1px 0px rgba(255, 255, 255, 0.5));
+    }
+
     /* GitHub-Grade Blue-Ring Tactile Feedback */
     button:focus-visible, a:focus-visible, input:focus-visible {
       outline: 2px solid #2563eb !important;
@@ -76,7 +89,7 @@
       outline-offset: 2px !important;
     }
 
-    /* Micro Neon Pulses */
+    /* Micro Pulses */
     .pulse-live {
       animation: pulseGreen 2s infinite;
     }
@@ -92,21 +105,24 @@
   <header class="sticky top-0 z-40 bg-[#030712]/90 backdrop-blur-md border-b border-slate-800/80 px-4 py-3">
     <div class="flex items-center justify-between">
       
-      <!-- Brand Primacy -->
+      <!-- Brand Primacy: Titanium Silver Logo + Bold WORLD -->
       <div class="flex items-center space-x-3">
+        <!-- Titanium Steel / Chrome Logo (Dark & Light Adaptive) -->
         <div class="relative flex items-center justify-center cursor-pointer" onclick="toggleMenuDrawer(true)">
-          <div class="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-teal-400 rounded-xl blur-xs opacity-75 pulse-live"></div>
-          <div class="relative w-10 h-10 rounded-xl bg-gradient-to-br from-slate-900 via-slate-950 to-emerald-950 border border-emerald-500/50 flex items-center justify-center shadow-lg active:scale-95">
-            <span class="text-transparent bg-clip-text bg-gradient-to-tr from-emerald-400 via-teal-200 to-white font-black tracking-tighter text-sm font-mono">
+          <div class="absolute -inset-1 bg-gradient-to-r from-slate-100 via-slate-300 to-slate-400 rounded-2xl blur-xs opacity-50"></div>
+          <div class="relative w-10 h-10 rounded-xl steel-logo-frame flex items-center justify-center active:scale-95 transition-transform shadow-md">
+            <span class="steel-monogram-text font-black tracking-tighter text-base font-mono">
               RM
             </span>
           </div>
         </div>
+
         <div>
-          <h1 class="text-sm font-black text-white leading-tight flex items-center space-x-1.5">
-            <span>Rise Mitra</span>
+          <!-- Bold Attractive Metallic WORLD Heading -->
+          <h1 class="text-lg font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 leading-tight uppercase font-sans">
+            WORLD
           </h1>
-          <p class="text-[10px] text-emerald-400/90 font-medium">स्वास्थ्य और स्वावलंबन</p>
+          <p class="text-[10px] text-slate-400 font-medium">Rise Mitra • स्वास्थ्य और स्वावलंबन</p>
         </div>
       </div>
 
@@ -136,29 +152,29 @@
 
   <main class="max-w-md mx-auto px-4 py-4 space-y-4">
 
-    <!-- 1. HIGH-VALUE BRAND-LED CATALOG BUTTON (4 PILLARS & ZERO HARDCODED '50') -->
-    <button type="button" id="cat-menu-btn" onclick="toggleMenuDrawer(true)" class="w-full glass-card p-3.5 rounded-2xl flex items-center justify-between border-emerald-500/30 tactile-card cursor-pointer group shadow-lg">
+    <!-- 1. HIGH-VALUE GLOBAL BRAND-LED CATALOG BUTTON -->
+    <button type="button" id="cat-menu-btn" onclick="toggleMenuDrawer(true)" class="w-full glass-card p-3.5 rounded-2xl flex items-center justify-between border-slate-700/60 tactile-card cursor-pointer group shadow-lg">
       <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-emerald-950/90 border border-emerald-500/40 flex items-center justify-center text-lg shadow-inner group-hover:scale-105 transition-transform">
+        <div class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center text-lg text-slate-200 shadow-inner group-hover:scale-105 transition-transform">
           ☰
         </div>
         <div class="text-left">
-          <div class="text-sm font-bold text-slate-100 group-hover:text-emerald-300 transition-colors">
-            Rise Mitra संपूर्ण सुविधा केंद्र
+          <div class="text-sm font-black text-slate-100 group-hover:text-cyan-300 transition-colors">
+            RM World Directory
           </div>
-          <div id="cat-subtitle-pill" class="text-xs text-emerald-400 font-sans">
-            🛡️ 100% सुरक्षित • Services, Utilities & Games
+          <div id="cat-subtitle-pill" class="text-xs text-emerald-400 font-sans tracking-wide">
+            Services • Utilities • Security • Games
           </div>
         </div>
       </div>
-      <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full text-xs font-bold">
+      <span class="bg-slate-800 text-slate-200 border border-slate-700 px-3 py-1 rounded-full text-xs font-bold">
         खोलें ›
       </span>
     </button>
 
     <!-- 2. SEARCH & DISCOVER INPUT -->
     <div class="relative">
-      <input type="text" id="liveSearchInput" oninput="filterQuickTiles()" placeholder="श्रेणी, दुकान या सेवा खोजें..." class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors">
+      <input type="text" id="liveSearchInput" oninput="filterQuickTiles()" placeholder="श्रेणी, दुकान या सेवा खोजें..." class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition-colors">
       <span class="absolute right-3 top-2.5 text-slate-500 text-sm">🔍</span>
     </div>
 
@@ -262,16 +278,16 @@
   </main>
 
   <!-- ============================================================== -->
-  <!-- DYNAMIC CATALOG MODAL (SMOOTH ACCORDION & ZERO HARDCODED '50') -->
+  <!-- TOP-ANCHORED NATURAL DROPDOWN DIRECTORY (RM WORLD RE-BRANDED)  -->
   <!-- ============================================================== -->
-  <div id="categoryModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex flex-col justify-end transition-opacity">
-    <div class="bg-[#0b0f19] border-t border-slate-800 rounded-t-3xl max-h-[85vh] flex flex-col shadow-2xl">
+  <div id="categoryModal" onclick="if(event.target === this) toggleMenuDrawer(false)" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex flex-col justify-start pt-16 px-3 sm:px-4 transition-all">
+    <div class="bg-[#0b0f19] border border-slate-800 rounded-2xl max-w-md w-full mx-auto max-h-[80vh] flex flex-col shadow-2xl overflow-hidden">
       
       <!-- Modal Header -->
-      <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/60">
+      <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/70">
         <div>
-          <h3 class="text-sm font-black text-slate-100 uppercase tracking-wide">राइज मित्रा सुविधा केंद्र</h3>
-          <p id="modal-catalog-count" class="text-[10px] text-emerald-400">उपलब्ध सेवाएं, सुविधाएं व खेल</p>
+          <h3 class="text-sm font-black text-slate-100 uppercase tracking-wide">RM World — Universal Catalog</h3>
+          <p id="modal-catalog-count" class="text-[10px] text-emerald-400">Services • Utilities • Security • Games</p>
         </div>
         <button type="button" onclick="toggleMenuDrawer(false)" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 font-bold text-sm hover:bg-slate-700 active:scale-95 cursor-pointer">
           ✕
@@ -279,10 +295,10 @@
       </div>
 
       <!-- Scrollable Category Lists -->
-      <div class="flex-1 overflow-y-auto p-4 space-y-4 text-xs">
+      <div class="flex-1 overflow-y-auto p-3.5 space-y-3 text-xs">
         
         <!-- Accordion 1: Services & Utilities Dropdown -->
-        <div class="space-y-2">
+        <div class="space-y-1.5">
           <button type="button" id="rm-tier1-toggle" onclick="toggleAccordion('tier1-list', this)" class="w-full flex justify-between items-center p-2.5 rounded-xl bg-emerald-950/60 border border-emerald-800/40 text-emerald-300 font-bold cursor-pointer select-none active:scale-[0.99] transition-transform">
             <span id="tier1-header-text">💼 आजीविका (सेवाएं व सुविधाएं)</span>
             <span class="acc-arrow text-xs font-mono">▼</span>
@@ -326,7 +342,7 @@
         </div>
 
         <!-- Accordion 2: Games Dropdown -->
-        <div class="space-y-2">
+        <div class="space-y-1.5">
           <button type="button" id="rm-tier2-toggle" onclick="toggleAccordion('tier2-list', this)" class="w-full flex justify-between items-center p-2.5 rounded-xl bg-cyan-950/60 border border-cyan-800/40 text-cyan-300 font-bold cursor-pointer select-none active:scale-[0.99] transition-transform">
             <span id="tier2-header-text">🎮 खेल व मनोरंजन</span>
             <span class="acc-arrow text-xs font-mono">▼</span>
@@ -360,7 +376,7 @@
   <!-- BOTTOM 4-TAB NAVIGATION BAR -->
   <nav class="fixed bottom-0 left-0 right-0 nav-glass z-40 px-4 py-2">
     <div class="max-w-md mx-auto grid grid-cols-4 gap-1 text-center">
-      <button class="flex flex-col items-center justify-center py-1 text-emerald-400 font-bold tactile-card cursor-pointer">
+      <button class="flex flex-col items-center justify-center py-1 text-slate-200 font-bold tactile-card cursor-pointer">
         <span class="text-base">🏠</span>
         <span class="text-[10px] mt-0.5">होम</span>
       </button>
@@ -379,11 +395,8 @@
     </div>
   </nav>
 
-  <!-- ============================================================== -->
-  <!-- JAVASCRIPT CONTROLLERS (WORKING ACCORDION & REAL-TIME AUTO-SYNC) -->
-  <!-- ============================================================== -->
+  <!-- JAVASCRIPT CONTROLLERS -->
   <script>
-    // 1. Working Accordion Dropdown Function (Toggle & Arrow Fix)
     function toggleAccordion(listId, btnEl) {
       const list = document.getElementById(listId);
       if (!list) return;
@@ -395,7 +408,6 @@
       }
     }
 
-    // 2. Real-time Staged Launch Sync Engine
     function syncCategoryVisibilityFromOwner() {
       const raw = localStorage.getItem('rm_active_categories_v1');
       let activeIds;
@@ -409,7 +421,7 @@
         }
       }
 
-      // Filter Services & Utilities (Tier 1)
+      // Filter Services & Utilities
       const t1List = document.getElementById('tier1-list');
       let liveT1 = 0;
       if (t1List) {
@@ -438,7 +450,7 @@
         if (t1Header) t1Header.textContent = `💼 आजीविका (${liveT1} सेवाएं उपलब्ध)`;
       }
 
-      // Filter Games (Tier 2)
+      // Filter Games
       const t2List = document.getElementById('tier2-list');
       let liveT2 = 0;
       if (t2List) {
@@ -468,14 +480,12 @@
         if (t2Header) t2Header.textContent = `🎮 खेल व मनोरंजन (${liveT2} श्रेणियां उपलब्ध)`;
       }
 
-      // Dynamic Modal Subtitle
       const modalCount = document.getElementById('modal-catalog-count');
       if (modalCount) {
-        modalCount.textContent = `कुल ${liveT1 + liveT2} सुविधाएं उपलब्ध`;
+        modalCount.textContent = liveT2 > 0 ? `${liveT1} Services • ${liveT2} Games Active` : `${liveT1} Enterprise Services Active`;
       }
     }
 
-    // Modal Control
     function toggleMenuDrawer(show) {
       const modal = document.getElementById('categoryModal');
       if (show) {
@@ -486,7 +496,6 @@
       }
     }
 
-    // Search Filter for Verticals
     function filterQuickTiles() {
       const q = (document.getElementById('liveSearchInput').value || '').toLowerCase().trim();
       const grid = document.getElementById('verticalTilesGrid');
@@ -497,7 +506,6 @@
       });
     }
 
-    // Event Listeners
     window.addEventListener('DOMContentLoaded', syncCategoryVisibilityFromOwner);
     window.addEventListener('storage', syncCategoryVisibilityFromOwner);
   </script>
