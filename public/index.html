@@ -3,11 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <meta name="theme-color" content="#030712">
-  <meta name="description" content="WORLD (Rise Mitra) — Sovereign Offline-First Super App & Bahi Khata">
-  <title>WORLD — Rise Mitra</title>
+  <meta name="theme-color" content="#02091d">
+  <meta name="description" content="RM WORLD (Rise Mitra) — Sovereign Offline-First Super App & Bahi Khata">
+  <title>RM WORLD — Rise Mitra</title>
 
-  <!-- PWA Metadata -->
+  <!-- PWA & Brand Favicon Metadata -->
+  <link rel="icon" type="image/svg+xml" href="/rise-mitra-logo.svg">
+  <link rel="apple-touch-icon" href="/rise-mitra-logo.svg">
   <link rel="manifest" href="/manifest.json">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -63,19 +65,6 @@
       border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    /* Metallic Silver / Titanium Chrome 3D Logo Frame */
-    .steel-logo-frame {
-      background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 25%, #94a3b8 50%, #cbd5e1 75%, #475569 100%);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      box-shadow: 0 0 16px rgba(226, 232, 240, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.9);
-    }
-    .steel-monogram-text {
-      background: linear-gradient(180deg, #0f172a 0%, #1e293b 65%, #334155 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 1px 0px rgba(255, 255, 255, 0.5));
-    }
-
     /* GitHub-Grade Blue-Ring Tactile Feedback */
     button:focus-visible, a:focus-visible, input:focus-visible {
       outline: 2px solid #2563eb !important;
@@ -105,20 +94,18 @@
   <header class="sticky top-0 z-40 bg-[#030712]/90 backdrop-blur-md border-b border-slate-800/80 px-4 py-3">
     <div class="flex items-center justify-between">
       
-      <!-- Brand Primacy: Titanium Silver Logo + Bold WORLD -->
+      <!-- Brand Primacy: Master RM WORLD Vector Logo + Header Typography -->
       <div class="flex items-center space-x-3">
-        <!-- Titanium Steel / Chrome Logo (Dark & Light Adaptive) -->
+        <!-- Master Logo Asset Trigger -->
         <div class="relative flex items-center justify-center cursor-pointer" onclick="toggleMenuDrawer(true)">
-          <div class="absolute -inset-1 bg-gradient-to-r from-slate-100 via-slate-300 to-slate-400 rounded-2xl blur-xs opacity-50"></div>
-          <div class="relative w-10 h-10 rounded-xl steel-logo-frame flex items-center justify-center active:scale-95 transition-transform shadow-md">
-            <span class="steel-monogram-text font-black tracking-tighter text-base font-mono">
-              RM
-            </span>
-          </div>
+          <div class="absolute -inset-1 bg-gradient-to-r from-blue-500/30 to-cyan-400/20 rounded-2xl blur-xs opacity-75"></div>
+          <img src="/rise-mitra-logo.svg" 
+               alt="RM WORLD Master Logo" 
+               class="relative w-11 h-11 rounded-xl shadow-lg border border-slate-700/60 object-contain bg-[#02091d] active:scale-95 transition-transform" />
         </div>
 
         <div>
-          <!-- Bold Attractive Metallic WORLD Heading -->
+          <!-- Bold Attractive WORLD Heading -->
           <h1 class="text-lg font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 leading-tight uppercase font-sans">
             WORLD
           </h1>
@@ -277,9 +264,7 @@
 
   </main>
 
-  <!-- ============================================================== -->
-  <!-- TOP-ANCHORED NATURAL DROPDOWN DIRECTORY (RM WORLD RE-BRANDED)  -->
-  <!-- ============================================================== -->
+  <!-- TOP-ANCHORED NATURAL DROPDOWN DIRECTORY (RM WORLD RE-BRANDED) -->
   <div id="categoryModal" onclick="if(event.target === this) toggleMenuDrawer(false)" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex flex-col justify-start pt-16 px-3 sm:px-4 transition-all">
     <div class="bg-[#0b0f19] border border-slate-800 rounded-2xl max-w-md w-full mx-auto max-h-[80vh] flex flex-col shadow-2xl overflow-hidden">
       
