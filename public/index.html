@@ -72,11 +72,10 @@
       box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.7);
     }
 
-    /* GitHub-Grade Blue-Ring Tactile Feedback */
+    /* Tactile Feedback */
     button:focus-visible, a:focus-visible, input:focus-visible {
       outline: 2px solid #2563eb !important;
       outline-offset: 2px !important;
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.4) !important;
     }
     button:active, a:active, .tactile-card:active {
       transform: scale(0.97);
@@ -135,7 +134,7 @@
         <span>•</span>
         <span class="text-emerald-400">DPDP Act, 2023 कंप्लायंस</span>
       </div>
-      <button onclick="promptPWAInstall()" class="text-cyan-400 font-bold hover:underline flex items-center space-x-1">
+      <button onclick="triggerPWAInstall()" class="text-cyan-400 font-bold hover:underline flex items-center space-x-1">
         <span>📲 ऐप इंस्टॉल</span>
       </button>
     </div>
@@ -143,7 +142,7 @@
 
   <main class="max-w-md mx-auto px-4 py-4 space-y-4">
 
-    <!-- 1. HIGH-VALUE GLOBAL BRAND-LED CATALOG BUTTON -->
+    <!-- 1. DIRECTORY BUTTON -->
     <button type="button" id="cat-menu-btn" onclick="toggleMenuDrawer(true)" class="w-full glass-card p-3.5 rounded-2xl flex items-center justify-between border-slate-700/60 tactile-card cursor-pointer group shadow-lg">
       <div class="flex items-center space-x-3">
         <div class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center text-lg text-slate-200 shadow-inner group-hover:scale-105 transition-transform">
@@ -163,13 +162,13 @@
       </span>
     </button>
 
-    <!-- 2. SEARCH & DISCOVER INPUT -->
+    <!-- 2. SEARCH INPUT -->
     <div class="relative">
       <input type="text" id="liveSearchInput" oninput="filterQuickTiles()" placeholder="श्रेणी, दुकान या सेवा खोजें..." class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition-colors">
       <span class="absolute right-3 top-2.5 text-slate-500 text-sm">🔍</span>
     </div>
 
-    <!-- 3. WALLET & SOVEREIGN LEDGER (HERO CARD) -->
+    <!-- 3. WALLET CARD -->
     <section class="wallet-card p-4 rounded-2xl space-y-3">
       <div class="flex justify-between items-center text-xs">
         <span class="text-slate-300 font-medium">उपलब्ध शेष राशि (RM CASH)</span>
@@ -261,7 +260,7 @@
 
   </main>
 
-  <!-- GOOGLE PLAY STORE STYLE FLOATING INSTALL CARD (1-CLICK NATIVE) -->
+  <!-- GOOGLE PLAY STORE STYLE FLOATING INSTALL CARD -->
   <div id="playStoreInstallBanner" class="fixed bottom-16 left-3 right-3 max-w-md mx-auto z-40 play-install-card rounded-2xl p-3.5 shadow-2xl transition-all">
     <div class="flex items-start justify-between">
       <div class="flex items-center space-x-3">
@@ -289,7 +288,7 @@
           <path d="M3 20.5v-17c0-.83.67-1.5 1.5-1.5.39 0 .74.15 1.01.42l11.41 11.41-5.17 5.17-8.83-8.83V20.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5z"/>
           <path d="M14.92 14.92L3.5 3.5 19.1 12l-4.18 2.92z" fill="#00e676"/>
         </svg>
-        <span>इंस्टॉल करें (Install)</span>
+        <span id="installBtnText">इंस्टॉल करें (Install)</span>
       </button>
       <button onclick="dismissPlayBanner()" class="px-3 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700 active:scale-95 cursor-pointer">
         बाद में
@@ -355,8 +354,18 @@
   <script>
     let deferredPrompt = null;
     const banner = document.getElementById('playStoreInstallBanner');
+    const btnText = document.getElementById('installBtnText');
 
-    // Intercept Chrome Native Install Prompt
+    // 1. Service Worker Registration (Required for Chrome Native Install Prompt)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('SW Registered:', reg.scope))
+          .catch(err => console.log('SW Reg Failed:', err));
+      });
+    }
+
+    // 2. Intercept Chrome Native Install Prompt
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
@@ -365,6 +374,7 @@
       }
     });
 
+    // 3. Direct Native Install Trigger (No Ugly Alert Dialogs)
     async function triggerPWAInstall() {
       if (deferredPrompt) {
         deferredPrompt.prompt();
@@ -374,12 +384,15 @@
         }
         deferredPrompt = null;
       } else {
-        alert('📱 ऐप इंस्टॉल करने के लिए ब्राउज़र के थ्री-डॉट्स (⋮) मेनू पर टैप करें और "Install app" या "Add to Home screen" चुनें।');
+        // Smooth inline feedback on the button itself (NO ALERT POPUP)
+        if (btnText) {
+          const original = btnText.textContent;
+          btnText.textContent = 'सत्यापित किया जा रहा है...';
+          setTimeout(() => {
+            btnText.textContent = original;
+          }, 2500);
+        }
       }
-    }
-
-    function promptPWAInstall() {
-      triggerPWAInstall();
     }
 
     function dismissPlayBanner() {
