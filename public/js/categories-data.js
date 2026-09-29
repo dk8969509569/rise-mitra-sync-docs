@@ -2,6 +2,7 @@
  * Rise Mitra (RM WORLD) — 50 Categories Modular Extension & Drawer Controller
  * Canonical Binding: File-14 Section Q & 00_SPEC (Skeleton Shell Invariant)
  * Features: 33 Play Store Apps + 17 Anti-RMG Games • Dynamic Accordion Injection • Auto-Close
+ * Architecture: DEC-RM-SOV-ARCH-20260929-UNIVERSAL-ZEL-CATALOG (v0.3.1)
  */
 
 (function () {
@@ -25,7 +26,24 @@
     { id: "c13", tier: 1, hash: "#ledger-balance", icon: "💰", en: "13. Finance", hi: "13. Finance (RM CASH लेज़र)" },
     { id: "c14", tier: 1, hash: "#cat-food-drink", icon: "🍲", en: "14. Food & Drink", hi: "14. Food & Drink (खान-पान)" },
     { id: "c15", tier: 1, hash: "#swasth-man", icon: "🌿", en: "15. Health & Fitness", hi: "15. Health & Fitness (स्वास्थ्य)" },
-    { id: "c16", tier: 1, hash: "#cat-house-home", icon: "🏠", en: "16. House & Home", hi: "16. House & Home (घर व मरम्मत)" },
+    {
+      id: "c16",
+      categoryId: "category-16",
+      tier: 1,
+      hash: "#cat-house-home",
+      icon: "🏠",
+      en: "16. House & Home",
+      hi: "16. House & Home (घर व मरम्मत)",
+      defaultSubFeature: "16-2",
+      modulePath: "/js/catalog/category-16/16-2-rental-ledger.js",
+      dataPath: "/data/category-16/16-2-rental-ledger.json",
+      schemaPath: "/data/category-16/16-2-rental-ledger.schema.json",
+      cacheBundle: [
+        "/js/catalog/category-16/16-2-rental-ledger.js",
+        "/data/category-16/16-2-rental-ledger.json",
+        "/data/category-16/16-2-rental-ledger.schema.json"
+      ]
+    },
     { id: "c17", tier: 1, hash: "#cat-libraries-demo", icon: "📦", en: "17. Libraries & Demo", hi: "17. Libraries & Demo (टूल्स)" },
     { id: "c18", tier: 1, hash: "#lifestyle-hub", icon: "🧘", en: "18. Lifestyle", hi: "18. Lifestyle (जीवनशैली)" },
     { id: "c19", tier: 1, hash: "#hyperlocal-map", icon: "🗺️", en: "19. Maps & Navigation", hi: "19. Maps & Navigation (नक्शा)" },
@@ -81,6 +99,7 @@
       const a = document.createElement('a');
       a.href = item.hash;
       a.className = 'rm-menu-item';
+      a.setAttribute('data-category-id', item.id);
       const title = currentLang === 'en' ? item.en : item.hi;
       a.innerHTML = `<span style="font-size:1.1rem; line-height:1;">${item.icon}</span><span>${title}</span>`;
       a.setAttribute('data-en', item.en);
@@ -97,20 +116,55 @@
     tier2Box.appendChild(frag2);
   }
 
-  // 3. AUTO-CLOSE DRAWER ON ITEM CLICK
+  // 3. ON-DEMAND MODULAR SCRIPT LOADER (ZERO ELEMENT LOSS)
+  function loadCatalogModule(catId, targetContainer) {
+    const cat = PLAYSTORE_50_CATEGORIES.find(c => c.id === catId || c.categoryId === catId);
+    if (!cat || !cat.modulePath) return false;
+
+    const mountPoint = targetContainer || document.getElementById('rm-module-container') || document.getElementById('main-content');
+    if (!mountPoint) return false;
+
+    if (window.RM_Cat16_Sub2_RentalLedger) {
+      window.RM_Cat16_Sub2_RentalLedger.mount(mountPoint);
+      return true;
+    }
+
+    const script = document.createElement('script');
+    script.src = cat.modulePath;
+    script.async = true;
+    script.onload = function () {
+      if (window.RM_Cat16_Sub2_RentalLedger) {
+        window.RM_Cat16_Sub2_RentalLedger.mount(mountPoint);
+      }
+    };
+    script.onerror = function () {
+      mountPoint.innerHTML = '<div style="padding:16px; color:#ef4444;">मॉड्यूल लोड करने में विफलता हुई।</div>';
+    };
+    document.body.appendChild(script);
+    return true;
+  }
+
+  // 4. AUTO-CLOSE DRAWER & HASH DISPATCHER
   document.addEventListener('click', function (e) {
-    if (e.target.closest('.rm-menu-item') || e.target.closest('.rm-cat-item')) {
+    const menuItem = e.target.closest('.rm-menu-item') || e.target.closest('.rm-cat-item');
+    if (menuItem) {
       const drawer = document.getElementById('rm-drawer-menu');
       const backdrop = document.getElementById('rm-drawer-backdrop');
       if (drawer) drawer.style.transform = 'translateX(-100%)';
       if (backdrop) backdrop.style.display = 'none';
       document.body.style.overflow = '';
+
+      const catId = menuItem.getAttribute('data-category-id');
+      if (catId === 'c16') {
+        loadCatalogModule('c16');
+      }
     }
   });
 
   // Export to Global Scope & Immediate Init
   window.PLAYSTORE_50_CATEGORIES = PLAYSTORE_50_CATEGORIES;
   window.renderCategoriesAccordion = renderCategoriesAccordion;
+  window.loadCatalogModule = loadCatalogModule;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', renderCategoriesAccordion);
