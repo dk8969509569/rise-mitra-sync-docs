@@ -1,0 +1,93 @@
+{
+  "$schema": "./16-2-rental-ledger.schema.json",
+  "subFeatureId": "16-2",
+  "categoryId": "category-16",
+  "featureSlug": "rental-ledger",
+  "moduleVersion": "1.0.0",
+  "schemaVersion": "1",
+  "bundleVersion": "1",
+  "storageContract": {
+    "localNamespaceTemplate": "rm_local_acct{opaqueAccountId}_cat16_sub2_v1",
+    "cacheBundleTemplate": "rm_cache_cat16_sub2_b1"
+  },
+  "cacheBundle": [
+    "/js/catalog/category-16/16-2-rental-ledger.js",
+    "/data/category-16/16-2-rental-ledger.json",
+    "/data/category-16/16-2-rental-ledger.schema.json"
+  ],
+  "configurationDefaults": {
+    "currency": "INR",
+    "currencySymbol": "₹",
+    "defaultDueDayOfMonth": 5,
+    "gracePeriodDays": 5,
+    "electricitySubMeter": {
+      "enabled": true,
+      "defaultRatePerUnit": 8.0,
+      "meterReadingFrequency": "MONTHLY"
+    },
+    "waterCharges": {
+      "mode": "FIXED_MONTHLY",
+      "defaultAmount": 0
+    },
+    "maintenanceCharges": {
+      "mode": "FIXED_MONTHLY",
+      "defaultAmount": 0
+    },
+    "securityDeposit": {
+      "tracked": true,
+      "interestBearing": false
+    }
+  },
+  "i18n": {
+    "hi": {
+      "featureTitle": "किराया बहीखाता",
+      "featureSubtitle": "मकान मालिक-किरायेदार डिजिटल हिसाब व सब-मीटर पर्ची",
+      "actions": {
+        "recordRent": "किराया दर्ज करें",
+        "addReading": "सब-मीटर रीडिंग डालें",
+        "generateSlip": "डिजिटल रसीद बनाएं",
+        "exportLedger": "बहीखाता डाउनलोड करें"
+      },
+      "labels": {
+        "roomOrUnit": "कमरा / फ्लैट संख्या",
+        "tenantName": "किरायेदार का नाम",
+        "monthlyRent": "मासिक किराया",
+        "currentMeterReading": "वर्तमान मीटर रीडिंग",
+        "previousMeterReading": "पिछली मीटर रीडिंग",
+        "unitsConsumed": "खपत यूनिट",
+        "unitRate": "प्रति यूनिट दर",
+        "totalElectricityAmount": "बिजली कुल रकम",
+        "totalPayable": "कुल देय राशि",
+        "statusPending": "बाकी",
+        "statusAcknowledged": "स्वीकृत",
+        "statusSettled": "चुका दिया"
+      },
+      "disclaimer": "यह डिजिटल पर्ची केवल स्थानीय हिसाब के लिए है; बैंक सेटलमेंट का प्रमाण नहीं है।"
+    },
+    "en": {
+      "featureTitle": "Rental Ledger",
+      "featureSubtitle": "Landlord-Tenant Digital Ledger & Sub-Meter Slip",
+      "actions": {
+        "recordRent": "Record Rent",
+        "addReading": "Add Meter Reading",
+        "generateSlip": "Generate Digital Slip",
+        "exportLedger": "Export Ledger"
+      },
+      "labels": {
+        "roomOrUnit": "Room / Flat No.",
+        "tenantName": "Tenant Name",
+        "monthlyRent": "Monthly Rent",
+        "currentMeterReading": "Current Meter Reading",
+        "previousMeterReading": "Previous Meter Reading",
+        "unitsConsumed": "Units Consumed",
+        "unitRate": "Rate Per Unit",
+        "totalElectricityAmount": "Total Electricity Charge",
+        "totalPayable": "Total Amount Payable",
+        "statusPending": "Pending",
+        "statusAcknowledged": "Acknowledged",
+        "statusSettled": "Settled"
+      },
+      "disclaimer": "This digital slip is for local accounting records only; not proof of bank settlement."
+    }
+  }
+}
