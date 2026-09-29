@@ -70,11 +70,11 @@
     if (!record || typeof record !== 'object') return null;
     var ele = calculateElectricity(record.previousMeterReading, record.currentMeterReading, record.unitRate || 8.0);
     var net = calculateTotal(record.rentAmount, ele.electricityAmount, record.otherCharges);
-    
+
     var voucher = {
       voucherId: 'VCH-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase(),
       accountRef: accountId || 'default',
-      unitIdentifier: (record.unitIdentifier || 'Unit-1').trim(),
+      unitIdentifier: (record.unitIdentifier || 'कमरा 101').trim(),
       billingMonth: record.billingMonth || new Date().toISOString().substring(0, 7),
       rentAmount: parseFloat(record.rentAmount) || 0,
       previousMeterReading: parseFloat(record.previousMeterReading) || 0,
@@ -83,7 +83,7 @@
       electricityAmount: ele.electricityAmount,
       otherCharges: parseFloat(record.otherCharges) || 0,
       netPayable: net,
-      paymentStatus: record.paymentStatus || 'PENDING',
+      paymentStatus: record.paymentStatus || 'बाकी (Pending)',
       timestamp: Date.now(),
       disclaimer: 'यह डिजिटल पर्ची केवल स्थानीय हिसाब के लिए है; बैंक सेटलमेंट का प्रमाण नहीं है।'
     };
@@ -101,45 +101,74 @@
     var vouchers = loadVouchers(accountId);
 
     var html = '' +
-      '<div class="rm-cat16-ledger" style="padding:16px; font-family:sans-serif; color:#0f172a;">' +
-      '  <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e2e8f0; padding-bottom:12px; margin-bottom:16px;">' +
-      '    <div>' +
-      '      <h2 style="margin:0; font-size:1.25rem; font-weight:700; color:#0f172a;">किराया बहीखाता (Rental Ledger)</h2>' +
-      '      <span style="font-size:0.8rem; color:#64748b;">Sub-Feature 16-2 • Sovereign P2P Offline</span>' +
+      '<div style="box-sizing:border-box; width:100%; max-width:100%; margin:0 auto; padding:6px 2px; font-family:system-ui,-apple-system,sans-serif; color:#f8fafc; overflow-x:hidden;">' +
+
+      // Top Module Header Card
+      '  <div style="background:#0f172a; border:1px solid #1e293b; border-radius:14px; padding:12px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; box-sizing:border-box; width:100%;">' +
+      '    <div style="min-width:0; flex:1;">' +
+      '      <h2 style="margin:0; font-size:1.05rem; font-weight:800; color:#ffffff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">🏠 16-2. किराया बहीखाता</h2>' +
+      '      <span style="font-size:0.72rem; color:#10b981; font-weight:600; display:block;">सब-मीटर पर्ची व सॉवरेन P2P लेज़र</span>' +
       '    </div>' +
-      '    <span style="background:#10b981; color:#fff; font-size:0.75rem; padding:4px 8px; border-radius:4px; font-weight:600;">ACTIVE</span>' +
+      '    <span style="background:#064e3b; color:#34d399; border:1px solid #059669; font-size:0.68rem; padding:3px 8px; border-radius:999px; font-weight:700; white-space:nowrap; margin-left:8px;">सक्रिय</span>' +
       '  </div>' +
-      '  <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:14px; margin-bottom:16px;">' +
-      '    <h3 style="margin:0 0 10px 0; font-size:0.95rem; font-weight:600;">नया किराया व सब-मीटर पर्ची दर्ज करें</h3>' +
-      '    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">' +
-      '      <input type="text" id="rm-cat16-unit" placeholder="कमरा / फ्लैट संख्या" style="padding:8px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.9rem;" />' +
-      '      <input type="number" id="rm-cat16-rent" placeholder="मासिक किराया (₹)" style="padding:8px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.9rem;" />' +
-      '      <input type="number" id="rm-cat16-prev-meter" placeholder="पिछली रीडिंग (Unit)" style="padding:8px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.9rem;" />' +
-      '      <input type="number" id="rm-cat16-curr-meter" placeholder="वर्तमान रीडिंग (Unit)" style="padding:8px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.9rem;" />' +
+
+      // Form Card
+      '  <div style="background:#0f172a; border:1px solid #1e293b; border-radius:14px; padding:14px; margin-bottom:14px; box-sizing:border-box; width:100%;">' +
+      '    <h3 style="margin:0 0 12px 0; font-size:0.9rem; font-weight:700; color:#e2e8f0;">नया किराया व सब-मीटर पर्ची दर्ज करें</h3>' +
+
+      '    <div style="display:flex; flex-direction:column; gap:10px; width:100%; box-sizing:border-box;">' +
+      '      <div style="width:100%; box-sizing:border-box;">' +
+      '        <label style="display:block; font-size:0.72rem; color:#94a3b8; margin-bottom:4px; font-weight:600;">कमरा / फ्लैट संख्या</label>' +
+      '        <input type="text" id="rm-cat16-unit" placeholder="उदा. कमरा 101 / फ्लैट 2B" style="width:100%; max-width:100%; box-sizing:border-box; padding:10px 12px; background:#030712; border:1px solid #334155; border-radius:8px; color:#ffffff; font-size:0.9rem; outline:none; display:block;" />' +
+      '      </div>' +
+
+      '      <div style="width:100%; box-sizing:border-box;">' +
+      '        <label style="display:block; font-size:0.72rem; color:#94a3b8; margin-bottom:4px; font-weight:600;">मासिक किराया (₹)</label>' +
+      '        <input type="number" id="rm-cat16-rent" placeholder="₹ 5000" style="width:100%; max-width:100%; box-sizing:border-box; padding:10px 12px; background:#030712; border:1px solid #334155; border-radius:8px; color:#ffffff; font-size:0.9rem; outline:none; display:block;" />' +
+      '      </div>' +
+
+      '      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%; box-sizing:border-box;">' +
+      '        <div style="min-width:0; box-sizing:border-box;">' +
+      '          <label style="display:block; font-size:0.72rem; color:#94a3b8; margin-bottom:4px; font-weight:600;">पिछली रीडिंग</label>' +
+      '          <input type="number" id="rm-cat16-prev-meter" placeholder="Unit" style="width:100%; max-width:100%; box-sizing:border-box; padding:10px 8px; background:#030712; border:1px solid #334155; border-radius:8px; color:#ffffff; font-size:0.9rem; outline:none; display:block;" />' +
+      '        </div>' +
+      '        <div style="min-width:0; box-sizing:border-box;">' +
+      '          <label style="display:block; font-size:0.72rem; color:#94a3b8; margin-bottom:4px; font-weight:600;">वर्तमान रीडिंग</label>' +
+      '          <input type="number" id="rm-cat16-curr-meter" placeholder="Unit" style="width:100%; max-width:100%; box-sizing:border-box; padding:10px 8px; background:#030712; border:1px solid #334155; border-radius:8px; color:#ffffff; font-size:0.9rem; outline:none; display:block;" />' +
+      '        </div>' +
+      '      </div>' +
+
+      '      <button id="rm-cat16-btn-add" style="margin-top:4px; width:100%; min-height:46px; background:#10b981; color:#022c22; border:none; border-radius:10px; font-weight:800; font-size:0.9rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; box-sizing:border-box;">' +
+      '        <span>+ रसीद बनाएं व हिसाब जोड़ें</span>' +
+      '      </button>' +
       '    </div>' +
-      '    <button id="rm-cat16-btn-add" style="margin-top:12px; width:100%; min-height:44px; background:#10b981; color:#fff; border:none; border-radius:6px; font-weight:600; font-size:0.95rem; cursor:pointer;">' +
-      '      + रसीद बनाएं व हिसाब जोड़ें' +
-      '    </button>' +
       '  </div>' +
-      '  <div>' +
-      '    <h3 style="margin:0 0 8px 0; font-size:0.95rem; font-weight:600;">हालिया रसीदें (' + vouchers.length + ')</h3>' +
-      '    <div id="rm-cat16-list" style="display:flex; flex-direction:column; gap:8px;">';
+
+      // Recent Records Section
+      '  <div style="box-sizing:border-box; width:100%;">' +
+      '    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; padding:0 2px;">' +
+      '      <h3 style="margin:0; font-size:0.85rem; font-weight:700; color:#94a3b8; text-transform:uppercase;">हालिया रसीदें (' + vouchers.length + ')</h3>' +
+      '      <span style="font-size:0.7rem; color:#64748b;">ऑफ़लाइन सुरक्षित</span>' +
+      '    </div>' +
+      '    <div id="rm-cat16-list" style="display:flex; flex-direction:column; gap:8px; width:100%; box-sizing:border-box;">';
 
     if (vouchers.length === 0) {
-      html += '<p style="color:#64748b; font-size:0.85rem; margin:8px 0;">कोई रसीद दर्ज नहीं है। ऊपर दिए फ़ॉर्म से नई पर्ची जोड़ें।</p>';
+      html += '<div style="background:#0f172a; border:1px dashed #334155; border-radius:10px; padding:16px; text-align:center; color:#64748b; font-size:0.8rem; box-sizing:border-box;">कोई रसीद दर्ज नहीं है। ऊपर दिए फ़ॉर्म से पर्ची जोड़ें।</div>';
     } else {
       for (var i = 0; i < vouchers.length; i++) {
         var v = vouchers[i];
         html += '' +
-          '<div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:6px; padding:10px; display:flex; justify-content:space-between; align-items:center;">' +
-          '  <div>' +
-          '    <strong style="color:#0f172a; font-size:0.95rem;">' + v.unitIdentifier + '</strong> • ' +
-          '    <span style="color:#64748b; font-size:0.8rem;">' + v.billingMonth + '</span><br/>' +
-          '    <span style="font-size:0.8rem; color:#475569;">बिजली: ' + v.unitsConsumed + ' यूनिट (₹' + v.electricityAmount + ')</span>' +
+          '<div style="background:#0f172a; border:1px solid #1e293b; border-radius:10px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center; box-sizing:border-box; width:100%;">' +
+          '  <div style="min-width:0; flex:1; padding-right:8px;">' +
+          '    <div style="font-size:0.9rem; font-weight:700; color:#f8fafc; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">' + v.unitIdentifier + '</div>' +
+          '    <div style="font-size:0.72rem; color:#94a3b8; margin-top:2px;">' +
+          '      किराया: ₹' + v.rentAmount + ' • बिजली: ' + v.unitsConsumed + ' यूनिट (₹' + v.electricityAmount + ')' +
+          '    </div>' +
+          '    <div style="font-size:0.68rem; color:#64748b; margin-top:2px;">' + v.billingMonth + '</div>' +
           '  </div>' +
-          '  <div style="text-align:right;">' +
-          '    <div style="font-size:1rem; font-weight:700; color:#10b981;">₹' + v.netPayable + '</div>' +
-          '    <span style="font-size:0.75rem; color:#f59e0b; font-weight:600;">' + v.paymentStatus + '</span>' +
+          '  <div style="text-align:right; flex-shrink:0;">' +
+          '    <div style="font-size:1rem; font-weight:900; color:#34d399;">₹' + v.netPayable + '</div>' +
+          '    <span style="font-size:0.65rem; color:#fbbf24; font-weight:700; background:#451a03; border:1px solid #78350f; padding:2px 5px; border-radius:4px; display:inline-block; margin-top:2px;">' + v.paymentStatus + '</span>' +
           '  </div>' +
           '</div>';
       }
@@ -157,7 +186,7 @@
         var currVal = (container.querySelector('#rm-cat16-curr-meter') || {}).value;
 
         if (!unitVal || !rentVal) {
-          alert('कृपया कमरा संख्या और मासिक किराया अवश्य भरें।');
+          alert('कृपया कमरा/फ्लैट पहचान और मासिक किराया अवश्य दर्ज करें।');
           return;
         }
 
@@ -189,7 +218,7 @@
       } catch (err) {
         console.error('[RM-16-2] Mount error:', err);
         if (container) {
-          container.innerHTML = '<div style="color:#ef4444; padding:12px;">किराया बहीखाता लोड करने में समस्या हुई। कृपया पुनः प्रयास करें।</div>';
+          container.innerHTML = '<div style="color:#ef4444; padding:16px;">किराया बहीखाता लोड करने में समस्या हुई।</div>';
         }
       }
     },
