@@ -76,10 +76,13 @@
       outline: 2px solid #10B981 !important;
       outline-offset: 2px !important;
     }
+
+    /* 5% to 8% Tactile Button Press (Depression) Effect */
     button:active, a:active, .tactile-card:active {
-      transform: scale(0.97);
-      transition: transform 0.08s ease-out;
+      transform: scale(0.94) !important;
+      transition: transform 0.06s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
+
     .pulse-live {
       animation: pulseGreen 2s infinite;
     }
@@ -101,7 +104,7 @@
           <div class="absolute -inset-1 bg-gradient-to-r from-blue-500/30 to-cyan-400/20 rounded-2xl blur-xs opacity-75"></div>
           <img src="/rise-mitra-logo.svg" 
                alt="RM WORLD Logo" 
-               class="relative w-11 h-11 rounded-xl shadow-lg border border-slate-700/60 object-contain bg-[#02091d] active:scale-95 transition-transform" />
+               class="relative w-11 h-11 rounded-xl shadow-lg border border-slate-700/60 object-contain bg-[#02091d] transition-transform" />
         </div>
 
         <div>
@@ -200,6 +203,9 @@
       </div>
     </section>
 
+    <!-- DYNAMIC CATALOG MOUNT POINT (FOR CATEGORY-16 & MODULAR EXTENSIONS) -->
+    <section id="rm-module-container" class="empty:hidden glass-card rounded-2xl overflow-hidden border border-emerald-800/40 shadow-xl transition-all"></section>
+
     <!-- 5. 9 CORE VERTICALS -->
     <section class="space-y-2">
       <div class="flex justify-between items-center px-1">
@@ -288,14 +294,14 @@
     </div>
 
     <div class="mt-3 flex items-center space-x-2">
-      <button id="pwaInstallBtn" onclick="triggerPWAInstall()" class="flex-1 bg-[#01875f] hover:bg-[#059669] text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-2 shadow-lg active:scale-95 transition-transform cursor-pointer min-h-[48px]">
+      <button id="pwaInstallBtn" onclick="triggerPWAInstall()" class="flex-1 bg-[#01875f] hover:bg-[#059669] text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-2 shadow-lg cursor-pointer min-h-[48px]">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
           <path d="M3 20.5v-17c0-.83.67-1.5 1.5-1.5.39 0 .74.15 1.01.42l11.41 11.41-5.17 5.17-8.83-8.83V20.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5z"/>
           <path d="M14.92 14.92L3.5 3.5 19.1 12l-4.18 2.92z" fill="#00e676"/>
         </svg>
         <span id="installBtnText">इंस्टॉल करें (Install)</span>
       </button>
-      <button onclick="dismissPlayBanner()" class="px-3.5 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700 active:scale-95 cursor-pointer min-h-[48px] flex items-center justify-center">
+      <button onclick="dismissPlayBanner()" class="px-3.5 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700 cursor-pointer min-h-[48px] flex items-center justify-center">
         बाद में
       </button>
     </div>
@@ -310,7 +316,7 @@
           <h3 class="text-sm font-black text-slate-100 uppercase tracking-wide">RM World — Universal Catalog</h3>
           <p id="modal-catalog-count" class="text-[10px] text-emerald-400">Services • Utilities • Security • Games</p>
         </div>
-        <button type="button" onclick="toggleMenuDrawer(false)" class="w-9 h-9 rounded-lg bg-slate-800 text-slate-300 font-bold text-sm hover:bg-slate-700 active:scale-95 cursor-pointer flex items-center justify-center">
+        <button type="button" onclick="toggleMenuDrawer(false)" class="w-9 h-9 rounded-lg bg-slate-800 text-slate-300 font-bold text-sm hover:bg-slate-700 cursor-pointer flex items-center justify-center">
           ✕
         </button>
       </div>
@@ -319,7 +325,7 @@
         
         <!-- Accordion 1: Services (33 Verticals) -->
         <div class="space-y-1.5">
-          <button type="button" id="rm-tier1-toggle" onclick="toggleAccordion('tier1-list', this)" class="w-full flex justify-between items-center p-3 rounded-xl bg-emerald-950/60 border border-emerald-800/40 text-emerald-300 font-bold cursor-pointer select-none active:scale-[0.99] transition-transform min-h-[48px]">
+          <button type="button" id="rm-tier1-toggle" onclick="toggleAccordion('tier1-list', this)" class="w-full flex justify-between items-center p-3 rounded-xl bg-emerald-950/60 border border-emerald-800/40 text-emerald-300 font-bold cursor-pointer select-none transition-transform min-h-[48px]">
             <span id="tier1-header-text">💼 आजीविका (सेवाएं व सुविधाएं)</span>
             <span class="acc-arrow text-xs font-mono">▼</span>
           </button>
@@ -329,7 +335,7 @@
             <button class="w-full text-left p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2 min-h-[44px]"><span>🚗</span><span>02. Auto & Vehicles (वाहन सेवा)</span></button>
             <button class="w-full text-left p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2 min-h-[44px]"><span>💄</span><span>03. Beauty & Salon (ब्यूटी)</span></button>
             <button class="w-full text-left p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2 min-h-[44px]"><span>📚</span><span>04. Books & Reference (किताबें)</span></button>
-            <button class="w-full text-left p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2 min-h-[44px]"><span>💼</span><span>05. Business (सॉवरेन बहीखाता)</span></button>
+            <button onclick="handleLaunchCategory('c05')" class="w-full text-left p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2 min-h-[44px]"><span>💼</span><span>05. Business (सॉवरेन बहीखाता)</span></button>
             <button class="w-full text-left p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2 min-h-[44px]"><span>🎭</span><span>06. Comics & Stories (कहानियाँ)</span></button>
             <button class="w-full text-left p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2 min-h-[44px]"><span>💬</span><span>07. Communication (संपर्क)</span></button>
             <button class="w-full text-left p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2 min-h-[44px]"><span>❤️</span><span>08. Dating & Relations (रिश्ते)</span></button>
@@ -340,7 +346,7 @@
             <button class="w-full text-left p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2 min-h-[44px]"><span>💰</span><span>13. Finance (RM CASH लेज़र)</span></button>
             <button class="w-full text-left p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2 min-h-[44px]"><span>🍲</span><span>14. Food & Drink (ढाबा व भोजन)</span></button>
             <button class="w-full text-left p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2 min-h-[44px]"><span>🌿</span><span>15. Health & Fitness (स्वस्थ मन)</span></button>
-            <button class="w-full text-left p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2 min-h-[44px]"><span>🏠</span><span>16. House & Home (मिस्त्री सेवा)</span></button>
+            <button onclick="handleLaunchCategory('c16')" class="w-full text-left p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2 min-h-[44px]"><span>🏠</span><span>16. House & Home (किराया बहीखाता)</span></button>
             <button class="w-full text-left p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2 min-h-[44px]"><span>📦</span><span>17. Libraries & Demo (पुस्तकालय)</span></button>
             <button class="w-full text-left p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2 min-h-[44px]"><span>🧘</span><span>18. Lifestyle (स्वावलंबन)</span></button>
             <button class="w-full text-left p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-200 tactile-card flex items-center space-x-2 min-h-[44px]"><span>🗺️</span><span>19. Maps & Navigation (मार्गदर्शन)</span></button>
@@ -363,7 +369,7 @@
 
         <!-- Accordion 2: Games (17 Verticals) -->
         <div class="space-y-1.5">
-          <button type="button" id="rm-tier2-toggle" onclick="toggleAccordion('tier2-list', this)" class="w-full flex justify-between items-center p-3 rounded-xl bg-cyan-950/60 border border-cyan-800/40 text-cyan-300 font-bold cursor-pointer select-none active:scale-[0.99] transition-transform min-h-[48px]">
+          <button type="button" id="rm-tier2-toggle" onclick="toggleAccordion('tier2-list', this)" class="w-full flex justify-between items-center p-3 rounded-xl bg-cyan-950/60 border border-cyan-800/40 text-cyan-300 font-bold cursor-pointer select-none transition-transform min-h-[48px]">
             <span id="tier2-header-text">🎮 खेल व मनोरंजन</span>
             <span class="acc-arrow text-xs font-mono">▼</span>
           </button>
@@ -416,6 +422,7 @@
   </nav>
 
   <!-- 10. JAVASCRIPT CONTROLLERS -->
+  <script src="/js/categories-data.js"></script>
   <script>
     let deferredPrompt = null;
     const banner = document.getElementById('playStoreInstallBanner');
@@ -477,16 +484,47 @@
       }
     }
 
+    function handleLaunchCategory(catId) {
+      toggleMenuDrawer(false);
+      const container = document.getElementById('rm-module-container');
+      if (!container) return;
+
+      if (catId === 'c16') {
+        if (window.RM_Cat16_Sub2_RentalLedger) {
+          window.RM_Cat16_Sub2_RentalLedger.mount(container);
+          container.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          const script = document.createElement('script');
+          script.src = '/js/catalog/category-16/16-2-rental-ledger.js';
+          script.async = true;
+          script.onload = function () {
+            if (window.RM_Cat16_Sub2_RentalLedger) {
+              window.RM_Cat16_Sub2_RentalLedger.mount(container);
+              container.scrollIntoView({ behavior: 'smooth' });
+            }
+          };
+          script.onerror = function () {
+            container.innerHTML = '<div style="padding:16px; color:#ef4444;">किराया बहीखाता लोड नहीं हो सका।</div>';
+          };
+          document.body.appendChild(script);
+        }
+      } else if (catId === 'c05') {
+        alert('सॉवरेन बहीखाता (Business Khata) लोड हो रहा है...');
+      }
+    }
+
     function syncCategoryVisibilityFromOwner() {
       const raw = localStorage.getItem('rm_active_categories_v1');
       let activeIds;
       if (!raw) {
-        activeIds = new Set(['c05', 'c13', 'c27', '05', '13', '27']);
+        activeIds = new Set(['c05', 'c13', 'c16', 'c27', '05', '13', '16', '27']);
       } else {
         try {
           activeIds = new Set(JSON.parse(raw));
+          activeIds.add('c16');
+          activeIds.add('16');
         } catch (_) {
-          activeIds = new Set(['c05', 'c13', 'c27', '05', '13', '27']);
+          activeIds = new Set(['c05', 'c13', 'c16', 'c27', '05', '13', '16', '27']);
         }
       }
 
