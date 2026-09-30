@@ -1,31 +1,66 @@
+# OWNER-REVIEW v2.0.1: use with the matching snapshot generator.
 name: Sync Codebase Snapshot to Google Drive
 
+# SECTION 1 — TRIGGERS
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
+    inputs:
+      upload:
+        description: 'Update Folder B after local verification'
+        type: boolean
+        required: true
+        default: false
 
+# SECTION 2 — REPOSITORY PERMISSIONS
+permissions:
+  contents: read
+
+# SECTION 3 — SERIALIZE UPDATES TO THE SHARED DRIVE FILE
+# This group coordinates this repository's matching workflows.
+# It does not prevent writes from external applications.
+concurrency:
+  group: rm-folder-b-snapshot
+  cancel-in-progress: false
+
+# SECTION 4 — SNAPSHOT JOB
 jobs:
   bundle-and-sync:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
 
     steps:
-      - name: Checkout Codebase
+      # SECTION 5 — CHECKOUT THE EXACT EVENT COMMIT
+      - name: Checkout exact event commit
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
 
+      # SECTION 6 — PYTHON AND DRIVE DEPENDENCIES
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install Google API Dependencies
-        run: |
-          pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib
+      - name: Install Google API dependencies
+        run: python -m pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib
 
-      - name: Bundle Codebase and Sync to Google Drive
+      # SECTION 7 — VERIFY WITHOUT UPLOADING
+      - name: Verify snapshot locally
+        run: python scripts/sync_to_drive.py
+
+      # SECTION 8 — UPLOAD AND VERIFY EXACT DRIVE CONTENT
+      # Runs only after preceding steps succeed.
+      # Manual runs upload only when the upload input is true.
+      - name: Generate, upload and verify Folder B snapshot
+        if: github.event_name == 'push' || inputs.upload == true
         env:
           GDRIVE_SA_KEY: ${{ secrets.GDRIVE_SA_KEY }}
           GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
-        run: |
-          python scripts/sync_to_drive.py
+        run: python scripts/sync_to_drive.py --upload
