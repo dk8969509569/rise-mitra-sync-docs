@@ -1,396 +1,72 @@
-<!DOCTYPE html>
-<html lang="hi" class="dark" data-theme="dark">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <meta name="theme-color" content="#02091d">
-  <meta name="description" content="RM WORLD (Rise Mitra) — Sovereign Offline-First Super App & Bahi Khata">
-  <title>RM WORLD — Rise Mitra</title>
-
-  <link rel="icon" type="image/svg+xml" href="/rise-mitra-logo.svg">
-  <link rel="apple-touch-icon" href="/rise-mitra-logo.svg">
-  <link rel="manifest" href="/manifest.json">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-  <link rel="stylesheet" href="/css/app.css">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: { 500: '#10b981', 600: '#059669', 950: '#022c22' },
-            amberBrand: { 500: '#f59e0b', 950: '#451a03' },
-            surface: { 800: '#111827', 900: '#0b0f19', 950: '#030712' }
-          }
-        }
-      }
-    }
-  </script>
-
-  <style>
-    * {
-      -webkit-tap-highlight-color: transparent;
-      box-sizing: border-box;
-      -webkit-touch-callout: none;
-    }
-    body {
-      background-color: #030712;
-      color: #f8fafc;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      touch-action: manipulation;
-      -webkit-user-select: none;
-      user-select: none;
-    }
-
-    input, textarea {
-      -webkit-user-select: text !important;
-      user-select: text !important;
-    }
-
-    /* 2.5D Tactile Elevation Tokens (EL-UX-ELEVATION-25D) */
-    .tactile-25d {
-      position: relative;
-      border-top: 1px solid rgba(255, 255, 255, 0.12);
-      border-bottom: 2px solid rgba(15, 23, 42, 0.90);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12),
-                  0 4px 0 #020914,
-                  0 8px 16px -2px rgba(0, 0, 0, 0.60);
-      transition: transform 0.06s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.06s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .tactile-25d:active {
-      transform: translateY(2px) scale(0.94) !important;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.70),
-                  0 1px 0 #020914,
-                  0 2px 6px rgba(0, 0, 0, 0.40) !important;
-    }
-
-    /* High-Contrast Luminous Active Ring (EL-UX-LUMINOUS-AURA) */
-    .ring-active-luminous {
-      border: 2px solid #34d399 !important;
-      box-shadow: 0 0 14px -1px rgba(16, 185, 129, 0.45),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.20) !important;
-      background: linear-gradient(135deg, rgba(6, 78, 59, 0.35) 0%, rgba(11, 15, 25, 0.95) 100%) !important;
-    }
-
-    .glass-card {
-      background: linear-gradient(135deg, rgba(17, 24, 39, 0.85) 0%, rgba(11, 15, 25, 0.95) 100%);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.50);
-    }
-    .wallet-card {
-      background: radial-gradient(circle at 100% 0%, rgba(16, 185, 129, 0.15) 0%, transparent 60%),
-                  linear-gradient(135deg, #064e3b 0%, #022c22 40%, #0b0f19 100%);
-      border: 1px solid rgba(16, 185, 129, 0.30);
-      box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.25);
-    }
-    .nav-glass {
-      background: rgba(3, 7, 18, 0.95);
-      backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-    }
-    .play-install-card {
-      background: #0f172a;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.80);
-    }
-
-    button:focus-visible, a:focus-visible, input:focus-visible {
-      outline: 2px solid #10b981 !important;
-      outline-offset: 2px !important;
-    }
-
-    .pulse-live {
-      animation: pulseGreen 2s infinite;
-    }
-    @keyframes pulseGreen {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(1.15); }
-    }
-  </style>
-</head>
-<body class="pb-36 antialiased">
-
-  <header class="sticky top-0 z-40 bg-[#030712]/95 backdrop-blur-md border-b border-slate-800/80 px-4 py-3">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="relative flex items-center justify-center cursor-pointer min-w-[48px] min-h-[48px]" onclick="toggleMenuDrawer(true)">
-          <div class="absolute -inset-1 bg-gradient-to-r from-blue-500/30 to-cyan-400/20 rounded-2xl blur-xs opacity-75"></div>
-          <img src="/rise-mitra-logo.svg" alt="RM WORLD Logo" class="relative w-11 h-11 rounded-xl shadow-lg border border-slate-700/60 object-contain bg-[#02091d] transition-transform" />
-        </div>
-        <div>
-          <h1 class="text-lg font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 leading-tight uppercase font-sans">
-            RM WORLD
-          </h1>
-          <p class="text-[10px] text-slate-400 font-medium">Rise Mitra • स्वास्थ्य और स्वावलंबन</p>
-        </div>
-      </div>
-      <div class="flex items-center space-x-2">
-        <div class="flex items-center space-x-1.5 bg-emerald-950/80 border border-emerald-700/60 rounded-full px-2.5 py-1">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-live"></span>
-          <span class="text-[10px] font-bold text-emerald-300">ऑनलाइन सिंक</span>
-        </div>
-        <div class="text-[10px] font-mono bg-slate-900 border border-slate-800 rounded-full px-2.5 py-1 text-slate-300">
-          USR-***489
-        </div>
-      </div>
-    </div>
-    <div class="flex justify-between items-center mt-2 pt-1 border-t border-slate-900 text-[10px] text-slate-400 font-sans">
-      <div class="flex items-center space-x-1">
-        <span>🛡️ गोपनीयता व सुरक्षा नीतियां</span>
-        <span>•</span>
-        <span class="text-emerald-400">DPDP Act, 2023 कंप्लायंस</span>
-      </div>
-      <button onclick="triggerPWAInstall()" class="text-cyan-400 font-bold hover:underline flex items-center space-x-1 cursor-pointer min-h-[36px] px-2">
-        <span>📲 ऐप इंस्टॉल</span>
-      </button>
-    </div>
-  </header>
-
-  <main class="max-w-md mx-auto px-4 py-4 space-y-4">
-    <button type="button" id="cat-menu-btn" onclick="toggleMenuDrawer(true)" class="w-full tactile-25d bg-slate-900 p-3.5 rounded-2xl flex items-center justify-between cursor-pointer group shadow-lg min-h-[56px]">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-slate-950 border border-slate-700/80 flex items-center justify-center text-lg text-slate-200 shadow-inner group-hover:scale-105 transition-transform">
-          ☰
-        </div>
-        <div class="text-left">
-          <div class="text-sm font-black text-slate-100 group-hover:text-cyan-300 transition-colors">
-            RM World Directory
-          </div>
-          <div id="cat-subtitle-pill" class="text-xs text-emerald-400 font-sans tracking-wide">
-            Services • Utilities • Security • Games
-          </div>
-        </div>
-      </div>
-      <span class="bg-slate-800 text-slate-200 border border-slate-700 px-3 py-1 rounded-full text-xs font-bold">
-        खोलें ›
-      </span>
-    </button>
-
-    <div class="relative">
-      <input type="text" id="liveSearchInput" oninput="filterQuickTiles()" placeholder="श्रेणी, दुकान या सेवा खोजें..." class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition-colors min-h-[48px]">
-      <span class="absolute right-3 top-3.5 text-slate-500 text-sm">🔍</span>
-    </div>
-
-    <!-- Hero Wallet Card -->
-    <section class="wallet-card p-4 rounded-2xl space-y-3">
-      <div class="flex justify-between items-center text-xs">
-        <span class="text-slate-300 font-medium">उपलब्ध शेष राशि (RM CASH)</span>
-        <span class="bg-emerald-950/90 border border-emerald-700/60 text-emerald-300 px-2 py-0.5 rounded text-[10px] font-bold">
-          सुरक्षित बहीखाता
-        </span>
-      </div>
-      <div class="flex items-baseline space-x-2">
-        <span class="text-3xl font-black text-white tracking-tight">₹0.00</span>
-        <span class="text-xs text-emerald-400 font-bold flex items-center space-x-1">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-          <span>खाता सक्रिय</span>
-        </span>
-      </div>
-      <div class="flex justify-between items-center pt-1 text-[10px] text-slate-400 border-t border-emerald-900/60">
-        <span>लेन-देन स्थिति: सत्यापित</span>
-        <span class="text-emerald-300">ऑफलाइन-फर्स्ट सिंक</span>
-      </div>
-      <div class="grid grid-cols-2 gap-2 pt-1">
-        <button type="button" onclick="alert('नया लेन-देन खुला')" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1 shadow-md tactile-25d cursor-pointer min-h-[48px]">
-          <span>+</span>
-          <span>नया लेन-देन</span>
-        </button>
-        <button type="button" onclick="alert('खाता विवरणी लोड हो रही है...')" class="w-full bg-slate-900/90 border border-slate-700/80 hover:bg-slate-800 text-slate-200 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1 shadow-md tactile-25d cursor-pointer min-h-[48px]">
-          <span>📜</span>
-          <span>खाता विवरणी</span>
-        </button>
-      </div>
-    </section>
-
-    <!-- 9 Core Verticals (Full 2.5D Tactile Depth & High Contrast) -->
-    <section class="space-y-2">
-      <div class="flex justify-between items-center px-1">
-        <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">9 Core Verticals</h2>
-        <span class="text-[10px] text-emerald-400 font-bold bg-emerald-950/60 border border-emerald-800/40 px-2 py-0.5 rounded-full">जुड़ना मुफ़्त</span>
-      </div>
-      <div id="verticalTilesGrid" class="grid grid-cols-3 gap-2.5">
-        <div class="tactile-25d bg-slate-900 p-3 rounded-2xl text-center space-y-1 cursor-pointer min-h-[88px] flex flex-col justify-center items-center">
-          <div class="text-xl">🌿</div>
-          <div class="text-xs font-bold text-slate-200">स्वस्थ मन</div>
-          <div class="text-[9px] text-slate-400">वेलनेस गाइड</div>
-        </div>
-        <div class="tactile-25d bg-slate-900 p-3 rounded-2xl text-center space-y-1 cursor-pointer min-h-[88px] flex flex-col justify-center items-center">
-          <div class="text-xl">🎓</div>
-          <div class="text-xs font-bold text-slate-200">कौशल सीखें</div>
-          <div class="text-[9px] text-slate-400">डिजिटल वर्कशॉप</div>
-        </div>
-        <div class="tactile-25d bg-slate-900 p-3 rounded-2xl text-center space-y-1 cursor-pointer min-h-[88px] flex flex-col justify-center items-center">
-          <div class="text-xl">🛒</div>
-          <div class="text-xs font-bold text-slate-200">किराना</div>
-          <div class="text-[9px] text-emerald-400 font-bold">0% कमीशन</div>
-        </div>
-        <div class="tactile-25d bg-slate-900 p-3 rounded-2xl text-center space-y-1 cursor-pointer min-h-[88px] flex flex-col justify-center items-center">
-          <div class="text-xl">⚡</div>
-          <div class="text-xs font-bold text-slate-200">डिलीवरी</div>
-          <div class="text-[9px] text-slate-400">हाइपरलोकल गिग</div>
-        </div>
-        <div class="tactile-25d bg-slate-900 p-3 rounded-2xl text-center space-y-1 cursor-pointer min-h-[88px] flex flex-col justify-center items-center">
-          <div class="text-xl">💼</div>
-          <div class="text-xs font-bold text-slate-200">व्यापार टूल्स</div>
-          <div class="text-[9px] text-slate-400">ऑटोमेशन किट</div>
-        </div>
-        <div class="tactile-25d bg-slate-900 p-3 rounded-2xl text-center space-y-1 cursor-pointer min-h-[88px] flex flex-col justify-center items-center">
-          <div class="text-xl">⚖️</div>
-          <div class="text-xs font-bold text-slate-200">विशेषज्ञ सलाह</div>
-          <div class="text-[9px] text-slate-400">CA व विधिक सेवा</div>
-        </div>
-        <div class="tactile-25d bg-slate-900 p-3 rounded-2xl text-center space-y-1 cursor-pointer min-h-[88px] flex flex-col justify-center items-center">
-          <div class="text-xl">🎟️</div>
-          <div class="text-xs font-bold text-slate-200">वाउचर</div>
-          <div class="text-[9px] text-slate-400">ऑफ़लाइन सिंक</div>
-        </div>
-        <!-- Active Ledger Tile with Luminous Ring -->
-        <div class="tactile-25d ring-active-luminous p-3 rounded-2xl text-center space-y-1 cursor-pointer min-h-[88px] flex flex-col justify-center items-center" onclick="handleLaunchCategory('c16', '16-2')">
-          <div class="text-xl">📊</div>
-          <div class="text-xs font-bold text-emerald-300">बहीखाता</div>
-          <div class="text-[9px] text-emerald-400 font-bold">पारदर्शी लेज़र</div>
-        </div>
-        <div class="tactile-25d bg-slate-900 p-3 rounded-2xl text-center space-y-1 cursor-pointer min-h-[88px] flex flex-col justify-center items-center">
-          <div class="text-xl">🚨</div>
-          <div class="text-xs font-bold text-red-300">आपात सहायता</div>
-          <div class="text-[9px] text-slate-400">तुरंत कॉल/संपर्क</div>
-        </div>
-      </div>
-    </section>
-
-    <div class="text-center pt-8 pb-10">
-      <a href="/owner-console.html" class="text-slate-600 hover:text-amber-400 font-mono text-xs tracking-widest uppercase transition-colors p-3 inline-block min-h-[48px] min-w-[48px] flex items-center justify-center">
-        console
-      </a>
-    </div>
-  </main>
-
-  <div id="playStoreInstallBanner" class="fixed bottom-16 left-3 right-3 max-w-md mx-auto z-40 play-install-card rounded-2xl p-3.5 shadow-2xl transition-all">
-    <div class="flex items-start justify-between">
-      <div class="flex items-center space-x-3">
-        <img src="/rise-mitra-logo.svg" alt="App Icon" class="w-12 h-12 rounded-xl object-contain bg-[#02091d] border border-slate-700 p-0.5 shadow-md">
-        <div>
-          <h4 class="text-sm font-black text-white leading-tight">RM WORLD</h4>
-          <p class="text-[11px] text-slate-400">Rise Mitra • सुपर ऐप</p>
-          <div class="flex items-center space-x-2 mt-1 text-[10px] text-slate-300">
-            <span class="flex items-center text-amber-400 font-bold">4.9 ★</span>
-            <span>•</span>
-            <span class="text-slate-400">1.2 MB</span>
-            <span>•</span>
-            <span class="text-emerald-400 font-bold flex items-center space-x-0.5">
-              <span>🛡️ Play Protect सत्यापित</span>
-            </span>
-          </div>
-        </div>
-      </div>
-      <button onclick="dismissPlayBanner()" class="text-slate-400 hover:text-slate-200 p-2 text-xs cursor-pointer min-w-[36px] min-h-[36px] flex items-center justify-center">✕</button>
-    </div>
-    <div class="mt-3 flex items-center space-x-2">
-      <button id="pwaInstallBtn" onclick="triggerPWAInstall()" class="flex-1 bg-[#01875f] hover:bg-[#059669] text-white font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-2 shadow-lg cursor-pointer min-h-[48px]">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M3 20.5v-17c0-.83.67-1.5 1.5-1.5.39 0 .74.15 1.01.42l11.41 11.41-5.17 5.17-8.83-8.83V20.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5z"/>
-          <path d="M14.92 14.92L3.5 3.5 19.1 12l-4.18 2.92z" fill="#00e676"/>
-        </svg>
-        <span id="installBtnText">इंस्टॉल करें (Install)</span>
-      </button>
-      <button onclick="dismissPlayBanner()" class="px-3.5 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700 cursor-pointer min-h-[48px] flex items-center justify-center">
-        बाद में
-      </button>
-    </div>
-  </div>
-
-  <!-- Universal Catalog Modal (Slim Shell Mount Viewports) -->
-  <div id="categoryModal" onclick="if(event.target === this) toggleMenuDrawer(false)" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex flex-col justify-start pt-14 px-3 sm:px-4 transition-all">
-    <div class="bg-[#0b0f19] border border-slate-800 rounded-2xl max-w-md w-full mx-auto max-h-[82vh] flex flex-col shadow-2xl overflow-hidden">
-      <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/70">
-        <div>
-          <h3 class="text-sm font-black text-slate-100 uppercase tracking-wide">RM World — Universal Catalog</h3>
-          <p id="modal-catalog-count" class="text-[10px] text-emerald-400">Services • Utilities • Security • Games</p>
-        </div>
-        <button type="button" onclick="toggleMenuDrawer(false)" class="w-9 h-9 rounded-lg bg-slate-800 text-slate-300 font-bold text-sm hover:bg-slate-700 cursor-pointer flex items-center justify-center">
-          ✕
-        </button>
-      </div>
-
-      <div class="flex-1 overflow-y-auto p-3.5 space-y-3 text-xs">
-        <div class="space-y-1.5">
-          <button type="button" id="rm-tier1-toggle" onclick="toggleAccordion('tier1-list', this)" class="w-full flex justify-between items-center p-3 rounded-xl bg-emerald-950/60 border border-emerald-800/40 text-emerald-300 font-bold cursor-pointer select-none transition-transform min-h-[52px]">
-            <span id="tier1-header-text">💼 आजीविका (सेवाएं व सुविधाएं)</span>
-            <span class="acc-arrow text-sm font-bold font-mono">▼</span>
-          </button>
-          
-          <!-- Modular Tier 1 Mount Container (EL-CAT-MODULAR-ENGINE) -->
-          <div id="tier1-list" class="space-y-2 pl-1 transition-all" style="display: block;">
-            <div class="p-3 text-xs text-slate-500 animate-pulse text-center">कैटलॉग लोड हो रहा है…</div>
-          </div>
-        </div>
-
-        <div class="space-y-1.5">
-          <button type="button" id="rm-tier2-toggle" onclick="toggleAccordion('tier2-list', this)" class="w-full flex justify-between items-center p-3 rounded-xl bg-cyan-950/60 border border-cyan-800/40 text-cyan-300 font-bold cursor-pointer select-none transition-transform min-h-[52px]">
-            <span id="tier2-header-text">🎮 खेल व मनोरंजन</span>
-            <span class="acc-arrow text-sm font-bold font-mono">▼</span>
-          </button>
-          
-          <!-- Modular Tier 2 Mount Container (EL-CAT-MODULAR-ENGINE) -->
-          <div id="tier2-list" class="space-y-2 pl-1 transition-all" style="display: block;">
-            <div class="p-3 text-xs text-slate-500 animate-pulse text-center">गेम्स लोड हो रहे हैं…</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Dedicated Fullscreen Micro-App Viewport -->
-  <div id="rm-fullscreen-view" class="fixed inset-0 z-50 bg-[#030712] overflow-y-auto hidden flex flex-col">
-    <div class="sticky top-0 z-50 bg-[#030712]/95 backdrop-blur-md border-b border-slate-800 px-4 py-3 flex items-center justify-between">
-      <button type="button" onclick="closeFullscreenModule()" class="flex items-center space-x-1.5 text-emerald-400 font-bold text-sm bg-slate-900 border border-slate-700/80 px-3 py-1.5 rounded-xl tactile-25d cursor-pointer">
-        <span class="text-base leading-none">‹</span>
-        <span>वापस</span>
-      </button>
-      <div id="fs-module-title" class="text-xs font-bold text-slate-200 font-sans tracking-wide">
-        🏠 किराया बहीखाता
-      </div>
-      <button type="button" onclick="closeFullscreenModule()" class="w-8 h-8 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 text-xs font-bold flex items-center justify-center tactile-25d cursor-pointer">
-        ✕
-      </button>
-    </div>
-    <div class="flex-1 w-full max-w-md mx-auto p-3.5 pb-24">
-      <div id="rm-module-container" class="w-full"></div>
-    </div>
-  </div>
-
-  <nav class="fixed bottom-0 left-0 right-0 nav-glass z-40 px-4 py-2">
-    <div class="max-w-md mx-auto grid grid-cols-4 gap-1 text-center">
-      <button class="flex flex-col items-center justify-center py-1 text-emerald-400 font-bold tactile-25d cursor-pointer min-h-[48px]">
-        <span class="text-base">🏠</span>
-        <span class="text-[10px] mt-0.5">होम</span>
-      </button>
-      <button onclick="alert('ऑर्डर स्क्रीन लोड हो रही है...')" class="flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-200 tactile-25d cursor-pointer min-h-[48px]">
-        <span class="text-base">🛒</span>
-        <span class="text-[10px] mt-0.5">ऑर्डर</span>
-      </button>
-      <button onclick="alert('बहीखाता लोड हो रहा है...')" class="flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-200 tactile-25d cursor-pointer min-h-[48px]">
-        <span class="text-base">📖</span>
-        <span class="text-[10px] mt-0.5">खाता</span>
-      </button>
-      <button onclick="alert('वाउचर केंद्र लोड हो रहा है...')" class="flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-200 tactile-25d cursor-pointer min-h-[48px]">
-        <span class="text-base">🎟️</span>
-        <span class="text-[10px] mt-0.5">वाउचर</span>
-      </button>
-    </div>
-  </nav>
-
   <!-- Modular Catalog Engine Script -->
   <script src="/js/categories-data.js"></script>
 
   <script>
+    // ==============================================================
+    // 50 CANONICAL CATEGORIES (33 SERVICES + 17 NATIVE GAMES)
+    // ==============================================================
+    const RM_SERVICES_DATA = [
+      { id: 'c01', name: 'डिज़ाइन व कला (Art & Design)', icon: '🎨' },
+      { id: 'c02', name: 'वाहन सेवा (Auto & Vehicles)', icon: '🚗' },
+      { id: 'c03', name: 'ब्यूटी व सैलून (Beauty & Salon)', icon: '✂️' },
+      { id: 'c04', name: 'किताबें व संदर्भ (Books)', icon: '📚' },
+      { id: 'c05', name: 'सॉवरेन बहीखाता (Business Khata)', icon: '💼', action: 'launch' },
+      { id: 'c06', name: 'कहानियाँ व कॉमिक्स (Comics)', icon: '📖' },
+      { id: 'c07', name: 'संपर्क व संवाद (Communication)', icon: '💬' },
+      { id: 'c08', name: 'रिश्ते व संबंध (Relations)', icon: '🤝' },
+      { id: 'c09', name: 'हुनर सीखें (Education)', icon: '🎓' },
+      { id: 'c10', name: 'मनोरंजन (Entertainment)', icon: '🎭' },
+      { id: 'c11', name: 'कार्यक्रम व पास (Events)', icon: '🎟️' },
+      { id: 'c12', name: 'परिवार व केयर (Family & Care)', icon: '👨‍👩‍👧' },
+      { id: 'c13', name: 'RM CASH लेज़र (Finance)', icon: '💰' },
+      { id: 'c14', name: 'ढाबा व भोजन (Food & Drink)', icon: '🍲' },
+      { id: 'c15', name: 'स्वस्थ मन व योग (Health & Fitness)', icon: '🧘' },
+      { id: 'c16', name: 'घर व मकान (House & Home)', icon: '🏠', hasChildren: true },
+      { id: 'c17', name: 'पुस्तकालय (Libraries)', icon: '🏛️' },
+      { id: 'c18', name: 'स्वावलंबन (Lifestyle)', icon: '🌱' },
+      { id: 'c19', name: 'मार्गदर्शन (Maps & Navigation)', icon: '🗺️' },
+      { id: 'c20', name: 'दवाई व क्लिनिक (Medical)', icon: '💊' },
+      { id: 'c21', name: 'संगीत (Music & Audio)', icon: '🎵' },
+      { id: 'c22', name: 'समाचार (News & Magazines)', icon: '📰' },
+      { id: 'c23', name: 'शिशु पोषण (Parenting)', icon: '🍼' },
+      { id: 'c24', name: 'थीम्स (Personalization)', icon: '✨' },
+      { id: 'c25', name: 'स्कैनर (Photography)', icon: '📷' },
+      { id: 'c26', name: 'बिलिंग (Productivity)', icon: '🧾' },
+      { id: 'c27', name: '0% किराना स्टोर (Shopping)', icon: '🛒' },
+      { id: 'c28', name: 'चौपाल व संवाद (Social)', icon: '🗣️' },
+      { id: 'c29', name: 'खेलकूद (Sports Community)', icon: '⚽' },
+      { id: 'c30', name: 'कैलकुलेटर (Tools)', icon: '🧮' },
+      { id: 'c31', name: 'यात्रा (Travel & Local)', icon: '🧭' },
+      { id: 'c32', name: 'वीडियो प्लेयर व संपादन (Video)', icon: '🎬' },
+      { id: 'c33', name: 'मौसम पूर्वानुमान (Weather)', icon: '🌤️' }
+    ];
+
+    const RM_GAMES_DATA = [
+      { id: 'g34', name: 'ऐक्शन तीरंदाजी (Action)', icon: '🏹' },
+      { id: 'g35', name: 'रोमांचक यात्रा (Adventure)', icon: '🏔️' },
+      { id: 'g36', name: 'गेंद टप्पा (Arcade)', icon: '🕹️' },
+      { id: 'g37', name: 'देसी लूडो व कैरम (Board)', icon: '🎲' },
+      { id: 'g38', name: 'ताश सॉलिटेयर (Card)', icon: '🃏' },
+      { id: 'g39', name: 'लकी चक्र (Casino Points)', icon: '🎡' },
+      { id: 'g40', name: 'रंगोली क्राफ्ट (Casual)', icon: '🎨' },
+      { id: 'g41', name: 'भारत क्विज़ (Educational)', icon: '🇮🇳' },
+      { id: 'g42', name: 'तबला व ढोलक ताल (Music)', icon: '🥁' },
+      { id: 'g43', name: 'दिमागी पहेलियाँ (Puzzle)', icon: '🧩' },
+      { id: 'g44', name: 'बैलगाड़ी रेस (Racing)', icon: '🏁' },
+      { id: 'g45', name: 'गाँव का प्रधान (Role Playing)', icon: '👑' },
+      { id: 'g46', name: 'खेत सिमुलेटर (Simulation)', icon: '🌾' },
+      { id: 'g47', name: 'गली क्रिकेट (Sports)', icon: '🏏' },
+      { id: 'g48', name: 'चाणक्य नीति (Strategy)', icon: '♟️' },
+      { id: 'g49', name: 'देसी ट्रिविया व तथ्य (Trivia)', icon: '💡' },
+      { id: 'g50', name: 'शब्द पहेली व कोश (Word)', icon: '📝' }
+    ];
+
+    const C16_CHILDREN = [
+      { id: '16-1', name: 'मिस्त्री व गृह मरम्मत', icon: '🔧', badge: 'जल्द उपलब्ध' },
+      { id: '16-2', name: 'किराया बहीखाता (Rental Ledger)', icon: '🏠', badge: 'सक्रिय लेज़र', action: 'launch' },
+      { id: '16-3', name: 'कमरा व फ्लैट लिस्टिंग', icon: '🏢', badge: 'जल्द उपलब्ध' }
+    ];
+
     let deferredPrompt = null;
     const banner = document.getElementById('playStoreInstallBanner');
 
@@ -412,9 +88,7 @@
       if (deferredPrompt) {
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-          if (banner) banner.style.display = 'none';
-        }
+        if (outcome === 'accepted' && banner) banner.style.display = 'none';
         deferredPrompt = null;
       }
     }
@@ -432,7 +106,132 @@
       if (banner) banner.style.display = 'none';
     }
 
+    // ==============================================================
+    // GUARANTEED DOM RENDER ENGINE
+    // ==============================================================
+    function renderCatalogItems() {
+      const t1 = document.getElementById('tier1-list');
+      const t2 = document.getElementById('tier2-list');
+
+      if (t1 && (!t1.dataset.rendered || t1.innerHTML.includes('लोड हो रहा'))) {
+        t1.innerHTML = RM_SERVICES_DATA.map(item => `
+          <div data-cat-id="${item.id}" class="rounded-xl bg-slate-900/90 border border-slate-800 transition-all overflow-hidden mb-2">
+            <div onclick="handleCategoryClick('${item.id}', this)" class="flex items-center justify-between p-3 cursor-pointer hover:border-emerald-500/50 active:scale-[0.98] transition-transform">
+              <div class="flex items-center space-x-3">
+                <span class="text-xl">${item.icon}</span>
+                <span class="text-xs font-bold text-slate-200">${item.name}</span>
+              </div>
+              <div class="flex items-center space-x-1.5">
+                ${item.hasChildren ? '<span class="text-[10px] text-emerald-400 font-bold bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800/40">3 सेवाएं</span>' : ''}
+                <span class="text-xs text-slate-400 font-bold">${item.hasChildren ? '▼' : 'खोलें ›'}</span>
+              </div>
+            </div>
+            ${item.id === 'c16' ? `
+              <div id="sub-c16" class="p-2 pt-0 space-y-1.5 border-t border-slate-800/60 bg-slate-950/60" style="display: block;">
+                ${C16_CHILDREN.map(ch => `
+                  <div onclick="handleLaunchCategory('c16', '${ch.id}')" class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-emerald-500/60 cursor-pointer active:scale-[0.98]">
+                    <div class="flex items-center space-x-2">
+                      <span>${ch.icon}</span>
+                      <span class="text-xs text-slate-300 font-medium">${ch.name}</span>
+                    </div>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded ${ch.action === 'launch' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-slate-800 text-slate-400'}">${ch.badge}</span>
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
+          </div>
+        `).join('');
+        t1.dataset.rendered = "true";
+      }
+
+      if (t2 && (!t2.dataset.rendered || t2.innerHTML.includes('लोड हो रहे'))) {
+        t2.innerHTML = RM_GAMES_DATA.map(item => `
+          <div data-cat-id="${item.id}" class="flex items-center justify-between p-3 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 active:scale-[0.98] transition-transform cursor-pointer mb-2" onclick="alert('${item.name} गेम जल्द शुरू होगा')">
+            <div class="flex items-center space-x-3">
+              <span class="text-xl">${item.icon}</span>
+              <span class="text-xs font-bold text-slate-200">${item.name}</span>
+            </div>
+            <span class="text-xs text-cyan-400 font-semibold px-2 py-1 bg-cyan-950/60 rounded-lg border border-cyan-800/40">खेलें ›</span>
+          </div>
+        `).join('');
+        t2.dataset.rendered = "true";
+      }
+
+      syncCategoryVisibilityFromOwner();
+    }
+
+    // ==============================================================
+    // OWNER CONSOLE VISIBILITY SYNC (SURFACE B ➔ SURFACE A)
+    // ==============================================================
+    function syncCategoryVisibilityFromOwner() {
+      const raw = localStorage.getItem('rm_active_categories_v1');
+      let activeIds;
+      if (!raw) {
+        activeIds = new Set(RM_SERVICES_DATA.map(s => s.id).concat(RM_GAMES_DATA.map(g => g.id)));
+      } else {
+        try {
+          activeIds = new Set(JSON.parse(raw));
+          activeIds.add('c16');
+          activeIds.add('16');
+        } catch (_) {
+          activeIds = new Set(RM_SERVICES_DATA.map(s => s.id).concat(RM_GAMES_DATA.map(g => g.id)));
+        }
+      }
+
+      const t1List = document.getElementById('tier1-list');
+      let liveT1 = 0;
+      if (t1List) {
+        Array.from(t1List.children).forEach(itemEl => {
+          const catId = itemEl.dataset.catId;
+          if (!catId) return;
+          const num = catId.replace('c', '');
+          const isLive = activeIds.has(catId) || activeIds.has(num);
+          itemEl.style.display = isLive ? 'block' : 'none';
+          if (isLive) liveT1++;
+        });
+
+        const t1Header = document.getElementById('tier1-header-text');
+        if (t1Header) t1Header.textContent = `💼 आजीविका (${liveT1} सेवाएं उपलब्ध)`;
+      }
+
+      const t2List = document.getElementById('tier2-list');
+      let liveT2 = 0;
+      if (t2List) {
+        Array.from(t2List.children).forEach(itemEl => {
+          const catId = itemEl.dataset.catId;
+          if (!catId) return;
+          const num = catId.replace('g', '');
+          const isLive = activeIds.has(catId) || activeIds.has(num);
+          itemEl.style.display = isLive ? 'flex' : 'none';
+          if (isLive) liveT2++;
+        });
+
+        const t2Header = document.getElementById('tier2-header-text');
+        if (t2Header) t2Header.textContent = `🎮 खेल व मनोरंजन (${liveT2} श्रेणियां उपलब्ध)`;
+      }
+
+      const modalCount = document.getElementById('modal-catalog-count');
+      if (modalCount) {
+        modalCount.textContent = `${liveT1} Services • ${liveT2} Games Active`;
+      }
+    }
+
+    function handleCategoryClick(catId, el) {
+      if (catId === 'c16') {
+        const sub = document.getElementById('sub-c16');
+        if (sub) {
+          const isHidden = sub.style.display === 'none';
+          sub.style.display = isHidden ? 'block' : 'none';
+        }
+      } else if (catId === 'c05') {
+        handleLaunchCategory('c05', '05-1');
+      } else {
+        alert(catId + ' सेवा का विस्तार जल्द उपलब्ध होगा।');
+      }
+    }
+
     function toggleAccordion(listId, btnEl) {
+      renderCatalogItems();
       const list = document.getElementById(listId);
       if (!list) return;
       const isHidden = list.style.display === 'none';
@@ -453,7 +252,7 @@
     function toggleMenuDrawer(show) {
       const modal = document.getElementById('categoryModal');
       if (show) {
-        syncCategoryVisibilityFromOwner();
+        renderCatalogItems();
         modal.classList.remove('hidden');
       } else {
         modal.classList.add('hidden');
@@ -483,13 +282,15 @@
       const container = document.getElementById('rm-module-container');
       if (!container) return;
 
-      if (catId === 'c16') {
-        openFullscreenModule('🏠 16-2. किराया बहीखाता');
+      if (catId === 'c16' && (subId === '16-2' || !subId)) {
+        openFullscreenModule('🏠 16-2. किराया बहीखाता (Rental Ledger)');
         if (window.RM_Cat16_Sub2_RentalLedger) {
           window.RM_Cat16_Sub2_RentalLedger.mount(container);
         } else {
+          container.innerHTML = '<div class="p-6 text-center text-xs text-emerald-400 animate-pulse">किराया बहीखाता लोड हो रहा है...</div>';
           const script = document.createElement('script');
-          script.src = '/js/catalog/category-16/16-2-rental-ledger.js';
+          // EL-SYS-CACHE-BUSTER Compliant Dynamic Query Parameter
+          script.src = '/js/catalog/category-16/16-2-rental-ledger.js?v=' + (window.RM_DEPLOY_EPOCH || Date.now());
           script.async = true;
           script.onload = function () {
             if (window.RM_Cat16_Sub2_RentalLedger) {
@@ -497,65 +298,14 @@
             }
           };
           script.onerror = function () {
-            container.innerHTML = '<div style="padding:16px; color:#ef4444;">किराया बहीखाता लोड नहीं हो सका।</div>';
+            container.innerHTML = '<div class="p-6 text-center text-xs text-red-400">किराया बहीखाता लोड नहीं हो सका। कृपया फाइल पाथ चेक करें।</div>';
           };
           document.body.appendChild(script);
         }
       } else if (catId === 'c05') {
         alert('सॉवरेन बहीखाता (Business Khata) लोड हो रहा है...');
-      }
-    }
-
-    function syncCategoryVisibilityFromOwner() {
-      const raw = localStorage.getItem('rm_active_categories_v1');
-      let activeIds;
-      if (!raw) {
-        activeIds = new Set(['c05', 'c13', 'c16', 'c27', '05', '13', '16', '27']);
       } else {
-        try {
-          activeIds = new Set(JSON.parse(raw));
-          activeIds.add('c16');
-          activeIds.add('16');
-        } catch (_) {
-          activeIds = new Set(['c05', 'c13', 'c16', 'c27', '05', '13', '16', '27']);
-        }
-      }
-
-      const t1List = document.getElementById('tier1-list');
-      let liveT1 = 0;
-      if (t1List) {
-        Array.from(t1List.children).forEach((btn, idx) => {
-          if (btn.classList.contains('zero-state-msg')) return;
-          const catId = btn.dataset.catId || ('c' + String(idx + 1).padStart(2, '0'));
-          const num = catId.replace('c', '');
-          const isLive = activeIds.has(catId) || activeIds.has(num);
-          btn.style.display = isLive ? 'block' : 'none';
-          if (isLive) liveT1++;
-        });
-
-        const t1Header = document.getElementById('tier1-header-text');
-        if (t1Header) t1Header.textContent = `💼 आजीविका (${liveT1} सेवाएं उपलब्ध)`;
-      }
-
-      const t2List = document.getElementById('tier2-list');
-      let liveT2 = 0;
-      if (t2List) {
-        Array.from(t2List.children).forEach((btn, idx) => {
-          if (btn.classList.contains('zero-state-msg')) return;
-          const catId = btn.dataset.catId || ('g' + (33 + idx + 1));
-          const num = String(33 + idx + 1);
-          const isLive = activeIds.has(catId) || activeIds.has(num);
-          btn.style.display = isLive ? 'flex' : 'none';
-          if (isLive) liveT2++;
-        });
-
-        const t2Header = document.getElementById('tier2-header-text');
-        if (t2Header) t2Header.textContent = `🎮 खेल व मनोरंजन (${liveT2} श्रेणियां उपलब्ध)`;
-      }
-
-      const modalCount = document.getElementById('modal-catalog-count');
-      if (modalCount) {
-        modalCount.textContent = liveT2 > 0 ? `${liveT1} Services • ${liveT2} Games Active` : `${liveT1} Enterprise Services Active`;
+        alert('यह सेवा जल्द ही एक्टिवेट होगी।');
       }
     }
 
@@ -565,12 +315,12 @@
       if (!grid) return;
       Array.from(grid.children).forEach(card => {
         const txt = card.innerText.toLowerCase();
-        card.style.display = txt.includes(q) ? 'block' : 'none';
+        card.style.display = txt.includes(q) ? 'flex' : 'none';
       });
     }
 
-    window.addEventListener('DOMContentLoaded', syncCategoryVisibilityFromOwner);
+    window.addEventListener('DOMContentLoaded', () => {
+      renderCatalogItems();
+    });
     window.addEventListener('storage', syncCategoryVisibilityFromOwner);
   </script>
-</body>
-</html>
