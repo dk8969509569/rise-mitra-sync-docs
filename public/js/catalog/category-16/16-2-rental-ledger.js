@@ -1,9 +1,15 @@
 /**
- * Rise Mitra — Category-16: House & Home
- * Sub-Feature 16-2: Rental Ledger & Bahi-Khata (Client Logic)
- * Contract: DEC-RM-SOV-ARCH-20260929-UNIVERSAL-ZEL-CATALOG (v0.3.1)
- * Storage Key: rm_local_acct{opaqueAccountId}_cat16_sub2_v1
+ * RISE MITRA — CATEGORY-16 MICRO-APP ENGINE
+ * SUB-FEATURE   : 16-2 (Rental Ledger & Sub-Meter P2P Engine)
+ * SPECIFICATION : 14_04__EXT_004_MODULAR_ARCHITECTURE_MOBILE_SAFETY_RECOVERY_SPEC
+ * GOVERNANCE    : GATE-16.7 | DEC-RM-SOV-ARCH-20260930-MODULAR-ZEL-001
+ * REPO TARGET   : public/js/catalog/category-16/16-2-rental-ledger.js
  */
+
+
+// ==============================================================================
+// SECTION 1: SPECIFICATION METADATA, SCHEMAS & STORAGE IDENTIFIERS
+// ==============================================================================
 
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -25,6 +31,11 @@
     return 'rm_local_acct' + acct + '_cat16_sub2_v' + SCHEMA_VERSION;
   }
 
+
+// ==============================================================================
+// SECTION 2: MATHEMATICAL CALCULATORS & CANONICAL FINANCIAL FORMULAS
+// ==============================================================================
+
   function calculateElectricity(prev, curr, rate) {
     var p = parseFloat(prev) || 0;
     var c = parseFloat(curr) || 0;
@@ -43,6 +54,11 @@
     var o = parseFloat(otherCharges) || 0;
     return Math.round((r + e + o) * 100) / 100;
   }
+
+
+// ==============================================================================
+// SECTION 3: OFFLINE-FIRST PERSISTENCE & SOVEREIGN VOUCHER CREATION
+// ==============================================================================
 
   function loadVouchers(accountId) {
     try {
@@ -93,6 +109,11 @@
     saveVouchers(accountId, vouchers);
     return voucher;
   }
+
+
+// ==============================================================================
+// SECTION 4: FLUID DOM VIEWPORT & TACTILE EVENT HANDLERS
+// ==============================================================================
 
   function renderView(container, options) {
     if (!container) return;
@@ -202,6 +223,11 @@
       });
     }
   }
+
+
+// ==============================================================================
+// SECTION 5: LIFECYCLE MOUNT/UNMOUNT CONTRACT & UMD EXPORTS
+// ==============================================================================
 
   return {
     subFeatureId: SUB_FEATURE_ID,
