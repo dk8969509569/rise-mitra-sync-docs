@@ -1,0 +1,42 @@
+# SECTION 1 — VALIDATION WORKFLOW
+name: Validate Snapshot Without Upload
+
+# SECTION 2 — REVIEW BRANCH TRIGGER
+on:
+  push:
+    branches:
+      - review/snapshot-v2-0-1
+
+# SECTION 3 — READ-ONLY REPOSITORY ACCESS
+permissions:
+  contents: read
+
+# SECTION 4 — CANCEL OUTDATED VALIDATION RUNS
+concurrency:
+  group: rm-snapshot-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+# SECTION 5 — LOCAL SNAPSHOT VALIDATION
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+
+    steps:
+      - name: Checkout exact event commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Generate and verify snapshot without upload
+        run: python scripts/sync_to_drive.py
