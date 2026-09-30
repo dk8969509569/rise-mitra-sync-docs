@@ -306,7 +306,7 @@
     </div>
   </div>
 
-  <!-- Universal Catalog Modal -->
+  <!-- Universal Catalog Modal (Slim Shell Mount Viewports) -->
   <div id="categoryModal" onclick="if(event.target === this) toggleMenuDrawer(false)" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex flex-col justify-start pt-14 px-3 sm:px-4 transition-all">
     <div class="bg-[#0b0f19] border border-slate-800 rounded-2xl max-w-md w-full mx-auto max-h-[82vh] flex flex-col shadow-2xl overflow-hidden">
       <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/70">
@@ -326,80 +326,9 @@
             <span class="acc-arrow text-sm font-bold font-mono">▼</span>
           </button>
           
+          <!-- Modular Tier 1 Mount Container (EL-CAT-MODULAR-ENGINE) -->
           <div id="tier1-list" class="space-y-2 pl-1 transition-all" style="display: block;">
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🎨</span><span>01. Art & Design (डिज़ाइन)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🚗</span><span>02. Auto & Vehicles (वाहन सेवा)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>💄</span><span>03. Beauty & Salon (ब्यूटी)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>📚</span><span>04. Books & Reference (किताबें)</span></button>
-            <button onclick="handleLaunchCategory('c05')" class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>💼</span><span>05. Business (सॉवरेन बहीखाता)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🎭</span><span>06. Comics & Stories (कहानियाँ)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>💬</span><span>07. Communication (संपर्क)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>❤️</span><span>08. Dating & Relations (रिश्ते)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🎓</span><span>09. Education (हुनर सीखें)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🎬</span><span>10. Entertainment (मनोरंजन)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🎟️</span><span>11. Events & Pass (कार्यक्रम)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>👨‍👩‍👧</span><span>12. Family & Care (परिवार)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>💰</span><span>13. Finance (RM CASH लेज़र)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🍲</span><span>14. Food & Drink (ढाबा व भोजन)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🌿</span><span>15. Health & Fitness (स्वस्थ मन)</span></button>
-
-            <!-- 16. House & Home Sub-Category Accordion (EL-CAT16-HIERARCHY-TREE) -->
-            <div class="rounded-2xl border border-slate-800/90 bg-slate-900/40 overflow-hidden transition-all">
-              <button type="button" onclick="toggleSubCategory('c16-subs', this)" class="w-full text-left p-3.5 text-slate-100 tactile-25d flex items-center justify-between min-h-[52px] bg-slate-900/70 hover:bg-slate-850 cursor-pointer">
-                <div class="flex items-center space-x-2.5">
-                  <span class="text-base">🏠</span>
-                  <span class="font-bold text-xs tracking-wide">16. House & Home (घर व मकान)</span>
-                </div>
-                <span class="sub-arrow text-sm font-bold text-emerald-400 font-mono transition-transform duration-200">▼</span>
-              </button>
-              
-              <div id="c16-subs" class="space-y-2 py-2.5 pr-2.5 ml-3.5 pl-3 border-l-2 border-emerald-500/40 transition-all" style="display: block;">
-                <!-- 16-1 Mistri Service -->
-                <button onclick="alert('16-1. मिस्त्री सेवा शीघ्र उपलब्ध होगी')" class="w-full text-left p-3 rounded-xl bg-slate-900/60 border border-slate-800/80 text-slate-300 tactile-25d flex items-center justify-between min-h-[48px] hover:border-slate-700">
-                  <div class="flex items-center space-x-2">
-                    <span class="text-sm">🔨</span>
-                    <span class="text-xs font-medium">16-1. मिस्त्री व गृह मरम्मत</span>
-                  </div>
-                  <span class="text-[10px] text-slate-500 font-medium">जल्द आ रहा</span>
-                </button>
-
-                <!-- 16-2 Kiraya Bahi-Khata (Active Module) -->
-                <button onclick="handleLaunchCategory('c16', '16-2')" class="w-full text-left p-3 rounded-xl ring-active-luminous text-emerald-300 font-semibold tactile-25d flex items-center justify-between min-h-[48px] shadow-sm">
-                  <div class="flex items-center space-x-2">
-                    <span class="text-sm">📄</span>
-                    <span class="text-xs font-bold text-emerald-200">16-2. किराया बहीखाता (Rental Ledger)</span>
-                  </div>
-                  <span class="text-[10px] bg-emerald-500 text-slate-950 px-2 py-1 rounded-md font-extrabold uppercase tracking-wider shadow">खोलें ›</span>
-                </button>
-
-                <!-- 16-3 Room Listing -->
-                <button onclick="alert('16-3. संपत्ति लिस्टिंग शीघ्र उपलब्ध होगी')" class="w-full text-left p-3 rounded-xl bg-slate-900/60 border border-slate-800/80 text-slate-300 tactile-25d flex items-center justify-between min-h-[48px] hover:border-slate-700">
-                  <div class="flex items-center space-x-2">
-                    <span class="text-sm">🔑</span>
-                    <span class="text-xs font-medium">16-3. कमरा व फ्लैट लिस्टिंग</span>
-                  </div>
-                  <span class="text-[10px] text-slate-500 font-medium">जल्द आ रहा</span>
-                </button>
-              </div>
-            </div>
-
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>📦</span><span>17. Libraries & Demo (पुस्तकालय)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🧘</span><span>18. Lifestyle (स्वावलंबन)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🗺</span><span>19. Maps & Navigation (मार्गदर्शन)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>💊</span><span>20. Medical (दवाई व क्लिनिक)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🎵</span><span>21. Music & Audio (संगीत)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>📰</span><span>22. News & Magazines (समाचार)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🍼</span><span>23. Parenting (शिशु पोषण)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>✨</span><span>24. Personalization (थीम्स)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>📸</span><span>25. Photography (स्कैनर)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>⚡</span><span>26. Productivity (बिलिंग)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🛒</span><span>27. Shopping (0% किराना स्टोर)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🌐</span><span>28. Social (चौपाल व संवाद)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🏏</span><span>29. Sports Community (खेलकूद)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🛠️</span><span>30. Tools (कैलकुलेटर)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>✈️</span><span>31. Travel & Local (यात्रा)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🎞️</span><span>32. Video Players & Editors</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>☀️</span><span>33. Weather (मौसम पूर्वानुमान)</span></button>
+            <div class="p-3 text-xs text-slate-500 animate-pulse text-center">कैटलॉग लोड हो रहा है…</div>
           </div>
         </div>
 
@@ -408,24 +337,10 @@
             <span id="tier2-header-text">🎮 खेल व मनोरंजन</span>
             <span class="acc-arrow text-sm font-bold font-mono">▼</span>
           </button>
+          
+          <!-- Modular Tier 2 Mount Container (EL-CAT-MODULAR-ENGINE) -->
           <div id="tier2-list" class="space-y-2 pl-1 transition-all" style="display: block;">
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🏹</span><span>01. Action (ऐक्शन तीरंदाजी)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🧭</span><span>02. Adventure (रोमांचक यात्रा)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🕹️</span><span>03. Arcade (गेंद टप्पा)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🎲</span><span>04. Board (देसी लूडो व कैरम)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🃏</span><span>05. Card (ताश सॉलिटेयर)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🎡</span><span>06. Casino Points (लकी चक्र)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🎈</span><span>07. Casual (रंगोली क्राफ्ट)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🧠</span><span>08. Educational (भारत क्विज़)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🥁</span><span>09. Music (तबला व ढोलक ताल)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🧩</span><span>10. Puzzle (दिमागी पहेलियाँ)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🏎️</span><span>11. Racing (बैलगाड़ी रेस)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>👑</span><span>12. Role Playing (गाँव का प्रधान)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🚜</span><span>13. Simulation (खेत सिमुलेटर)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🏏</span><span>14. Sports (गली क्रिकेट)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>♟️</span><span>15. Strategy (चाणक्य नीति)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>❓</span><span>16. Trivia (देसी ट्रिविया व तथ्य)</span></button>
-            <button class="w-full text-left p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-slate-200 tactile-25d flex items-center space-x-2 min-h-[48px]"><span>🔤</span><span>17. Word (शब्द पहेली व कोश)</span></button>
+            <div class="p-3 text-xs text-slate-500 animate-pulse text-center">गेम्स लोड हो रहे हैं…</div>
           </div>
         </div>
       </div>
@@ -472,7 +387,9 @@
     </div>
   </nav>
 
+  <!-- Modular Catalog Engine Script -->
   <script src="/js/categories-data.js"></script>
+
   <script>
     let deferredPrompt = null;
     const banner = document.getElementById('playStoreInstallBanner');
@@ -609,8 +526,9 @@
       if (t1List) {
         Array.from(t1List.children).forEach((btn, idx) => {
           if (btn.classList.contains('zero-state-msg')) return;
-          const num = String(idx + 1).padStart(2, '0');
-          const isLive = activeIds.has('c' + num) || activeIds.has(num);
+          const catId = btn.dataset.catId || ('c' + String(idx + 1).padStart(2, '0'));
+          const num = catId.replace('c', '');
+          const isLive = activeIds.has(catId) || activeIds.has(num);
           btn.style.display = isLive ? 'block' : 'none';
           if (isLive) liveT1++;
         });
@@ -624,9 +542,9 @@
       if (t2List) {
         Array.from(t2List.children).forEach((btn, idx) => {
           if (btn.classList.contains('zero-state-msg')) return;
-          const localNum = String(idx + 1).padStart(2, '0');
-          const globalId = 'g' + (33 + idx + 1);
-          const isLive = activeIds.has(globalId) || activeIds.has(String(33 + idx + 1)) || activeIds.has(localNum);
+          const catId = btn.dataset.catId || ('g' + (33 + idx + 1));
+          const num = String(33 + idx + 1);
+          const isLive = activeIds.has(catId) || activeIds.has(num);
           btn.style.display = isLive ? 'flex' : 'none';
           if (isLive) liveT2++;
         });
