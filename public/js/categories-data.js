@@ -66,11 +66,13 @@ const RM_GAMES_DATA = [
   { id: 'g50', num: '50', name: 'शब्द पहेली व कोश (Word)', icon: '📝' }
 ];
 
-const C16_CHILDREN = [
-  { id: '16-1', name: 'मिस्त्री व गृह मरम्मत', icon: '🔧', badge: 'जल्द उपलब्ध', state: 'upcoming' },
-  { id: '16-2', name: 'किराया बहीखाता (Rental Ledger)', icon: '🏠', badge: 'खोलें ›', state: 'active', action: 'launch' },
-  { id: '16-3', name: 'कमरा व फ्लैट लिस्टिंग', icon: '🏢', badge: 'जल्द उपलब्ध', state: 'upcoming' }
-];
+  const C16_CHILDREN = [
+    { id: '16-1', name: 'मिस्त्री व गृह मरम्मत', icon: '🛠️', badge: 'जल्द उपलब्ध', state: 'upcoming' },
+    { id: '16-2', name: 'किराया बहीखाता (Rental Ledger)', icon: '📋', badge: 'खोलें', state: 'active', action: 'launch' },
+    { id: '16-3', name: 'कमरा व फ्लैट खोज (Rental Search)', icon: '🏠', badge: 'खोलें', state: 'active', action: 'launch' }
+  ];
+
+
 
 
 // ==============================================================================
