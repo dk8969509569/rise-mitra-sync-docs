@@ -1,0 +1,224 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://rmworld.rise-mitra.internal/schemas/category-16/16-3-rental-search.schema.json",
+  "title": "Rise Mitra Sub-Feature 16-3 Rental Search & Discovery Schema",
+  "description": "Validation schema for Public Rental Search, Unit Discovery, Locality Filtering, and Auto-Publish Intake from Sub-Feature 16-2 under Universal Catalog standard.",
+  "type": "object",
+  "required": [
+    "subFeatureId",
+    "categoryId",
+    "featureSlug",
+    "moduleVersion",
+    "schemaVersion",
+    "bundleVersion",
+    "storageContract",
+    "cacheBundle",
+    "searchDefaults",
+    "publicListings",
+    "i18n",
+    "auditTrail"
+  ],
+
+
+  "properties": {
+    "subFeatureId": {
+      "type": "string",
+      "const": "16-3"
+    },
+    "categoryId": {
+      "type": "string",
+      "const": "category-16"
+    },
+    "featureSlug": {
+      "type": "string",
+      "const": "rental-search"
+    },
+    "moduleVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+    "bundleVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+$"
+    },
+
+
+    "storageContract": {
+      "type": "object",
+      "required": ["localNamespaceTemplate", "cacheBundleTemplate"],
+      "properties": {
+        "localNamespaceTemplate": { "type": "string" },
+        "cacheBundleTemplate": { "type": "string" }
+      }
+    },
+
+
+    "cacheBundle": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+
+
+    "searchDefaults": {
+      "type": "object",
+      "required": [
+        "currency",
+        "currencySymbol",
+        "defaultCity",
+        "defaultRadiusKm",
+        "supportedUnitTypes"
+      ],
+      "properties": {
+        "currency": { "type": "string", "maxLength": 3, "default": "INR" },
+        "currencySymbol": { "type": "string", "default": "₹" },
+        "defaultCity": { "type": "string", "default": "इंदौर" },
+        "defaultRadiusKm": { "type": "number", "minimum": 1, "default": 10 },
+        "supportedUnitTypes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["entire_flat", "private_room", "shared_bed"]
+          }
+        },
+        "maxBudgetLimit": { "type": "number", "default": 50000 },
+        "subMeterFilterSupported": { "type": "boolean", "default": true }
+      }
+    },
+
+
+    "publicListings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/searchListingItem"
+      }
+    },
+
+
+    "i18n": {
+      "type": "object",
+      "required": ["hi", "en"],
+      "properties": {
+        "hi": { "$ref": "#/definitions/localeStrings" },
+        "en": { "$ref": "#/definitions/localeStrings" }
+      }
+    },
+
+
+    "auditTrail": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["eventId", "timestamp", "actorRole", "actionType"],
+        "properties": {
+          "eventId": { "type": "string" },
+          "timestamp": { "type": "string", "format": "date-time" },
+          "actorRole": { "type": "string", "enum": ["system", "owner", "tenant", "aggregator"] },
+          "actionType": { "type": "string" },
+          "details": { "type": "string" }
+        }
+      }
+    }
+  },
+
+
+  "definitions": {
+    "localeStrings": {
+      "type": "object",
+      "required": ["featureTitle", "actions", "labels", "disclaimer"],
+      "properties": {
+        "featureTitle": { "type": "string" },
+        "featureSubtitle": { "type": "string" },
+        "actions": { "type": "object" },
+        "labels": { "type": "object" },
+        "disclaimer": { "type": "string" }
+      }
+    },
+
+
+    "searchListingItem": {
+      "type": "object",
+      "required": [
+        "listingId",
+        "sourceSubFeature",
+        "propertyId",
+        "unitId",
+        "title",
+        "unitType",
+        "monthlyRent",
+        "securityDeposit",
+        "addressPublic",
+        "electricityBilling",
+        "lifecycleVerification",
+        "landlordContactMasked",
+        "status"
+      ],
+      "properties": {
+        "listingId": { "type": "string", "pattern": "^LST-[A-Z0-9_-]+$" },
+        "sourceSubFeature": { "type": "string", "const": "16-2" },
+        "propertyId": { "type": "string", "pattern": "^PROP-[0-9]{4,8}$" },
+        "unitId": { "type": "string", "pattern": "^UNIT-[0-9]{4,8}$" },
+        "title": { "type": "string", "minLength": 3 },
+        "unitType": {
+          "type": "string",
+          "enum": ["entire_flat", "private_room", "shared_bed"]
+        },
+        "monthlyRent": { "type": "number", "minimum": 0 },
+        "securityDeposit": { "type": "number", "minimum": 0 },
+        "addressPublic": {
+          "type": "object",
+          "required": ["city", "locality", "pincode"],
+          "properties": {
+            "city": { "type": "string" },
+            "locality": { "type": "string" },
+            "pincode": { "type": "string", "pattern": "^[0-9]{6}$" }
+          }
+        },
+        "electricityBilling": {
+          "type": "object",
+          "required": ["meterType"],
+          "properties": {
+            "meterType": {
+              "type": "string",
+              "enum": ["sub_meter_per_unit", "included_in_rent", "fixed_monthly", "commercial_direct"]
+            },
+            "ratePerUnit": { "type": "number", "minimum": 0, "default": 8.0 }
+          }
+        },
+        "publicationMode": {
+          "type": "string",
+          "enum": ["confirm_each_time", "auto_publish"],
+          "default": "auto_publish"
+        },
+        "lifecycleVerification": {
+          "type": "object",
+          "required": ["physicalPossessionConfirmed", "readyToRentConfirmed"],
+          "properties": {
+            "physicalPossessionConfirmed": { "type": "boolean", "const": true },
+            "readyToRentConfirmed": { "type": "boolean", "const": true },
+            "availableFromDate": { "type": "string", "format": "date" }
+          }
+        },
+        "landlordContactMasked": {
+          "type": "object",
+          "required": ["name", "maskedPhone"],
+          "properties": {
+            "name": { "type": "string" },
+            "maskedPhone": { "type": "string", "pattern": "^\\+91\\s[X]{5}[0-9]{5}$" },
+            "verifiedBadge": { "type": "boolean", "default": true }
+          }
+        },
+        "status": {
+          "type": "string",
+          "enum": ["AVAILABLE", "INQUIRY_ACTIVE", "RESERVED", "RENTED"],
+          "default": "AVAILABLE"
+        },
+        "lastSyncedAt": { "type": "string", "format": "date-time" }
+      }
+    }
+  }
+}
