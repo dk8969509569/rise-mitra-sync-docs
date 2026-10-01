@@ -6,15 +6,22 @@
   "moduleVersion": "1.0.0",
   "schemaVersion": "1",
   "bundleVersion": "1",
+  "landlordId": "LL-IND90214",
+
+
   "storageContract": {
     "localNamespaceTemplate": "rm_local_acct{opaqueAccountId}_cat16_sub2_v1",
     "cacheBundleTemplate": "rm_cache_cat16_sub2_b1"
   },
+
+
   "cacheBundle": [
     "/js/catalog/category-16/16-2-rental-ledger.js",
     "/data/category-16/16-2-rental-ledger.json",
     "/data/category-16/16-2-rental-ledger.schema.json"
   ],
+
+
   "configurationDefaults": {
     "currency": "INR",
     "currencySymbol": "₹",
@@ -38,6 +45,75 @@
       "interestBearing": false
     }
   },
+
+
+  "publicationPolicies": {
+    "globalDefaultMode": "confirm_each_time",
+    "autoPublishAllowed": true,
+    "lastConsentTimestamp": "2026-10-01T10:30:00Z"
+  },
+
+
+  "landlordProfile": {
+    "name": "सुरेश कुमार शर्मा",
+    "maskedPhone": "+91 XXXXX98765",
+    "emergencyContact": "support@risemitra.com"
+  },
+
+
+  "properties": [
+    {
+      "propertyId": "PROP-1001",
+      "title": "शांति कुंज रेजीडेंसी",
+      "propertyType": "apartment_flat",
+      "address": {
+        "fullAddressPrivate": "मकान नं 42, गली नं 3, विजयनगर",
+        "city": "इंदौर",
+        "locality": "विजयनगर",
+        "pincode": "452010"
+      },
+      "units": [
+        {
+          "unitId": "UNIT-201",
+          "unitLabel": "कमरा नं 101 (2BHK इंडिपेंडेंट)",
+          "unitType": "entire_flat",
+          "monthlyRent": 8500,
+          "securityDeposit": 10000,
+          "electricityConfig": {
+            "meterType": "sub_meter_per_unit",
+            "ratePerUnit": 8.0,
+            "lastReading": 1240,
+            "lastReadingDate": "2026-09-01"
+          },
+          "publicationSettings": {
+            "mode": "confirm_each_time",
+            "consentActive": true,
+            "isListedPublicly": false,
+            "targetCategory": "16-3",
+            "publicPriceSnapshot": 8500
+          },
+          "lifecycleStatus": {
+            "physicalPossessionReturned": false,
+            "readyToRent": false,
+            "settlementPending": false,
+            "keysHandedOverDate": null,
+            "futureAvailableDate": "2026-11-01"
+          },
+          "activeTenancy": {
+            "tenancyId": "TEN-4011",
+            "tenantName": "अमित वर्मा",
+            "tenantMaskedPhone": "+91 XXXXX43210",
+            "startDate": "2026-01-01",
+            "arrearsDue": 0,
+            "advancePaid": 500
+          },
+          "pastTenancies": []
+        }
+      ]
+    }
+  ],
+
+
   "i18n": {
     "hi": {
       "featureTitle": "किराया बहीखाता",
@@ -46,7 +122,8 @@
         "recordRent": "किराया दर्ज करें",
         "addReading": "सब-मीटर रीडिंग डालें",
         "generateSlip": "डिजिटल रसीद बनाएं",
-        "exportLedger": "बहीखाता डाउनलोड करें"
+        "exportLedger": "बहीखाता डाउनलोड करें",
+        "autoPublishToggle": "ऑटो-पब्लिश सेटिंग"
       },
       "labels": {
         "roomOrUnit": "कमरा / फ्लैट संख्या",
@@ -60,7 +137,9 @@
         "totalPayable": "कुल देय राशि",
         "statusPending": "बाकी",
         "statusAcknowledged": "स्वीकृत",
-        "statusSettled": "चुका दिया"
+        "statusSettled": "चुका दिया",
+        "status": "स्थिति",
+        "possession": "कब्जा / चाबी स्थिति"
       },
       "disclaimer": "यह डिजिटल पर्ची केवल स्थानीय हिसाब के लिए है; बैंक सेटलमेंट का प्रमाण नहीं है।"
     },
@@ -71,7 +150,8 @@
         "recordRent": "Record Rent",
         "addReading": "Add Meter Reading",
         "generateSlip": "Generate Digital Slip",
-        "exportLedger": "Export Ledger"
+        "exportLedger": "Export Ledger",
+        "autoPublishToggle": "Auto-Publish Settings"
       },
       "labels": {
         "roomOrUnit": "Room / Flat No.",
@@ -85,9 +165,22 @@
         "totalPayable": "Total Amount Payable",
         "statusPending": "Pending",
         "statusAcknowledged": "Acknowledged",
-        "statusSettled": "Settled"
+        "statusSettled": "Settled",
+        "status": "Status",
+        "possession": "Possession Status"
       },
       "disclaimer": "This digital slip is for local accounting records only; not proof of bank settlement."
     }
-  }
+  },
+
+
+  "auditTrail": [
+    {
+      "eventId": "EVT-CAT16-001",
+      "timestamp": "2026-10-01T10:30:00Z",
+      "actorRole": "owner",
+      "actionType": "SEED_INITIALIZATION_V07",
+      "details": "Initialized 16-2 rental ledger seed data aligned with v0.7 schema (ZEL preserved)"
+    }
+  ]
 }
