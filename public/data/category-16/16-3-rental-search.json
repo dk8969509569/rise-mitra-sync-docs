@@ -1,0 +1,132 @@
+{
+  "$schema": "./16-3-rental-search.schema.json",
+  "subFeatureId": "16-3",
+  "categoryId": "category-16",
+  "featureSlug": "rental-search",
+  "moduleVersion": "1.0.0",
+  "schemaVersion": "1",
+  "bundleVersion": "1",
+
+
+  "storageContract": {
+    "localNamespaceTemplate": "rm_local_acct{opaqueAccountId}_cat16_sub3_v1",
+    "cacheBundleTemplate": "rm_cache_cat16_sub3_b1"
+  },
+
+
+  "cacheBundle": [
+    "/js/catalog/category-16/16-3-rental-search.js",
+    "/data/category-16/16-3-rental-search.json",
+    "/data/category-16/16-3-rental-search.schema.json"
+  ],
+
+
+  "searchDefaults": {
+    "currency": "INR",
+    "currencySymbol": "₹",
+    "defaultCity": "इंदौर",
+    "defaultRadiusKm": 10,
+    "supportedUnitTypes": [
+      "entire_flat",
+      "private_room",
+      "shared_bed"
+    ],
+    "maxBudgetLimit": 50000,
+    "subMeterFilterSupported": true
+  },
+
+
+  "publicListings": [
+    {
+      "listingId": "LST-IND-PROP1001-UNIT201",
+      "sourceSubFeature": "16-2",
+      "propertyId": "PROP-1001",
+      "unitId": "UNIT-201",
+      "title": "कमरा नं 101 (2BHK इंडिपेंडेंट) - शांति कुंज रेजीडेंसी",
+      "unitType": "entire_flat",
+      "monthlyRent": 8500,
+      "securityDeposit": 10000,
+      "addressPublic": {
+        "city": "इंदौर",
+        "locality": "विजयनगर",
+        "pincode": "452010"
+      },
+      "electricityBilling": {
+        "meterType": "sub_meter_per_unit",
+        "ratePerUnit": 8.0
+      },
+      "publicationMode": "auto_publish",
+      "lifecycleVerification": {
+        "physicalPossessionConfirmed": true,
+        "readyToRentConfirmed": true,
+        "availableFromDate": "2026-11-01"
+      },
+      "landlordContactMasked": {
+        "name": "सुरेश कुमार शर्मा",
+        "maskedPhone": "+91 XXXXX98765",
+        "verifiedBadge": true
+      },
+      "status": "AVAILABLE",
+      "lastSyncedAt": "2026-10-01T10:30:00Z"
+    }
+  ],
+
+
+  "i18n": {
+    "hi": {
+      "featureTitle": "किराया खोज व आवास डायरेक्टरी",
+      "featureSubtitle": "सत्यापित कमरे, फ्लैट, हॉस्टल और सब-मीटर बिजली विवरण",
+      "actions": {
+        "searchButton": "आवास खोजें",
+        "filterLocality": "इलाका चुनें",
+        "filterBudget": "बजट सीमा",
+        "contactOwner": "मालिक से संपर्क करें",
+        "viewDetails": "विवरण देखें"
+      },
+      "labels": {
+        "monthlyRent": "मासिक किराया",
+        "securityDeposit": "सुरक्षा राशि",
+        "unitType": "आवास प्रकार",
+        "locality": "इलाका",
+        "subMeter": "सब-मीटर बिजली",
+        "availableFrom": "उपलब्ध तिथि",
+        "verifiedOwner": "सत्यापित मकान मालिक",
+        "statusAvailable": "उपलब्ध"
+      },
+      "disclaimer": "सार्वजनिक लिस्टिंग में मकान मालिक का मोबाइल नंबर गोपनीयता सुरक्षा हेतु मास्क किया गया है। प्रारंभिक संपर्क प्लेटफ़ॉर्म के माध्यम से ही संभव है।"
+    },
+    "en": {
+      "featureTitle": "Rental Search & Unit Directory",
+      "featureSubtitle": "Verified flats, rooms, hostels, and transparent sub-meter billing",
+      "actions": {
+        "searchButton": "Search Rentals",
+        "filterLocality": "Select Locality",
+        "filterBudget": "Budget Filter",
+        "contactOwner": "Contact Landlord",
+        "viewDetails": "View Details"
+      },
+      "labels": {
+        "monthlyRent": "Monthly Rent",
+        "securityDeposit": "Security Deposit",
+        "unitType": "Unit Type",
+        "locality": "Locality",
+        "subMeter": "Sub-Meter Electricity",
+        "availableFrom": "Available From",
+        "verifiedOwner": "Verified Owner",
+        "statusAvailable": "Available"
+      },
+      "disclaimer": "Owner phone numbers are masked for privacy protection. Initial communication is facilitated via platform interface."
+    }
+  },
+
+
+  "auditTrail": [
+    {
+      "eventId": "EVT-CAT16-002",
+      "timestamp": "2026-10-01T10:35:00Z",
+      "actorRole": "system",
+      "actionType": "INTAKE_AUTO_PUBLISH_CAT16_SUB2",
+      "details": "Ingested UNIT-201 from 16-2 ledger under auto_publish lifecycle clearance"
+    }
+  ]
+}
