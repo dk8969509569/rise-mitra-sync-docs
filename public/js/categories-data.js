@@ -96,7 +96,7 @@ function renderCatalogItems() {
           </div>
         </div>
         ${item.id === 'c16' ? `
-          <div id="sub-c16" class="p-2 pt-0 space-y-1.5 border-t border-slate-800/60 bg-slate-950/60 block">
+          <div id="sub-c16" class="rm-subcategory-list p-2 pt-0 space-y-1.5 border-t border-slate-800/60 bg-slate-950/60 block">
             ${C16_CHILDREN.map(ch => `
               <div onclick="handleLaunchCategory('c16', '${ch.id}')" class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-emerald-500/60 cursor-pointer active:scale-[0.98] transition-transform">
                 <div class="flex items-center space-x-2">
