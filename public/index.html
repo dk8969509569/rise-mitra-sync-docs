@@ -111,6 +111,79 @@
       0%, 100% { opacity: 1; transform: scale(1); }
       50% { opacity: 0.4; transform: scale(1.15); }
     }
+    /* Shared subcategory hierarchy guides */
+#categoryModal .rm-subcategory-list {
+  --rm-guide-color: #526b78;
+  --rm-guide-offset: 12px;
+  --rm-service-gap: 6px;
+  padding-left: 22px;
+  padding-top: 8px;
+}
+
+#categoryModal .rm-subcategory-list > div {
+  position: relative;
+  min-width: 0;
+  overflow: visible;
+}
+
+#categoryModal .rm-subcategory-list > div + div {
+  margin-top: var(--rm-service-gap);
+}
+
+#categoryModal .rm-subcategory-list > div::before {
+  content: "";
+  position: absolute;
+  left: calc(0px - var(--rm-guide-offset));
+  top: calc(0px - var(--rm-service-gap) - 1px);
+  bottom: -1px;
+  width: 1px;
+  background-color: var(--rm-guide-color);
+  pointer-events: none;
+}
+
+#categoryModal .rm-subcategory-list > div:first-child::before {
+  top: -9px;
+}
+
+#categoryModal .rm-subcategory-list > div:last-child::before {
+  bottom: 50%;
+}
+
+#categoryModal .rm-subcategory-list > div::after {
+  content: "";
+  position: absolute;
+  left: calc(0px - var(--rm-guide-offset));
+  top: 50%;
+  width: var(--rm-guide-offset);
+  height: 1px;
+  background-color: var(--rm-guide-color);
+  pointer-events: none;
+}
+
+#categoryModal .rm-subcategory-list > div > div {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+#categoryModal .rm-subcategory-list > div > div > span:first-child {
+  flex-shrink: 0;
+}
+
+#categoryModal .rm-subcategory-list > div > div > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+#categoryModal .rm-subcategory-list > div > span {
+  flex: 0 0 auto;
+  margin-left: 8px;
+}
+
+@media (forced-colors: active) {
+  #categoryModal .rm-subcategory-list {
+    --rm-guide-color: CanvasText;
+  }
+}
   </style>
 </head>
 
