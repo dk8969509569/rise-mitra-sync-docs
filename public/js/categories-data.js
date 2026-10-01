@@ -242,13 +242,39 @@ function handleLaunchCategory(catId, subId) {
 
       document.body.appendChild(script);
     }
+  } else if (catId === 'c16' && subId === '16-3') {
+    if (typeof openFullscreenModule === 'function') {
+      openFullscreenModule('🏠 16-3. कमरा व फ्लैट खोज (Rental Search)');
+    }
+
+    if (window.RM_Cat16_Sub3_RentalSearch && typeof window.RM_Cat16_Sub3_RentalSearch.mount === 'function') {
+      window.RM_Cat16_Sub3_RentalSearch.mount(container);
+    } else {
+      container.innerHTML = '<div class="p-6 text-center text-xs text-emerald-400 animate-pulse">कमरा व फ्लैट खोज लोड हो रहा है...</div>';
+      const script = document.createElement('script');
+      script.src = '/js/catalog/category-16/16-3-rental-search.js?v=' + (window.RM_DEPLOY_EPOCH || Date.now());
+      script.async = true;
+
+      script.onload = function () {
+        if (window.RM_Cat16_Sub3_RentalSearch && typeof window.RM_Cat16_Sub3_RentalSearch.mount === 'function') {
+          window.RM_Cat16_Sub3_RentalSearch.mount(container);
+        } else {
+          container.innerHTML = '<div class="p-6 text-center text-xs text-amber-400 bg-amber-950/40 border border-amber-800/60 rounded-xl">मॉड्यूल लोड हुआ किंतु इनिशियलाइज़ नहीं हो सका।</div>';
+        }
+      };
+
+      script.onerror = function () {
+        container.innerHTML = '<div class="p-6 text-center text-xs text-red-400 bg-red-950/40 border border-red-800/60 rounded-xl space-y-2"><div>मॉड्यूल लोड नहीं हो सका — कृपया पुनः प्रयास करें।</div><button onclick="handleLaunchCategory(\'c16\', \'16-3\')" class="px-3 py-1 bg-red-900/60 border border-red-700 text-red-200 rounded text-[10px] font-bold cursor-pointer">रीट्राई करें</button></div>';
+      };
+
+      document.body.appendChild(script);
+    }
   } else if (catId === 'c05') {
     alert('सॉवरेन बहीखाता (Business Khata) लोड हो रहा है...');
   } else {
     alert('यह सेवा जल्द ही एक्टिवेट होगी।');
   }
 }
-
 
 // ==============================================================================
 // SECTION 5: AUTO-BOOTSTRAP & PUBLIC API EXPORTS
