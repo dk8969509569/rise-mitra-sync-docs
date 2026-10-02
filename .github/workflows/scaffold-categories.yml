@@ -1,0 +1,136 @@
+name: Scaffold 47 Categories
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scaffold:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Generate Categories
+        run: |
+          python - << 'EOF'
+          import os
+          import json
+
+          # Standard category slugs & names map (01 to 50)
+          category_registry = {
+              3: ("electronics-appliances", "Electronics & Appliances", "इलेक्ट्रॉनिक्स एवं उपकरण"),
+              4: ("fashion-clothing", "Fashion & Garments", "कपड़ा एवं परिधान"),
+              5: ("footwear-leather", "Footwear & Leather Goods", "जूते-चप्पल एवं लेदर"),
+              6: ("pharmacy-wellness", "Pharmacy & Healthcare", "दवा एवं स्वास्थ्य"),
+              7: ("hardware-electrical", "Hardware & Electricals", "हार्डवेयर एवं बिजली"),
+              8: ("building-construction", "Building & Construction Materials", "भवन निर्माण सामग्री"),
+              9: ("automobile-parts", "Automobile Spares & Repair", "ऑटोमोबाइल एवं रिपेयर"),
+              10: ("transport-logistics", "Transport & Goods Carrier", "ट्रांसपोर्ट एवं लॉजिस्टिक्स"),
+              11: ("food-restaurant", "Food, Dairy & Sweets", "भोजन, डेयरी एवं मिष्ठान"),
+              12: ("fruits-vegetables", "Fruits & Green Vegetables", "फल एवं हरी सब्जियां"),
+              13: ("furniture-furnishings", "Furniture & Home Furnishings", "फर्नीचर एवं साज-सज्जा"),
+              14: ("stationery-books", "Stationery & Books", "स्टेशनरी एवं पुस्तकें"),
+              15: ("jewelry-ornaments", "Jewelry, Gold & Silver", "आभूषण, सोना एवं चांदी"),
+              17: ("tailoring-boutique", "Tailoring & Boutique", "टेलरिंग एवं सिलाई बुटीक"),
+              18: ("beauty-salon-spa", "Beauty Parlour & Salon", "सैलून एवं ब्यूटी पार्लर"),
+              19: ("plumbing-sanitary", "Plumbing & Sanitaryware", "नलसाजी एवं सेनेटरी"),
+              20: ("carpentry-woodwork", "Carpentry & Woodwork", "बढ़ईगीरी एवं लकड़ी कार्य"),
+              21: ("metal-welding-fabrication", "Welding & Metal Fabrication", "वेल्डिंग एवं मेटल फैब्रिकेशन"),
+              22: ("home-appliances-repair", "Appliance Repair & Service", "घरेलू उपकरण मरम्मत"),
+              23: ("mobile-computer-repair", "Mobile & IT Device Service", "मोबाइल व कंप्यूटर सेवा"),
+              24: ("printing-graphics", "Printing, Flex & Photocopy", "प्रिंटिंग एवं स्टेशनरी"),
+              25: ("photography-videography", "Photo Studio & Video Shoot", "फोटोग्राफी एवं वीडियो"),
+              26: ("real-estate-properties", "Real Estate & Plots", "प्रॉपर्टी एवं रियल एस्टेट"),
+              27: ("caterers-tiffin-service", "Catering & Tiffin Services", "कैटरिंग एवं टिफिन सेवा"),
+              28: ("event-tent-decorators", "Tent House & Event Decor", "टेंट हाउस एवं सजावट"),
+              29: ("coaching-education", "Education, Tuition & Coaching", "शिक्षा एवं ट्यूशन सेवाएँ"),
+              30: ("fitness-gym-sports", "Gym, Fitness & Sports", "जिम, फिटनेस एवं खेल"),
+              31: ("pet-care-veterinary", "Pet Care & Cattle Doctor", "पशु चिकित्सा एवं पेट केयर"),
+              32: ("security-cctv", "Security Services & CCTV", "सुरक्षा गार्ड एवं सीसीटीवी"),
+              33: ("cleaning-housekeeping", "Cleaning, Laundry & Housekeeping", "सफाई एवं हाउसकीपिंग"),
+              34: ("legal-tax-accounting", "Advocate, Tax & CA Services", "वकील, सीए एवं टैक्स सेवाएँ"),
+              35: ("travels-taxi-rentals", "Tour, Travels & Taxi Booking", "टूर, ट्रैवल्स एवं टैक्सी"),
+              36: ("financial-loan-advisors", "Banking, Loan & Microfinance", "ऋण एवं वित्तीय सलाहकार"),
+              37: ("astrology-pooja-samagri", "Astrology & Pooja Services", "ज्योतिष एवं पूजा सामग्री"),
+              38: ("courier-parcels", "Courier & Domestic Parcels", "कूरियर एवं पार्सल सेवा"),
+              39: ("scrap-kabadi-recycling", "Scrap, Recycling & Kabadi", "कबाड़ एवं रीसाइक्लिंग"),
+              40: ("handicrafts-cottage", "Handicrafts & Village Industry", "हस्तशिल्प एवं कुटीर उद्योग"),
+              41: ("solar-green-energy", "Solar Rooftop & Inverters", "सोलर ऊर्जा एवं इन्वर्टर"),
+              42: ("packers-and-movers", "Packers & Household Shifting", "पैकर्स एवं मूवर्स"),
+              43: ("waste-management-septic", "Septic Tank & Waste Disposal", "सेप्टिक टैंक एवं स्वच्छता"),
+              44: ("driving-school-licensing", "Motor Driving School & RTO", "ड्राइविंग स्कूल एवं आरटीओ"),
+              45: ("pest-control-fumigation", "Pest Control & Sanitization", "कीट नियंत्रण सेवाएँ"),
+              46: ("hire-cook-maid-caregiver", "Cooks, Maids & Caregivers", "रसोइया, आया एवं केयरटेकर"),
+              47: ("advertising-local-media", "Local Advertising & Announcements", "विज्ञापन एवं स्थानीय प्रचार"),
+              48: ("musical-bands-dhol", "Band, Shehnai & Orchestra", "बैंड बाजा एवं ऑर्केस्ट्रा"),
+              49: ("cold-storage-warehouse", "Cold Storage & Rural Warehousing", "कोल्ड स्टोरेज एवं गोदाम"),
+              50: ("miscellaneous-micro-services", "Other Local Micro-Services", "अन्य स्थानीय सूक्ष्म सेवाएँ")
+          }
+
+          base_dir = "public/data"
+          os.makedirs(base_dir, exist_ok=True)
+          created_count = 0
+
+          for cat_id, (slug, name_en, name_hi) in category_registry.items():
+              folder_name = f"category-{cat_id:02d}"
+              cat_path = os.path.join(base_dir, folder_name)
+              os.makedirs(cat_path, exist_ok=True)
+
+              tax_file = os.path.join(cat_path, "taxonomy.json")
+              if not os.path.exists(tax_file):
+                  tax_data = {
+                      "category_id": cat_id,
+                      "category_code": f"{cat_id:02d}",
+                      "category_slug": slug,
+                      "category_name_en": name_en,
+                      "category_name_hi": name_hi,
+                      "sub_categories": [
+                          {
+                              "sub_code": f"{cat_id}-1",
+                              "slug": "general-listings",
+                              "name_en": f"General {name_en}",
+                              "name_hi": f"सामान्य {name_hi}",
+                              "filter_chips": ["Sabhi", "Popular", "Nearby", "Verified"]
+                          },
+                          {
+                              "sub_code": f"{cat_id}-2",
+                              "slug": "custom-requests",
+                              "name_en": "Specialized Services",
+                              "name_hi": "विशेषज्ञ सेवाएँ",
+                              "filter_chips": ["Sabhi", "Standard", "Urgent"]
+                          },
+                          {
+                              "sub_code": f"{cat_id}-N",
+                              "slug": "other-requirements",
+                              "name_en": "Other Inquiries",
+                              "name_hi": "अन्य आवश्यकताएं",
+                              "filter_chips": ["Sabhi", "Miscellaneous"]
+                          }
+                      ]
+                  }
+                  with open(tax_file, "w", encoding="utf-8") as f:
+                      json.dump(tax_data, f, ensure_ascii=False, indent=2)
+                  created_count += 1
+
+          print(f"Successfully generated {created_count} category taxonomy files.")
+          EOF
+
+      - name: Commit and Push Scaffolded Categories
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "feat(data): scaffold canonical taxonomy.json for remaining 47 categories"
+            git push origin main
+          fi
