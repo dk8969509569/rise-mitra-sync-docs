@@ -181,7 +181,11 @@
       i18n: { hi: { featureTitle: 'किराया खोज व आवास डायरेक्टरी', actions: {}, labels: {} } }
     };
 
-    var listings = state.publicListings || [];
+        var localData = loadSearchData(accountId);
+    var dynamicListings = (localData && Array.isArray(localData.publicListings)) ? localData.publicListings : [];
+    var baseListings = (state && Array.isArray(state.publicListings)) ? state.publicListings : [];
+    var listings = dynamicListings.concat(baseListings);
+
     var i18n = (state.i18n && state.i18n.hi) ? state.i18n.hi : {};
     var labels = i18n.labels || {};
     var actions = i18n.actions || {};
