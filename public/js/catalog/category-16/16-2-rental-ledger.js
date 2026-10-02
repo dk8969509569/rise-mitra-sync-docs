@@ -305,17 +305,26 @@
     container.innerHTML = html;
 
     
-    function syncTo16_3Search(acct, unitLabel, rentAmount) {
+        function syncTo16_3Search(acct, unitLabel, rentAmount) {
       try {
         var key = 'rm_local_acct' + (acct || 'default') + '_cat16_sub3_v1';
         var raw = localStorage.getItem(key);
         var searchState = raw ? JSON.parse(raw) : { publicListings: [] };
         if (!Array.isArray(searchState.publicListings)) searchState.publicListings = [];
 
+        var cleanUnit = (unitLabel || '').trim();
+        var targetTitle = cleanUnit + ' - आवासीय कमरा';
+
+        // Deduplication: यदि यह यूनिट पहले से मौजूद है, तो पुराना कार्ड हटाकर केवल नया अपडेटेड रखें
+        searchState.publicListings = searchState.publicListings.filter(function (item) {
+          return item.title !== targetTitle;
+        });
+
         var newListing = {
-          listingId: 'LST-' + Date.now().toString(36).toUpperCase(),
+          listingId: 'LST-' + (acct || 'default') + '-' + cleanUnit.replace(/\s+/g, '-').toUpperCase(),
           sourceSubFeature: '16-2',
-          title: unitLabel + ' - आवासीय कमरा',
+          unitIdentifier: cleanUnit,
+          title: targetTitle,
           unitType: 'single_room',
           monthlyRent: parseFloat(rentAmount) || 0,
           securityDeposit: Math.round((parseFloat(rentAmount) || 0) * 1.5),
@@ -350,6 +359,7 @@
         return false;
       }
     }
+
 
     var btnAdd = container.querySelector('#rm-cat16-btn-add');
     if (btnAdd) {
