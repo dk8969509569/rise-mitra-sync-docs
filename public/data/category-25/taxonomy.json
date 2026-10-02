@@ -1,15 +1,15 @@
 {
   "category_id": 25,
   "category_code": "25",
-  "category_slug": "photography-videography",
-  "category_name_en": "Photo Studio & Video Shoot",
-  "category_name_hi": "फोटोग्राफी एवं वीडियो",
+  "category_slug": "photography",
+  "category_name_en": "Photography & Scanner",
+  "category_name_hi": "स्कैनर",
   "sub_categories": [
     {
       "sub_code": "25-1",
       "slug": "general-listings",
-      "name_en": "General Photo Studio & Video Shoot",
-      "name_hi": "सामान्य फोटोग्राफी एवं वीडियो",
+      "name_en": "Primary Photography & Scanner",
+      "name_hi": "मुख्य स्कैनर",
       "filter_chips": [
         "Sabhi",
         "Popular",
@@ -19,23 +19,23 @@
     },
     {
       "sub_code": "25-2",
-      "slug": "custom-requests",
-      "name_en": "Specialized Services",
-      "name_hi": "विशेषज्ञ सेवाएँ",
+      "slug": "custom-services",
+      "name_en": "Specialized Photography & Scanner",
+      "name_hi": "विशेष स्कैनर",
       "filter_chips": [
         "Sabhi",
-        "Standard",
-        "Urgent"
+        "Fast Track",
+        "Top Rated"
       ]
     },
     {
       "sub_code": "25-N",
-      "slug": "other-requirements",
-      "name_en": "Other Inquiries",
-      "name_hi": "अन्य आवश्यकताएं",
+      "slug": "other-services",
+      "name_en": "Other Photography & Scanner",
+      "name_hi": "अन्य स्कैनर",
       "filter_chips": [
         "Sabhi",
-        "Miscellaneous"
+        "Support"
       ]
     }
   ]

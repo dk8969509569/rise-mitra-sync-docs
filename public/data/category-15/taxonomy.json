@@ -1,15 +1,15 @@
 {
   "category_id": 15,
   "category_code": "15",
-  "category_slug": "jewelry-ornaments",
-  "category_name_en": "Jewelry, Gold & Silver",
-  "category_name_hi": "आभूषण, सोना एवं चांदी",
+  "category_slug": "health-and-fitness",
+  "category_name_en": "Health & Fitness",
+  "category_name_hi": "स्वस्थ मन व योग",
   "sub_categories": [
     {
       "sub_code": "15-1",
       "slug": "general-listings",
-      "name_en": "General Jewelry, Gold & Silver",
-      "name_hi": "सामान्य आभूषण, सोना एवं चांदी",
+      "name_en": "Primary Health & Fitness",
+      "name_hi": "मुख्य स्वस्थ मन व योग",
       "filter_chips": [
         "Sabhi",
         "Popular",
@@ -19,23 +19,23 @@
     },
     {
       "sub_code": "15-2",
-      "slug": "custom-requests",
-      "name_en": "Specialized Services",
-      "name_hi": "विशेषज्ञ सेवाएँ",
+      "slug": "custom-services",
+      "name_en": "Specialized Health & Fitness",
+      "name_hi": "विशेष स्वस्थ मन व योग",
       "filter_chips": [
         "Sabhi",
-        "Standard",
-        "Urgent"
+        "Fast Track",
+        "Top Rated"
       ]
     },
     {
       "sub_code": "15-N",
-      "slug": "other-requirements",
-      "name_en": "Other Inquiries",
-      "name_hi": "अन्य आवश्यकताएं",
+      "slug": "other-services",
+      "name_en": "Other Health & Fitness",
+      "name_hi": "अन्य स्वस्थ मन व योग",
       "filter_chips": [
         "Sabhi",
-        "Miscellaneous"
+        "Support"
       ]
     }
   ]

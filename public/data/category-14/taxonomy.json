@@ -1,15 +1,15 @@
 {
   "category_id": 14,
   "category_code": "14",
-  "category_slug": "stationery-books",
-  "category_name_en": "Stationery & Books",
-  "category_name_hi": "स्टेशनरी एवं पुस्तकें",
+  "category_slug": "food-and-drink",
+  "category_name_en": "Food & Drink",
+  "category_name_hi": "ढाबा व भोजन",
   "sub_categories": [
     {
       "sub_code": "14-1",
       "slug": "general-listings",
-      "name_en": "General Stationery & Books",
-      "name_hi": "सामान्य स्टेशनरी एवं पुस्तकें",
+      "name_en": "Primary Food & Drink",
+      "name_hi": "मुख्य ढाबा व भोजन",
       "filter_chips": [
         "Sabhi",
         "Popular",
@@ -19,23 +19,23 @@
     },
     {
       "sub_code": "14-2",
-      "slug": "custom-requests",
-      "name_en": "Specialized Services",
-      "name_hi": "विशेषज्ञ सेवाएँ",
+      "slug": "custom-services",
+      "name_en": "Specialized Food & Drink",
+      "name_hi": "विशेष ढाबा व भोजन",
       "filter_chips": [
         "Sabhi",
-        "Standard",
-        "Urgent"
+        "Fast Track",
+        "Top Rated"
       ]
     },
     {
       "sub_code": "14-N",
-      "slug": "other-requirements",
-      "name_en": "Other Inquiries",
-      "name_hi": "अन्य आवश्यकताएं",
+      "slug": "other-services",
+      "name_en": "Other Food & Drink",
+      "name_hi": "अन्य ढाबा व भोजन",
       "filter_chips": [
         "Sabhi",
-        "Miscellaneous"
+        "Support"
       ]
     }
   ]

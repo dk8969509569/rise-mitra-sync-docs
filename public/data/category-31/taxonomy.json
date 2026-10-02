@@ -1,15 +1,15 @@
 {
   "category_id": 31,
   "category_code": "31",
-  "category_slug": "pet-care-veterinary",
-  "category_name_en": "Pet Care & Cattle Doctor",
-  "category_name_hi": "पशु चिकित्सा एवं पेट केयर",
+  "category_slug": "travel-and-local",
+  "category_name_en": "Travel & Local Transit",
+  "category_name_hi": "यात्रा",
   "sub_categories": [
     {
       "sub_code": "31-1",
       "slug": "general-listings",
-      "name_en": "General Pet Care & Cattle Doctor",
-      "name_hi": "सामान्य पशु चिकित्सा एवं पेट केयर",
+      "name_en": "Primary Travel & Local Transit",
+      "name_hi": "मुख्य यात्रा",
       "filter_chips": [
         "Sabhi",
         "Popular",
@@ -19,23 +19,23 @@
     },
     {
       "sub_code": "31-2",
-      "slug": "custom-requests",
-      "name_en": "Specialized Services",
-      "name_hi": "विशेषज्ञ सेवाएँ",
+      "slug": "custom-services",
+      "name_en": "Specialized Travel & Local Transit",
+      "name_hi": "विशेष यात्रा",
       "filter_chips": [
         "Sabhi",
-        "Standard",
-        "Urgent"
+        "Fast Track",
+        "Top Rated"
       ]
     },
     {
       "sub_code": "31-N",
-      "slug": "other-requirements",
-      "name_en": "Other Inquiries",
-      "name_hi": "अन्य आवश्यकताएं",
+      "slug": "other-services",
+      "name_en": "Other Travel & Local Transit",
+      "name_hi": "अन्य यात्रा",
       "filter_chips": [
         "Sabhi",
-        "Miscellaneous"
+        "Support"
       ]
     }
   ]

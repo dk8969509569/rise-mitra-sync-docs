@@ -1,15 +1,15 @@
 {
   "category_id": 9,
   "category_code": "09",
-  "category_slug": "automobile-parts",
-  "category_name_en": "Automobile Spares & Repair",
-  "category_name_hi": "ऑटोमोबाइल एवं रिपेयर",
+  "category_slug": "education",
+  "category_name_en": "Education & Skills",
+  "category_name_hi": "हुनर सीखें",
   "sub_categories": [
     {
       "sub_code": "9-1",
       "slug": "general-listings",
-      "name_en": "General Automobile Spares & Repair",
-      "name_hi": "सामान्य ऑटोमोबाइल एवं रिपेयर",
+      "name_en": "Primary Education & Skills",
+      "name_hi": "मुख्य हुनर सीखें",
       "filter_chips": [
         "Sabhi",
         "Popular",
@@ -19,23 +19,23 @@
     },
     {
       "sub_code": "9-2",
-      "slug": "custom-requests",
-      "name_en": "Specialized Services",
-      "name_hi": "विशेषज्ञ सेवाएँ",
+      "slug": "custom-services",
+      "name_en": "Specialized Education & Skills",
+      "name_hi": "विशेष हुनर सीखें",
       "filter_chips": [
         "Sabhi",
-        "Standard",
-        "Urgent"
+        "Fast Track",
+        "Top Rated"
       ]
     },
     {
       "sub_code": "9-N",
-      "slug": "other-requirements",
-      "name_en": "Other Inquiries",
-      "name_hi": "अन्य आवश्यकताएं",
+      "slug": "other-services",
+      "name_en": "Other Education & Skills",
+      "name_hi": "अन्य हुनर सीखें",
       "filter_chips": [
         "Sabhi",
-        "Miscellaneous"
+        "Support"
       ]
     }
   ]

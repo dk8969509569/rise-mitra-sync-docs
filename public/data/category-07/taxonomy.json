@@ -1,15 +1,15 @@
 {
   "category_id": 7,
   "category_code": "07",
-  "category_slug": "hardware-electrical",
-  "category_name_en": "Hardware & Electricals",
-  "category_name_hi": "हार्डवेयर एवं बिजली",
+  "category_slug": "communication",
+  "category_name_en": "Communication",
+  "category_name_hi": "संपर्क व संवाद",
   "sub_categories": [
     {
       "sub_code": "7-1",
       "slug": "general-listings",
-      "name_en": "General Hardware & Electricals",
-      "name_hi": "सामान्य हार्डवेयर एवं बिजली",
+      "name_en": "Primary Communication",
+      "name_hi": "मुख्य संपर्क व संवाद",
       "filter_chips": [
         "Sabhi",
         "Popular",
@@ -19,23 +19,23 @@
     },
     {
       "sub_code": "7-2",
-      "slug": "custom-requests",
-      "name_en": "Specialized Services",
-      "name_hi": "विशेषज्ञ सेवाएँ",
+      "slug": "custom-services",
+      "name_en": "Specialized Communication",
+      "name_hi": "विशेष संपर्क व संवाद",
       "filter_chips": [
         "Sabhi",
-        "Standard",
-        "Urgent"
+        "Fast Track",
+        "Top Rated"
       ]
     },
     {
       "sub_code": "7-N",
-      "slug": "other-requirements",
-      "name_en": "Other Inquiries",
-      "name_hi": "अन्य आवश्यकताएं",
+      "slug": "other-services",
+      "name_en": "Other Communication",
+      "name_hi": "अन्य संपर्क व संवाद",
       "filter_chips": [
         "Sabhi",
-        "Miscellaneous"
+        "Support"
       ]
     }
   ]

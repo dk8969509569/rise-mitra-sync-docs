@@ -1,15 +1,15 @@
 {
   "category_id": 30,
   "category_code": "30",
-  "category_slug": "fitness-gym-sports",
-  "category_name_en": "Gym, Fitness & Sports",
-  "category_name_hi": "जिम, फिटनेस एवं खेल",
+  "category_slug": "tools",
+  "category_name_en": "Tools & Utilities",
+  "category_name_hi": "कैलकुलेटर",
   "sub_categories": [
     {
       "sub_code": "30-1",
       "slug": "general-listings",
-      "name_en": "General Gym, Fitness & Sports",
-      "name_hi": "सामान्य जिम, फिटनेस एवं खेल",
+      "name_en": "Primary Tools & Utilities",
+      "name_hi": "मुख्य कैलकुलेटर",
       "filter_chips": [
         "Sabhi",
         "Popular",
@@ -19,23 +19,23 @@
     },
     {
       "sub_code": "30-2",
-      "slug": "custom-requests",
-      "name_en": "Specialized Services",
-      "name_hi": "विशेषज्ञ सेवाएँ",
+      "slug": "custom-services",
+      "name_en": "Specialized Tools & Utilities",
+      "name_hi": "विशेष कैलकुलेटर",
       "filter_chips": [
         "Sabhi",
-        "Standard",
-        "Urgent"
+        "Fast Track",
+        "Top Rated"
       ]
     },
     {
       "sub_code": "30-N",
-      "slug": "other-requirements",
-      "name_en": "Other Inquiries",
-      "name_hi": "अन्य आवश्यकताएं",
+      "slug": "other-services",
+      "name_en": "Other Tools & Utilities",
+      "name_hi": "अन्य कैलकुलेटर",
       "filter_chips": [
         "Sabhi",
-        "Miscellaneous"
+        "Support"
       ]
     }
   ]

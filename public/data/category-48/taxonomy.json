@@ -1,15 +1,15 @@
 {
   "category_id": 48,
   "category_code": "48",
-  "category_slug": "musical-bands-dhol",
-  "category_name_en": "Band, Shehnai & Orchestra",
-  "category_name_hi": "बैंड बाजा एवं ऑर्केस्ट्रा",
+  "category_slug": "game-strategy",
+  "category_name_en": "Strategy Games",
+  "category_name_hi": "चाणक्य नीति",
   "sub_categories": [
     {
       "sub_code": "48-1",
       "slug": "general-listings",
-      "name_en": "General Band, Shehnai & Orchestra",
-      "name_hi": "सामान्य बैंड बाजा एवं ऑर्केस्ट्रा",
+      "name_en": "Primary Strategy Games",
+      "name_hi": "मुख्य चाणक्य नीति",
       "filter_chips": [
         "Sabhi",
         "Popular",
@@ -19,23 +19,23 @@
     },
     {
       "sub_code": "48-2",
-      "slug": "custom-requests",
-      "name_en": "Specialized Services",
-      "name_hi": "विशेषज्ञ सेवाएँ",
+      "slug": "custom-services",
+      "name_en": "Specialized Strategy Games",
+      "name_hi": "विशेष चाणक्य नीति",
       "filter_chips": [
         "Sabhi",
-        "Standard",
-        "Urgent"
+        "Fast Track",
+        "Top Rated"
       ]
     },
     {
       "sub_code": "48-N",
-      "slug": "other-requirements",
-      "name_en": "Other Inquiries",
-      "name_hi": "अन्य आवश्यकताएं",
+      "slug": "other-services",
+      "name_en": "Other Strategy Games",
+      "name_hi": "अन्य चाणक्य नीति",
       "filter_chips": [
         "Sabhi",
-        "Miscellaneous"
+        "Support"
       ]
     }
   ]

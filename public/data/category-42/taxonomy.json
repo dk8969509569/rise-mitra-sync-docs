@@ -1,15 +1,15 @@
 {
   "category_id": 42,
   "category_code": "42",
-  "category_slug": "packers-and-movers",
-  "category_name_en": "Packers & Household Shifting",
-  "category_name_hi": "पैकर्स एवं मूवर्स",
+  "category_slug": "game-music",
+  "category_name_en": "Music & Rhythm",
+  "category_name_hi": "तबला व ढोलक ताल",
   "sub_categories": [
     {
       "sub_code": "42-1",
       "slug": "general-listings",
-      "name_en": "General Packers & Household Shifting",
-      "name_hi": "सामान्य पैकर्स एवं मूवर्स",
+      "name_en": "Primary Music & Rhythm",
+      "name_hi": "मुख्य तबला व ढोलक ताल",
       "filter_chips": [
         "Sabhi",
         "Popular",
@@ -19,23 +19,23 @@
     },
     {
       "sub_code": "42-2",
-      "slug": "custom-requests",
-      "name_en": "Specialized Services",
-      "name_hi": "विशेषज्ञ सेवाएँ",
+      "slug": "custom-services",
+      "name_en": "Specialized Music & Rhythm",
+      "name_hi": "विशेष तबला व ढोलक ताल",
       "filter_chips": [
         "Sabhi",
-        "Standard",
-        "Urgent"
+        "Fast Track",
+        "Top Rated"
       ]
     },
     {
       "sub_code": "42-N",
-      "slug": "other-requirements",
-      "name_en": "Other Inquiries",
-      "name_hi": "अन्य आवश्यकताएं",
+      "slug": "other-services",
+      "name_en": "Other Music & Rhythm",
+      "name_hi": "अन्य तबला व ढोलक ताल",
       "filter_chips": [
         "Sabhi",
-        "Miscellaneous"
+        "Support"
       ]
     }
   ]

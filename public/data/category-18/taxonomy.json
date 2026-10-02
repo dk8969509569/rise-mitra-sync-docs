@@ -1,15 +1,15 @@
 {
   "category_id": 18,
   "category_code": "18",
-  "category_slug": "beauty-salon-spa",
-  "category_name_en": "Beauty Parlour & Salon",
-  "category_name_hi": "सैलून एवं ब्यूटी पार्लर",
+  "category_slug": "lifestyle",
+  "category_name_en": "Lifestyle",
+  "category_name_hi": "स्वावलंबन",
   "sub_categories": [
     {
       "sub_code": "18-1",
       "slug": "general-listings",
-      "name_en": "General Beauty Parlour & Salon",
-      "name_hi": "सामान्य सैलून एवं ब्यूटी पार्लर",
+      "name_en": "Primary Lifestyle",
+      "name_hi": "मुख्य स्वावलंबन",
       "filter_chips": [
         "Sabhi",
         "Popular",
@@ -19,23 +19,23 @@
     },
     {
       "sub_code": "18-2",
-      "slug": "custom-requests",
-      "name_en": "Specialized Services",
-      "name_hi": "विशेषज्ञ सेवाएँ",
+      "slug": "custom-services",
+      "name_en": "Specialized Lifestyle",
+      "name_hi": "विशेष स्वावलंबन",
       "filter_chips": [
         "Sabhi",
-        "Standard",
-        "Urgent"
+        "Fast Track",
+        "Top Rated"
       ]
     },
     {
       "sub_code": "18-N",
-      "slug": "other-requirements",
-      "name_en": "Other Inquiries",
-      "name_hi": "अन्य आवश्यकताएं",
+      "slug": "other-services",
+      "name_en": "Other Lifestyle",
+      "name_hi": "अन्य स्वावलंबन",
       "filter_chips": [
         "Sabhi",
-        "Miscellaneous"
+        "Support"
       ]
     }
   ]

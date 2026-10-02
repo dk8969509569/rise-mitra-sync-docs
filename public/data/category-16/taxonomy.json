@@ -1,37 +1,46 @@
 {
   "category_id": 16,
   "category_code": "16",
-  "category_slug": "rental-leasing",
-  "category_name_en": "Rental & Leasing",
-  "category_name_hi": "किराया एवं लीजिंग",
+  "category_slug": "house-and-home",
+  "category_name_en": "House & Home",
+  "category_name_hi": "घर व मकान",
   "sub_categories": [
     {
       "sub_code": "16-1",
-      "slug": "earth-movers-jcb",
-      "name_en": "Earth Movers & JCB",
-      "name_hi": "जेसीबी एवं अर्थ मूवर्स",
-      "filter_chips": ["Sabhi", "Mini Digger", "JCB 3DX", "Crawler Crane"]
+      "slug": "home-repair-mistri",
+      "name_en": "Home Repair & Mistri",
+      "name_hi": "मिस्त्री व गृह मरम्मत",
+      "filter_chips": [
+        "Sabhi",
+        "Plumber",
+        "Electrician",
+        "Carpenter"
+      ]
     },
     {
       "sub_code": "16-2",
       "slug": "rental-ledger",
       "name_en": "Rental Ledger & Accounts",
-      "name_hi": "रेंटल बहीखाता",
-      "filter_chips": ["Sabhi", "Daily Ledger", "Monthly Lease", "Security Deposit"]
+      "name_hi": "किराया बहीखाता",
+      "filter_chips": [
+        "Sabhi",
+        "Daily Ledger",
+        "Monthly Lease",
+        "Security Deposit"
+      ]
     },
     {
       "sub_code": "16-3",
       "slug": "rental-search",
-      "name_en": "Equipment Search Directory",
-      "name_hi": "उपकरण खोज",
-      "filter_chips": ["Sabhi", "Verified Merchants", "Near Me", "Instant Book"]
-    },
-    {
-      "sub_code": "16-N",
-      "slug": "event-tent-supplies",
-      "name_en": "Event & Tent Supplies",
-      "name_hi": "टेंट एवं इवेंट सामग्री",
-      "filter_chips": ["Sabhi", "Sound System", "Stage Light", "Coolers"]
+      "name_en": "Room & Flat Search",
+      "name_hi": "कमरा व फ्लैट खोज",
+      "filter_chips": [
+        "Sabhi",
+        "1 BHK",
+        "2 BHK",
+        "Single Room",
+        "Commercial"
+      ]
     }
   ]
 }

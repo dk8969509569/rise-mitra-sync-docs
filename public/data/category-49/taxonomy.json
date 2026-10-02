@@ -1,15 +1,15 @@
 {
   "category_id": 49,
   "category_code": "49",
-  "category_slug": "cold-storage-warehouse",
-  "category_name_en": "Cold Storage & Rural Warehousing",
-  "category_name_hi": "कोल्ड स्टोरेज एवं गोदाम",
+  "category_slug": "game-trivia",
+  "category_name_en": "Trivia & Facts",
+  "category_name_hi": "देसी ट्रिविया व तथ्य",
   "sub_categories": [
     {
       "sub_code": "49-1",
       "slug": "general-listings",
-      "name_en": "General Cold Storage & Rural Warehousing",
-      "name_hi": "सामान्य कोल्ड स्टोरेज एवं गोदाम",
+      "name_en": "Primary Trivia & Facts",
+      "name_hi": "मुख्य देसी ट्रिविया व तथ्य",
       "filter_chips": [
         "Sabhi",
         "Popular",
@@ -19,23 +19,23 @@
     },
     {
       "sub_code": "49-2",
-      "slug": "custom-requests",
-      "name_en": "Specialized Services",
-      "name_hi": "विशेषज्ञ सेवाएँ",
+      "slug": "custom-services",
+      "name_en": "Specialized Trivia & Facts",
+      "name_hi": "विशेष देसी ट्रिविया व तथ्य",
       "filter_chips": [
         "Sabhi",
-        "Standard",
-        "Urgent"
+        "Fast Track",
+        "Top Rated"
       ]
     },
     {
       "sub_code": "49-N",
-      "slug": "other-requirements",
-      "name_en": "Other Inquiries",
-      "name_hi": "अन्य आवश्यकताएं",
+      "slug": "other-services",
+      "name_en": "Other Trivia & Facts",
+      "name_hi": "अन्य देसी ट्रिविया व तथ्य",
       "filter_chips": [
         "Sabhi",
-        "Miscellaneous"
+        "Support"
       ]
     }
   ]

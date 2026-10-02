@@ -1,15 +1,15 @@
 {
   "category_id": 41,
   "category_code": "41",
-  "category_slug": "solar-green-energy",
-  "category_name_en": "Solar Rooftop & Inverters",
-  "category_name_hi": "सोलर ऊर्जा एवं इन्वर्टर",
+  "category_slug": "game-educational",
+  "category_name_en": "Educational Quiz",
+  "category_name_hi": "भारत क्विज़",
   "sub_categories": [
     {
       "sub_code": "41-1",
       "slug": "general-listings",
-      "name_en": "General Solar Rooftop & Inverters",
-      "name_hi": "सामान्य सोलर ऊर्जा एवं इन्वर्टर",
+      "name_en": "Primary Educational Quiz",
+      "name_hi": "मुख्य भारत क्विज़",
       "filter_chips": [
         "Sabhi",
         "Popular",
@@ -19,23 +19,23 @@
     },
     {
       "sub_code": "41-2",
-      "slug": "custom-requests",
-      "name_en": "Specialized Services",
-      "name_hi": "विशेषज्ञ सेवाएँ",
+      "slug": "custom-services",
+      "name_en": "Specialized Educational Quiz",
+      "name_hi": "विशेष भारत क्विज़",
       "filter_chips": [
         "Sabhi",
-        "Standard",
-        "Urgent"
+        "Fast Track",
+        "Top Rated"
       ]
     },
     {
       "sub_code": "41-N",
-      "slug": "other-requirements",
-      "name_en": "Other Inquiries",
-      "name_hi": "अन्य आवश्यकताएं",
+      "slug": "other-services",
+      "name_en": "Other Educational Quiz",
+      "name_hi": "अन्य भारत क्विज़",
       "filter_chips": [
         "Sabhi",
-        "Miscellaneous"
+        "Support"
       ]
     }
   ]

@@ -1,15 +1,15 @@
 {
   "category_id": 32,
   "category_code": "32",
-  "category_slug": "security-cctv",
-  "category_name_en": "Security Services & CCTV",
-  "category_name_hi": "सुरक्षा गार्ड एवं सीसीटीवी",
+  "category_slug": "video-players",
+  "category_name_en": "Video Players & Editor",
+  "category_name_hi": "वीडियो प्लेयर व संपादन",
   "sub_categories": [
     {
       "sub_code": "32-1",
       "slug": "general-listings",
-      "name_en": "General Security Services & CCTV",
-      "name_hi": "सामान्य सुरक्षा गार्ड एवं सीसीटीवी",
+      "name_en": "Primary Video Players & Editor",
+      "name_hi": "मुख्य वीडियो प्लेयर व संपादन",
       "filter_chips": [
         "Sabhi",
         "Popular",
@@ -19,23 +19,23 @@
     },
     {
       "sub_code": "32-2",
-      "slug": "custom-requests",
-      "name_en": "Specialized Services",
-      "name_hi": "विशेषज्ञ सेवाएँ",
+      "slug": "custom-services",
+      "name_en": "Specialized Video Players & Editor",
+      "name_hi": "विशेष वीडियो प्लेयर व संपादन",
       "filter_chips": [
         "Sabhi",
-        "Standard",
-        "Urgent"
+        "Fast Track",
+        "Top Rated"
       ]
     },
     {
       "sub_code": "32-N",
-      "slug": "other-requirements",
-      "name_en": "Other Inquiries",
-      "name_hi": "अन्य आवश्यकताएं",
+      "slug": "other-services",
+      "name_en": "Other Video Players & Editor",
+      "name_hi": "अन्य वीडियो प्लेयर व संपादन",
       "filter_chips": [
         "Sabhi",
-        "Miscellaneous"
+        "Support"
       ]
     }
   ]

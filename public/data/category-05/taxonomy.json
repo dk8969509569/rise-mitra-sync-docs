@@ -1,15 +1,15 @@
 {
   "category_id": 5,
   "category_code": "05",
-  "category_slug": "footwear-leather",
-  "category_name_en": "Footwear & Leather Goods",
-  "category_name_hi": "जूते-चप्पल एवं लेदर",
+  "category_slug": "business",
+  "category_name_en": "Business & Khata",
+  "category_name_hi": "सॉवरेन बहीखाता",
   "sub_categories": [
     {
       "sub_code": "5-1",
       "slug": "general-listings",
-      "name_en": "General Footwear & Leather Goods",
-      "name_hi": "सामान्य जूते-चप्पल एवं लेदर",
+      "name_en": "Primary Business & Khata",
+      "name_hi": "मुख्य सॉवरेन बहीखाता",
       "filter_chips": [
         "Sabhi",
         "Popular",
@@ -19,23 +19,23 @@
     },
     {
       "sub_code": "5-2",
-      "slug": "custom-requests",
-      "name_en": "Specialized Services",
-      "name_hi": "विशेषज्ञ सेवाएँ",
+      "slug": "custom-services",
+      "name_en": "Specialized Business & Khata",
+      "name_hi": "विशेष सॉवरेन बहीखाता",
       "filter_chips": [
         "Sabhi",
-        "Standard",
-        "Urgent"
+        "Fast Track",
+        "Top Rated"
       ]
     },
     {
       "sub_code": "5-N",
-      "slug": "other-requirements",
-      "name_en": "Other Inquiries",
-      "name_hi": "अन्य आवश्यकताएं",
+      "slug": "other-services",
+      "name_en": "Other Business & Khata",
+      "name_hi": "अन्य सॉवरेन बहीखाता",
       "filter_chips": [
         "Sabhi",
-        "Miscellaneous"
+        "Support"
       ]
     }
   ]

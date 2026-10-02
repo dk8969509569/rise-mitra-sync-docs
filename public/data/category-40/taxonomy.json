@@ -1,15 +1,15 @@
 {
   "category_id": 40,
   "category_code": "40",
-  "category_slug": "handicrafts-cottage",
-  "category_name_en": "Handicrafts & Village Industry",
-  "category_name_hi": "हस्तशिल्प एवं कुटीर उद्योग",
+  "category_slug": "game-casual",
+  "category_name_en": "Casual Craft",
+  "category_name_hi": "रंगोली क्राफ्ट",
   "sub_categories": [
     {
       "sub_code": "40-1",
       "slug": "general-listings",
-      "name_en": "General Handicrafts & Village Industry",
-      "name_hi": "सामान्य हस्तशिल्प एवं कुटीर उद्योग",
+      "name_en": "Primary Casual Craft",
+      "name_hi": "मुख्य रंगोली क्राफ्ट",
       "filter_chips": [
         "Sabhi",
         "Popular",
@@ -19,23 +19,23 @@
     },
     {
       "sub_code": "40-2",
-      "slug": "custom-requests",
-      "name_en": "Specialized Services",
-      "name_hi": "विशेषज्ञ सेवाएँ",
+      "slug": "custom-services",
+      "name_en": "Specialized Casual Craft",
+      "name_hi": "विशेष रंगोली क्राफ्ट",
       "filter_chips": [
         "Sabhi",
-        "Standard",
-        "Urgent"
+        "Fast Track",
+        "Top Rated"
       ]
     },
     {
       "sub_code": "40-N",
-      "slug": "other-requirements",
-      "name_en": "Other Inquiries",
-      "name_hi": "अन्य आवश्यकताएं",
+      "slug": "other-services",
+      "name_en": "Other Casual Craft",
+      "name_hi": "अन्य रंगोली क्राफ्ट",
       "filter_chips": [
         "Sabhi",
-        "Miscellaneous"
+        "Support"
       ]
     }
   ]

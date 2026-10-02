@@ -1,15 +1,15 @@
 {
   "category_id": 22,
   "category_code": "22",
-  "category_slug": "home-appliances-repair",
-  "category_name_en": "Appliance Repair & Service",
-  "category_name_hi": "घरेलू उपकरण मरम्मत",
+  "category_slug": "news-and-magazines",
+  "category_name_en": "News & Media",
+  "category_name_hi": "समाचार",
   "sub_categories": [
     {
       "sub_code": "22-1",
       "slug": "general-listings",
-      "name_en": "General Appliance Repair & Service",
-      "name_hi": "सामान्य घरेलू उपकरण मरम्मत",
+      "name_en": "Primary News & Media",
+      "name_hi": "मुख्य समाचार",
       "filter_chips": [
         "Sabhi",
         "Popular",
@@ -19,23 +19,23 @@
     },
     {
       "sub_code": "22-2",
-      "slug": "custom-requests",
-      "name_en": "Specialized Services",
-      "name_hi": "विशेषज्ञ सेवाएँ",
+      "slug": "custom-services",
+      "name_en": "Specialized News & Media",
+      "name_hi": "विशेष समाचार",
       "filter_chips": [
         "Sabhi",
-        "Standard",
-        "Urgent"
+        "Fast Track",
+        "Top Rated"
       ]
     },
     {
       "sub_code": "22-N",
-      "slug": "other-requirements",
-      "name_en": "Other Inquiries",
-      "name_hi": "अन्य आवश्यकताएं",
+      "slug": "other-services",
+      "name_en": "Other News & Media",
+      "name_hi": "अन्य समाचार",
       "filter_chips": [
         "Sabhi",
-        "Miscellaneous"
+        "Support"
       ]
     }
   ]
