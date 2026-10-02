@@ -569,29 +569,78 @@
       }
     }
 
-    function handleLaunchCategory(catId, subId) {
+
+        function handleLaunchCategory(catId, subId) {
       toggleMenuDrawer(false);
       const container = document.getElementById('rm-module-container');
       if (!container) return;
 
+      // 16-2: किराया बहीखाता (Rental Ledger)
       if (catId === 'c16' && (subId === '16-2' || !subId)) {
         openFullscreenModule('🏠 16-2. किराया बहीखाता (Rental Ledger)');
         if (window.RM_Cat16_Sub2_RentalLedger) {
           window.RM_Cat16_Sub2_RentalLedger.mount(container);
         } else {
-          container.innerHTML = '<div class="p-6 text-center text-xs text-emerald-400 animate-pulse">किराया बहीखाता लोड हो रहा है...</div>';
-          const script = document.createElement('script');
-          script.src = '/js/catalog/category-16/16-2-rental-ledger.js?v=' + Date.now();
-          script.async = true;
-          script.onload = function () {
-            if (window.RM_Cat16_Sub2_RentalLedger) {
-              window.RM_Cat16_Sub2_RentalLedger.mount(container);
-            }
-          };
-          script.onerror = function () {
-            container.innerHTML = '<div class="p-6 text-center text-xs text-red-400 bg-red-950/40 border border-red-800/60 rounded-xl">मॉड्यूल लोड नहीं हो सका — कृपया पुनः प्रयास करें।</div>';
-          };
-          document.body.appendChild(script);
+          loadModuleScript('/js/catalog/category-16/16-2-rental-ledger.js', () => {
+            if (window.RM_Cat16_Sub2_RentalLedger) window.RM_Cat16_Sub2_RentalLedger.mount(container);
+          }, container);
+        }
+      } 
+      // 16-3: कमरा व फ्लैट खोज (Canonical Modular Engine Mount)
+      else if (catId === 'c16' && subId === '16-3') {
+        openFullscreenModule('🏠 16-3. कमरा व फ्लैट खोज (Rental Search)');
+        
+        const mountSub3 = () => {
+          if (window.RM_Cat16_Sub3_RentalSearch) {
+            window.RM_Cat16_Sub3_RentalSearch.mount(container, {
+              state: {
+                publicListings: [
+                  {
+                    listingId: 'LST-001',
+                    title: '1 BHK स्वतंत्र फ्लैट (ग्राउंड फ्लोर)',
+                    status: 'AVAILABLE',
+                    monthlyRent: 4500,
+                    securityDeposit: 4500,
+                    unitType: '1 BHK',
+                    addressPublic: { city: 'इंदौर', locality: 'शांति नगर', pincode: '452010' },
+                    electricityBilling: { meterType: 'sub_meter_per_unit', ratePerUnit: 8.0 },
+                    landlordContactMasked: { name: 'सुरेश जी (मकान मालिक)', maskedPhone: '+91 98XXXXXX01' },
+                    lifecycleVerification: { availableFromDate: 'तत्काल' }
+                  },
+                  {
+                    listingId: 'LST-002',
+                    title: 'सिंगल रूम (अटैच लेट-बाथ)',
+                    status: 'AVAILABLE',
+                    monthlyRent: 2500,
+                    securityDeposit: 2000,
+                    unitType: 'Single Room',
+                    addressPublic: { city: 'इंदौर', locality: 'कॉलेज रोड', pincode: '452001' },
+                    electricityBilling: { meterType: 'sub_meter_per_unit', ratePerUnit: 7.5 },
+                    landlordContactMasked: { name: 'राजेश वर्मा', maskedPhone: '+91 97XXXXXX42' },
+                    lifecycleVerification: { availableFromDate: 'तत्काल' }
+                  },
+                  {
+                    listingId: 'LST-003',
+                    title: '2 BHK फॅमिली आवास (कार पार्किंग सहित)',
+                    status: 'AVAILABLE',
+                    monthlyRent: 7500,
+                    securityDeposit: 7500,
+                    unitType: '2 BHK',
+                    addressPublic: { city: 'इंदौर', locality: 'विजयनगर', pincode: '452010' },
+                    electricityBilling: { meterType: 'sub_meter_per_unit', ratePerUnit: 8.5 },
+                    landlordContactMasked: { name: 'अमित शर्मा', maskedPhone: '+91 94XXXXXX18' },
+                    lifecycleVerification: { availableFromDate: 'तत्काल' }
+                  }
+                ]
+              }
+            });
+          }
+        };
+
+        if (window.RM_Cat16_Sub3_RentalSearch) {
+          mountSub3();
+        } else {
+          loadModuleScript('/js/catalog/category-16/16-3-rental-search.js', mountSub3, container);
         }
       } else if (catId === 'c05') {
         alert('सॉवरेन बहीखाता (Business Khata) लोड हो रहा है...');
@@ -599,6 +648,20 @@
         alert(catId + ' सेवा का विस्तार जल्द उपलब्ध होगा।');
       }
     }
+
+    // Generic Dynamic Script Loader Helper
+    function loadModuleScript(src, onLoadCallback, container) {
+      container.innerHTML = '<div class="p-6 text-center text-xs text-cyan-400 animate-pulse">मॉड्यूल लोड हो रहा है...</div>';
+      const script = document.createElement('script');
+      script.src = src + '?v=' + Date.now();
+      script.async = true;
+      script.onload = onLoadCallback;
+      script.onerror = function () {
+        container.innerHTML = '<div class="p-6 text-center text-xs text-red-400 bg-red-950/40 border border-red-800/60 rounded-xl">मॉड्यूल लोड नहीं हो सका — कृपया पुनः प्रयास करें।</div>';
+      };
+      document.body.appendChild(script);
+    }
+
 
     function filterQuickTiles() {
       const q = (document.getElementById('liveSearchInput').value || '').toLowerCase().trim();
