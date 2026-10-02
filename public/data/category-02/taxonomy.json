@@ -1,0 +1,44 @@
+{
+  "category_id": 2,
+  "category_code": "02",
+  "category_slug": "agriculture-mandi",
+  "category_name_en": "Agriculture & Mandi",
+  "category_name_hi": "कृषि एवं मंडी",
+  "sub_categories": [
+    {
+      "sub_code": "2-1",
+      "slug": "seeds-fertilizers",
+      "name_en": "Seeds, Bio-Fertilizers & Pesticides",
+      "name_hi": "बीज, जैविक खाद एवं कीटनाशक",
+      "filter_chips": ["Sabhi", "Hybrid Seeds", "Urea & DAP", "Organic Compost", "Bio-Pesticides"]
+    },
+    {
+      "sub_code": "2-2",
+      "slug": "mandi-daily-rates",
+      "name_en": "Mandi Live Crop Trading & Rates",
+      "name_hi": "मंडी भाव एवं फसल व्यापार",
+      "filter_chips": ["Sabhi", "Gehun", "Chana", "Sarson", "Soyabean", "Dhan"]
+    },
+    {
+      "sub_code": "2-3",
+      "slug": "farm-machinery-implements",
+      "name_en": "Farm Machinery & Implements",
+      "name_hi": "कृषि यंत्र एवं उपकरण",
+      "filter_chips": ["Sabhi", "Tractor Attachments", "Rotavator", "Seed Drill", "Sprayers"]
+    },
+    {
+      "sub_code": "2-4",
+      "slug": "irrigation-solar-pumps",
+      "name_en": "Irrigation, Pipes & Solar Pumps",
+      "name_hi": "सिंचाई पाइप एवं सोलर पंप",
+      "filter_chips": ["Sabhi", "Drip System", "Sprinkler", "Submersible", "Solar Pump"]
+    },
+    {
+      "sub_code": "2-N",
+      "slug": "dairy-cattle-feed",
+      "name_en": "Cattle Feed & Dairy Equipment",
+      "name_hi": "पशु आहार एवं डेयरी उपकरण",
+      "filter_chips": ["Sabhi", "Chara & Khali", "Milking Machine", "Mineral Mixture"]
+    }
+  ]
+}
