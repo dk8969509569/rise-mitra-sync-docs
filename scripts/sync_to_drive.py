@@ -23,7 +23,7 @@ from pathlib import Path, PurePosixPath
 VERSION = '2.0.1-OWNER-REVIEW'
 POLICY_VERSION = 'tracked-commit-text-v2'
 SCOPES = ['https://www.googleapis.com/auth/drive']
-EXPECTED_REPOSITORY = 'dk8969509569/rise-mitra-sync-docs-'
+EXPECTED_REPOSITORY = 'dk8969509569/rise-mitra-sync-docs'
 TARGET_FILE_ID = '1Cek2LaS7qICH4MFdB66_Q7w2Isd2fwFA'
 EXPECTED_FOLDER_ID = '1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH'
 OUTPUT_NAME = '00_LIVE_CODEBASE_SNAPSHOT_RISE_MITRA.md'
