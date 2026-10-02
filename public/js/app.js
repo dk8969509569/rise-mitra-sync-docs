@@ -351,6 +351,82 @@
     }
   }
 
+     // =========================================================================
+  // 1.6: CATEGORY-16 RENTAL SEARCH ENGINE (16-3 RESILIENT LAUNCHER)
+  // =========================================================================
+  window.rmLaunchRentalSearch = function () {
+    const drawer = document.getElementById('rm-services-drawer');
+    if (drawer) {
+      drawer.classList.remove('active');
+      drawer.style.transform = 'translateX(100%)';
+    }
+
+    const container = document.getElementById('rm-view-container') || document.querySelector('.rm-main');
+    if (!container) return;
+
+    container.innerHTML = `
+      <div style="padding:1rem; max-width:600px; margin:0 auto; color:#fff; animation:fadeIn 0.2s ease;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:1px solid #334155; padding-bottom:0.75rem;">
+          <h2 style="font-size:1.2rem; font-weight:700; color:#38bdf8; display:flex; align-items:center; gap:0.5rem; margin:0;">
+            🏠 कमरा व फ्लैट खोज (Rental Search)
+          </h2>
+          <button onclick="window.location.hash='#home'" style="background:#334155; color:#fff; border:none; padding:4px 10px; border-radius:6px; cursor:pointer;">✕ बंद करें</button>
+        </div>
+
+        <div style="background:#1e293b; padding:1rem; border-radius:8px; margin-bottom:1rem; border:1px solid #475569;">
+          <label style="font-size:0.8rem; color:#94a3b8; display:block; margin-bottom:0.4rem;">स्थान या इलाका खोजें:</label>
+          <input type="text" id="rm-rental-query" placeholder="उदा. मेन रोड, स्टेशन रोड, कॉलेज के पास..." style="width:100%; box-sizing:border-box; padding:0.65rem; border-radius:6px; border:1px solid #475569; background:#0f172a; color:#fff; margin-bottom:0.75rem; font-size:0.9rem;">
+          
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button style="background:#0284c7; color:#fff; border:none; padding:5px 12px; border-radius:4px; font-size:0.8rem; cursor:pointer; font-weight:600;">सभी</button>
+            <button style="background:#334155; color:#cbd5e1; border:none; padding:5px 12px; border-radius:4px; font-size:0.8rem; cursor:pointer;">1 RK</button>
+            <button style="background:#334155; color:#cbd5e1; border:none; padding:5px 12px; border-radius:4px; font-size:0.8rem; cursor:pointer;">1 BHK</button>
+            <button style="background:#334155; color:#cbd5e1; border:none; padding:5px 12px; border-radius:4px; font-size:0.8rem; cursor:pointer;">2 BHK</button>
+            <button style="background:#334155; color:#cbd5e1; border:none; padding:5px 12px; border-radius:4px; font-size:0.8rem; cursor:pointer;">Single Room</button>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:0.75rem;">
+          <div style="background:#1e293b; border-radius:8px; padding:0.85rem; border-left:4px solid #22c55e;">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+              <div>
+                <span style="font-size:0.7rem; background:#064e3b; color:#34d399; padding:2px 6px; border-radius:4px; font-weight:700;">सत्यापित मकान</span>
+                <h3 style="font-size:1rem; font-weight:700; margin:0.35rem 0 0.2rem 0; color:#f8fafc;">1 BHK स्वतंत्र फ्लैट (ग्राउंड फ्लोर)</h3>
+                <p style="font-size:0.8rem; color:#94a3b8; margin:0;">📍 शांति नगर, बाजार के पास • 24 घंटे पानी व बाइक पार्किंग</p>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:1.15rem; font-weight:800; color:#38bdf8;">₹4,500<span style="font-size:0.7rem; color:#94a3b8;">/माह</span></div>
+                <div style="font-size:0.65rem; color:#f59e0b; margin-top:2px;">0% ब्रोकरेज</div>
+              </div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.75rem; border-top:1px solid #334155; padding-top:0.6rem;">
+              <span style="font-size:0.75rem; color:#cbd5e1;">सिक्योरिटी डिपॉजिट: ₹4,500</span>
+              <button onclick="alert('मकान मालिक से संपर्क: 98XXXXXX01 (डायरेक्ट कनेक्ट)')" style="background:#22c55e; color:#0f172a; font-weight:700; border:none; padding:6px 14px; border-radius:6px; font-size:0.8rem; cursor:pointer;">कॉल / चैट करें</button>
+            </div>
+          </div>
+
+          <div style="background:#1e293b; border-radius:8px; padding:0.85rem; border-left:4px solid #38bdf8;">
+            <div style="display:flex; justify-content:space-between; align-items:start;">
+              <div>
+                <span style="font-size:0.7rem; background:#075985; color:#7dd3fc; padding:2px 6px; border-radius:4px; font-weight:700;">स्टूडेंट / वर्किंग</span>
+                <h3 style="font-size:1rem; font-weight:700; margin:0.35rem 0 0.2rem 0; color:#f8fafc;">सिंगल रूम (छात्रों व व्यापारियों हेतु)</h3>
+                <p style="font-size:0.8rem; color:#94a3b8; margin:0;">📍 कॉलेज रोड • बिजली मीटर अलग • शांत वातावरण</p>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:1.15rem; font-weight:800; color:#38bdf8;">₹2,500<span style="font-size:0.7rem; color:#94a3b8;">/माह</span></div>
+                <div style="font-size:0.65rem; color:#f59e0b; margin-top:2px;">0% ब्रोकरेज</div>
+              </div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.75rem; border-top:1px solid #334155; padding-top:0.6rem;">
+              <span style="font-size:0.75rem; color:#cbd5e1;">सिक्योरिटी डिपॉजिट: ₹2,000</span>
+              <button onclick="alert('मकान मालिक से संपर्क: 97XXXXXX42 (डायरेक्ट कनेक्ट)')" style="background:#22c55e; color:#0f172a; font-weight:700; border:none; padding:6px 14px; border-radius:6px; font-size:0.8rem; cursor:pointer;">कॉल / चैट करें</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  };
+
   // Master Bootstrap
   document.addEventListener('DOMContentLoaded', () => {
     window.rmOrchestrator = new RiseMitraOrchestrator();
