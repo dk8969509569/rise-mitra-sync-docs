@@ -304,6 +304,53 @@
     html += '</div></div></div>';
     container.innerHTML = html;
 
+    
+    function syncTo16_3Search(acct, unitLabel, rentAmount) {
+      try {
+        var key = 'rm_local_acct' + (acct || 'default') + '_cat16_sub3_v1';
+        var raw = localStorage.getItem(key);
+        var searchState = raw ? JSON.parse(raw) : { publicListings: [] };
+        if (!Array.isArray(searchState.publicListings)) searchState.publicListings = [];
+
+        var newListing = {
+          listingId: 'LST-' + Date.now().toString(36).toUpperCase(),
+          sourceSubFeature: '16-2',
+          title: unitLabel + ' - आवासीय कमरा',
+          unitType: 'single_room',
+          monthlyRent: parseFloat(rentAmount) || 0,
+          securityDeposit: Math.round((parseFloat(rentAmount) || 0) * 1.5),
+          addressPublic: {
+            city: 'इंदौर',
+            locality: 'विजयनगर',
+            pincode: '452010'
+          },
+          electricityBilling: {
+            meterType: 'sub_meter_per_unit',
+            ratePerUnit: 8.0
+          },
+          lifecycleVerification: {
+            physicalPossessionConfirmed: true,
+            readyToRentConfirmed: true,
+            availableFromDate: new Date().toISOString().slice(0, 10)
+          },
+          landlordContactMasked: {
+            name: 'सत्यापित मकान मालिक',
+            maskedPhone: '+91 XXXXX00000',
+            verifiedBadge: true
+          },
+          status: 'AVAILABLE',
+          lastSyncedAt: new Date().toISOString()
+        };
+
+        searchState.publicListings.unshift(newListing);
+        localStorage.setItem(key, JSON.stringify(searchState));
+        return true;
+      } catch (err) {
+        console.warn('[RM-16-2] Sync to 16-3 failed:', err);
+        return false;
+      }
+    }
+
     var btnAdd = container.querySelector('#rm-cat16-btn-add');
     if (btnAdd) {
       btnAdd.addEventListener('click', function () {
@@ -311,6 +358,9 @@
         var rentVal = (container.querySelector('#rm-cat16-rent') || {}).value;
         var prevVal = (container.querySelector('#rm-cat16-prev-meter') || {}).value;
         var currVal = (container.querySelector('#rm-cat16-curr-meter') || {}).value;
+        var pubMode = (container.querySelector('#rm-cat16-pub-mode') || {}).value || 'confirm_each_time';
+        var possession = Boolean((container.querySelector('#rm-cat16-possession') || {}).checked);
+        var ready = Boolean((container.querySelector('#rm-cat16-ready') || {}).checked);
 
         if (!unitVal || !rentVal) {
           alert('कृपया कमरा/फ्लैट पहचान और मासिक किराया अवश्य दर्ज करें।');
@@ -324,6 +374,24 @@
           currentMeterReading: currVal,
           unitRate: 8.0
         });
+
+        // Phase 1 v0.7: Publication Decision Handling
+        if (pubMode === 'auto_publish') {
+          if (possession && ready) {
+            syncTo16_3Search(accountId, unitVal, rentVal);
+            alert('✅ पर्ची सुरक्षित हुई और कमरा स्वतः 16-3 किराये की खोज में प्रकाशित हो गया!');
+          } else {
+            alert('⚠️ पर्ची सुरक्षित हुई। कमरा 16-3 में प्रकाशित नहीं हुआ क्योंकि कब्जा या तैयारी अभी अधूरी है।');
+          }
+        } else if (pubMode === 'confirm_each_time') {
+          if (possession && ready) {
+            var confirmPublish = window.confirm('क्या आप ' + unitVal + ' को 16-3 किराये की खोज में सार्वजनिक रूप से प्रकाशित करना चाहते हैं?');
+            if (confirmPublish) {
+              syncTo16_3Search(accountId, unitVal, rentVal);
+              alert('✅ कमरा 16-3 किराये की खोज में सफलतापूर्वक प्रकाशित किया गया।');
+            }
+          }
+        }
 
         renderView(container, options);
       });
