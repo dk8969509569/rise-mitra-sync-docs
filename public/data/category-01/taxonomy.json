@@ -1,0 +1,30 @@
+{
+  "category_id": 1,
+  "category_code": "01",
+  "category_slug": "grocery-kirana",
+  "category_name_en": "Grocery & Daily Needs",
+  "category_name_hi": "किराना एवं दैनिक सामग्री",
+  "sub_categories": [
+    {
+      "sub_code": "1-1",
+      "slug": "foodgrains-atta-dal",
+      "name_en": "Foodgrains, Atta & Dal",
+      "name_hi": "अनाज, आटा एवं दालें",
+      "filter_chips": ["Sabhi", "Chakki Atta", "Basmati Rice", "Arhar Dal"]
+    },
+    {
+      "sub_code": "1-2",
+      "slug": "edible-oils-ghee",
+      "name_en": "Edible Oils & Ghee",
+      "name_hi": "खाद्य तेल एवं घी",
+      "filter_chips": ["Sabhi", "Mustard Oil", "Refined", "Desi Ghee"]
+    },
+    {
+      "sub_code": "1-N",
+      "slug": "spices-masala",
+      "name_en": "Spices & Dry Fruits",
+      "name_hi": "मसाले एवं सूखे मेवे",
+      "filter_chips": ["Sabhi", "Khada Masala", "Kaju Badam"]
+    }
+  ]
+}
