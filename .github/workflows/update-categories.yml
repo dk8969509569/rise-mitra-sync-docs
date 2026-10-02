@@ -1,0 +1,175 @@
+name: Scaffold 47 Categories
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scaffold:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Generate Categories
+        run: |
+          python - << 'EOF'
+          import os
+          import json
+
+          # 50 Google Play Store Official Categories (33 Apps + 17 Games)
+          category_registry = {
+              # --- 33 Applications (Services & Livelihood) ---
+              1: ("art-and-design", "Art & Design", "डिज़ाइन व कला"),
+              2: ("auto-and-vehicles", "Auto & Vehicles", "वाहन सेवा"),
+              3: ("beauty", "Beauty & Salon", "ब्यूटी व सैलून"),
+              4: ("books-and-reference", "Books & Reference", "किताबें व संदर्भ"),
+              5: ("business", "Business & Khata", "सॉवरेन बहीखाता"),
+              6: ("comics", "Comics", "कहानियाँ व कॉमिक्स"),
+              7: ("communication", "Communication", "संपर्क व संवाद"),
+              8: ("dating-relations", "Relations & Social", "रिश्ते व संबंध"),
+              9: ("education", "Education & Skills", "हुनर सीखें"),
+              10: ("entertainment", "Entertainment", "मनोरंजन"),
+              11: ("events", "Events & Passes", "कार्यक्रम व पास"),
+              12: ("family-parenting", "Family & Care", "परिवार व केयर"),
+              13: ("finance", "Finance & Cash Ledger", "RM CASH लेज़र"),
+              14: ("food-and-drink", "Food & Drink", "ढाबा व भोजन"),
+              15: ("health-and-fitness", "Health & Fitness", "स्वस्थ मन व योग"),
+              16: ("house-and-home", "House & Home", "घर व मकान"),
+              17: ("libraries-and-demo", "Libraries & Reference", "पुस्तकालय"),
+              18: ("lifestyle", "Lifestyle", "स्वावलंबन"),
+              19: ("maps-and-navigation", "Maps & Navigation", "मार्गदर्शन"),
+              20: ("medical", "Medical & Clinic", "दवाई व क्लिनिक"),
+              21: ("music-and-audio", "Music & Audio", "संगीत"),
+              22: ("news-and-magazines", "News & Media", "समाचार"),
+              23: ("parenting", "Parenting & Child Care", "शिशु पोषण"),
+              24: ("personalization", "Themes & Customization", "थीम्स"),
+              25: ("photography", "Photography & Scanner", "स्कैनर"),
+              26: ("productivity", "Productivity & Billing", "बिलिंग"),
+              27: ("shopping", "Shopping & Store", "0% किराना स्टोर"),
+              28: ("social", "Social Community", "चौपाल व संवाद"),
+              29: ("sports", "Sports Community", "खेलकूद"),
+              30: ("tools", "Tools & Utilities", "कैलकुलेटर"),
+              31: ("travel-and-local", "Travel & Local Transit", "यात्रा"),
+              32: ("video-players", "Video Players & Editor", "वीडियो प्लेयर व संपादन"),
+              33: ("weather", "Weather Forecast", "मौसम पूर्वानुमान"),
+
+              # --- 17 Games (Entertainment & Gaming) ---
+              34: ("game-action", "Action Gaming", "एक्शन तीरंदाजी"),
+              35: ("game-adventure", "Adventure Games", "रोमांचक यात्रा"),
+              36: ("game-arcade", "Arcade Games", "गेंद टप्पा"),
+              37: ("game-board", "Board Games", "देसी लूडो व कैरम"),
+              38: ("game-card", "Card Games", "ताश सॉलिटेयर"),
+              39: ("game-casino", "Casino & Spin", "लकी चक्र"),
+              40: ("game-casual", "Casual Craft", "रंगोली क्राफ्ट"),
+              41: ("game-educational", "Educational Quiz", "भारत क्विज़"),
+              42: ("game-music", "Music & Rhythm", "तबला व ढोलक ताल"),
+              43: ("game-puzzle", "Puzzle Games", "दिमागी पहेलियाँ"),
+              44: ("game-racing", "Racing Games", "बैलगाड़ी रेस"),
+              45: ("game-role-playing", "Role Playing", "गाँव का प्रधान"),
+              46: ("game-simulation", "Farm Simulation", "खेत सिमुलेटर"),
+              47: ("game-sports", "Sports Gaming", "गली क्रिकेट"),
+              48: ("game-strategy", "Strategy Games", "चाणक्य नीति"),
+              49: ("game-trivia", "Trivia & Facts", "देसी ट्रिविया व तथ्य"),
+              50: ("game-word", "Word & Vocabulary", "शब्द पहेली व कोश")
+          }
+
+          base_dir = "public/data"
+          os.makedirs(base_dir, exist_ok=True)
+          updated_count = 0
+
+          for cat_id, (slug, name_en, name_hi) in category_registry.items():
+              folder_name = f"category-{cat_id:02d}"
+              cat_path = os.path.join(base_dir, folder_name)
+              os.makedirs(cat_path, exist_ok=True)
+              tax_file = os.path.join(cat_path, "taxonomy.json")
+
+              # Category 16 ka existing Rental Ledger aur Rental Search preserve rakhein
+              if cat_id == 16:
+                  tax_data = {
+                      "category_id": 16,
+                      "category_code": "16",
+                      "category_slug": "house-and-home",
+                      "category_name_en": "House & Home",
+                      "category_name_hi": "घर व मकान",
+                      "sub_categories": [
+                          {
+                              "sub_code": "16-1",
+                              "slug": "home-repair-mistri",
+                              "name_en": "Home Repair & Mistri",
+                              "name_hi": "मिस्त्री व गृह मरम्मत",
+                              "filter_chips": ["Sabhi", "Plumber", "Electrician", "Carpenter"]
+                          },
+                          {
+                              "sub_code": "16-2",
+                              "slug": "rental-ledger",
+                              "name_en": "Rental Ledger & Accounts",
+                              "name_hi": "किराया बहीखाता",
+                              "filter_chips": ["Sabhi", "Daily Ledger", "Monthly Lease", "Security Deposit"]
+                          },
+                          {
+                              "sub_code": "16-3",
+                              "slug": "rental-search",
+                              "name_en": "Room & Flat Search",
+                              "name_hi": "कमरा व फ्लैट खोज",
+                              "filter_chips": ["Sabhi", "1 BHK", "2 BHK", "Single Room", "Commercial"]
+                          }
+                      ]
+                  }
+              else:
+                  tax_data = {
+                      "category_id": cat_id,
+                      "category_code": f"{cat_id:02d}",
+                      "category_slug": slug,
+                      "category_name_en": name_en,
+                      "category_name_hi": name_hi,
+                      "sub_categories": [
+                          {
+                              "sub_code": f"{cat_id}-1",
+                              "slug": "general-listings",
+                              "name_en": f"Primary {name_en}",
+                              "name_hi": f"मुख्य {name_hi}",
+                              "filter_chips": ["Sabhi", "Popular", "Nearby", "Verified"]
+                          },
+                          {
+                              "sub_code": f"{cat_id}-2",
+                              "slug": "custom-services",
+                              "name_en": f"Specialized {name_en}",
+                              "name_hi": f"विशेष {name_hi}",
+                              "filter_chips": ["Sabhi", "Fast Track", "Top Rated"]
+                          },
+                          {
+                              "sub_code": f"{cat_id}-N",
+                              "slug": "other-services",
+                              "name_en": f"Other {name_en}",
+                              "name_hi": f"अन्य {name_hi}",
+                              "filter_chips": ["Sabhi", "Support"]
+                          }
+                      ]
+                  }
+
+              with open(tax_file, "w", encoding="utf-8") as f:
+                  json.dump(tax_data, f, ensure_ascii=False, indent=2)
+              updated_count += 1
+
+          print(f"Successfully aligned {updated_count} categories to official Google Play Store standard.")
+          EOF
+
+      - name: Commit and Push Aligned Taxonomy
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "fix(taxonomy): align all 50 categories with Google Play Store 33 Apps + 17 Games standard"
+            git push origin main
+          fi
