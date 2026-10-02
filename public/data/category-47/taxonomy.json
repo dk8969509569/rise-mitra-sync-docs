@@ -1,0 +1,42 @@
+{
+  "category_id": 47,
+  "category_code": "47",
+  "category_slug": "advertising-local-media",
+  "category_name_en": "Local Advertising & Announcements",
+  "category_name_hi": "विज्ञापन एवं स्थानीय प्रचार",
+  "sub_categories": [
+    {
+      "sub_code": "47-1",
+      "slug": "general-listings",
+      "name_en": "General Local Advertising & Announcements",
+      "name_hi": "सामान्य विज्ञापन एवं स्थानीय प्रचार",
+      "filter_chips": [
+        "Sabhi",
+        "Popular",
+        "Nearby",
+        "Verified"
+      ]
+    },
+    {
+      "sub_code": "47-2",
+      "slug": "custom-requests",
+      "name_en": "Specialized Services",
+      "name_hi": "विशेषज्ञ सेवाएँ",
+      "filter_chips": [
+        "Sabhi",
+        "Standard",
+        "Urgent"
+      ]
+    },
+    {
+      "sub_code": "47-N",
+      "slug": "other-requirements",
+      "name_en": "Other Inquiries",
+      "name_hi": "अन्य आवश्यकताएं",
+      "filter_chips": [
+        "Sabhi",
+        "Miscellaneous"
+      ]
+    }
+  ]
+}

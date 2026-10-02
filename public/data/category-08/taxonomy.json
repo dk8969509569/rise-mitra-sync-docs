@@ -1,0 +1,42 @@
+{
+  "category_id": 8,
+  "category_code": "08",
+  "category_slug": "building-construction",
+  "category_name_en": "Building & Construction Materials",
+  "category_name_hi": "भवन निर्माण सामग्री",
+  "sub_categories": [
+    {
+      "sub_code": "8-1",
+      "slug": "general-listings",
+      "name_en": "General Building & Construction Materials",
+      "name_hi": "सामान्य भवन निर्माण सामग्री",
+      "filter_chips": [
+        "Sabhi",
+        "Popular",
+        "Nearby",
+        "Verified"
+      ]
+    },
+    {
+      "sub_code": "8-2",
+      "slug": "custom-requests",
+      "name_en": "Specialized Services",
+      "name_hi": "विशेषज्ञ सेवाएँ",
+      "filter_chips": [
+        "Sabhi",
+        "Standard",
+        "Urgent"
+      ]
+    },
+    {
+      "sub_code": "8-N",
+      "slug": "other-requirements",
+      "name_en": "Other Inquiries",
+      "name_hi": "अन्य आवश्यकताएं",
+      "filter_chips": [
+        "Sabhi",
+        "Miscellaneous"
+      ]
+    }
+  ]
+}

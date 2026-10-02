@@ -1,0 +1,42 @@
+{
+  "category_id": 11,
+  "category_code": "11",
+  "category_slug": "food-restaurant",
+  "category_name_en": "Food, Dairy & Sweets",
+  "category_name_hi": "भोजन, डेयरी एवं मिष्ठान",
+  "sub_categories": [
+    {
+      "sub_code": "11-1",
+      "slug": "general-listings",
+      "name_en": "General Food, Dairy & Sweets",
+      "name_hi": "सामान्य भोजन, डेयरी एवं मिष्ठान",
+      "filter_chips": [
+        "Sabhi",
+        "Popular",
+        "Nearby",
+        "Verified"
+      ]
+    },
+    {
+      "sub_code": "11-2",
+      "slug": "custom-requests",
+      "name_en": "Specialized Services",
+      "name_hi": "विशेषज्ञ सेवाएँ",
+      "filter_chips": [
+        "Sabhi",
+        "Standard",
+        "Urgent"
+      ]
+    },
+    {
+      "sub_code": "11-N",
+      "slug": "other-requirements",
+      "name_en": "Other Inquiries",
+      "name_hi": "अन्य आवश्यकताएं",
+      "filter_chips": [
+        "Sabhi",
+        "Miscellaneous"
+      ]
+    }
+  ]
+}

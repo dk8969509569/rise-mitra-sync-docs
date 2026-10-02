@@ -1,0 +1,42 @@
+{
+  "category_id": 44,
+  "category_code": "44",
+  "category_slug": "driving-school-licensing",
+  "category_name_en": "Motor Driving School & RTO",
+  "category_name_hi": "ड्राइविंग स्कूल एवं आरटीओ",
+  "sub_categories": [
+    {
+      "sub_code": "44-1",
+      "slug": "general-listings",
+      "name_en": "General Motor Driving School & RTO",
+      "name_hi": "सामान्य ड्राइविंग स्कूल एवं आरटीओ",
+      "filter_chips": [
+        "Sabhi",
+        "Popular",
+        "Nearby",
+        "Verified"
+      ]
+    },
+    {
+      "sub_code": "44-2",
+      "slug": "custom-requests",
+      "name_en": "Specialized Services",
+      "name_hi": "विशेषज्ञ सेवाएँ",
+      "filter_chips": [
+        "Sabhi",
+        "Standard",
+        "Urgent"
+      ]
+    },
+    {
+      "sub_code": "44-N",
+      "slug": "other-requirements",
+      "name_en": "Other Inquiries",
+      "name_hi": "अन्य आवश्यकताएं",
+      "filter_chips": [
+        "Sabhi",
+        "Miscellaneous"
+      ]
+    }
+  ]
+}

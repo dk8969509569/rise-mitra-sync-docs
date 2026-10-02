@@ -1,0 +1,42 @@
+{
+  "category_id": 17,
+  "category_code": "17",
+  "category_slug": "tailoring-boutique",
+  "category_name_en": "Tailoring & Boutique",
+  "category_name_hi": "टेलरिंग एवं सिलाई बुटीक",
+  "sub_categories": [
+    {
+      "sub_code": "17-1",
+      "slug": "general-listings",
+      "name_en": "General Tailoring & Boutique",
+      "name_hi": "सामान्य टेलरिंग एवं सिलाई बुटीक",
+      "filter_chips": [
+        "Sabhi",
+        "Popular",
+        "Nearby",
+        "Verified"
+      ]
+    },
+    {
+      "sub_code": "17-2",
+      "slug": "custom-requests",
+      "name_en": "Specialized Services",
+      "name_hi": "विशेषज्ञ सेवाएँ",
+      "filter_chips": [
+        "Sabhi",
+        "Standard",
+        "Urgent"
+      ]
+    },
+    {
+      "sub_code": "17-N",
+      "slug": "other-requirements",
+      "name_en": "Other Inquiries",
+      "name_hi": "अन्य आवश्यकताएं",
+      "filter_chips": [
+        "Sabhi",
+        "Miscellaneous"
+      ]
+    }
+  ]
+}

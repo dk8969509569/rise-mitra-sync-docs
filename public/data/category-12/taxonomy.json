@@ -1,0 +1,42 @@
+{
+  "category_id": 12,
+  "category_code": "12",
+  "category_slug": "fruits-vegetables",
+  "category_name_en": "Fruits & Green Vegetables",
+  "category_name_hi": "फल एवं हरी सब्जियां",
+  "sub_categories": [
+    {
+      "sub_code": "12-1",
+      "slug": "general-listings",
+      "name_en": "General Fruits & Green Vegetables",
+      "name_hi": "सामान्य फल एवं हरी सब्जियां",
+      "filter_chips": [
+        "Sabhi",
+        "Popular",
+        "Nearby",
+        "Verified"
+      ]
+    },
+    {
+      "sub_code": "12-2",
+      "slug": "custom-requests",
+      "name_en": "Specialized Services",
+      "name_hi": "विशेषज्ञ सेवाएँ",
+      "filter_chips": [
+        "Sabhi",
+        "Standard",
+        "Urgent"
+      ]
+    },
+    {
+      "sub_code": "12-N",
+      "slug": "other-requirements",
+      "name_en": "Other Inquiries",
+      "name_hi": "अन्य आवश्यकताएं",
+      "filter_chips": [
+        "Sabhi",
+        "Miscellaneous"
+      ]
+    }
+  ]
+}

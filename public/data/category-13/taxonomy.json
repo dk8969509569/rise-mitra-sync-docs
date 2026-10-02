@@ -1,0 +1,42 @@
+{
+  "category_id": 13,
+  "category_code": "13",
+  "category_slug": "furniture-furnishings",
+  "category_name_en": "Furniture & Home Furnishings",
+  "category_name_hi": "फर्नीचर एवं साज-सज्जा",
+  "sub_categories": [
+    {
+      "sub_code": "13-1",
+      "slug": "general-listings",
+      "name_en": "General Furniture & Home Furnishings",
+      "name_hi": "सामान्य फर्नीचर एवं साज-सज्जा",
+      "filter_chips": [
+        "Sabhi",
+        "Popular",
+        "Nearby",
+        "Verified"
+      ]
+    },
+    {
+      "sub_code": "13-2",
+      "slug": "custom-requests",
+      "name_en": "Specialized Services",
+      "name_hi": "विशेषज्ञ सेवाएँ",
+      "filter_chips": [
+        "Sabhi",
+        "Standard",
+        "Urgent"
+      ]
+    },
+    {
+      "sub_code": "13-N",
+      "slug": "other-requirements",
+      "name_en": "Other Inquiries",
+      "name_hi": "अन्य आवश्यकताएं",
+      "filter_chips": [
+        "Sabhi",
+        "Miscellaneous"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "category_id": 27,
+  "category_code": "27",
+  "category_slug": "caterers-tiffin-service",
+  "category_name_en": "Catering & Tiffin Services",
+  "category_name_hi": "कैटरिंग एवं टिफिन सेवा",
+  "sub_categories": [
+    {
+      "sub_code": "27-1",
+      "slug": "general-listings",
+      "name_en": "General Catering & Tiffin Services",
+      "name_hi": "सामान्य कैटरिंग एवं टिफिन सेवा",
+      "filter_chips": [
+        "Sabhi",
+        "Popular",
+        "Nearby",
+        "Verified"
+      ]
+    },
+    {
+      "sub_code": "27-2",
+      "slug": "custom-requests",
+      "name_en": "Specialized Services",
+      "name_hi": "विशेषज्ञ सेवाएँ",
+      "filter_chips": [
+        "Sabhi",
+        "Standard",
+        "Urgent"
+      ]
+    },
+    {
+      "sub_code": "27-N",
+      "slug": "other-requirements",
+      "name_en": "Other Inquiries",
+      "name_hi": "अन्य आवश्यकताएं",
+      "filter_chips": [
+        "Sabhi",
+        "Miscellaneous"
+      ]
+    }
+  ]
+}

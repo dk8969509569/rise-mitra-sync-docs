@@ -1,0 +1,42 @@
+{
+  "category_id": 29,
+  "category_code": "29",
+  "category_slug": "coaching-education",
+  "category_name_en": "Education, Tuition & Coaching",
+  "category_name_hi": "शिक्षा एवं ट्यूशन सेवाएँ",
+  "sub_categories": [
+    {
+      "sub_code": "29-1",
+      "slug": "general-listings",
+      "name_en": "General Education, Tuition & Coaching",
+      "name_hi": "सामान्य शिक्षा एवं ट्यूशन सेवाएँ",
+      "filter_chips": [
+        "Sabhi",
+        "Popular",
+        "Nearby",
+        "Verified"
+      ]
+    },
+    {
+      "sub_code": "29-2",
+      "slug": "custom-requests",
+      "name_en": "Specialized Services",
+      "name_hi": "विशेषज्ञ सेवाएँ",
+      "filter_chips": [
+        "Sabhi",
+        "Standard",
+        "Urgent"
+      ]
+    },
+    {
+      "sub_code": "29-N",
+      "slug": "other-requirements",
+      "name_en": "Other Inquiries",
+      "name_hi": "अन्य आवश्यकताएं",
+      "filter_chips": [
+        "Sabhi",
+        "Miscellaneous"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "category_id": 14,
+  "category_code": "14",
+  "category_slug": "stationery-books",
+  "category_name_en": "Stationery & Books",
+  "category_name_hi": "स्टेशनरी एवं पुस्तकें",
+  "sub_categories": [
+    {
+      "sub_code": "14-1",
+      "slug": "general-listings",
+      "name_en": "General Stationery & Books",
+      "name_hi": "सामान्य स्टेशनरी एवं पुस्तकें",
+      "filter_chips": [
+        "Sabhi",
+        "Popular",
+        "Nearby",
+        "Verified"
+      ]
+    },
+    {
+      "sub_code": "14-2",
+      "slug": "custom-requests",
+      "name_en": "Specialized Services",
+      "name_hi": "विशेषज्ञ सेवाएँ",
+      "filter_chips": [
+        "Sabhi",
+        "Standard",
+        "Urgent"
+      ]
+    },
+    {
+      "sub_code": "14-N",
+      "slug": "other-requirements",
+      "name_en": "Other Inquiries",
+      "name_hi": "अन्य आवश्यकताएं",
+      "filter_chips": [
+        "Sabhi",
+        "Miscellaneous"
+      ]
+    }
+  ]
+}

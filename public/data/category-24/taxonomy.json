@@ -1,0 +1,42 @@
+{
+  "category_id": 24,
+  "category_code": "24",
+  "category_slug": "printing-graphics",
+  "category_name_en": "Printing, Flex & Photocopy",
+  "category_name_hi": "प्रिंटिंग एवं स्टेशनरी",
+  "sub_categories": [
+    {
+      "sub_code": "24-1",
+      "slug": "general-listings",
+      "name_en": "General Printing, Flex & Photocopy",
+      "name_hi": "सामान्य प्रिंटिंग एवं स्टेशनरी",
+      "filter_chips": [
+        "Sabhi",
+        "Popular",
+        "Nearby",
+        "Verified"
+      ]
+    },
+    {
+      "sub_code": "24-2",
+      "slug": "custom-requests",
+      "name_en": "Specialized Services",
+      "name_hi": "विशेषज्ञ सेवाएँ",
+      "filter_chips": [
+        "Sabhi",
+        "Standard",
+        "Urgent"
+      ]
+    },
+    {
+      "sub_code": "24-N",
+      "slug": "other-requirements",
+      "name_en": "Other Inquiries",
+      "name_hi": "अन्य आवश्यकताएं",
+      "filter_chips": [
+        "Sabhi",
+        "Miscellaneous"
+      ]
+    }
+  ]
+}

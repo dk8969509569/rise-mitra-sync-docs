@@ -1,0 +1,42 @@
+{
+  "category_id": 3,
+  "category_code": "03",
+  "category_slug": "electronics-appliances",
+  "category_name_en": "Electronics & Appliances",
+  "category_name_hi": "इलेक्ट्रॉनिक्स एवं उपकरण",
+  "sub_categories": [
+    {
+      "sub_code": "3-1",
+      "slug": "general-listings",
+      "name_en": "General Electronics & Appliances",
+      "name_hi": "सामान्य इलेक्ट्रॉनिक्स एवं उपकरण",
+      "filter_chips": [
+        "Sabhi",
+        "Popular",
+        "Nearby",
+        "Verified"
+      ]
+    },
+    {
+      "sub_code": "3-2",
+      "slug": "custom-requests",
+      "name_en": "Specialized Services",
+      "name_hi": "विशेषज्ञ सेवाएँ",
+      "filter_chips": [
+        "Sabhi",
+        "Standard",
+        "Urgent"
+      ]
+    },
+    {
+      "sub_code": "3-N",
+      "slug": "other-requirements",
+      "name_en": "Other Inquiries",
+      "name_hi": "अन्य आवश्यकताएं",
+      "filter_chips": [
+        "Sabhi",
+        "Miscellaneous"
+      ]
+    }
+  ]
+}

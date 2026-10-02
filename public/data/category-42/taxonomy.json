@@ -1,0 +1,42 @@
+{
+  "category_id": 42,
+  "category_code": "42",
+  "category_slug": "packers-and-movers",
+  "category_name_en": "Packers & Household Shifting",
+  "category_name_hi": "पैकर्स एवं मूवर्स",
+  "sub_categories": [
+    {
+      "sub_code": "42-1",
+      "slug": "general-listings",
+      "name_en": "General Packers & Household Shifting",
+      "name_hi": "सामान्य पैकर्स एवं मूवर्स",
+      "filter_chips": [
+        "Sabhi",
+        "Popular",
+        "Nearby",
+        "Verified"
+      ]
+    },
+    {
+      "sub_code": "42-2",
+      "slug": "custom-requests",
+      "name_en": "Specialized Services",
+      "name_hi": "विशेषज्ञ सेवाएँ",
+      "filter_chips": [
+        "Sabhi",
+        "Standard",
+        "Urgent"
+      ]
+    },
+    {
+      "sub_code": "42-N",
+      "slug": "other-requirements",
+      "name_en": "Other Inquiries",
+      "name_hi": "अन्य आवश्यकताएं",
+      "filter_chips": [
+        "Sabhi",
+        "Miscellaneous"
+      ]
+    }
+  ]
+}

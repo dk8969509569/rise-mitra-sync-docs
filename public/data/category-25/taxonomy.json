@@ -1,0 +1,42 @@
+{
+  "category_id": 25,
+  "category_code": "25",
+  "category_slug": "photography-videography",
+  "category_name_en": "Photo Studio & Video Shoot",
+  "category_name_hi": "फोटोग्राफी एवं वीडियो",
+  "sub_categories": [
+    {
+      "sub_code": "25-1",
+      "slug": "general-listings",
+      "name_en": "General Photo Studio & Video Shoot",
+      "name_hi": "सामान्य फोटोग्राफी एवं वीडियो",
+      "filter_chips": [
+        "Sabhi",
+        "Popular",
+        "Nearby",
+        "Verified"
+      ]
+    },
+    {
+      "sub_code": "25-2",
+      "slug": "custom-requests",
+      "name_en": "Specialized Services",
+      "name_hi": "विशेषज्ञ सेवाएँ",
+      "filter_chips": [
+        "Sabhi",
+        "Standard",
+        "Urgent"
+      ]
+    },
+    {
+      "sub_code": "25-N",
+      "slug": "other-requirements",
+      "name_en": "Other Inquiries",
+      "name_hi": "अन्य आवश्यकताएं",
+      "filter_chips": [
+        "Sabhi",
+        "Miscellaneous"
+      ]
+    }
+  ]
+}

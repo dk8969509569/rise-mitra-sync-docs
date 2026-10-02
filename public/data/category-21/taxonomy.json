@@ -1,0 +1,42 @@
+{
+  "category_id": 21,
+  "category_code": "21",
+  "category_slug": "metal-welding-fabrication",
+  "category_name_en": "Welding & Metal Fabrication",
+  "category_name_hi": "वेल्डिंग एवं मेटल फैब्रिकेशन",
+  "sub_categories": [
+    {
+      "sub_code": "21-1",
+      "slug": "general-listings",
+      "name_en": "General Welding & Metal Fabrication",
+      "name_hi": "सामान्य वेल्डिंग एवं मेटल फैब्रिकेशन",
+      "filter_chips": [
+        "Sabhi",
+        "Popular",
+        "Nearby",
+        "Verified"
+      ]
+    },
+    {
+      "sub_code": "21-2",
+      "slug": "custom-requests",
+      "name_en": "Specialized Services",
+      "name_hi": "विशेषज्ञ सेवाएँ",
+      "filter_chips": [
+        "Sabhi",
+        "Standard",
+        "Urgent"
+      ]
+    },
+    {
+      "sub_code": "21-N",
+      "slug": "other-requirements",
+      "name_en": "Other Inquiries",
+      "name_hi": "अन्य आवश्यकताएं",
+      "filter_chips": [
+        "Sabhi",
+        "Miscellaneous"
+      ]
+    }
+  ]
+}

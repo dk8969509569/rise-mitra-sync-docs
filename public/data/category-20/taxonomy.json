@@ -1,0 +1,42 @@
+{
+  "category_id": 20,
+  "category_code": "20",
+  "category_slug": "carpentry-woodwork",
+  "category_name_en": "Carpentry & Woodwork",
+  "category_name_hi": "बढ़ईगीरी एवं लकड़ी कार्य",
+  "sub_categories": [
+    {
+      "sub_code": "20-1",
+      "slug": "general-listings",
+      "name_en": "General Carpentry & Woodwork",
+      "name_hi": "सामान्य बढ़ईगीरी एवं लकड़ी कार्य",
+      "filter_chips": [
+        "Sabhi",
+        "Popular",
+        "Nearby",
+        "Verified"
+      ]
+    },
+    {
+      "sub_code": "20-2",
+      "slug": "custom-requests",
+      "name_en": "Specialized Services",
+      "name_hi": "विशेषज्ञ सेवाएँ",
+      "filter_chips": [
+        "Sabhi",
+        "Standard",
+        "Urgent"
+      ]
+    },
+    {
+      "sub_code": "20-N",
+      "slug": "other-requirements",
+      "name_en": "Other Inquiries",
+      "name_hi": "अन्य आवश्यकताएं",
+      "filter_chips": [
+        "Sabhi",
+        "Miscellaneous"
+      ]
+    }
+  ]
+}

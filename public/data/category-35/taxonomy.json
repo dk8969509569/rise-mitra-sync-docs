@@ -1,0 +1,42 @@
+{
+  "category_id": 35,
+  "category_code": "35",
+  "category_slug": "travels-taxi-rentals",
+  "category_name_en": "Tour, Travels & Taxi Booking",
+  "category_name_hi": "टूर, ट्रैवल्स एवं टैक्सी",
+  "sub_categories": [
+    {
+      "sub_code": "35-1",
+      "slug": "general-listings",
+      "name_en": "General Tour, Travels & Taxi Booking",
+      "name_hi": "सामान्य टूर, ट्रैवल्स एवं टैक्सी",
+      "filter_chips": [
+        "Sabhi",
+        "Popular",
+        "Nearby",
+        "Verified"
+      ]
+    },
+    {
+      "sub_code": "35-2",
+      "slug": "custom-requests",
+      "name_en": "Specialized Services",
+      "name_hi": "विशेषज्ञ सेवाएँ",
+      "filter_chips": [
+        "Sabhi",
+        "Standard",
+        "Urgent"
+      ]
+    },
+    {
+      "sub_code": "35-N",
+      "slug": "other-requirements",
+      "name_en": "Other Inquiries",
+      "name_hi": "अन्य आवश्यकताएं",
+      "filter_chips": [
+        "Sabhi",
+        "Miscellaneous"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "category_id": 45,
+  "category_code": "45",
+  "category_slug": "pest-control-fumigation",
+  "category_name_en": "Pest Control & Sanitization",
+  "category_name_hi": "कीट नियंत्रण सेवाएँ",
+  "sub_categories": [
+    {
+      "sub_code": "45-1",
+      "slug": "general-listings",
+      "name_en": "General Pest Control & Sanitization",
+      "name_hi": "सामान्य कीट नियंत्रण सेवाएँ",
+      "filter_chips": [
+        "Sabhi",
+        "Popular",
+        "Nearby",
+        "Verified"
+      ]
+    },
+    {
+      "sub_code": "45-2",
+      "slug": "custom-requests",
+      "name_en": "Specialized Services",
+      "name_hi": "विशेषज्ञ सेवाएँ",
+      "filter_chips": [
+        "Sabhi",
+        "Standard",
+        "Urgent"
+      ]
+    },
+    {
+      "sub_code": "45-N",
+      "slug": "other-requirements",
+      "name_en": "Other Inquiries",
+      "name_hi": "अन्य आवश्यकताएं",
+      "filter_chips": [
+        "Sabhi",
+        "Miscellaneous"
+      ]
+    }
+  ]
+}

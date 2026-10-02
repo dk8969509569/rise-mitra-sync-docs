@@ -1,0 +1,42 @@
+{
+  "category_id": 36,
+  "category_code": "36",
+  "category_slug": "financial-loan-advisors",
+  "category_name_en": "Banking, Loan & Microfinance",
+  "category_name_hi": "ऋण एवं वित्तीय सलाहकार",
+  "sub_categories": [
+    {
+      "sub_code": "36-1",
+      "slug": "general-listings",
+      "name_en": "General Banking, Loan & Microfinance",
+      "name_hi": "सामान्य ऋण एवं वित्तीय सलाहकार",
+      "filter_chips": [
+        "Sabhi",
+        "Popular",
+        "Nearby",
+        "Verified"
+      ]
+    },
+    {
+      "sub_code": "36-2",
+      "slug": "custom-requests",
+      "name_en": "Specialized Services",
+      "name_hi": "विशेषज्ञ सेवाएँ",
+      "filter_chips": [
+        "Sabhi",
+        "Standard",
+        "Urgent"
+      ]
+    },
+    {
+      "sub_code": "36-N",
+      "slug": "other-requirements",
+      "name_en": "Other Inquiries",
+      "name_hi": "अन्य आवश्यकताएं",
+      "filter_chips": [
+        "Sabhi",
+        "Miscellaneous"
+      ]
+    }
+  ]
+}

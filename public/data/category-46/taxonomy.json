@@ -1,0 +1,42 @@
+{
+  "category_id": 46,
+  "category_code": "46",
+  "category_slug": "hire-cook-maid-caregiver",
+  "category_name_en": "Cooks, Maids & Caregivers",
+  "category_name_hi": "रसोइया, आया एवं केयरटेकर",
+  "sub_categories": [
+    {
+      "sub_code": "46-1",
+      "slug": "general-listings",
+      "name_en": "General Cooks, Maids & Caregivers",
+      "name_hi": "सामान्य रसोइया, आया एवं केयरटेकर",
+      "filter_chips": [
+        "Sabhi",
+        "Popular",
+        "Nearby",
+        "Verified"
+      ]
+    },
+    {
+      "sub_code": "46-2",
+      "slug": "custom-requests",
+      "name_en": "Specialized Services",
+      "name_hi": "विशेषज्ञ सेवाएँ",
+      "filter_chips": [
+        "Sabhi",
+        "Standard",
+        "Urgent"
+      ]
+    },
+    {
+      "sub_code": "46-N",
+      "slug": "other-requirements",
+      "name_en": "Other Inquiries",
+      "name_hi": "अन्य आवश्यकताएं",
+      "filter_chips": [
+        "Sabhi",
+        "Miscellaneous"
+      ]
+    }
+  ]
+}
