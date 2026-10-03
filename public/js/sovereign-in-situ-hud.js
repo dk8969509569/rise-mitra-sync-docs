@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Ultra-Responsive 1-Tap Core)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Clean-Exit Verified)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.4 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-hud.js
@@ -276,7 +276,7 @@
     badge.title = label + (isVisible ? ' छुपाने के लिए टैप करें (Hide)' : ' लाइव दिखाने के लिए टैप करें (Show)');
   }
 
-  // 5. FLOATING HUD DOCK
+  // 5. FLOATING HUD DOCK (With Absolute Clean-Exit Protocol)
   function updateFloatingDock(isAuth, hiddenCount, trackedCount) {
     var existingDock = document.getElementById('sivmeFloatingDock');
 
@@ -307,19 +307,43 @@
 
       var exitBtn = document.getElementById('btnExitInSitu');
       if (exitBtn) {
-        function handleExit(e) {
+        function handleCleanExit(e) {
           if (e.cancelable) e.preventDefault();
           e.stopPropagation();
+
+          // 1. Purge authorization tokens from BOTH storage layers
+          sessionStorage.removeItem(SESSION_KEY);
+          localStorage.removeItem(SESSION_KEY);
+          sessionStorage.removeItem('rm_sov_in_situ_session');
+          localStorage.removeItem('rm_sov_in_situ_session');
+
+          // 2. Set registry mode to public in memory and storage
           if (window.RM_SovereignRegistry) {
             window.RM_SovereignRegistry.setConsoleMode(false);
-          } else {
-            sessionStorage.removeItem(SESSION_KEY);
-            localStorage.removeItem(SESSION_KEY);
           }
-          window.location.href = window.location.pathname;
+          try {
+            var regRaw = localStorage.getItem(REGISTRY_STORAGE_KEY);
+            if (regRaw) {
+              var reg = JSON.parse(regRaw);
+              if (reg) {
+                reg.activeMode = 'public';
+                localStorage.setItem(REGISTRY_STORAGE_KEY, JSON.stringify(reg));
+              }
+            }
+          } catch (_) {}
+
+          // 3. Immediately purge HUD and badges from the DOM
+          if (existingDock) existingDock.remove();
+          var badges = document.querySelectorAll('.sivme-inline-badge');
+          badges.forEach(function (b) { b.remove(); });
+
+          // 4. Clean reload without any query string
+          var cleanTargetUrl = window.location.origin + window.location.pathname;
+          window.location.replace(cleanTargetUrl);
         }
-        exitBtn.addEventListener('pointerup', handleExit);
-        exitBtn.addEventListener('click', handleExit);
+
+        exitBtn.addEventListener('pointerup', handleCleanExit);
+        exitBtn.addEventListener('click', handleCleanExit);
       }
     } else {
       var numSpan = document.getElementById('sivmeHiddenCountNum');
