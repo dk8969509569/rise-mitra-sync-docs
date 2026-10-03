@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Universal Catalog & 50-Verticals Bind)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Zero-Bleed & Stacking Isolated)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.4 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-hud.js
@@ -41,7 +41,6 @@
     } catch (_) {}
   }
 
-  // Intercept legacy sync to prevent DOM element deletion
   if (typeof window !== 'undefined') {
     enforceZELTemplateRendering();
     window.addEventListener('rm:sov:visibility-changed', function () {
@@ -101,19 +100,20 @@
     }
   ];
 
-  // 3. INJECT SIVME STYLES (Zero-Movement Lock & Luminous Hitboxes)
+  // 3. INJECT SIVME STYLES (Layer Isolation & Zero-Bleed Controls)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
     style.id = 'sivme-core-styles';
     style.textContent = `
-      /* Prevent transform displacement during admin in-situ mode */
-      .sivme-badge-anchor,
+      /* Stacking context isolation: Badges can never bleed into modals/drawers */
+      .sivme-badge-anchor {
+        position: relative !important;
+        isolation: isolate !important;
+      }
       .sivme-badge-anchor:active {
         transform: none !important;
         transition: none !important;
-        position: relative !important;
-        overflow: visible !important;
       }
       .sivme-ghost-dormant {
         border: 2px dashed #ef4444 !important;
@@ -128,7 +128,6 @@
         ) !important;
         cursor: pointer !important;
       }
-      /* Dim contents while keeping the badge 100% bright and clear */
       .sivme-ghost-dormant > *:not(.sivme-inline-badge) {
         opacity: 0.32 !important;
         filter: grayscale(85%) !important;
@@ -137,35 +136,35 @@
       .sivme-public-hidden {
         display: none !important;
       }
+      /* Clean in-card badge: z-index kept strictly within parent stacking context */
       .sivme-inline-badge {
         position: absolute;
-        top: -10px;
+        top: -8px;
         right: 4px;
-        z-index: 999999 !important;
+        z-index: 20 !important;
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
         font-size: 10px;
         font-weight: 800;
-        padding: 4px 10px;
+        padding: 3px 8px;
         border-radius: 9999px;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
         gap: 4px;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.85);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.85);
         user-select: none !important;
         -webkit-user-select: none !important;
         touch-action: manipulation !important;
         pointer-events: auto !important;
         opacity: 1 !important;
       }
-      /* 48px Touch Safety Buffer */
       .sivme-inline-badge::before {
         content: '';
         position: absolute;
-        top: -10px;
-        bottom: -10px;
-        left: -12px;
-        right: -12px;
+        top: -8px;
+        bottom: -8px;
+        left: -10px;
+        right: -10px;
         z-index: 1;
       }
       .sivme-inline-badge * {
@@ -183,14 +182,19 @@
         background: #7f1d1d !important;
         color: #fca5a5 !important;
         border: 1.5px solid #ef4444 !important;
-        box-shadow: 0 0 12px rgba(239, 68, 68, 0.6) !important;
+        box-shadow: 0 0 10px rgba(239, 68, 68, 0.6) !important;
+      }
+      /* Ensure modals and backdrops are always stacked strictly above background cards */
+      #categoryModal,
+      #categoryModal > div:first-child {
+        z-index: 99999 !important;
       }
       #sivmeFloatingDock {
         position: fixed;
         bottom: 18px;
         left: 50%;
         transform: translateX(-50%);
-        z-index: 9999999;
+        z-index: 9999999 !important;
         display: flex;
         align-items: center;
         gap: 8px;
@@ -206,7 +210,7 @@
     document.head.appendChild(style);
   }
 
-  // 4. SCAN AND ATTACH IN-SITU CONTROLS (Home Cards + Category 16 + Universal Catalog 50 Categories)
+  // 4. SCAN AND ATTACH IN-SITU CONTROLS (With Node Deduplication)
   function applyInSituAudit() {
     if (isAuditing) return;
     isAuditing = true;
@@ -217,15 +221,22 @@
       var registryEngine = window.RM_SovereignRegistry;
 
       var matchedElements = [];
+      var seenNodes = [];
 
-      // 4.1 Explicit DOM URN Nodes (Home 9 Core Verticals)
+      function registerMatch(node, urn, label) {
+        if (!node || seenNodes.indexOf(node) !== -1) return;
+        seenNodes.push(node);
+        matchedElements.push({ el: node, urn: urn, label: label });
+      }
+
+      // 4.1 Home 9 Core Verticals
       var explicitNodes = document.querySelectorAll('[data-sov-urn]');
       explicitNodes.forEach(function (node) {
-        matchedElements.push({
-          el: node,
-          urn: node.getAttribute('data-sov-urn'),
-          label: node.getAttribute('data-sov-label') || 'फ़ीचर'
-        });
+        registerMatch(
+          node,
+          node.getAttribute('data-sov-urn'),
+          node.getAttribute('data-sov-label') || 'फ़ीचर'
+        );
       });
 
       // 4.2 Category 16-3 Dynamic Filters Resolution
@@ -240,13 +251,13 @@
             if (!targetNode.hasAttribute('data-sov-urn')) {
               targetNode.setAttribute('data-sov-urn', def.urn);
               targetNode.setAttribute('data-sov-label', def.label);
-              matchedElements.push({ el: targetNode, urn: def.urn, label: def.label });
             }
+            registerMatch(targetNode, def.urn, def.label);
           });
         } catch (_) {}
       });
 
-      // 4.3 Universal Catalog (33 Services + 17 Games) Resolution
+      // 4.3 Universal Catalog (33 Services + 17 Games)
       var catalogCards = document.querySelectorAll('#categoryModal [data-cat-id]');
       catalogCards.forEach(function (card) {
         var catId = card.getAttribute('data-cat-id');
@@ -263,7 +274,7 @@
           card.setAttribute('data-sov-urn', urn);
           card.setAttribute('data-sov-label', label);
         }
-        matchedElements.push({ el: card, urn: urn, label: label });
+        registerMatch(card, urn, label);
       });
 
       // 4.4 Category 16 Sub-Services Resolution (#sub-c16 child cards)
@@ -277,7 +288,7 @@
           subCard.setAttribute('data-sov-urn', subUrn);
           subCard.setAttribute('data-sov-label', subLabel);
         }
-        matchedElements.push({ el: subCard, urn: subUrn, label: subLabel });
+        registerMatch(subCard, subUrn, subLabel);
       });
 
       var totalTracked = matchedElements.length;
@@ -288,7 +299,6 @@
         if (!isVis) totalHidden++;
 
         if (!isAuth) {
-          // Public Mode: Completely hide
           if (!isVis) {
             item.el.classList.add('sivme-public-hidden');
           } else {
@@ -300,7 +310,6 @@
           return;
         }
 
-        // Console Mode: Keep element displayed, show red ghost if hidden
         if (item.el.style.display === 'none') {
           item.el.style.display = '';
         }
@@ -381,7 +390,6 @@
       badge.addEventListener('pointerup', executeToggle);
       badge.addEventListener('click', executeToggle);
 
-      // FULL-CARD WAKE-UP: If element is hidden, tapping anywhere restores it
       parentEl.addEventListener('pointerup', function (e) {
         if (!parentEl.classList.contains('sivme-ghost-dormant')) return;
         if (e.target.closest('.sivme-inline-badge')) return;
@@ -437,13 +445,11 @@
           if (e.cancelable) e.preventDefault();
           e.stopPropagation();
 
-          // 1. Purge authorization tokens from BOTH storage layers
           sessionStorage.removeItem(SESSION_KEY);
           localStorage.removeItem(SESSION_KEY);
           sessionStorage.removeItem('rm_sov_in_situ_session');
           localStorage.removeItem('rm_sov_in_situ_session');
 
-          // 2. Set registry mode to public in memory and storage
           if (window.RM_SovereignRegistry) {
             window.RM_SovereignRegistry.setConsoleMode(false);
           }
@@ -458,12 +464,10 @@
             }
           } catch (_) {}
 
-          // 3. Immediately purge HUD and badges from the DOM
           if (existingDock) existingDock.remove();
           var badges = document.querySelectorAll('.sivme-inline-badge');
           badges.forEach(function (b) { b.remove(); });
 
-          // 4. Clean reload without any query string
           var cleanTargetUrl = window.location.origin + window.location.pathname;
           window.location.replace(cleanTargetUrl);
         }
