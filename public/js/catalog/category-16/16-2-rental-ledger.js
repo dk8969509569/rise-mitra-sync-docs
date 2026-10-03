@@ -4,6 +4,9 @@
  * SPECIFICATION : 14_04__EXT_004_MODULAR_ARCHITECTURE_MOBILE_SAFETY_RECOVERY_SPEC
  * GOVERNANCE    : GATE-16.7 | DEC-RM-SOV-ARCH-20260930-MODULAR-ZEL-001
  * REPO TARGET   : public/js/catalog/category-16/16-2-rental-ledger.js
+ * DUAL-FOLDER REFERENCES:
+ *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
+ *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
  */
 
 // ==============================================================================
@@ -27,7 +30,7 @@
   var CATEGORY_ID = 'category-16';
   var FEATURE_SLUG = 'rental-ledger';
   var SCHEMA_VERSION = '1';
-  var MODULE_VERSION = '1.1.0';
+  var MODULE_VERSION = '1.1.1';
 
   var PUBLICATION_MODES = {
     PRIVATE_ONLY: 'private_only',
@@ -117,6 +120,97 @@
       return { eligible: true, mode: mode, actionRequired: 'AUTO_PUBLISH_AUTHORIZED' };
     }
     return { eligible: false, reason: 'UNKNOWN_PUBLICATION_MODE' };
+  }
+
+  // Pincode to State & District Auto-Resolver
+  function resolveGeoFromPincode(pCode) {
+    if (!pCode) return null;
+    var pin = String(pCode).trim();
+    if (pin.length < 3) return null;
+
+    // Jharkhand (822 Palamu/Garhwa, 834 Ranchi, 831 Jamshedpur, 825-829 Coalfield/North Chotanagpur)
+    if (/^822/.test(pin)) {
+      return { stateCode: 'JH', state: 'झारखंड', district: 'पलामू (डाल्टनगंज)' };
+    }
+    if (/^834/.test(pin)) {
+      return { stateCode: 'JH', state: 'झारखंड', district: 'रांची' };
+    }
+    if (/^831/.test(pin)) {
+      return { stateCode: 'JH', state: 'झारखंड', district: 'पूर्वी सिंहभूम (जमशेदपुर)' };
+    }
+    if (/^825|^826|^827|^828|^829|^832|^833|^835/.test(pin)) {
+      return { stateCode: 'JH', state: 'झारखंड', district: 'रांची' };
+    }
+
+    // Bihar (800 Patna, 823 Gaya, 842 Muzaffarpur, 812 Bhagalpur, etc.)
+    if (/^800|^801|^803/.test(pin)) {
+      return { stateCode: 'BR', state: 'बिहार', district: 'पटना' };
+    }
+    if (/^823|^824/.test(pin)) {
+      return { stateCode: 'BR', state: 'बिहार', district: 'गया' };
+    }
+    if (/^80|^81|^82|^84|^85/.test(pin)) {
+      return { stateCode: 'BR', state: 'बिहार', district: 'पटना' };
+    }
+
+    // Madhya Pradesh (452 Indore, 462 Bhopal, 45-48 MP Zones)
+    if (/^452/.test(pin)) {
+      return { stateCode: 'MP', state: 'मध्य प्रदेश', district: 'इंदौर' };
+    }
+    if (/^462/.test(pin)) {
+      return { stateCode: 'MP', state: 'मध्य प्रदेश', district: 'भोपाल' };
+    }
+    if (/^45|^46|^47|^48/.test(pin)) {
+      return { stateCode: 'MP', state: 'मध्य प्रदेश', district: 'इंदौर' };
+    }
+
+    // Rajasthan (324 Kota, 302 Jaipur, 30-34 Rajasthan Zones)
+    if (/^324/.test(pin)) {
+      return { stateCode: 'RJ', state: 'राजस्थान', district: 'कोटा' };
+    }
+    if (/^302/.test(pin)) {
+      return { stateCode: 'RJ', state: 'राजस्थान', district: 'जयपुर' };
+    }
+    if (/^30|^31|^32|^33|^34/.test(pin)) {
+      return { stateCode: 'RJ', state: 'राजस्थान', district: 'जयपुर' };
+    }
+
+    // Delhi
+    if (/^11/.test(pin)) {
+      return { stateCode: 'DL', state: 'दिल्ली', district: 'नई दिल्ली' };
+    }
+
+    // Uttar Pradesh (20-28)
+    if (/^226/.test(pin)) {
+      return { stateCode: 'UP', state: 'उत्तर प्रदेश', district: 'लखनऊ' };
+    }
+    if (/^201|^203/.test(pin)) {
+      return { stateCode: 'UP', state: 'उत्तर प्रदेश', district: 'गौतम बुद्ध नगर (नोएडा)' };
+    }
+    if (/^20|^21|^22|^23|^24|^25|^26|^27|^28/.test(pin)) {
+      return { stateCode: 'UP', state: 'उत्तर प्रदेश', district: 'लखनऊ' };
+    }
+
+    // Maharashtra (40-44)
+    if (/^400|^401/.test(pin)) {
+      return { stateCode: 'MH', state: 'महाराष्ट्र', district: 'मुंबई' };
+    }
+    if (/^411/.test(pin)) {
+      return { stateCode: 'MH', state: 'महाराष्ट्र', district: 'पुणे' };
+    }
+    if (/^40|^41|^42|^43|^44/.test(pin)) {
+      return { stateCode: 'MH', state: 'महाराष्ट्र', district: 'मुंबई' };
+    }
+
+    // Tamil Nadu (60-64)
+    if (/^600/.test(pin)) {
+      return { stateCode: 'TN', state: 'तमिलनाडु', district: 'चेन्नई' };
+    }
+    if (/^60|^61|^62|^63|^64/.test(pin)) {
+      return { stateCode: 'TN', state: 'तमिलनाडु', district: 'चेन्नई' };
+    }
+
+    return null;
   }
 
 // ==============================================================================
@@ -319,10 +413,23 @@
       '        <input type="number" id="rm-cat16-rent" placeholder="₹ 7000" style="width:100%; max-width:100%; box-sizing:border-box; padding:10px 12px; background:#030712; border:1px solid #334155; border-radius:8px; color:#ffffff; font-size:0.9rem; outline:none; display:block;" />' +
       '      </div>' +
 
-      // Pan-India Geo Hierarchy Cascading Selectors
+      // Pan-India Geo Hierarchy Cascading Selectors with Pincode-First Hook
       '      <div style="border:1px solid #1e293b; background:#030712; border-radius:10px; padding:10px; box-sizing:border-box;">' +
-      '        <div style="font-size:0.72rem; font-weight:700; color:#38bdf8; margin-bottom:8px;">📍 आवास का भौगोलिक स्थान (Pan-India)</div>' +
-      '        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">' +
+      '        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">' +
+      '          <span style="font-size:0.72rem; font-weight:700; color:#38bdf8;">📍 आवास का भौगोलिक स्थान (Pan-India)</span>' +
+      '          <span id="rm-geo-hint" style="font-size:0.65rem; color:#10b981; font-weight:600;">पिनकोड से स्वतः चयन</span>' +
+      '        </div>' +
+      '        <div style="display:grid; grid-template-columns:1fr 1.5fr; gap:8px; margin-bottom:8px;">' +
+      '          <div>' +
+      '            <label style="display:block; font-size:0.68rem; color:#94a3b8; margin-bottom:3px; font-weight:700;">पिनकोड (6-अंक)</label>' +
+      '            <input type="number" id="rm-cat16-pincode" placeholder="उदा. 822101" style="width:100%; box-sizing:border-box; padding:8px; background:#0b0f19; border:1px solid #10b981; border-radius:6px; color:#ffffff; font-size:0.85rem; font-weight:800; outline:none;" />' +
+      '          </div>' +
+      '          <div>' +
+      '            <label style="display:block; font-size:0.68rem; color:#94a3b8; margin-bottom:3px;">मोहल्ला / इलाका</label>' +
+      '            <input type="text" id="rm-cat16-locality" placeholder="उदा. लालपुर / विजयनगर" style="width:100%; box-sizing:border-box; padding:8px; background:#0b0f19; border:1px solid #334155; border-radius:6px; color:#ffffff; font-size:0.78rem; outline:none;" />' +
+      '          </div>' +
+      '        </div>' +
+      '        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">' +
       '          <div>' +
       '            <label style="display:block; font-size:0.68rem; color:#94a3b8; margin-bottom:3px;">राज्य (State)</label>' +
       '            <select id="rm-cat16-state" style="width:100%; box-sizing:border-box; padding:8px; background:#0b0f19; border:1px solid #334155; border-radius:6px; color:#ffffff; font-size:0.78rem; outline:none;"></select>' +
@@ -330,16 +437,6 @@
       '          <div>' +
       '            <label style="display:block; font-size:0.68rem; color:#94a3b8; margin-bottom:3px;">जिला (District)</label>' +
       '            <select id="rm-cat16-district" style="width:100%; box-sizing:border-box; padding:8px; background:#0b0f19; border:1px solid #334155; border-radius:6px; color:#ffffff; font-size:0.78rem; outline:none;"></select>' +
-      '          </div>' +
-      '        </div>' +
-      '        <div style="display:grid; grid-template-columns:1.5fr 1fr; gap:8px;">' +
-      '          <div>' +
-      '            <label style="display:block; font-size:0.68rem; color:#94a3b8; margin-bottom:3px;">मोहल्ला / इलाका</label>' +
-      '            <input type="text" id="rm-cat16-locality" placeholder="उदा. लालपुर / विजयनगर" style="width:100%; box-sizing:border-box; padding:8px; background:#0b0f19; border:1px solid #334155; border-radius:6px; color:#ffffff; font-size:0.78rem; outline:none;" />' +
-      '          </div>' +
-      '          <div>' +
-      '            <label style="display:block; font-size:0.68rem; color:#94a3b8; margin-bottom:3px;">पिनकोड</label>' +
-      '            <input type="number" id="rm-cat16-pincode" placeholder="उदा. 834001" style="width:100%; box-sizing:border-box; padding:8px; background:#0b0f19; border:1px solid #334155; border-radius:6px; color:#ffffff; font-size:0.78rem; outline:none;" />' +
       '          </div>' +
       '        </div>' +
       '      </div>' +
@@ -398,8 +495,10 @@
     // Populate Pan-India States & Districts
     var stateSelect = container.querySelector('#rm-cat16-state');
     var districtSelect = container.querySelector('#rm-cat16-district');
+    var pincodeInput = container.querySelector('#rm-cat16-pincode');
+    var geoHint = container.querySelector('#rm-geo-hint');
 
-    function populateDistricts(selectedStateCode) {
+    function populateDistricts(selectedStateCode, targetDistrictName) {
       if (!districtSelect) return;
       districtSelect.innerHTML = '';
       if (!window.RM_INDIA_GEO || typeof window.RM_INDIA_GEO.getDistrictsByState !== 'function') {
@@ -407,12 +506,20 @@
         return;
       }
       var distList = window.RM_INDIA_GEO.getDistrictsByState(selectedStateCode);
-      distList.forEach(function (d) {
+      var matchedIdx = 0;
+      distList.forEach(function (d, idx) {
         var opt = document.createElement('option');
-        opt.value = d.nameHi || d.name;
-        opt.textContent = (d.nameHi || d.name) + ' (' + d.name + ')';
+        var val = d.nameHi || d.name;
+        opt.value = val;
+        opt.textContent = val + ' (' + d.name + ')';
+        if (targetDistrictName && (val.indexOf(targetDistrictName) !== -1 || targetDistrictName.indexOf(val) !== -1)) {
+          matchedIdx = idx;
+        }
         districtSelect.appendChild(opt);
       });
+      if (districtSelect.options.length > matchedIdx) {
+        districtSelect.selectedIndex = matchedIdx;
+      }
     }
 
     if (stateSelect) {
@@ -425,14 +532,37 @@
           if (s.code === 'JH') opt.selected = true; // डिफ़ॉल्ट झारखंड
           stateSelect.appendChild(opt);
         });
-        populateDistricts('JH');
+        populateDistricts('JH', 'पलामू (डाल्टनगंज)');
       } else {
         stateSelect.innerHTML = '<option value="JH">झारखंड</option><option value="MP">मध्य प्रदेश</option>';
-        populateDistricts('JH');
+        populateDistricts('JH', 'पलामू (डाल्टनगंज)');
       }
 
       stateSelect.addEventListener('change', function () {
         populateDistricts(this.value);
+      });
+    }
+
+    // Pincode Auto-Fill Event Listener
+    if (pincodeInput) {
+      pincodeInput.addEventListener('input', function () {
+        var pCode = String(this.value || '').trim();
+        if (pCode.length === 6) {
+          var resolved = resolveGeoFromPincode(pCode);
+          if (resolved) {
+            if (stateSelect) {
+              stateSelect.value = resolved.stateCode;
+              populateDistricts(resolved.stateCode, resolved.district);
+            }
+            if (geoHint) {
+              geoHint.textContent = '✓ ' + resolved.state + ' - ' + resolved.district;
+              geoHint.style.color = '#34d399';
+            }
+          }
+        } else if (pCode.length < 6 && geoHint) {
+          geoHint.textContent = 'पिनकोड से स्वतः चयन';
+          geoHint.style.color = '#10b981';
+        }
       });
     }
 
@@ -514,6 +644,7 @@
     calculateNetPayable: calculateNetPayable,
     calculateProratedRent: calculateProratedRent,
     evaluatePublicationEligibility: evaluatePublicationEligibility,
+    resolveGeoFromPincode: resolveGeoFromPincode,
     loadVouchers: loadVouchers,
     saveVouchers: saveVouchers,
     recordVoucher: recordVoucher,
