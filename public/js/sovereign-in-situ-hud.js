@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Category 16-3 Dynamic Bind)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (ZEL Persistent Ghost Core)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.4 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-hud.js
@@ -18,7 +18,38 @@
   var auditTimer = null;
   var lastActionTime = 0;
 
-  // 1. FAIL-CLOSED CHECK: Public user verification
+  // 1. ZEL TEMPLATE SHIELD: Ensure legacy modules always render complete DOM
+  function enforceZELTemplateRendering() {
+    try {
+      var configKeys = [
+        'rm_local_acct_owner_config',
+        'rm_local_acctdefault_owner_config',
+        'rm_owner_filter_config_v1'
+      ];
+      configKeys.forEach(function (k) {
+        var raw = localStorage.getItem(k);
+        var cfg = raw ? JSON.parse(raw) : { filterVisibility: {} };
+        if (!cfg.filterVisibility) cfg.filterVisibility = {};
+        cfg.filterVisibility.smartOmnibox = true;
+        cfg.filterVisibility.showState = true;
+        cfg.filterVisibility.showDistrict = true;
+        cfg.filterVisibility.showLocality = true;
+        cfg.filterVisibility.budgetSlider = true;
+        cfg.filterVisibility.subMeterOnly = true;
+        localStorage.setItem(k, JSON.stringify(cfg));
+      });
+    } catch (_) {}
+  }
+
+  // Intercept legacy sync to prevent DOM element deletion
+  if (typeof window !== 'undefined') {
+    enforceZELTemplateRendering();
+    window.addEventListener('rm:sov:visibility-changed', function () {
+      enforceZELTemplateRendering();
+    });
+  }
+
+  // 2. FAIL-CLOSED CHECK: Public user verification
   function isConsoleAuthorized() {
     try {
       var params = new URLSearchParams(window.location.search);
@@ -44,6 +75,11 @@
   // Element URN Selectors Map for Category 16 & Dynamic Nodes
   var URN_SELECTORS = [
     {
+      urn: 'rm:cat:16:sub:16-3:elem:smart_omnibox',
+      selector: '#rm-search-locality, #smartOmniboxGroup, #smartOmnibox, [data-sov-urn="rm:cat:16:sub:16-3:elem:smart_omnibox"]',
+      label: 'स्मार्ट खोज'
+    },
+    {
       urn: 'rm:cat:16:sub:16-3:elem:state_filter',
       selector: '#rm-cat16-search-state, #stateFilterGroup, #stateFilter, [data-sov-urn="rm:cat:16:sub:16-3:elem:state_filter"]',
       label: 'राज्य फ़िल्टर'
@@ -52,11 +88,6 @@
       urn: 'rm:cat:16:sub:16-3:elem:district_filter',
       selector: '#rm-cat16-search-district, #districtFilterGroup, #districtFilter, [data-sov-urn="rm:cat:16:sub:16-3:elem:district_filter"]',
       label: 'जिला फ़िल्टर'
-    },
-    {
-      urn: 'rm:cat:16:sub:16-3:elem:smart_omnibox',
-      selector: '#rm-search-locality, #smartOmniboxGroup, #smartOmnibox, [data-sov-urn="rm:cat:16:sub:16-3:elem:smart_omnibox"]',
-      label: 'स्मार्ट खोज'
     },
     {
       urn: 'rm:cat:16:sub:16-3:elem:budget_slider',
@@ -70,7 +101,7 @@
     }
   ];
 
-  // 2. INJECT SIVME STYLES (Zero-Movement Lock & Luminous Hitboxes)
+  // 3. INJECT SIVME STYLES (Zero-Movement Lock & Luminous Hitboxes)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -176,12 +207,13 @@
     document.head.appendChild(style);
   }
 
-  // 3. SCAN AND ATTACH IN-SITU CONTROLS (With Container Resolution for Inputs & Selects)
+  // 4. SCAN AND ATTACH IN-SITU CONTROLS
   function applyInSituAudit() {
     if (isAuditing) return;
     isAuditing = true;
 
     try {
+      enforceZELTemplateRendering();
       var isAuth = isConsoleAuthorized();
       var registryEngine = window.RM_SovereignRegistry;
 
@@ -196,7 +228,6 @@
         try {
           var nodes = document.querySelectorAll(def.selector);
           nodes.forEach(function (node) {
-            // Replaced/Void Elements (INPUT, SELECT) resolution to container wrapper
             var targetNode = node;
             if (['INPUT', 'SELECT'].indexOf(node.tagName) !== -1 && node.parentElement) {
               targetNode = node.parentElement;
@@ -249,7 +280,7 @@
     }
   }
 
-  // 4. MOUNT INLINE TOGGLE BADGE & FULL-CARD WAKE-UP
+  // 5. MOUNT INLINE TOGGLE BADGE & FULL-CARD WAKE-UP
   function mountInlineBadge(parentEl, urn, isVisible, label) {
     var badge = parentEl.querySelector(':scope > .sivme-inline-badge');
     var targetClass = isVisible ? 'sivme-inline-badge sivme-badge-live' : 'sivme-inline-badge sivme-badge-dormant';
@@ -269,6 +300,7 @@
 
       if (window.RM_SovereignRegistry) {
         window.RM_SovereignRegistry.toggleVisibility(bUrn, !bVis, bLabel);
+        enforceZELTemplateRendering();
         applyInSituAudit();
       }
     }
@@ -301,7 +333,7 @@
     badge.title = label + (isVisible ? ' छुपाने के लिए टैप करें (Hide)' : ' लाइव दिखाने के लिए टैप करें (Show)');
   }
 
-  // 5. FLOATING HUD DOCK (With Absolute Clean-Exit Protocol)
+  // 6. FLOATING HUD DOCK (With Absolute Clean-Exit Protocol)
   function updateFloatingDock(isAuth, hiddenCount, trackedCount) {
     var existingDock = document.getElementById('sivmeFloatingDock');
 
@@ -385,8 +417,9 @@
     }, 60);
   }
 
-  // 6. OBSERVER & INITIALIZATION
+  // 7. OBSERVER & INITIALIZATION
   function initEngine() {
+    enforceZELTemplateRendering();
     injectStyles();
     applyInSituAudit();
 
