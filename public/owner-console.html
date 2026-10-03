@@ -171,6 +171,109 @@
       </p>
     </section>
 
+    <!-- Category 16 Dynamic Search Filter Visibility (Phase 4 Switchboard) -->
+    <section class="glass-panel p-4 rounded-2xl border-amber-500/30 space-y-3">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+        <div class="flex items-center space-x-2">
+          <span class="text-sm">🏠</span>
+          <span class="text-xs font-black text-amber-400 uppercase tracking-wide">Category 16: Search Filter Runtime Controls</span>
+        </div>
+        <span id="filterSaveIndicator" class="text-[9px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-700/60 px-2 py-0.5 rounded-full">
+          SYNCED TO SURFACE-A
+        </span>
+      </div>
+
+      <p class="text-[10px] text-slate-400 font-sans">
+        Zero-Redeploy Toggle: 16-3 (कमरा व फ्लैट खोज) में कौन-कौन से खोज फ़िल्टर प्रदर्शित करने हैं, उन्हें यहाँ से सीधे नियंत्रित करें।
+      </p>
+
+      <div class="space-y-2 pt-1 text-xs">
+        <!-- State Filter Toggle -->
+        <div class="flex items-center justify-between p-2.5 bg-slate-950/70 rounded-xl border border-slate-800">
+          <div>
+            <div class="font-bold text-slate-200 text-xs">राज्य फ़िल्टर (State Filter)</div>
+            <div class="text-[9px] text-slate-400">16-3 में पैन-इंडिया राज्य ड्रॉपडाउन दिखाएँ</div>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="cfg_showState" onchange="updateFilterToggle('showState', this.checked)" class="sr-only switch-checkbox" checked>
+            <div class="w-10 h-5 bg-slate-800 border border-slate-700 rounded-full switch-label transition-colors">
+              <div class="w-4 h-4 bg-white rounded-full switch-dot transform transition-transform mt-0.5 ml-0.5"></div>
+            </div>
+          </label>
+        </div>
+
+        <!-- District Filter Toggle -->
+        <div class="flex items-center justify-between p-2.5 bg-slate-950/70 rounded-xl border border-slate-800">
+          <div>
+            <div class="font-bold text-slate-200 text-xs">जिला फ़िल्टर (District Filter)</div>
+            <div class="text-[9px] text-slate-400">राज्य के अंतर्गत कैस्केडिंग 780+ जिले दिखाएँ</div>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="cfg_showDistrict" onchange="updateFilterToggle('showDistrict', this.checked)" class="sr-only switch-checkbox" checked>
+            <div class="w-10 h-5 bg-slate-800 border border-slate-700 rounded-full switch-label transition-colors">
+              <div class="w-4 h-4 bg-white rounded-full switch-dot transform transition-transform mt-0.5 ml-0.5"></div>
+            </div>
+          </label>
+        </div>
+
+        <!-- Smart Omnibox Toggle -->
+        <div class="flex items-center justify-between p-2.5 bg-slate-950/70 rounded-xl border border-slate-800">
+          <div>
+            <div class="font-bold text-slate-200 text-xs">स्मार्ट खोज (Omnibox Search)</div>
+            <div class="text-[9px] text-slate-400">इलाका, शहर, पिनकोड मल्टी-मैच सर्च बॉक्स दिखाएँ</div>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="cfg_smartOmnibox" onchange="updateFilterToggle('smartOmnibox', this.checked)" class="sr-only switch-checkbox" checked>
+            <div class="w-10 h-5 bg-slate-800 border border-slate-700 rounded-full switch-label transition-colors">
+              <div class="w-4 h-4 bg-white rounded-full switch-dot transform transition-transform mt-0.5 ml-0.5"></div>
+            </div>
+          </label>
+        </div>
+
+        <!-- Budget Slider Toggle -->
+        <div class="flex items-center justify-between p-2.5 bg-slate-950/70 rounded-xl border border-slate-800">
+          <div>
+            <div class="font-bold text-slate-200 text-xs">मासिक किराया बजट (Budget Slider)</div>
+            <div class="text-[9px] text-slate-400">अधिकतम किराया स्लाइडर व संख्या बॉक्स दिखाएँ</div>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="cfg_budgetSlider" onchange="updateFilterToggle('budgetSlider', this.checked)" class="sr-only switch-checkbox" checked>
+            <div class="w-10 h-5 bg-slate-800 border border-slate-700 rounded-full switch-label transition-colors">
+              <div class="w-4 h-4 bg-white rounded-full switch-dot transform transition-transform mt-0.5 ml-0.5"></div>
+            </div>
+          </label>
+        </div>
+
+        <!-- Sub-Meter Only Toggle -->
+        <div class="flex items-center justify-between p-2.5 bg-slate-950/70 rounded-xl border border-slate-800">
+          <div>
+            <div class="font-bold text-slate-200 text-xs">केवल सब-मीटर आवास (Sub-Meter Toggle)</div>
+            <div class="text-[9px] text-slate-400">स्वतंत्र सब-मीटर चेकबॉक्स फ़िल्टर दिखाएँ</div>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="cfg_subMeterOnly" onchange="updateFilterToggle('subMeterOnly', this.checked)" class="sr-only switch-checkbox" checked>
+            <div class="w-10 h-5 bg-slate-800 border border-slate-700 rounded-full switch-label transition-colors">
+              <div class="w-4 h-4 bg-white rounded-full switch-dot transform transition-transform mt-0.5 ml-0.5"></div>
+            </div>
+          </label>
+        </div>
+
+        <!-- Country Select Toggle (Default OFF) -->
+        <div class="flex items-center justify-between p-2.5 bg-slate-950/70 rounded-xl border border-slate-800">
+          <div>
+            <div class="font-bold text-slate-200 text-xs">देश फ़िल्टर (Country Filter)</div>
+            <div class="text-[9px] text-slate-400">पैन-इंडिया से बाहर के लिए देश चयन (Default: Off)</div>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="cfg_showCountry" onchange="updateFilterToggle('showCountry', this.checked)" class="sr-only switch-checkbox">
+            <div class="w-10 h-5 bg-slate-800 border border-slate-700 rounded-full switch-label transition-colors">
+              <div class="w-4 h-4 bg-white rounded-full switch-dot transform transition-transform mt-0.5 ml-0.5"></div>
+            </div>
+          </label>
+        </div>
+      </div>
+    </section>
+
     <!-- Active Invariants -->
     <section class="glass-panel p-4 rounded-2xl border-slate-800 space-y-2">
       <span class="text-xs font-black text-slate-300 uppercase tracking-wide">Active Invariant Controls</span>
@@ -284,7 +387,7 @@
       { id: "c29", no: "29", name: "Sports Community (खेलकूद)", icon: "🏏", type: "Service" },
       { id: "c30", no: "30", name: "Tools (कैलकुलेटर व SaaS)", icon: "🛠️", type: "Service" },
       { id: "c31", no: "31", name: "Travel & Local (यात्रा व पर्यटन)", icon: "✈️", type: "Service" },
-      { id: "c32", no: "32", name: "Video Editors (वीडियो संपादन)", icon: "🎞️", type: "Service" },
+      { id: "c32", no: "32", name: "Video Editors (वीडियो संपादन)", icon: "🎞️️", type: "Service" },
       { id: "c33", no: "33", name: "Weather (मौसम व कृषि)", icon: "☀️", type: "Service" },
 
       // 17 GAMES (TIER 2)
@@ -309,6 +412,75 @@
 
     let activeCategoryIds = new Set();
 
+    // PHASE 4: CATEGORY 16 RUNTIME FILTER CONFIGURATION
+    const DEFAULT_CAT16_FILTER_CONFIG = {
+      filterVisibility: {
+        showCountry: false,
+        showState: true,
+        showDistrict: true,
+        showLocality: true,
+        smartOmnibox: true,
+        budgetSlider: true,
+        subMeterOnly: true
+      }
+    };
+
+    let currentCat16FilterConfig = JSON.parse(JSON.stringify(DEFAULT_CAT16_FILTER_CONFIG));
+
+    function loadOwnerFilterConfig() {
+      try {
+        const saved = localStorage.getItem('rm_local_acct_owner_config');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && parsed.filterVisibility) {
+            currentCat16FilterConfig = parsed;
+          }
+        }
+      } catch (e) {
+        console.warn('Filter config read error:', e);
+      }
+      applyFilterConfigToUI();
+    }
+
+    function applyFilterConfigToUI() {
+      const fv = currentCat16FilterConfig.filterVisibility || {};
+      ['showState', 'showDistrict', 'smartOmnibox', 'budgetSlider', 'subMeterOnly', 'showCountry'].forEach(key => {
+        const el = document.getElementById('cfg_' + key);
+        if (el) {
+          el.checked = Boolean(fv[key]);
+        }
+      });
+    }
+
+    function updateFilterToggle(key, isChecked) {
+      if (!currentCat16FilterConfig.filterVisibility) {
+        currentCat16FilterConfig.filterVisibility = {};
+      }
+      currentCat16FilterConfig.filterVisibility[key] = Boolean(isChecked);
+      saveOwnerFilterConfig();
+    }
+
+    function saveOwnerFilterConfig() {
+      try {
+        const jsonStr = JSON.stringify(currentCat16FilterConfig);
+        localStorage.setItem('rm_local_acct_owner_config', jsonStr);
+        localStorage.setItem('rm_local_acctdefault_owner_config', jsonStr);
+        localStorage.setItem('rm_owner_filter_config_v1', jsonStr);
+
+        const ind = document.getElementById('filterSaveIndicator');
+        if (ind) {
+          ind.textContent = '✓ UPDATED LIVE';
+          ind.className = 'text-[9px] font-bold bg-amber-950 text-amber-300 border border-amber-600 px-2 py-0.5 rounded-full';
+          setTimeout(() => {
+            ind.textContent = 'SYNCED TO SURFACE-A';
+            ind.className = 'text-[9px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-700/60 px-2 py-0.5 rounded-full';
+          }, 1500);
+        }
+      } catch (err) {
+        console.error('Filter config save error:', err);
+      }
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       try {
         localStorage.removeItem('rm_owner_authenticated');
@@ -319,6 +491,7 @@
       document.getElementById("consolePanel").style.display = "none";
       
       loadCategoriesState();
+      loadOwnerFilterConfig();
       initWebOTP();
     });
 
@@ -495,6 +668,7 @@
       document.getElementById("authGate").style.display = "none";
       document.getElementById("consolePanel").style.display = "block";
       document.getElementById("authError").style.display = "none";
+      loadOwnerFilterConfig();
     }
 
     function showError() {
