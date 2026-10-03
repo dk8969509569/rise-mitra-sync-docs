@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Font-Safe, Zero-Collision & Ergonomic Spaced)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Zero-Clip & Permanent Overflow-Safe Layout)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.4 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-hud.js
@@ -100,7 +100,7 @@
     }
   ];
 
-  // 3. INJECT SIVME STYLES (Font-Safe, Anti-Colliding & Spacious Layout)
+  // 3. INJECT SIVME STYLES (Zero-Clip, Full-Card Overflow Unlock & Anti-Colliding)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -139,9 +139,10 @@
       /* UNIVERSAL ANTI-SQUISH INLINE BADGE */
       .sivme-inline-badge {
         position: absolute;
-        top: -9px !important;
-        right: 12px !important;
-        z-index: 20 !important;
+        top: -10px !important;
+        left: 14px !important;
+        right: auto !important;
+        z-index: 30 !important;
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
         font-size: 10px !important;
         font-weight: 800;
@@ -182,22 +183,24 @@
       }
 
       /* ==========================================================================
-         TOP-LEFT SHOULDER PLACEMENT FOR CATALOG & SUB-CARDS
-         Prevents any collision with action buttons on the right ('खोलें ›', '3 सेवाएं')
+         CRITICAL FIX: PERMANENT OVERFLOW UNLOCK (CATEGORY 16 & ALL CARDS)
+         Eliminates any border clipping on Category 16 or any other category
          ========================================================================== */
-      #categoryModal [data-cat-id] .sivme-inline-badge,
-      #sub-c16 > div .sivme-inline-badge {
-        top: -10px !important;
-        left: 14px !important;
-        right: auto !important;
+      #categoryModal [data-cat-id],
+      #categoryModal [data-cat-id="c16"],
+      #categoryModal [data-cat-id="c16"] > div,
+      #categoryModal [data-cat-id="c16"] header {
+        overflow: visible !important;
       }
 
-      /* Accordion Parent Protection */
+      /* Accordion Parent Container (Category 16) */
       #categoryModal [data-cat-id="c16"] {
         display: block !important;
         min-height: auto !important;
-        margin-bottom: 18px !important;
+        margin-top: 14px !important;
+        margin-bottom: 20px !important;
         position: relative !important;
+        box-sizing: border-box !important;
       }
 
       /* Single Category Rows: 68px height, 18px separation gap, spacious font room */
@@ -207,7 +210,6 @@
         margin-bottom: 18px !important;
         border-radius: 14px !important;
         position: relative !important;
-        overflow: visible !important;
         box-sizing: border-box !important;
       }
 
@@ -238,11 +240,12 @@
         gap: 3px !important;
       }
 
-      /* Category 16 Sub-Services: 56px height, 14px gap between sub-cards */
+      /* Category 16 Sub-Services: 56px height, 14px gap, 100% overflow visible */
       #sub-c16 {
         display: block !important;
         width: 100% !important;
         margin-top: 14px !important;
+        overflow: visible !important;
       }
       #sub-c16 > div {
         min-height: 56px !important;
@@ -253,10 +256,17 @@
         overflow: visible !important;
         box-sizing: border-box !important;
       }
+      /* Sub-card badges placed strictly on the top-left shoulder, away from buttons */
+      #sub-c16 > div .sivme-inline-badge {
+        top: -9px !important;
+        left: 14px !important;
+        right: auto !important;
+      }
 
-      /* 110px Bottom Scroll Buffer: Prevents Floating HUD from occluding last cards */
+      /* Top & Bottom Scroll Buffers: Prevents clipping against header and dock */
       #categoryModal .overflow-y-auto,
       #categoryModal > div > div:last-child {
+        padding-top: 16px !important;
         padding-bottom: 110px !important;
       }
 
