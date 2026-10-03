@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (ZEL Persistent Ghost Core)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Universal Catalog & 50-Verticals Bind)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.4 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-hud.js
@@ -112,6 +112,8 @@
       .sivme-badge-anchor:active {
         transform: none !important;
         transition: none !important;
+        position: relative !important;
+        overflow: visible !important;
       }
       .sivme-ghost-dormant {
         border: 2px dashed #ef4444 !important;
@@ -134,9 +136,6 @@
       }
       .sivme-public-hidden {
         display: none !important;
-      }
-      .sivme-badge-anchor {
-        position: relative !important;
       }
       .sivme-inline-badge {
         position: absolute;
@@ -207,7 +206,7 @@
     document.head.appendChild(style);
   }
 
-  // 4. SCAN AND ATTACH IN-SITU CONTROLS
+  // 4. SCAN AND ATTACH IN-SITU CONTROLS (Home Cards + Category 16 + Universal Catalog 50 Categories)
   function applyInSituAudit() {
     if (isAuditing) return;
     isAuditing = true;
@@ -219,11 +218,17 @@
 
       var matchedElements = [];
 
+      // 4.1 Explicit DOM URN Nodes (Home 9 Core Verticals)
       var explicitNodes = document.querySelectorAll('[data-sov-urn]');
       explicitNodes.forEach(function (node) {
-        matchedElements.push({ el: node, urn: node.getAttribute('data-sov-urn'), label: node.getAttribute('data-sov-label') || 'फ़ीचर' });
+        matchedElements.push({
+          el: node,
+          urn: node.getAttribute('data-sov-urn'),
+          label: node.getAttribute('data-sov-label') || 'फ़ीचर'
+        });
       });
 
+      // 4.2 Category 16-3 Dynamic Filters Resolution
       URN_SELECTORS.forEach(function (def) {
         try {
           var nodes = document.querySelectorAll(def.selector);
@@ -241,6 +246,40 @@
         } catch (_) {}
       });
 
+      // 4.3 Universal Catalog (33 Services + 17 Games) Resolution
+      var catalogCards = document.querySelectorAll('#categoryModal [data-cat-id]');
+      catalogCards.forEach(function (card) {
+        var catId = card.getAttribute('data-cat-id');
+        if (!catId) return;
+
+        var numStr = catId.replace(/[^0-9]/g, '');
+        if (numStr.length === 1) numStr = '0' + numStr;
+        var urn = 'rm:cat:' + numStr;
+
+        var labelEl = card.querySelector('.text-xs.font-bold') || card.querySelector('.font-bold');
+        var label = labelEl ? labelEl.textContent.trim() : ('श्रेणी ' + numStr);
+
+        if (!card.hasAttribute('data-sov-urn')) {
+          card.setAttribute('data-sov-urn', urn);
+          card.setAttribute('data-sov-label', label);
+        }
+        matchedElements.push({ el: card, urn: urn, label: label });
+      });
+
+      // 4.4 Category 16 Sub-Services Resolution (#sub-c16 child cards)
+      var sub16Cards = document.querySelectorAll('#sub-c16 > div');
+      sub16Cards.forEach(function (subCard, idx) {
+        var subUrn = 'rm:cat:16:sub:16-' + (idx + 1);
+        var subLabelEl = subCard.querySelector('.text-xs') || subCard;
+        var subLabel = subLabelEl ? subLabelEl.textContent.trim() : ('16-' + (idx + 1) + ' सेवा');
+
+        if (!subCard.hasAttribute('data-sov-urn')) {
+          subCard.setAttribute('data-sov-urn', subUrn);
+          subCard.setAttribute('data-sov-label', subLabel);
+        }
+        matchedElements.push({ el: subCard, urn: subUrn, label: subLabel });
+      });
+
       var totalTracked = matchedElements.length;
       var totalHidden = 0;
 
@@ -249,6 +288,7 @@
         if (!isVis) totalHidden++;
 
         if (!isAuth) {
+          // Public Mode: Completely hide
           if (!isVis) {
             item.el.classList.add('sivme-public-hidden');
           } else {
@@ -258,6 +298,11 @@
           if (oldBadge) oldBadge.remove();
           item.el.classList.remove('sivme-ghost-dormant', 'sivme-badge-anchor');
           return;
+        }
+
+        // Console Mode: Keep element displayed, show red ghost if hidden
+        if (item.el.style.display === 'none') {
+          item.el.style.display = '';
         }
 
         item.el.classList.remove('sivme-public-hidden');
@@ -300,6 +345,30 @@
 
       if (window.RM_SovereignRegistry) {
         window.RM_SovereignRegistry.toggleVisibility(bUrn, !bVis, bLabel);
+
+        // Surface-B Category Synchronization Bridge
+        try {
+          var match = bUrn.match(/^rm:cat:([0-9]{2})$/);
+          if (match) {
+            var catNum = match[1];
+            var rawActive = localStorage.getItem('rm_active_categories_v1');
+            var activeArr = rawActive ? JSON.parse(rawActive) : [];
+            var id1 = 'c' + catNum;
+            var id2 = 'g' + catNum;
+            var id3 = catNum;
+            if (!bVis) {
+              if (activeArr.indexOf(id1) === -1) activeArr.push(id1);
+              if (activeArr.indexOf(id2) === -1) activeArr.push(id2);
+              if (activeArr.indexOf(id3) === -1) activeArr.push(id3);
+            } else {
+              activeArr = activeArr.filter(function (x) {
+                return x !== id1 && x !== id2 && x !== id3;
+              });
+            }
+            localStorage.setItem('rm_active_categories_v1', JSON.stringify(activeArr));
+          }
+        } catch (_) {}
+
         enforceZELTemplateRendering();
         applyInSituAudit();
       }
