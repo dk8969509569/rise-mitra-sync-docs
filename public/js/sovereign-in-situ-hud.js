@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Zero-Collision & Layout Shielded)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Spacious Ergonomic & Zero-Collision Layout)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.4 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-hud.js
@@ -100,7 +100,7 @@
     }
   ];
 
-  // 3. INJECT SIVME STYLES (Zero-Collision, Anti-Squish & Isolated Stacking)
+  // 3. INJECT SIVME STYLES (Generous Clearance & Anti-Squish Controls)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -127,25 +127,26 @@
         ) !important;
         cursor: pointer !important;
       }
+      /* Improved ghost readability: clear text with alert styling */
       .sivme-ghost-dormant > *:not(.sivme-inline-badge) {
-        opacity: 0.32 !important;
-        filter: grayscale(85%) !important;
+        opacity: 0.48 !important;
+        filter: grayscale(70%) !important;
         pointer-events: none !important;
       }
       .sivme-public-hidden {
         display: none !important;
       }
 
-      /* UNIVERSAL ANTI-SQUISH INLINE BADGE */
+      /* Base Style for Grid Cards (Home Screen 9 Core Verticals) */
       .sivme-inline-badge {
         position: absolute;
-        top: -7px !important;
-        right: 12px !important;
+        top: -9px !important;
+        right: 14px !important;
         z-index: 20 !important;
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
         font-size: 10px !important;
         font-weight: 800;
-        padding: 2px 8px !important;
+        padding: 3px 9px !important;
         border-radius: 9999px;
         cursor: pointer;
         display: inline-flex !important;
@@ -182,45 +183,46 @@
       }
 
       /* ==========================================================================
-         ERGONOMIC TOUCH EXPANSION: Universal Catalog & Sub-Service Rows
-         Prevents accordion layout destruction while expanding rows
+         GENEROUS ERGONOMIC SPACING: Universal Catalog & Sub-Service Rows
+         Ensures wide vertical separation between buttons, cards and badges
          ========================================================================== */
-      /* Protect Category 16 parent accordion container from flex distortion */
+      /* Protect Category 16 parent accordion container */
       #categoryModal [data-cat-id="c16"] {
         display: block !important;
         min-height: auto !important;
-        margin-bottom: 10px !important;
+        margin-bottom: 16px !important;
         position: relative !important;
       }
 
-      /* Single Category Rows: 56px height, 10px separation gap */
+      /* Single Category Rows: 60px height, 16px bottom separation gap */
       #categoryModal [data-cat-id]:not([data-cat-id="c16"]) {
-        min-height: 56px !important;
+        min-height: 60px !important;
+        padding: 12px 16px !important;
+        margin-bottom: 16px !important;
+        border-radius: 14px !important;
+        position: relative !important;
+        overflow: visible !important;
+        box-sizing: border-box !important;
+      }
+
+      /* Category 16 Sub-Services: 52px height, 12px gap between sub-cards */
+      #sub-c16 {
+        display: block !important;
+        width: 100% !important;
+        margin-top: 10px !important;
+      }
+      #sub-c16 > div {
+        min-height: 52px !important;
         padding: 10px 14px !important;
-        margin-bottom: 10px !important;
+        margin-bottom: 12px !important;
         border-radius: 12px !important;
         position: relative !important;
         overflow: visible !important;
         box-sizing: border-box !important;
       }
-
-      /* Category 16 Sub-Services: full-width rows inside accordion */
-      #sub-c16 {
-        display: block !important;
-        width: 100% !important;
-      }
-      #sub-c16 > div {
-        min-height: 48px !important;
-        padding: 8px 12px !important;
-        margin-bottom: 8px !important;
-        border-radius: 10px !important;
-        position: relative !important;
-        overflow: visible !important;
-        box-sizing: border-box !important;
-      }
       #sub-c16 > div .sivme-inline-badge {
-        top: -6px !important;
-        right: 8px !important;
+        top: -8px !important;
+        right: 12px !important;
       }
 
       .sivme-badge-live {
@@ -388,7 +390,7 @@
   function mountInlineBadge(parentEl, urn, isVisible, label) {
     var badge = parentEl.querySelector(':scope > .sivme-inline-badge');
     var targetClass = isVisible ? 'sivme-inline-badge sivme-badge-live' : 'sivme-inline-badge sivme-badge-dormant';
-    var targetHtml = isVisible ? '<span>👁️️</span><span>Live</span>' : '<span>🚫</span><span>Hidden</span>';
+    var targetHtml = isVisible ? '<span>👁️</span><span>Live</span>' : '<span>🚫</span><span>Hidden</span>';
 
     function executeToggle(e) {
       if (e.cancelable) e.preventDefault();
