@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Loop-Guarded)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (1-Tap Instant Response)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.4 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-hud.js
@@ -49,7 +49,7 @@
     { urn: 'rm:cat:16:sub:16-3:elem:submeter_checkbox', selector: '#submeterFilterGroup, [data-sov-urn="rm:cat:16:sub:16-3:elem:submeter_checkbox"]', label: 'सब-मीटर फ़िल्टर' }
   ];
 
-  // 2. INJECT SIVME STYLES
+  // 2. INJECT SIVME STYLES (Zero Tap-Lag Tokens)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -61,7 +61,6 @@
         border: 2px dashed #ef4444 !important;
         border-radius: 12px !important;
         position: relative !important;
-        pointer-events: auto !important;
         background: repeating-linear-gradient(
           -45deg,
           rgba(239, 68, 68, 0.08),
@@ -78,41 +77,44 @@
       }
       .sivme-inline-badge {
         position: absolute;
-        top: -10px;
-        right: 8px;
-        z-index: 99999;
+        top: -12px;
+        right: 4px;
+        z-index: 999999 !important;
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
         font-size: 10px;
         font-weight: 800;
-        padding: 3px 8px;
+        padding: 4px 10px;
         border-radius: 9999px;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
         gap: 4px;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
-        transition: transform 0.15s ease, background 0.2s ease;
-        user-select: none;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.8);
+        user-select: none !important;
+        -webkit-user-select: none !important;
+        touch-action: manipulation !important;
+        pointer-events: auto !important;
+        transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1), background 0.15s ease;
       }
       .sivme-inline-badge:active {
-        transform: scale(0.92);
+        transform: scale(0.90) !important;
       }
       .sivme-badge-live {
-        background: #064e3b;
-        color: #6ee7b7;
-        border: 1px solid #10b981;
+        background: #064e3b !important;
+        color: #6ee7b7 !important;
+        border: 1.5px solid #10b981 !important;
       }
       .sivme-badge-dormant {
-        background: #7f1d1d;
-        color: #fca5a5;
-        border: 1px solid #ef4444;
+        background: #7f1d1d !important;
+        color: #fca5a5 !important;
+        border: 1.5px solid #ef4444 !important;
       }
       #sivmeFloatingDock {
         position: fixed;
         bottom: 18px;
         left: 50%;
         transform: translateX(-50%);
-        z-index: 999999;
+        z-index: 9999999;
         display: flex;
         align-items: center;
         gap: 8px;
@@ -128,7 +130,7 @@
     document.head.appendChild(style);
   }
 
-  // 3. SCAN AND ATTACH IN-SITU CONTROLS (Protected against recursive calls)
+  // 3. SCAN AND ATTACH IN-SITU CONTROLS
   function applyInSituAudit() {
     if (isAuditing) return;
     isAuditing = true;
@@ -192,36 +194,53 @@
     } finally {
       setTimeout(function () {
         isAuditing = false;
-      }, 50);
+      }, 40);
     }
   }
 
-  // 4. MOUNT INLINE TOGGLE BADGE
+  // 4. MOUNT INLINE TOGGLE BADGE (Ultra-Responsive 1-Tap Trigger)
   function mountInlineBadge(parentEl, urn, isVisible, label) {
-    var existing = parentEl.querySelector(':scope > .sivme-inline-badge');
+    var badge = parentEl.querySelector(':scope > .sivme-inline-badge');
     var targetClass = isVisible ? 'sivme-inline-badge sivme-badge-live' : 'sivme-inline-badge sivme-badge-dormant';
-    var targetText = isVisible ? '<span>👁️</span><span>Live</span>' : '<span>🚫</span><span>Hidden</span>';
+    var targetHtml = isVisible ? '<span>👁️</span><span>Live</span>' : '<span>🚫</span><span>Hidden</span>';
 
-    if (!existing) {
-      existing = document.createElement('div');
-      existing.className = targetClass;
-      existing.innerHTML = targetText;
-      parentEl.appendChild(existing);
-    } else {
-      if (existing.className !== targetClass) existing.className = targetClass;
-      if (existing.innerHTML !== targetText) existing.innerHTML = targetText;
+    if (!badge) {
+      badge = document.createElement('div');
+      parentEl.appendChild(badge);
+
+      // Event Isolation: Prevent parent card from shrinking/canceling click
+      function stopBubbling(e) {
+        e.stopPropagation();
+      }
+
+      badge.addEventListener('pointerdown', stopBubbling, { passive: true });
+      badge.addEventListener('touchstart', stopBubbling, { passive: true });
+      badge.addEventListener('mousedown', stopBubbling, { passive: true });
+
+      // Fast-Path Direct Action
+      function triggerToggle(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        var bUrn = badge.getAttribute('data-badge-urn');
+        var bVis = badge.getAttribute('data-badge-vis') === 'true';
+        var bLabel = badge.getAttribute('data-badge-label') || 'फ़ीचर';
+
+        if (window.RM_SovereignRegistry) {
+          window.RM_SovereignRegistry.toggleVisibility(bUrn, !bVis, bLabel);
+          applyInSituAudit();
+        }
+      }
+
+      badge.addEventListener('click', triggerToggle);
     }
 
-    existing.title = label + (isVisible ? ' छुपाने के लिए टैप करें (Hide)' : ' दिखाने के लिए टैप करें (Show)');
-
-    existing.onclick = function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      if (window.RM_SovereignRegistry) {
-        window.RM_SovereignRegistry.toggleVisibility(urn, !isVisible, label);
-        scheduleAudit();
-      }
-    };
+    badge.className = targetClass;
+    if (badge.innerHTML !== targetHtml) badge.innerHTML = targetHtml;
+    badge.setAttribute('data-badge-urn', urn);
+    badge.setAttribute('data-badge-vis', String(isVisible));
+    badge.setAttribute('data-badge-label', label);
+    badge.title = label + (isVisible ? ' छुपाने के लिए टैप करें (Hide)' : ' लाइव दिखाने के लिए टैप करें (Show)');
   }
 
   // 5. FLOATING HUD DOCK
@@ -255,7 +274,8 @@
 
       var exitBtn = document.getElementById('btnExitInSitu');
       if (exitBtn) {
-        exitBtn.onclick = function () {
+        exitBtn.onclick = function (e) {
+          e.stopPropagation();
           if (window.RM_SovereignRegistry) {
             window.RM_SovereignRegistry.setConsoleMode(false);
           } else {
@@ -277,27 +297,28 @@
     if (auditTimer) clearTimeout(auditTimer);
     auditTimer = setTimeout(function () {
       applyInSituAudit();
-    }, 80);
+    }, 60);
   }
 
-  // 6. OBSERVER & INITIALIZATION (Debounced & Filtered)
+  // 6. OBSERVER & INITIALIZATION
   function initEngine() {
     injectStyles();
     applyInSituAudit();
 
     window.addEventListener('rm:sov:visibility-changed', function () {
-      scheduleAudit();
+      applyInSituAudit();
     });
 
     window.addEventListener('storage', function (e) {
       if (e.key === REGISTRY_STORAGE_KEY || e.key === SESSION_KEY) {
-        scheduleAudit();
+        applyInSituAudit();
       }
     });
 
+    // Targeted Micro-App & Dynamic Observer
     var observer = new MutationObserver(function (mutations) {
       if (isAuditing) return;
-      var hasExternalChanges = false;
+      var hasStructuralChanges = false;
       for (var i = 0; i < mutations.length; i++) {
         var t = mutations[i].target;
         if (t && t.nodeType === 1) {
@@ -305,10 +326,10 @@
             continue;
           }
         }
-        hasExternalChanges = true;
+        hasStructuralChanges = true;
         break;
       }
-      if (hasExternalChanges) {
+      if (hasStructuralChanges) {
         scheduleAudit();
       }
     });
