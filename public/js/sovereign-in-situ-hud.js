@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Zero-Clip & Permanent Overflow-Safe Layout)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Permanent Header Buffer & Safe Spacing)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.4 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-hud.js
@@ -100,7 +100,7 @@
     }
   ];
 
-  // 3. INJECT SIVME STYLES (Zero-Clip, Full-Card Overflow Unlock & Anti-Colliding)
+  // 3. INJECT SIVME STYLES (Header Clearance, Number Pill Safe Buffer & Anti-Squish)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -183,9 +183,22 @@
       }
 
       /* ==========================================================================
-         CRITICAL FIX: PERMANENT OVERFLOW UNLOCK (CATEGORY 16 & ALL CARDS)
-         Eliminates any border clipping on Category 16 or any other category
+         CRITICAL FIX: SECTION HEADERS CLEARANCE ('आजीविका' & 'खेल व मनोरंजन')
+         Guarantees wide separation between main headers and cards below them
          ========================================================================== */
+      .sivme-catalog-section-header {
+        margin-top: 28px !important;
+        margin-bottom: 24px !important;
+        position: relative !important;
+        z-index: 10 !important;
+      }
+      #categoryModal > div > div > button:first-of-type,
+      #categoryModal .sivme-first-header {
+        margin-top: 14px !important;
+        margin-bottom: 24px !important;
+      }
+
+      /* Overflow unlock across all cards */
       #categoryModal [data-cat-id],
       #categoryModal [data-cat-id="c16"],
       #categoryModal [data-cat-id="c16"] > div,
@@ -197,23 +210,34 @@
       #categoryModal [data-cat-id="c16"] {
         display: block !important;
         min-height: auto !important;
-        margin-top: 14px !important;
-        margin-bottom: 20px !important;
+        margin-top: 18px !important;
+        margin-bottom: 24px !important;
         position: relative !important;
         box-sizing: border-box !important;
       }
 
-      /* Single Category Rows: 68px height, 18px separation gap, spacious font room */
+      /* Single Category Rows: 72px height, 22px top padding (protects 01. pill), 20px bottom gap */
       #categoryModal [data-cat-id]:not([data-cat-id="c16"]) {
-        min-height: 68px !important;
-        padding: 12px 14px !important;
-        margin-bottom: 18px !important;
+        min-height: 72px !important;
+        padding: 22px 14px 14px 14px !important;
+        margin-bottom: 20px !important;
         border-radius: 14px !important;
         position: relative !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
         box-sizing: border-box !important;
       }
 
-      /* Font-Safe Typography: Prevents clipping of Hindi matras and English text */
+      /* Category Title Text Container: neat wrapping without pushing button */
+      #categoryModal [data-cat-id] > div:first-child,
+      #categoryModal [data-cat-id] > span:first-child {
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+        padding-right: 12px !important;
+      }
+
+      /* Font-Safe Typography: prevents clipping of Hindi matras and English text */
       #categoryModal [data-cat-id] .text-xs,
       #categoryModal [data-cat-id] .font-bold,
       #categoryModal [data-cat-id] span,
@@ -240,7 +264,7 @@
         gap: 3px !important;
       }
 
-      /* Category 16 Sub-Services: 56px height, 14px gap, 100% overflow visible */
+      /* Category 16 Sub-Services: 60px height, 18px top padding, 14px gap */
       #sub-c16 {
         display: block !important;
         width: 100% !important;
@@ -248,15 +272,17 @@
         overflow: visible !important;
       }
       #sub-c16 > div {
-        min-height: 56px !important;
-        padding: 10px 14px !important;
+        min-height: 60px !important;
+        padding: 18px 14px 12px 14px !important;
         margin-bottom: 14px !important;
         border-radius: 12px !important;
         position: relative !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
         overflow: visible !important;
         box-sizing: border-box !important;
       }
-      /* Sub-card badges placed strictly on the top-left shoulder, away from buttons */
       #sub-c16 > div .sivme-inline-badge {
         top: -9px !important;
         left: 14px !important;
@@ -266,8 +292,8 @@
       /* Top & Bottom Scroll Buffers: Prevents clipping against header and dock */
       #categoryModal .overflow-y-auto,
       #categoryModal > div > div:last-child {
-        padding-top: 16px !important;
-        padding-bottom: 110px !important;
+        padding-top: 20px !important;
+        padding-bottom: 120px !important;
       }
 
       .sivme-badge-live {
@@ -307,7 +333,7 @@
     document.head.appendChild(style);
   }
 
-  // 4. SCAN AND ATTACH IN-SITU CONTROLS (With Node Deduplication)
+  // 4. SCAN AND ATTACH IN-SITU CONTROLS (With Section Header Dynamic Buffer)
   function applyInSituAudit() {
     if (isAuditing) return;
     isAuditing = true;
@@ -316,6 +342,17 @@
       enforceZELTemplateRendering();
       var isAuth = isConsoleAuthorized();
       var registryEngine = window.RM_SovereignRegistry;
+
+      // 4.0 Section Headers Buffer Enforcement ('आजीविका' & 'खेल व मनोरंजन')
+      var modalElements = document.querySelectorAll('#categoryModal button, #categoryModal [onclick], #categoryModal .cursor-pointer, #categoryModal div');
+      modalElements.forEach(function (el) {
+        var t = (el.textContent || '').trim();
+        if ((t.indexOf('आजीविका') !== -1 || t.indexOf('खेल व मनोरंजन') !== -1) && el.children.length > 0 && el.offsetHeight > 30 && el.offsetHeight < 70) {
+          el.classList.add('sivme-catalog-section-header');
+          el.style.setProperty('margin-top', '28px', 'important');
+          el.style.setProperty('margin-bottom', '24px', 'important');
+        }
+      });
 
       var matchedElements = [];
       var seenNodes = [];
