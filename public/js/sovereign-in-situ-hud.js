@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Loop-Guarded)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.4 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-hud.js
@@ -14,6 +14,8 @@
 
   var SESSION_KEY = 'rm_sov_in_situ_session';
   var REGISTRY_STORAGE_KEY = 'rm_sovereign_visibility_registry_v1';
+  var isAuditing = false;
+  var auditTimer = null;
 
   // 1. FAIL-CLOSED CHECK: Public user verification
   function isConsoleAuthorized() {
@@ -126,95 +128,98 @@
     document.head.appendChild(style);
   }
 
-  // 3. SCAN AND ATTACH IN-SITU CONTROLS
+  // 3. SCAN AND ATTACH IN-SITU CONTROLS (Protected against recursive calls)
   function applyInSituAudit() {
-    var isAuth = isConsoleAuthorized();
-    var registryEngine = window.RM_SovereignRegistry;
+    if (isAuditing) return;
+    isAuditing = true;
 
-    // Scan data-sov-urn attributes and known selectors
-    var matchedElements = [];
+    try {
+      var isAuth = isConsoleAuthorized();
+      var registryEngine = window.RM_SovereignRegistry;
 
-    // Attribute based nodes
-    var explicitNodes = document.querySelectorAll('[data-sov-urn]');
-    explicitNodes.forEach(function (node) {
-      matchedElements.push({ el: node, urn: node.getAttribute('data-sov-urn'), label: node.getAttribute('data-sov-label') || 'फ़ीचर' });
-    });
+      var matchedElements = [];
 
-    // Selector based mappings
-    URN_SELECTORS.forEach(function (def) {
-      try {
-        var nodes = document.querySelectorAll(def.selector);
-        nodes.forEach(function (node) {
-          if (!node.hasAttribute('data-sov-urn')) {
-            node.setAttribute('data-sov-urn', def.urn);
-            node.setAttribute('data-sov-label', def.label);
-            matchedElements.push({ el: node, urn: def.urn, label: def.label });
+      var explicitNodes = document.querySelectorAll('[data-sov-urn]');
+      explicitNodes.forEach(function (node) {
+        matchedElements.push({ el: node, urn: node.getAttribute('data-sov-urn'), label: node.getAttribute('data-sov-label') || 'फ़ीचर' });
+      });
+
+      URN_SELECTORS.forEach(function (def) {
+        try {
+          var nodes = document.querySelectorAll(def.selector);
+          nodes.forEach(function (node) {
+            if (!node.hasAttribute('data-sov-urn')) {
+              node.setAttribute('data-sov-urn', def.urn);
+              node.setAttribute('data-sov-label', def.label);
+              matchedElements.push({ el: node, urn: def.urn, label: def.label });
+            }
+          });
+        } catch (_) {}
+      });
+
+      var totalTracked = matchedElements.length;
+      var totalHidden = 0;
+
+      matchedElements.forEach(function (item) {
+        var isVis = registryEngine ? registryEngine.isVisible(item.urn) : true;
+        if (!isVis) totalHidden++;
+
+        if (!isAuth) {
+          if (!isVis) {
+            item.el.classList.add('sivme-public-hidden');
+          } else {
+            item.el.classList.remove('sivme-public-hidden');
           }
-        });
-      } catch (_) {}
-    });
-
-    var totalTracked = matchedElements.length;
-    var totalHidden = 0;
-
-    matchedElements.forEach(function (item) {
-      var isVis = registryEngine ? registryEngine.isVisible(item.urn) : true;
-      if (!isVis) totalHidden++;
-
-      if (!isAuth) {
-        // Public Mode: Strict strip / hide without admin badges
-        if (!isVis) {
-          item.el.classList.add('sivme-public-hidden');
-        } else {
-          item.el.classList.remove('sivme-public-hidden');
+          var oldBadge = item.el.querySelector(':scope > .sivme-inline-badge');
+          if (oldBadge) oldBadge.remove();
+          item.el.classList.remove('sivme-ghost-dormant', 'sivme-badge-anchor');
+          return;
         }
-        var oldBadge = item.el.querySelector('.sivme-inline-badge');
-        if (oldBadge) oldBadge.remove();
-        item.el.classList.remove('sivme-ghost-dormant', 'sivme-badge-anchor');
-        return;
-      }
 
-      // Console Mode: Keep element in DOM, apply ghost state & attach badge
-      item.el.classList.remove('sivme-public-hidden');
-      item.el.classList.add('sivme-badge-anchor');
+        item.el.classList.remove('sivme-public-hidden');
+        item.el.classList.add('sivme-badge-anchor');
 
-      if (!isVis) {
-        item.el.classList.add('sivme-ghost-dormant');
-      } else {
-        item.el.classList.remove('sivme-ghost-dormant');
-      }
+        if (!isVis) {
+          item.el.classList.add('sivme-ghost-dormant');
+        } else {
+          item.el.classList.remove('sivme-ghost-dormant');
+        }
 
-      mountInlineBadge(item.el, item.urn, isVis, item.label);
-    });
+        mountInlineBadge(item.el, item.urn, isVis, item.label);
+      });
 
-    updateFloatingDock(isAuth, totalHidden, totalTracked);
+      updateFloatingDock(isAuth, totalHidden, totalTracked);
+    } finally {
+      setTimeout(function () {
+        isAuditing = false;
+      }, 50);
+    }
   }
 
   // 4. MOUNT INLINE TOGGLE BADGE
   function mountInlineBadge(parentEl, urn, isVisible, label) {
     var existing = parentEl.querySelector(':scope > .sivme-inline-badge');
+    var targetClass = isVisible ? 'sivme-inline-badge sivme-badge-live' : 'sivme-inline-badge sivme-badge-dormant';
+    var targetText = isVisible ? '<span>👁️</span><span>Live</span>' : '<span>🚫</span><span>Hidden</span>';
+
     if (!existing) {
       existing = document.createElement('div');
-      existing.className = 'sivme-inline-badge';
+      existing.className = targetClass;
+      existing.innerHTML = targetText;
       parentEl.appendChild(existing);
+    } else {
+      if (existing.className !== targetClass) existing.className = targetClass;
+      if (existing.innerHTML !== targetText) existing.innerHTML = targetText;
     }
 
-    if (isVisible) {
-      existing.className = 'sivme-inline-badge sivme-badge-live';
-      existing.innerHTML = '<span>👁️</span><span>Live</span>';
-      existing.title = label + ' छुपाने के लिए टैप करें (Hide)';
-    } else {
-      existing.className = 'sivme-inline-badge sivme-badge-dormant';
-      existing.innerHTML = '<span>🚫</span><span>Hidden</span>';
-      existing.title = label + ' लाइव दिखाने के लिए टैप करें (Show)';
-    }
+    existing.title = label + (isVisible ? ' छुपाने के लिए टैप करें (Hide)' : ' दिखाने के लिए टैप करें (Show)');
 
     existing.onclick = function (e) {
       e.preventDefault();
       e.stopPropagation();
       if (window.RM_SovereignRegistry) {
         window.RM_SovereignRegistry.toggleVisibility(urn, !isVisible, label);
-        applyInSituAudit();
+        scheduleAudit();
       }
     };
   }
@@ -231,58 +236,81 @@
     if (!existingDock) {
       existingDock = document.createElement('div');
       existingDock.id = 'sivmeFloatingDock';
+      existingDock.innerHTML = `
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:13px;">🛡️</span>
+          <span style="color:#22d3ee;font-size:11px;font-weight:900;letter-spacing:0.5px;">SIVME HUD</span>
+        </div>
+        <span style="background:#0f172a;border:1px solid #334155;color:#94a3b8;font-size:10px;font-weight:700;padding:2px 7px;border-radius:9999px;">
+          Hidden: <span id="sivmeHiddenCountNum" style="color:#f87171;">${hiddenCount}</span>
+        </span>
+        <button id="btnExitInSitu" style="background:#450a0a;border:1px solid #b91c1c;color:#fca5a5;font-size:10px;font-weight:800;padding:3px 8px;border-radius:8px;cursor:pointer;">
+          Exit ✕
+        </button>
+        <a href="/owner-console.html" style="background:#1e1b4b;border:1px solid #4338ca;color:#a5b4fc;font-size:10px;font-weight:800;padding:3px 8px;border-radius:8px;text-decoration:none;display:inline-flex;align-items:center;gap:3px;">
+          <span>Surface-B ⚙️</span>
+        </a>
+      `;
       document.body.appendChild(existingDock);
-    }
 
-    existingDock.innerHTML = `
-      <div style="display:flex;align-items:center;gap:6px;">
-        <span style="font-size:13px;">🛡️</span>
-        <span style="color:#22d3ee;font-size:11px;font-weight:900;letter-spacing:0.5px;">SIVME HUD</span>
-      </div>
-      <span style="background:#0f172a;border:1px solid #334155;color:#94a3b8;font-size:10px;font-weight:700;padding:2px 7px;border-radius:9999px;">
-        Hidden: <span style="color:#f87171;">${hiddenCount}</span>
-      </span>
-      <button id="btnExitInSitu" style="background:#450a0a;border:1px solid #b91c1c;color:#fca5a5;font-size:10px;font-weight:800;padding:3px 8px;border-radius:8px;cursor:pointer;">
-        Exit ✕
-      </button>
-      <a href="/owner-console.html" style="background:#1e1b4b;border:1px solid #4338ca;color:#a5b4fc;font-size:10px;font-weight:800;padding:3px 8px;border-radius:8px;text-decoration:none;display:inline-flex;align-items:center;gap:3px;">
-        <span>Surface-B ⚙️</span>
-      </a>
-    `;
-
-    var exitBtn = document.getElementById('btnExitInSitu');
-    if (exitBtn) {
-      exitBtn.onclick = function () {
-        if (window.RM_SovereignRegistry) {
-          window.RM_SovereignRegistry.setConsoleMode(false);
-        } else {
-          sessionStorage.removeItem(SESSION_KEY);
-          localStorage.removeItem(SESSION_KEY);
-        }
-        window.location.href = window.location.pathname;
-      };
+      var exitBtn = document.getElementById('btnExitInSitu');
+      if (exitBtn) {
+        exitBtn.onclick = function () {
+          if (window.RM_SovereignRegistry) {
+            window.RM_SovereignRegistry.setConsoleMode(false);
+          } else {
+            sessionStorage.removeItem(SESSION_KEY);
+            localStorage.removeItem(SESSION_KEY);
+          }
+          window.location.href = window.location.pathname;
+        };
+      }
+    } else {
+      var numSpan = document.getElementById('sivmeHiddenCountNum');
+      if (numSpan && numSpan.textContent !== String(hiddenCount)) {
+        numSpan.textContent = String(hiddenCount);
+      }
     }
   }
 
-  // 6. OBSERVER & INITIALIZATION
+  function scheduleAudit() {
+    if (auditTimer) clearTimeout(auditTimer);
+    auditTimer = setTimeout(function () {
+      applyInSituAudit();
+    }, 80);
+  }
+
+  // 6. OBSERVER & INITIALIZATION (Debounced & Filtered)
   function initEngine() {
     injectStyles();
     applyInSituAudit();
 
-    // Re-audit when storage/visibility changes
     window.addEventListener('rm:sov:visibility-changed', function () {
-      applyInSituAudit();
+      scheduleAudit();
     });
 
     window.addEventListener('storage', function (e) {
       if (e.key === REGISTRY_STORAGE_KEY || e.key === SESSION_KEY) {
-        applyInSituAudit();
+        scheduleAudit();
       }
     });
 
-    // Observe DOM mutations for dynamically mounted micro-apps (e.g. 16-2, 16-3)
-    var observer = new MutationObserver(function () {
-      applyInSituAudit();
+    var observer = new MutationObserver(function (mutations) {
+      if (isAuditing) return;
+      var hasExternalChanges = false;
+      for (var i = 0; i < mutations.length; i++) {
+        var t = mutations[i].target;
+        if (t && t.nodeType === 1) {
+          if (t.id === 'sivmeFloatingDock' || t.classList.contains('sivme-inline-badge') || t.closest('#sivmeFloatingDock') || t.closest('.sivme-inline-badge')) {
+            continue;
+          }
+        }
+        hasExternalChanges = true;
+        break;
+      }
+      if (hasExternalChanges) {
+        scheduleAudit();
+      }
     });
 
     observer.observe(document.body, {
