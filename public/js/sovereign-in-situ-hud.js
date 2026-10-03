@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Zero-Bleed & Stacking Isolated)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Ergonomic Touch Card Expansion)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.4 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-hud.js
@@ -100,13 +100,12 @@
     }
   ];
 
-  // 3. INJECT SIVME STYLES (Layer Isolation & Zero-Bleed Controls)
+  // 3. INJECT SIVME STYLES (Ergonomic Touch Card Expansion & Spacing)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
     style.id = 'sivme-core-styles';
     style.textContent = `
-      /* Stacking context isolation: Badges can never bleed into modals/drawers */
       .sivme-badge-anchor {
         position: relative !important;
         isolation: isolate !important;
@@ -136,7 +135,8 @@
       .sivme-public-hidden {
         display: none !important;
       }
-      /* Clean in-card badge: z-index kept strictly within parent stacking context */
+
+      /* Base Style for Grid Cards (Home Screen 9 Core Verticals) */
       .sivme-inline-badge {
         position: absolute;
         top: -8px;
@@ -173,6 +173,46 @@
       .sivme-inline-badge:active {
         transform: scale(0.92) !important;
       }
+
+      /* ==========================================================================
+         ERGONOMIC TOUCH EXPANSION: Universal Catalog & Sub-Service Rows
+         Transforms thin strips into wide, comfortable, finger-friendly touch tiles
+         ========================================================================== */
+      #categoryModal [data-cat-id],
+      #sub-c16 > div {
+        min-height: 56px !important;
+        padding: 12px 14px !important;
+        margin-bottom: 8px !important;
+        border-radius: 12px !important;
+        display: flex !important;
+        align-items: center !important;
+        position: relative !important;
+        overflow: visible !important;
+        box-sizing: border-box !important;
+      }
+
+      /* Centered, clean badge inside spacious row with zero button overlap */
+      #categoryModal [data-cat-id] .sivme-inline-badge,
+      #sub-c16 > div .sivme-inline-badge {
+        top: 50% !important;
+        bottom: auto !important;
+        transform: translateY(-50%) !important;
+        right: 80px !important;
+        font-size: 9px !important;
+        padding: 3px 8px !important;
+      }
+      #categoryModal [data-cat-id] .sivme-inline-badge::before,
+      #sub-c16 > div .sivme-inline-badge::before {
+        top: -6px !important;
+        bottom: -6px !important;
+        left: -8px !important;
+        right: -8px !important;
+      }
+      #categoryModal [data-cat-id] .sivme-inline-badge:active,
+      #sub-c16 > div .sivme-inline-badge:active {
+        transform: translateY(-50%) scale(0.92) !important;
+      }
+
       .sivme-badge-live {
         background: #064e3b !important;
         color: #6ee7b7 !important;
@@ -184,7 +224,7 @@
         border: 1.5px solid #ef4444 !important;
         box-shadow: 0 0 10px rgba(239, 68, 68, 0.6) !important;
       }
-      /* Ensure modals and backdrops are always stacked strictly above background cards */
+
       #categoryModal,
       #categoryModal > div:first-child {
         z-index: 99999 !important;
