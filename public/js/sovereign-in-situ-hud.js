@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Zero-Lag 1-Tap Core)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Ultra-Responsive 1-Tap Core)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.4 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-hud.js
@@ -16,7 +16,7 @@
   var REGISTRY_STORAGE_KEY = 'rm_sovereign_visibility_registry_v1';
   var isAuditing = false;
   var auditTimer = null;
-  var lastToggleTime = 0;
+  var lastActionTime = 0;
 
   // 1. FAIL-CLOSED CHECK: Public user verification
   function isConsoleAuthorized() {
@@ -50,25 +50,36 @@
     { urn: 'rm:cat:16:sub:16-3:elem:submeter_checkbox', selector: '#submeterFilterGroup, [data-sov-urn="rm:cat:16:sub:16-3:elem:submeter_checkbox"]', label: 'सब-मीटर फ़िल्टर' }
   ];
 
-  // 2. INJECT SIVME STYLES (Zero-Lag 1-Tap & Expanded Touchpad Target)
+  // 2. INJECT SIVME STYLES (Zero-Movement Lock & Luminous Hitboxes)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
     style.id = 'sivme-core-styles';
     style.textContent = `
+      /* Prevent transform displacement during admin in-situ mode */
+      .sivme-badge-anchor,
+      .sivme-badge-anchor:active {
+        transform: none !important;
+        transition: none !important;
+      }
       .sivme-ghost-dormant {
-        opacity: 0.38 !important;
-        filter: grayscale(85%) !important;
         border: 2px dashed #ef4444 !important;
-        border-radius: 12px !important;
+        border-radius: 16px !important;
         position: relative !important;
         background: repeating-linear-gradient(
           -45deg,
-          rgba(239, 68, 68, 0.08),
-          rgba(239, 68, 68, 0.08) 10px,
+          rgba(239, 68, 68, 0.12),
+          rgba(239, 68, 68, 0.12) 10px,
           transparent 10px,
           transparent 20px
         ) !important;
+        cursor: pointer !important;
+      }
+      /* Dim contents while keeping the badge 100% bright and clear */
+      .sivme-ghost-dormant > *:not(.sivme-inline-badge) {
+        opacity: 0.32 !important;
+        filter: grayscale(85%) !important;
+        pointer-events: none !important;
       }
       .sivme-public-hidden {
         display: none !important;
@@ -76,12 +87,9 @@
       .sivme-badge-anchor {
         position: relative !important;
       }
-      .tactile-25d:has(.sivme-inline-badge:active) {
-        transform: none !important;
-      }
       .sivme-inline-badge {
         position: absolute;
-        top: -12px;
+        top: -10px;
         right: 4px;
         z-index: 999999 !important;
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -93,21 +101,21 @@
         display: inline-flex;
         align-items: center;
         gap: 4px;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.8);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.85);
         user-select: none !important;
         -webkit-user-select: none !important;
         touch-action: manipulation !important;
         pointer-events: auto !important;
-        transition: transform 0.08s ease, background 0.15s ease;
+        opacity: 1 !important;
       }
-      /* 48px Accessible Invisible Touch Hitbox */
+      /* 48px Touch Safety Buffer */
       .sivme-inline-badge::before {
         content: '';
         position: absolute;
-        top: -12px;
-        bottom: -12px;
-        left: -14px;
-        right: -14px;
+        top: -10px;
+        bottom: -10px;
+        left: -12px;
+        right: -12px;
         z-index: 1;
       }
       .sivme-inline-badge * {
@@ -125,6 +133,7 @@
         background: #7f1d1d !important;
         color: #fca5a5 !important;
         border: 1.5px solid #ef4444 !important;
+        box-shadow: 0 0 12px rgba(239, 68, 68, 0.6) !important;
       }
       #sivmeFloatingDock {
         position: fixed;
@@ -215,38 +224,48 @@
     }
   }
 
-  // 4. MOUNT INLINE TOGGLE BADGE (Direct 1-Tap Trigger on Touchdown)
+  // 4. MOUNT INLINE TOGGLE BADGE & FULL-CARD WAKE-UP
   function mountInlineBadge(parentEl, urn, isVisible, label) {
     var badge = parentEl.querySelector(':scope > .sivme-inline-badge');
     var targetClass = isVisible ? 'sivme-inline-badge sivme-badge-live' : 'sivme-inline-badge sivme-badge-dormant';
     var targetHtml = isVisible ? '<span>👁️</span><span>Live</span>' : '<span>🚫</span><span>Hidden</span>';
 
+    function executeToggle(e) {
+      if (e.cancelable) e.preventDefault();
+      e.stopPropagation();
+
+      var now = Date.now();
+      if (now - lastActionTime < 240) return;
+      lastActionTime = now;
+
+      var bUrn = badge ? badge.getAttribute('data-badge-urn') : urn;
+      var bVis = badge ? (badge.getAttribute('data-badge-vis') === 'true') : isVisible;
+      var bLabel = badge ? (badge.getAttribute('data-badge-label') || label) : label;
+
+      if (window.RM_SovereignRegistry) {
+        window.RM_SovereignRegistry.toggleVisibility(bUrn, !bVis, bLabel);
+        applyInSituAudit();
+      }
+    }
+
     if (!badge) {
       badge = document.createElement('div');
       parentEl.appendChild(badge);
 
-      // Instant 1-Tap Handler (0ms Latency on Initial Contact)
-      function executeInstantToggle(e) {
-        if (e.cancelable) e.preventDefault();
-        e.stopPropagation();
+      badge.addEventListener('pointerup', executeToggle);
+      badge.addEventListener('click', executeToggle);
 
-        var now = Date.now();
-        if (now - lastToggleTime < 280) return; // Prevent double trigger within 280ms
-        lastToggleTime = now;
-
-        var bUrn = badge.getAttribute('data-badge-urn');
-        var bVis = badge.getAttribute('data-badge-vis') === 'true';
-        var bLabel = badge.getAttribute('data-badge-label') || 'फ़ीचर';
-
-        if (window.RM_SovereignRegistry) {
-          window.RM_SovereignRegistry.toggleVisibility(bUrn, !bVis, bLabel);
-          applyInSituAudit();
-        }
-      }
-
-      badge.addEventListener('pointerdown', executeInstantToggle);
-      badge.addEventListener('touchstart', executeInstantToggle, { passive: false });
-      badge.addEventListener('click', executeInstantToggle);
+      // FULL-CARD WAKE-UP: If card is hidden, tapping anywhere on the card restores it
+      parentEl.addEventListener('pointerup', function (e) {
+        if (!parentEl.classList.contains('sivme-ghost-dormant')) return;
+        if (e.target.closest('.sivme-inline-badge')) return;
+        executeToggle(e);
+      });
+      parentEl.addEventListener('click', function (e) {
+        if (!parentEl.classList.contains('sivme-ghost-dormant')) return;
+        if (e.target.closest('.sivme-inline-badge')) return;
+        executeToggle(e);
+      });
     }
 
     badge.className = targetClass;
@@ -299,7 +318,7 @@
           }
           window.location.href = window.location.pathname;
         }
-        exitBtn.addEventListener('pointerdown', handleExit);
+        exitBtn.addEventListener('pointerup', handleExit);
         exitBtn.addEventListener('click', handleExit);
       }
     } else {
