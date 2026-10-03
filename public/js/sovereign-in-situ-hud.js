@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Spacious Ergonomic & Zero-Collision Layout)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Font-Safe, Zero-Collision & Ergonomic Spaced)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.4 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-hud.js
@@ -100,7 +100,7 @@
     }
   ];
 
-  // 3. INJECT SIVME STYLES (Generous Clearance & Anti-Squish Controls)
+  // 3. INJECT SIVME STYLES (Font-Safe, Anti-Colliding & Spacious Layout)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -127,21 +127,20 @@
         ) !important;
         cursor: pointer !important;
       }
-      /* Improved ghost readability: clear text with alert styling */
       .sivme-ghost-dormant > *:not(.sivme-inline-badge) {
-        opacity: 0.48 !important;
-        filter: grayscale(70%) !important;
+        opacity: 0.55 !important;
+        filter: grayscale(50%) !important;
         pointer-events: none !important;
       }
       .sivme-public-hidden {
         display: none !important;
       }
 
-      /* Base Style for Grid Cards (Home Screen 9 Core Verticals) */
+      /* UNIVERSAL ANTI-SQUISH INLINE BADGE */
       .sivme-inline-badge {
         position: absolute;
         top: -9px !important;
-        right: 14px !important;
+        right: 12px !important;
         z-index: 20 !important;
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
         font-size: 10px !important;
@@ -183,46 +182,82 @@
       }
 
       /* ==========================================================================
-         GENEROUS ERGONOMIC SPACING: Universal Catalog & Sub-Service Rows
-         Ensures wide vertical separation between buttons, cards and badges
+         TOP-LEFT SHOULDER PLACEMENT FOR CATALOG & SUB-CARDS
+         Prevents any collision with action buttons on the right ('खोलें ›', '3 सेवाएं')
          ========================================================================== */
-      /* Protect Category 16 parent accordion container */
+      #categoryModal [data-cat-id] .sivme-inline-badge,
+      #sub-c16 > div .sivme-inline-badge {
+        top: -10px !important;
+        left: 14px !important;
+        right: auto !important;
+      }
+
+      /* Accordion Parent Protection */
       #categoryModal [data-cat-id="c16"] {
         display: block !important;
         min-height: auto !important;
-        margin-bottom: 16px !important;
+        margin-bottom: 18px !important;
         position: relative !important;
       }
 
-      /* Single Category Rows: 60px height, 16px bottom separation gap */
+      /* Single Category Rows: 68px height, 18px separation gap, spacious font room */
       #categoryModal [data-cat-id]:not([data-cat-id="c16"]) {
-        min-height: 60px !important;
-        padding: 12px 16px !important;
-        margin-bottom: 16px !important;
+        min-height: 68px !important;
+        padding: 12px 14px !important;
+        margin-bottom: 18px !important;
         border-radius: 14px !important;
         position: relative !important;
         overflow: visible !important;
         box-sizing: border-box !important;
       }
 
-      /* Category 16 Sub-Services: 52px height, 12px gap between sub-cards */
+      /* Font-Safe Typography: Prevents clipping of Hindi matras and English text */
+      #categoryModal [data-cat-id] .text-xs,
+      #categoryModal [data-cat-id] .font-bold,
+      #categoryModal [data-cat-id] span,
+      #categoryModal [data-cat-id] div,
+      #sub-c16 * {
+        line-height: 1.5 !important;
+        overflow: visible !important;
+      }
+
+      /* Anti-Wrapping Lock for Action Buttons ('खोलें ›' / 'खेलें ›' / '3 सेवाएं') */
+      #categoryModal [data-cat-id] button,
+      #categoryModal [data-cat-id] a,
+      #categoryModal [data-cat-id] .text-cyan-400,
+      #categoryModal [data-cat-id] .text-emerald-400,
+      #categoryModal [data-cat-id] .text-slate-400,
+      #sub-c16 button,
+      #sub-c16 a,
+      #sub-c16 span {
+        white-space: nowrap !important;
+        word-break: keep-all !important;
+        flex-shrink: 0 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 3px !important;
+      }
+
+      /* Category 16 Sub-Services: 56px height, 14px gap between sub-cards */
       #sub-c16 {
         display: block !important;
         width: 100% !important;
-        margin-top: 10px !important;
+        margin-top: 14px !important;
       }
       #sub-c16 > div {
-        min-height: 52px !important;
+        min-height: 56px !important;
         padding: 10px 14px !important;
-        margin-bottom: 12px !important;
+        margin-bottom: 14px !important;
         border-radius: 12px !important;
         position: relative !important;
         overflow: visible !important;
         box-sizing: border-box !important;
       }
-      #sub-c16 > div .sivme-inline-badge {
-        top: -8px !important;
-        right: 12px !important;
+
+      /* 110px Bottom Scroll Buffer: Prevents Floating HUD from occluding last cards */
+      #categoryModal .overflow-y-auto,
+      #categoryModal > div > div:last-child {
+        padding-bottom: 110px !important;
       }
 
       .sivme-badge-live {
