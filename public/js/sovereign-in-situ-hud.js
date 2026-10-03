@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Permanent Header Buffer & Safe Spacing)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Interactive Accordion & Overflow-Safe Layout)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.4 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-hud.js
@@ -100,7 +100,7 @@
     }
   ];
 
-  // 3. INJECT SIVME STYLES (Header Clearance, Number Pill Safe Buffer & Anti-Squish)
+  // 3. INJECT SIVME STYLES (Interactive Accordion, Header Buffers & Anti-Squish)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -182,10 +182,7 @@
         transform: scale(0.92) !important;
       }
 
-      /* ==========================================================================
-         CRITICAL FIX: SECTION HEADERS CLEARANCE ('आजीविका' & 'खेल व मनोरंजन')
-         Guarantees wide separation between main headers and cards below them
-         ========================================================================== */
+      /* SECTION HEADERS CLEARANCE ('आजीविका' & 'खेल व मनोरंजन') */
       .sivme-catalog-section-header {
         margin-top: 28px !important;
         margin-bottom: 24px !important;
@@ -198,7 +195,7 @@
         margin-bottom: 24px !important;
       }
 
-      /* Overflow unlock across all cards */
+      /* Overflow unlock across cards */
       #categoryModal [data-cat-id],
       #categoryModal [data-cat-id="c16"],
       #categoryModal [data-cat-id="c16"] > div,
@@ -216,7 +213,32 @@
         box-sizing: border-box !important;
       }
 
-      /* Single Category Rows: 72px height, 22px top padding (protects 01. pill), 20px bottom gap */
+      /* Category 16 Header Cursor */
+      #categoryModal [data-cat-id="c16"] > div:first-child,
+      #categoryModal [data-cat-id="c16"] header {
+        cursor: pointer !important;
+        user-select: none !important;
+      }
+
+      /* ==========================================================================
+         CRITICAL FIX: CATEGORY 16 ACCORDION COLLAPSE & EXPAND BEHAVIOR
+         Allows smooth open/close when .hidden class is toggled
+         ========================================================================== */
+      #sub-c16 {
+        width: 100% !important;
+        margin-top: 14px !important;
+        overflow: visible !important;
+      }
+      #sub-c16.hidden,
+      #sub-c16[style*="display: none"],
+      #sub-c16.sivme-collapsed {
+        display: none !important;
+      }
+      #sub-c16:not(.hidden):not([style*="display: none"]):not(.sivme-collapsed) {
+        display: block !important;
+      }
+
+      /* Single Category Rows: 72px height, 22px top padding, 20px bottom gap */
       #categoryModal [data-cat-id]:not([data-cat-id="c16"]) {
         min-height: 72px !important;
         padding: 22px 14px 14px 14px !important;
@@ -229,7 +251,7 @@
         box-sizing: border-box !important;
       }
 
-      /* Category Title Text Container: neat wrapping without pushing button */
+      /* Category Title Text Container */
       #categoryModal [data-cat-id] > div:first-child,
       #categoryModal [data-cat-id] > span:first-child {
         min-width: 0 !important;
@@ -237,7 +259,7 @@
         padding-right: 12px !important;
       }
 
-      /* Font-Safe Typography: prevents clipping of Hindi matras and English text */
+      /* Font-Safe Typography */
       #categoryModal [data-cat-id] .text-xs,
       #categoryModal [data-cat-id] .font-bold,
       #categoryModal [data-cat-id] span,
@@ -265,12 +287,6 @@
       }
 
       /* Category 16 Sub-Services: 60px height, 18px top padding, 14px gap */
-      #sub-c16 {
-        display: block !important;
-        width: 100% !important;
-        margin-top: 14px !important;
-        overflow: visible !important;
-      }
       #sub-c16 > div {
         min-height: 60px !important;
         padding: 18px 14px 12px 14px !important;
@@ -289,7 +305,7 @@
         right: auto !important;
       }
 
-      /* Top & Bottom Scroll Buffers: Prevents clipping against header and dock */
+      /* Top & Bottom Scroll Buffers */
       #categoryModal .overflow-y-auto,
       #categoryModal > div > div:last-child {
         padding-top: 20px !important;
@@ -333,7 +349,7 @@
     document.head.appendChild(style);
   }
 
-  // 4. SCAN AND ATTACH IN-SITU CONTROLS (With Section Header Dynamic Buffer)
+  // 4. SCAN AND ATTACH IN-SITU CONTROLS
   function applyInSituAudit() {
     if (isAuditing) return;
     isAuditing = true;
@@ -353,6 +369,26 @@
           el.style.setProperty('margin-bottom', '24px', 'important');
         }
       });
+
+      // 4.0.1 Fallback Accordion Click Binder for Category 16
+      var c16Header = document.querySelector('#categoryModal [data-cat-id="c16"] > div:first-child');
+      if (c16Header && c16Header.getAttribute('data-sivme-toggle-bound') !== 'true') {
+        c16Header.setAttribute('data-sivme-toggle-bound', 'true');
+        c16Header.addEventListener('click', function (e) {
+          if (e.target.closest('.sivme-inline-badge')) return;
+          var sub = document.getElementById('sub-c16');
+          if (!sub) return;
+          setTimeout(function () {
+            if (typeof window.toggleSubCategory !== 'function') {
+              sub.classList.toggle('hidden');
+              var chevron = document.getElementById('chevron-c16');
+              if (chevron) {
+                chevron.style.transform = sub.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+              }
+            }
+          }, 15);
+        });
+      }
 
       var matchedElements = [];
       var seenNodes = [];
