@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Clean-Exit Verified)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Category 16-3 Dynamic Bind)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.4 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-hud.js
@@ -43,11 +43,31 @@
 
   // Element URN Selectors Map for Category 16 & Dynamic Nodes
   var URN_SELECTORS = [
-    { urn: 'rm:cat:16:sub:16-3:elem:state_filter', selector: '#stateFilterGroup, #stateFilter, [data-sov-urn="rm:cat:16:sub:16-3:elem:state_filter"]', label: 'राज्य फ़िल्टर' },
-    { urn: 'rm:cat:16:sub:16-3:elem:district_filter', selector: '#districtFilterGroup, #districtFilter, [data-sov-urn="rm:cat:16:sub:16-3:elem:district_filter"]', label: 'जिला फ़िल्टर' },
-    { urn: 'rm:cat:16:sub:16-3:elem:smart_omnibox', selector: '#smartOmniboxGroup, #smartOmnibox, [data-sov-urn="rm:cat:16:sub:16-3:elem:smart_omnibox"]', label: 'स्मार्ट खोज' },
-    { urn: 'rm:cat:16:sub:16-3:elem:budget_slider', selector: '#budgetSliderGroup, [data-sov-urn="rm:cat:16:sub:16-3:elem:budget_slider"]', label: 'बजट स्लाइडर' },
-    { urn: 'rm:cat:16:sub:16-3:elem:submeter_checkbox', selector: '#submeterFilterGroup, [data-sov-urn="rm:cat:16:sub:16-3:elem:submeter_checkbox"]', label: 'सब-मीटर फ़िल्टर' }
+    {
+      urn: 'rm:cat:16:sub:16-3:elem:state_filter',
+      selector: '#rm-cat16-search-state, #stateFilterGroup, #stateFilter, [data-sov-urn="rm:cat:16:sub:16-3:elem:state_filter"]',
+      label: 'राज्य फ़िल्टर'
+    },
+    {
+      urn: 'rm:cat:16:sub:16-3:elem:district_filter',
+      selector: '#rm-cat16-search-district, #districtFilterGroup, #districtFilter, [data-sov-urn="rm:cat:16:sub:16-3:elem:district_filter"]',
+      label: 'जिला फ़िल्टर'
+    },
+    {
+      urn: 'rm:cat:16:sub:16-3:elem:smart_omnibox',
+      selector: '#rm-search-locality, #smartOmniboxGroup, #smartOmnibox, [data-sov-urn="rm:cat:16:sub:16-3:elem:smart_omnibox"]',
+      label: 'स्मार्ट खोज'
+    },
+    {
+      urn: 'rm:cat:16:sub:16-3:elem:budget_slider',
+      selector: '#rm-search-budget-slider, #budgetSliderGroup, [data-sov-urn="rm:cat:16:sub:16-3:elem:budget_slider"]',
+      label: 'बजट स्लाइडर'
+    },
+    {
+      urn: 'rm:cat:16:sub:16-3:elem:submeter_checkbox',
+      selector: '#rm-search-submeter, #submeterFilterGroup, [data-sov-urn="rm:cat:16:sub:16-3:elem:submeter_checkbox"]',
+      label: 'सब-मीटर फ़िल्टर'
+    }
   ];
 
   // 2. INJECT SIVME STYLES (Zero-Movement Lock & Luminous Hitboxes)
@@ -64,7 +84,7 @@
       }
       .sivme-ghost-dormant {
         border: 2px dashed #ef4444 !important;
-        border-radius: 16px !important;
+        border-radius: 14px !important;
         position: relative !important;
         background: repeating-linear-gradient(
           -45deg,
@@ -156,7 +176,7 @@
     document.head.appendChild(style);
   }
 
-  // 3. SCAN AND ATTACH IN-SITU CONTROLS
+  // 3. SCAN AND ATTACH IN-SITU CONTROLS (With Container Resolution for Inputs & Selects)
   function applyInSituAudit() {
     if (isAuditing) return;
     isAuditing = true;
@@ -176,10 +196,15 @@
         try {
           var nodes = document.querySelectorAll(def.selector);
           nodes.forEach(function (node) {
-            if (!node.hasAttribute('data-sov-urn')) {
-              node.setAttribute('data-sov-urn', def.urn);
-              node.setAttribute('data-sov-label', def.label);
-              matchedElements.push({ el: node, urn: def.urn, label: def.label });
+            // Replaced/Void Elements (INPUT, SELECT) resolution to container wrapper
+            var targetNode = node;
+            if (['INPUT', 'SELECT'].indexOf(node.tagName) !== -1 && node.parentElement) {
+              targetNode = node.parentElement;
+            }
+            if (!targetNode.hasAttribute('data-sov-urn')) {
+              targetNode.setAttribute('data-sov-urn', def.urn);
+              targetNode.setAttribute('data-sov-label', def.label);
+              matchedElements.push({ el: targetNode, urn: def.urn, label: def.label });
             }
           });
         } catch (_) {}
@@ -255,7 +280,7 @@
       badge.addEventListener('pointerup', executeToggle);
       badge.addEventListener('click', executeToggle);
 
-      // FULL-CARD WAKE-UP: If card is hidden, tapping anywhere on the card restores it
+      // FULL-CARD WAKE-UP: If element is hidden, tapping anywhere restores it
       parentEl.addEventListener('pointerup', function (e) {
         if (!parentEl.classList.contains('sivme-ghost-dormant')) return;
         if (e.target.closest('.sivme-inline-badge')) return;
