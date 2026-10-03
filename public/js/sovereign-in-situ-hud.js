@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Ergonomic Touch Card Expansion)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Zero-Collision & Layout Shielded)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.4 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-hud.js
@@ -100,7 +100,7 @@
     }
   ];
 
-  // 3. INJECT SIVME STYLES (Ergonomic Touch Card Expansion & Spacing)
+  // 3. INJECT SIVME STYLES (Zero-Collision, Anti-Squish & Isolated Stacking)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -136,20 +136,21 @@
         display: none !important;
       }
 
-      /* Base Style for Grid Cards (Home Screen 9 Core Verticals) */
+      /* UNIVERSAL ANTI-SQUISH INLINE BADGE */
       .sivme-inline-badge {
         position: absolute;
-        top: -8px;
-        right: 4px;
+        top: -7px !important;
+        right: 12px !important;
         z-index: 20 !important;
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-        font-size: 10px;
+        font-size: 10px !important;
         font-weight: 800;
-        padding: 3px 8px;
+        padding: 2px 8px !important;
         border-radius: 9999px;
         cursor: pointer;
-        display: inline-flex;
-        align-items: center;
+        display: inline-flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
         gap: 4px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.85);
         user-select: none !important;
@@ -157,18 +158,24 @@
         touch-action: manipulation !important;
         pointer-events: auto !important;
         opacity: 1 !important;
+        white-space: nowrap !important;
+        writing-mode: horizontal-tb !important;
+        width: max-content !important;
+        box-sizing: border-box !important;
+        line-height: 1.2 !important;
       }
       .sivme-inline-badge::before {
         content: '';
         position: absolute;
-        top: -8px;
-        bottom: -8px;
-        left: -10px;
-        right: -10px;
+        top: -6px;
+        bottom: -6px;
+        left: -8px;
+        right: -8px;
         z-index: 1;
       }
       .sivme-inline-badge * {
         pointer-events: none !important;
+        white-space: nowrap !important;
       }
       .sivme-inline-badge:active {
         transform: scale(0.92) !important;
@@ -176,41 +183,44 @@
 
       /* ==========================================================================
          ERGONOMIC TOUCH EXPANSION: Universal Catalog & Sub-Service Rows
-         Transforms thin strips into wide, comfortable, finger-friendly touch tiles
+         Prevents accordion layout destruction while expanding rows
          ========================================================================== */
-      #categoryModal [data-cat-id],
-      #sub-c16 > div {
+      /* Protect Category 16 parent accordion container from flex distortion */
+      #categoryModal [data-cat-id="c16"] {
+        display: block !important;
+        min-height: auto !important;
+        margin-bottom: 10px !important;
+        position: relative !important;
+      }
+
+      /* Single Category Rows: 56px height, 10px separation gap */
+      #categoryModal [data-cat-id]:not([data-cat-id="c16"]) {
         min-height: 56px !important;
-        padding: 12px 14px !important;
-        margin-bottom: 8px !important;
+        padding: 10px 14px !important;
+        margin-bottom: 10px !important;
         border-radius: 12px !important;
-        display: flex !important;
-        align-items: center !important;
         position: relative !important;
         overflow: visible !important;
         box-sizing: border-box !important;
       }
 
-      /* Centered, clean badge inside spacious row with zero button overlap */
-      #categoryModal [data-cat-id] .sivme-inline-badge,
+      /* Category 16 Sub-Services: full-width rows inside accordion */
+      #sub-c16 {
+        display: block !important;
+        width: 100% !important;
+      }
+      #sub-c16 > div {
+        min-height: 48px !important;
+        padding: 8px 12px !important;
+        margin-bottom: 8px !important;
+        border-radius: 10px !important;
+        position: relative !important;
+        overflow: visible !important;
+        box-sizing: border-box !important;
+      }
       #sub-c16 > div .sivme-inline-badge {
-        top: 50% !important;
-        bottom: auto !important;
-        transform: translateY(-50%) !important;
-        right: 80px !important;
-        font-size: 9px !important;
-        padding: 3px 8px !important;
-      }
-      #categoryModal [data-cat-id] .sivme-inline-badge::before,
-      #sub-c16 > div .sivme-inline-badge::before {
         top: -6px !important;
-        bottom: -6px !important;
-        left: -8px !important;
-        right: -8px !important;
-      }
-      #categoryModal [data-cat-id] .sivme-inline-badge:active,
-      #sub-c16 > div .sivme-inline-badge:active {
-        transform: translateY(-50%) scale(0.92) !important;
+        right: 8px !important;
       }
 
       .sivme-badge-live {
@@ -378,7 +388,7 @@
   function mountInlineBadge(parentEl, urn, isVisible, label) {
     var badge = parentEl.querySelector(':scope > .sivme-inline-badge');
     var targetClass = isVisible ? 'sivme-inline-badge sivme-badge-live' : 'sivme-inline-badge sivme-badge-dormant';
-    var targetHtml = isVisible ? '<span>👁️</span><span>Live</span>' : '<span>🚫</span><span>Hidden</span>';
+    var targetHtml = isVisible ? '<span>👁️️</span><span>Live</span>' : '<span>🚫</span><span>Hidden</span>';
 
     function executeToggle(e) {
       if (e.cancelable) e.preventDefault();
