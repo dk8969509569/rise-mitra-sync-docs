@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (1-Tap Instant Response)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Zero-Lag 1-Tap Core)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.4 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-hud.js
@@ -16,6 +16,7 @@
   var REGISTRY_STORAGE_KEY = 'rm_sovereign_visibility_registry_v1';
   var isAuditing = false;
   var auditTimer = null;
+  var lastToggleTime = 0;
 
   // 1. FAIL-CLOSED CHECK: Public user verification
   function isConsoleAuthorized() {
@@ -49,7 +50,7 @@
     { urn: 'rm:cat:16:sub:16-3:elem:submeter_checkbox', selector: '#submeterFilterGroup, [data-sov-urn="rm:cat:16:sub:16-3:elem:submeter_checkbox"]', label: 'सब-मीटर फ़िल्टर' }
   ];
 
-  // 2. INJECT SIVME STYLES (Zero Tap-Lag Tokens)
+  // 2. INJECT SIVME STYLES (Zero-Lag 1-Tap & Expanded Touchpad Target)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -75,6 +76,9 @@
       .sivme-badge-anchor {
         position: relative !important;
       }
+      .tactile-25d:has(.sivme-inline-badge:active) {
+        transform: none !important;
+      }
       .sivme-inline-badge {
         position: absolute;
         top: -12px;
@@ -94,10 +98,23 @@
         -webkit-user-select: none !important;
         touch-action: manipulation !important;
         pointer-events: auto !important;
-        transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1), background 0.15s ease;
+        transition: transform 0.08s ease, background 0.15s ease;
+      }
+      /* 48px Accessible Invisible Touch Hitbox */
+      .sivme-inline-badge::before {
+        content: '';
+        position: absolute;
+        top: -12px;
+        bottom: -12px;
+        left: -14px;
+        right: -14px;
+        z-index: 1;
+      }
+      .sivme-inline-badge * {
+        pointer-events: none !important;
       }
       .sivme-inline-badge:active {
-        transform: scale(0.90) !important;
+        transform: scale(0.92) !important;
       }
       .sivme-badge-live {
         background: #064e3b !important;
@@ -198,7 +215,7 @@
     }
   }
 
-  // 4. MOUNT INLINE TOGGLE BADGE (Ultra-Responsive 1-Tap Trigger)
+  // 4. MOUNT INLINE TOGGLE BADGE (Direct 1-Tap Trigger on Touchdown)
   function mountInlineBadge(parentEl, urn, isVisible, label) {
     var badge = parentEl.querySelector(':scope > .sivme-inline-badge');
     var targetClass = isVisible ? 'sivme-inline-badge sivme-badge-live' : 'sivme-inline-badge sivme-badge-dormant';
@@ -208,19 +225,14 @@
       badge = document.createElement('div');
       parentEl.appendChild(badge);
 
-      // Event Isolation: Prevent parent card from shrinking/canceling click
-      function stopBubbling(e) {
+      // Instant 1-Tap Handler (0ms Latency on Initial Contact)
+      function executeInstantToggle(e) {
+        if (e.cancelable) e.preventDefault();
         e.stopPropagation();
-      }
 
-      badge.addEventListener('pointerdown', stopBubbling, { passive: true });
-      badge.addEventListener('touchstart', stopBubbling, { passive: true });
-      badge.addEventListener('mousedown', stopBubbling, { passive: true });
-
-      // Fast-Path Direct Action
-      function triggerToggle(e) {
-        e.preventDefault();
-        e.stopPropagation();
+        var now = Date.now();
+        if (now - lastToggleTime < 280) return; // Prevent double trigger within 280ms
+        lastToggleTime = now;
 
         var bUrn = badge.getAttribute('data-badge-urn');
         var bVis = badge.getAttribute('data-badge-vis') === 'true';
@@ -232,7 +244,9 @@
         }
       }
 
-      badge.addEventListener('click', triggerToggle);
+      badge.addEventListener('pointerdown', executeInstantToggle);
+      badge.addEventListener('touchstart', executeInstantToggle, { passive: false });
+      badge.addEventListener('click', executeInstantToggle);
     }
 
     badge.className = targetClass;
@@ -274,7 +288,8 @@
 
       var exitBtn = document.getElementById('btnExitInSitu');
       if (exitBtn) {
-        exitBtn.onclick = function (e) {
+        function handleExit(e) {
+          if (e.cancelable) e.preventDefault();
           e.stopPropagation();
           if (window.RM_SovereignRegistry) {
             window.RM_SovereignRegistry.setConsoleMode(false);
@@ -283,7 +298,9 @@
             localStorage.removeItem(SESSION_KEY);
           }
           window.location.href = window.location.pathname;
-        };
+        }
+        exitBtn.addEventListener('pointerdown', handleExit);
+        exitBtn.addEventListener('click', handleExit);
       }
     } else {
       var numSpan = document.getElementById('sivmeHiddenCountNum');
@@ -315,7 +332,6 @@
       }
     });
 
-    // Targeted Micro-App & Dynamic Observer
     var observer = new MutationObserver(function (mutations) {
       if (isAuditing) return;
       var hasStructuralChanges = false;
