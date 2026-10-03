@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Interactive Accordion & Overflow-Safe Layout)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Rollup Visibility & Uniform 72px Card Height)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.4 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-hud.js
@@ -100,7 +100,7 @@
     }
   ];
 
-  // 3. INJECT SIVME STYLES (Interactive Accordion, Header Buffers & Anti-Squish)
+  // 3. INJECT SIVME STYLES (Uniform 72px Card Height & Interactive Accordion)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -127,7 +127,7 @@
         ) !important;
         cursor: pointer !important;
       }
-      .sivme-ghost-dormant > *:not(.sivme-inline-badge) {
+      .sivme-ghost-dormant > *:not(.sivme-inline-badge):not(#sub-c16) {
         opacity: 0.55 !important;
         filter: grayscale(50%) !important;
         pointer-events: none !important;
@@ -195,15 +195,28 @@
         margin-bottom: 24px !important;
       }
 
-      /* Overflow unlock across cards */
-      #categoryModal [data-cat-id],
-      #categoryModal [data-cat-id="c16"],
-      #categoryModal [data-cat-id="c16"] > div,
-      #categoryModal [data-cat-id="c16"] header {
+      /* ==========================================================================
+         UNIFORM 72px CARD HEIGHT ACROSS ALL 33 CATEGORIES + CATEGORY 16 HEADER
+         Ensures Category 16 header bar has identical width and thickness to others
+         ========================================================================== */
+      #categoryModal [data-cat-id]:not([data-cat-id="c16"]),
+      #categoryModal [data-cat-id="c16"] > div:first-child {
+        min-height: 72px !important;
+        padding: 22px 14px 14px 14px !important;
+        border-radius: 14px !important;
+        position: relative !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        box-sizing: border-box !important;
         overflow: visible !important;
       }
 
-      /* Accordion Parent Container (Category 16) */
+      #categoryModal [data-cat-id]:not([data-cat-id="c16"]) {
+        margin-bottom: 20px !important;
+      }
+
+      /* Category 16 Accordion Parent */
       #categoryModal [data-cat-id="c16"] {
         display: block !important;
         min-height: auto !important;
@@ -211,19 +224,14 @@
         margin-bottom: 24px !important;
         position: relative !important;
         box-sizing: border-box !important;
+        overflow: visible !important;
       }
-
-      /* Category 16 Header Cursor */
-      #categoryModal [data-cat-id="c16"] > div:first-child,
-      #categoryModal [data-cat-id="c16"] header {
+      #categoryModal [data-cat-id="c16"] > div:first-child {
         cursor: pointer !important;
         user-select: none !important;
       }
 
-      /* ==========================================================================
-         CRITICAL FIX: CATEGORY 16 ACCORDION COLLAPSE & EXPAND BEHAVIOR
-         Allows smooth open/close when .hidden class is toggled
-         ========================================================================== */
+      /* Interactive Drop-down Collapse/Expand Rules */
       #sub-c16 {
         width: 100% !important;
         margin-top: 14px !important;
@@ -238,22 +246,9 @@
         display: block !important;
       }
 
-      /* Single Category Rows: 72px height, 22px top padding, 20px bottom gap */
-      #categoryModal [data-cat-id]:not([data-cat-id="c16"]) {
-        min-height: 72px !important;
-        padding: 22px 14px 14px 14px !important;
-        margin-bottom: 20px !important;
-        border-radius: 14px !important;
-        position: relative !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        box-sizing: border-box !important;
-      }
-
-      /* Category Title Text Container */
-      #categoryModal [data-cat-id] > div:first-child,
-      #categoryModal [data-cat-id] > span:first-child {
+      /* Category Title Text Safe Container */
+      #categoryModal [data-cat-id] > div:first-child > div:first-child,
+      #categoryModal [data-cat-id]:not([data-cat-id="c16"]) > div:first-child {
         min-width: 0 !important;
         flex: 1 1 auto !important;
         padding-right: 12px !important;
@@ -269,7 +264,7 @@
         overflow: visible !important;
       }
 
-      /* Anti-Wrapping Lock for Action Buttons ('खोलें ›' / 'खेलें ›' / '3 सेवाएं') */
+      /* Anti-Wrapping Lock for Action Buttons */
       #categoryModal [data-cat-id] button,
       #categoryModal [data-cat-id] a,
       #categoryModal [data-cat-id] .text-cyan-400,
@@ -349,7 +344,7 @@
     document.head.appendChild(style);
   }
 
-  // 4. SCAN AND ATTACH IN-SITU CONTROLS
+  // 4. SCAN AND ATTACH IN-SITU CONTROLS (With Sub-Category Upward Rollup)
   function applyInSituAudit() {
     if (isAuditing) return;
     isAuditing = true;
@@ -359,7 +354,7 @@
       var isAuth = isConsoleAuthorized();
       var registryEngine = window.RM_SovereignRegistry;
 
-      // 4.0 Section Headers Buffer Enforcement ('आजीविका' & 'खेल व मनोरंजन')
+      // 4.0 Section Headers Buffer Enforcement
       var modalElements = document.querySelectorAll('#categoryModal button, #categoryModal [onclick], #categoryModal .cursor-pointer, #categoryModal div');
       modalElements.forEach(function (el) {
         var t = (el.textContent || '').trim();
@@ -427,7 +422,26 @@
         } catch (_) {}
       });
 
-      // 4.3 Universal Catalog (33 Services + 17 Games)
+      // 4.3 Category 16 Sub-Services Resolution & Rollup Check
+      var sub16Cards = document.querySelectorAll('#sub-c16 > div');
+      var sub16HasHidden = false;
+      sub16Cards.forEach(function (subCard, idx) {
+        var subUrn = 'rm:cat:16:sub:16-' + (idx + 1);
+        var subLabelEl = subCard.querySelector('.text-xs') || subCard;
+        var subLabel = subLabelEl ? subLabelEl.textContent.trim() : ('16-' + (idx + 1) + ' सेवा');
+
+        if (!subCard.hasAttribute('data-sov-urn')) {
+          subCard.setAttribute('data-sov-urn', subUrn);
+          subCard.setAttribute('data-sov-label', subLabel);
+        }
+        registerMatch(subCard, subUrn, subLabel);
+
+        if (registryEngine && !registryEngine.isVisible(subUrn)) {
+          sub16HasHidden = true;
+        }
+      });
+
+      // 4.4 Universal Catalog (33 Services + 17 Games)
       var catalogCards = document.querySelectorAll('#categoryModal [data-cat-id]');
       catalogCards.forEach(function (card) {
         var catId = card.getAttribute('data-cat-id');
@@ -447,25 +461,20 @@
         registerMatch(card, urn, label);
       });
 
-      // 4.4 Category 16 Sub-Services Resolution (#sub-c16 child cards)
-      var sub16Cards = document.querySelectorAll('#sub-c16 > div');
-      sub16Cards.forEach(function (subCard, idx) {
-        var subUrn = 'rm:cat:16:sub:16-' + (idx + 1);
-        var subLabelEl = subCard.querySelector('.text-xs') || subCard;
-        var subLabel = subLabelEl ? subLabelEl.textContent.trim() : ('16-' + (idx + 1) + ' सेवा');
-
-        if (!subCard.hasAttribute('data-sov-urn')) {
-          subCard.setAttribute('data-sov-urn', subUrn);
-          subCard.setAttribute('data-sov-label', subLabel);
-        }
-        registerMatch(subCard, subUrn, subLabel);
-      });
-
       var totalTracked = matchedElements.length;
       var totalHidden = 0;
 
       matchedElements.forEach(function (item) {
         var isVis = registryEngine ? registryEngine.isVisible(item.urn) : true;
+
+        // UPWARD ROLLUP LOGIC: If any sub-service inside Category 16 is hidden,
+        // Category 16 itself displays as Hidden in Admin Mode to prevent missed hidden items!
+        if (item.urn === 'rm:cat:16' && isAuth) {
+          if (sub16HasHidden) {
+            isVis = false;
+          }
+        }
+
         if (!isVis) totalHidden++;
 
         if (!isAuth) {
@@ -504,7 +513,7 @@
     }
   }
 
-  // 5. MOUNT INLINE TOGGLE BADGE & FULL-CARD WAKE-UP
+  // 5. MOUNT INLINE TOGGLE BADGE & FULL-CARD WAKE-UP (With Master Cascade)
   function mountInlineBadge(parentEl, urn, isVisible, label) {
     var badge = parentEl.querySelector(':scope > .sivme-inline-badge');
     var targetClass = isVisible ? 'sivme-inline-badge sivme-badge-live' : 'sivme-inline-badge sivme-badge-dormant';
@@ -523,7 +532,17 @@
       var bLabel = badge ? (badge.getAttribute('data-badge-label') || label) : label;
 
       if (window.RM_SovereignRegistry) {
-        window.RM_SovereignRegistry.toggleVisibility(bUrn, !bVis, bLabel);
+        var newTargetVis = !bVis;
+
+        // If toggling Category 16 master badge, cascade to all sub-services
+        if (bUrn === 'rm:cat:16') {
+          window.RM_SovereignRegistry.toggleVisibility('rm:cat:16', newTargetVis, bLabel);
+          for (var sIdx = 1; sIdx <= 3; sIdx++) {
+            window.RM_SovereignRegistry.toggleVisibility('rm:cat:16:sub:16-' + sIdx, newTargetVis, '16-' + sIdx + ' सेवा');
+          }
+        } else {
+          window.RM_SovereignRegistry.toggleVisibility(bUrn, newTargetVis, bLabel);
+        }
 
         // Surface-B Category Synchronization Bridge
         try {
