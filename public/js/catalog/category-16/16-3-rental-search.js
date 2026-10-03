@@ -30,7 +30,7 @@
   var CATEGORY_ID = 'category-16';
   var FEATURE_SLUG = 'rental-search';
   var SCHEMA_VERSION = '1';
-  var MODULE_VERSION = '1.1.0';
+  var MODULE_VERSION = '1.1.1';
 
   var DEFAULT_SEARCH_CONFIG = {
     defaultCity: 'इंदौर',
@@ -150,6 +150,37 @@
 // SECTION 2: MATHEMATICAL CALCULATORS & CANONICAL FINANCIAL FORMULAS
 // ==============================================================================
 
+  // Helper: Auto resolve missing state/district from Indian pincode
+  function resolveGeoFromPincode(pCode) {
+    if (!pCode) return null;
+    var pin = String(pCode).trim();
+    if (/^45|^46|^47|^48/.test(pin)) {
+      return { state: 'मध्य प्रदेश', stateEn: 'Madhya Pradesh', district: 'इंदौर' };
+    }
+    if (/^80|^81|^82|^84|^85/.test(pin)) {
+      return { state: 'बिहार', stateEn: 'Bihar', district: 'पटना' };
+    }
+    if (/^83/.test(pin)) {
+      return { state: 'झारखंड', stateEn: 'Jharkhand', district: 'रांची' };
+    }
+    if (/^30|^31|^32|^33|^34/.test(pin)) {
+      return { state: 'राजस्थान', stateEn: 'Rajasthan', district: 'कोटा' };
+    }
+    if (/^60|^61|^62|^63|^64/.test(pin)) {
+      return { state: 'तमिलनाडु', stateEn: 'Tamil Nadu', district: 'चेन्नई' };
+    }
+    if (/^11/.test(pin)) {
+      return { state: 'दिल्ली', stateEn: 'Delhi', district: 'नई दिल्ली' };
+    }
+    if (/^20|^21|^22|^23|^24|^25|^26|^27|^28/.test(pin)) {
+      return { state: 'उत्तर प्रदेश', stateEn: 'Uttar Pradesh', district: 'लखनऊ' };
+    }
+    if (/^40|^41|^42|^43|^44/.test(pin)) {
+      return { state: 'महाराष्ट्र', stateEn: 'Maharashtra', district: 'मुंबई' };
+    }
+    return null;
+  }
+
   function filterListings(listings, filters) {
     if (!Array.isArray(listings)) return [];
     filters = filters || {};
@@ -174,21 +205,54 @@
       if (unitType !== 'ALL' && item.unitType && item.unitType !== unitType) return false;
 
       var addr = item.addressPublic || {};
-      var sName = (addr.state || '').toLowerCase();
-      var dName = (addr.district || '').toLowerCase();
-      var cName = (addr.city || '').toLowerCase();
-      var lName = (addr.locality || '').toLowerCase();
-      var pCode = String(addr.pincode || '').toLowerCase();
+      var sName = (addr.state || item.state || '').trim().toLowerCase();
+      var dName = (addr.district || item.district || '').trim().toLowerCase();
+      var cName = (addr.city || item.city || '').trim().toLowerCase();
+      var lName = (addr.locality || item.locality || '').trim().toLowerCase();
+      var pCode = String(addr.pincode || item.pincode || '').trim().toLowerCase();
       var titleText = (item.title || '').toLowerCase();
 
-      // State Filter Match
-      if (stateFilter && sName.indexOf(stateFilter) === -1 && stateFilter.indexOf(sName) === -1) {
-        return false;
+      // Pincode based Auto-Resolver if state/district is empty
+      if (!sName && pCode) {
+        var resolved = resolveGeoFromPincode(pCode);
+        if (resolved) {
+          sName = resolved.state.toLowerCase();
+          if (!dName) dName = resolved.district.toLowerCase();
+        }
       }
 
-      // District Filter Match
-      if (districtFilter && dName.indexOf(districtFilter) === -1 && districtFilter.indexOf(dName) === -1) {
-        return false;
+      // State Filter Match (Strict - prevents foreign listings leak)
+      if (stateFilter) {
+        if (!sName) return false;
+        var stateMatched = false;
+        if (sName === stateFilter || sName.indexOf(stateFilter) !== -1 || stateFilter.indexOf(sName) !== -1) {
+          stateMatched = true;
+        }
+
+        // Cross-match with Master Geo Dataset if loaded
+        if (!stateMatched && window.RM_INDIA_GEO && Array.isArray(window.RM_INDIA_GEO.states)) {
+          var matchedGeo = window.RM_INDIA_GEO.states.find(function (st) {
+            var hi = (st.nameHi || '').toLowerCase();
+            var en = (st.name || '').toLowerCase();
+            return (hi && hi === stateFilter) || (en && en === stateFilter);
+          });
+          if (matchedGeo) {
+            var geoHi = (matchedGeo.nameHi || '').toLowerCase();
+            var geoEn = (matchedGeo.name || '').toLowerCase();
+            if (sName === geoHi || sName === geoEn || sName.indexOf(geoHi) !== -1 || sName.indexOf(geoEn) !== -1) {
+              stateMatched = true;
+            }
+          }
+        }
+
+        if (!stateMatched) return false;
+      }
+
+      // District Filter Match (Strict)
+      if (districtFilter) {
+        if (!dName) return false;
+        var distMatched = (dName === districtFilter || dName.indexOf(districtFilter) !== -1 || districtFilter.indexOf(dName) !== -1);
+        if (!distMatched) return false;
       }
 
       // Locality Direct Match (Legacy Support)
@@ -279,6 +343,10 @@
       return null;
     }
 
+    var propAddr = property.address || {};
+    var pCode = propAddr.pincode || '452010';
+    var resolvedGeo = resolveGeoFromPincode(pCode);
+
     return {
       listingId: 'LST-' + (property.propertyId || 'PROP') + '-' + (unit.unitId || 'UNIT'),
       sourceSubFeature: '16-2',
@@ -289,12 +357,12 @@
       monthlyRent: parseFloat(unit.monthlyRent) || 0,
       securityDeposit: parseFloat(unit.securityDeposit) || 0,
       addressPublic: {
-        country: (property.address && property.address.country) ? property.address.country : 'IN',
-        state: (property.address && property.address.state) ? property.address.state : 'मध्य प्रदेश',
-        district: (property.address && property.address.district) ? property.address.district : 'इंदौर',
-        city: (property.address && property.address.city) ? property.address.city : 'इंदौर',
-        locality: (property.address && property.address.locality) ? property.address.locality : 'विजयनगर',
-        pincode: (property.address && property.address.pincode) ? property.address.pincode : '452010'
+        country: propAddr.country || 'IN',
+        state: propAddr.state || (resolvedGeo ? resolvedGeo.state : 'मध्य प्रदेश'),
+        district: propAddr.district || (resolvedGeo ? resolvedGeo.district : 'इंदौर'),
+        city: propAddr.city || (resolvedGeo ? resolvedGeo.district : 'इंदौर'),
+        locality: propAddr.locality || 'विजयनगर',
+        pincode: pCode
       },
       electricityBilling: {
         meterType: unit.electricityConfig ? unit.electricityConfig.meterType : 'sub_meter_per_unit',
@@ -339,7 +407,17 @@
     var result = [];
     for (var k in listingsMap) {
       if (Object.prototype.hasOwnProperty.call(listingsMap, k)) {
-        result.push(listingsMap[k]);
+        var it = listingsMap[k];
+        // Ensure state and district are auto-populated if missing
+        var addr = it.addressPublic || {};
+        if (!addr.state && addr.pincode) {
+          var autoG = resolveGeoFromPincode(addr.pincode);
+          if (autoG) {
+            addr.state = autoG.state;
+            if (!addr.district) addr.district = autoG.district;
+          }
+        }
+        result.push(it);
       }
     }
     return result;
@@ -351,9 +429,22 @@
 
   function renderListingCard(item) {
     var addr = item.addressPublic || {};
-    var geoParts = [addr.locality, addr.district, addr.state].filter(Boolean);
+    var pCode = String(addr.pincode || item.pincode || '').trim();
+    var sName = addr.state || item.state || '';
+    var dName = addr.district || item.district || '';
+    var lName = addr.locality || item.locality || '';
+
+    if (!sName && pCode) {
+      var autoG = resolveGeoFromPincode(pCode);
+      if (autoG) {
+        sName = autoG.state;
+        if (!dName) dName = autoG.district;
+      }
+    }
+
+    var geoParts = [lName, dName, sName].filter(Boolean);
     var geoDisplay = geoParts.length > 0 ? geoParts.join(', ') : (addr.city || 'सत्यापित स्थान');
-    var pinText = addr.pincode ? (' - ' + addr.pincode) : '';
+    var pinText = pCode ? (' - ' + pCode) : '';
 
     var meter = item.electricityBilling || {};
     var isSub = (meter.meterType === 'sub_meter_per_unit');
