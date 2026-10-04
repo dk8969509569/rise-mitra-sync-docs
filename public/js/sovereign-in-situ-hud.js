@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (2.5D Tactile Elevation & 16-3 Inner Filter Controls)
+ * MODULE        : Surface-A Floating HUD & Automation Hard-Reload Engine (General Tab Screenshot & Cache-Bust Mode)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -14,6 +14,7 @@
 
   var SESSION_KEY = 'rm_sov_in_situ_session';
   var REGISTRY_STORAGE_KEY = 'rm_sovereign_visibility_registry_v1';
+  var DEV_AUTO_KEY = 'rm_sov_automation_mode_active';
   var isAuditing = false;
   var auditTimer = null;
   var lastActionTime = 0;
@@ -50,13 +51,19 @@
     });
   }
 
-  // 2. FAIL-CLOSED CHECK: Public user verification
+  // 2. FAIL-CLOSED & AUTOMATION MODE AUTHORIZATION (Permanent for General Tab)
   function isConsoleAuthorized() {
     try {
       var params = new URLSearchParams(window.location.search);
-      if (params.get('sov_mode') === 'in_situ') {
+      if (params.get('sov_mode') === 'in_situ' || params.get('dev_auto') === '1') {
         sessionStorage.setItem(SESSION_KEY, 'SOV_ACTIVE_2026');
         localStorage.setItem(SESSION_KEY, 'SOV_ACTIVE_2026');
+        localStorage.setItem(DEV_AUTO_KEY, 'true');
+      }
+
+      if (localStorage.getItem(DEV_AUTO_KEY) === 'true') {
+        sessionStorage.setItem(SESSION_KEY, 'SOV_ACTIVE_2026');
+        return true;
       }
 
       var sToken = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
@@ -112,7 +119,7 @@
     } catch (_) {}
   }
 
-  // 3. INJECT SIVME STYLES (2.5D Elevation + Inner Filter Support)
+  // 3. INJECT SIVME STYLES (2.5D Elevation, Inner Filters & Action Dock)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -381,6 +388,8 @@
       #categoryModal > div:first-child {
         z-index: 99999 !important;
       }
+
+      /* SIVME AUTOMATION FLOATING DOCK */
       #sivmeFloatingDock {
         position: fixed;
         bottom: 18px;
@@ -389,14 +398,16 @@
         z-index: 9999999 !important;
         display: flex;
         align-items: center;
-        gap: 8px;
-        background: rgba(3, 7, 18, 0.95);
+        gap: 6px;
+        background: rgba(3, 7, 18, 0.96);
         backdrop-filter: blur(16px);
-        border: 1px solid rgba(6, 182, 212, 0.5);
+        border: 1.5px solid rgba(6, 182, 212, 0.6);
         border-radius: 9999px;
-        padding: 6px 14px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(6, 182, 212, 0.3);
+        padding: 6px 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 15px rgba(6, 182, 212, 0.4);
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        max-width: 96vw;
+        overflow-x: auto;
       }
     `;
     document.head.appendChild(style);
@@ -542,7 +553,7 @@
           }
         }
 
-        // 4. Budget Slider (Complete Section: Label + 15000 Value + Range Slider Bar)
+        // 4. Budget Slider (Complete Section: Label + Value + Range Slider Bar)
         var rangeInput = document.querySelector('input[type="range"]');
         var budgetTarget = null;
         if (rangeInput) {
@@ -567,7 +578,6 @@
           }
         }
         if (budgetTarget) {
-          // Clean up any inner child that previously held the badge
           var oldChild = budgetTarget.querySelector('[data-sov-urn="rm:cat:16:sub:16-3:elem:budget_slider"]');
           if (oldChild && oldChild !== budgetTarget) {
             oldChild.removeAttribute('data-sov-urn');
@@ -825,7 +835,7 @@
     badge.title = label + (isVisible ? ' छुपाने के लिए टैप करें (Hide)' : ' लाइव दिखाने के लिए टैप करें (Show)');
   }
 
-  // 6. FLOATING HUD DOCK
+  // 6. FLOATING HUD DOCK WITH 1-TAP AUTOMATION HARD-RELOAD & SCREENSHOT GENERAL MODE
   function updateFloatingDock(isAuth, hiddenCount, trackedCount) {
     var existingDock = document.getElementById('sivmeFloatingDock');
 
@@ -838,21 +848,61 @@
       existingDock = document.createElement('div');
       existingDock.id = 'sivmeFloatingDock';
       existingDock.innerHTML = `
-        <div style="display:flex;align-items:center;gap:6px;">
-          <span style="font-size:13px;">🛡️</span>
-          <span style="color:#22d3ee;font-size:11px;font-weight:900;letter-spacing:0.5px;">SIVME HUD</span>
+        <div style="display:flex;align-items:center;gap:5px;">
+          <span style="font-size:12px;">🛡️</span>
+          <span style="color:#22d3ee;font-size:11px;font-weight:900;letter-spacing:0.5px;">SIVME</span>
         </div>
-        <span style="background:#0f172a;border:1px solid #334155;color:#94a3b8;font-size:10px;font-weight:700;padding:2px 7px;border-radius:9999px;">
+        <span style="background:#0f172a;border:1px solid #334155;color:#94a3b8;font-size:10px;font-weight:700;padding:2px 6px;border-radius:9999px;">
           Hidden: <span id="sivmeHiddenCountNum" style="color:#f87171;">${hiddenCount}</span>
         </span>
-        <button id="btnExitInSitu" style="background:#450a0a;border:1px solid #b91c1c;color:#fca5a5;font-size:10px;font-weight:800;padding:3px 8px;border-radius:8px;cursor:pointer;">
+        <button id="btnHardReloadBust" title="1-टैप हार्ड रीलोड व कैश डिलीट (General Tab Screenshot Ready)" style="background:#0369a1;border:1px solid #38bdf8;color:#e0f2fe;font-size:10px;font-weight:900;padding:3px 8px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:3px;">
+          <span>⚡ Reload</span>
+        </button>
+        <button id="btnExitInSitu" title="पब्लिक मोड में जाएँ" style="background:#450a0a;border:1px solid #b91c1c;color:#fca5a5;font-size:10px;font-weight:800;padding:3px 7px;border-radius:8px;cursor:pointer;">
           Exit ✕
         </button>
-        <a href="/owner-console.html" style="background:#1e1b4b;border:1px solid #4338ca;color:#a5b4fc;font-size:10px;font-weight:800;padding:3px 8px;border-radius:8px;text-decoration:none;display:inline-flex;align-items:center;gap:3px;">
-          <span>Surface-B ⚙️</span>
+        <a href="/owner-console.html" style="background:#1e1b4b;border:1px solid #4338ca;color:#a5b4fc;font-size:10px;font-weight:800;padding:3px 7px;border-radius:8px;text-decoration:none;display:inline-flex;align-items:center;gap:2px;">
+          <span>B ⚙️</span>
         </a>
       `;
       document.body.appendChild(existingDock);
+
+      // 1-TAP AUTOMATION HARD RELOAD & CACHE BUST HANDLER
+      var hardReloadBtn = document.getElementById('btnHardReloadBust');
+      if (hardReloadBtn) {
+        hardReloadBtn.addEventListener('click', async function (e) {
+          if (e.cancelable) e.preventDefault();
+          e.stopPropagation();
+
+          hardReloadBtn.innerHTML = '<span>⏳ Clearing...</span>';
+
+          try {
+            // 1. Delete all browser caches & service workers
+            if ('caches' in window) {
+              var cacheNames = await caches.keys();
+              await Promise.all(cacheNames.map(function (k) { return caches.delete(k); }));
+            }
+            if (navigator.serviceWorker) {
+              var registrations = await navigator.serviceWorker.getRegistrations();
+              for (var i = 0; i < registrations.length; i++) {
+                await registrations[i].unregister();
+              }
+            }
+          } catch (_) {}
+
+          // 2. Lock automation flag so general tab never drops in-situ mode
+          localStorage.setItem(DEV_AUTO_KEY, 'true');
+          sessionStorage.setItem(SESSION_KEY, 'SOV_ACTIVE_2026');
+          localStorage.setItem(SESSION_KEY, 'SOV_ACTIVE_2026');
+
+          // 3. Force reload with fresh timestamp to bypass any CDN or HTTP cache
+          var freshUrl = new URL(window.location.origin + window.location.pathname);
+          freshUrl.searchParams.set('sov_mode', 'in_situ');
+          freshUrl.searchParams.set('dev_auto', '1');
+          freshUrl.searchParams.set('cb', String(Date.now()));
+          window.location.href = freshUrl.toString();
+        });
+      }
 
       var exitBtn = document.getElementById('btnExitInSitu');
       if (exitBtn) {
@@ -862,8 +912,7 @@
 
           sessionStorage.removeItem(SESSION_KEY);
           localStorage.removeItem(SESSION_KEY);
-          sessionStorage.removeItem('rm_sov_in_situ_session');
-          localStorage.removeItem('rm_sov_in_situ_session');
+          localStorage.removeItem(DEV_AUTO_KEY);
 
           if (window.RM_SovereignRegistry) {
             window.RM_SovereignRegistry.setConsoleMode(false);
