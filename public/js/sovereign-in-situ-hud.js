@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Direct Sub-Card Wake-Up & Infallible Accordion)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Direct Sub-Card Wake-Up, Infallible Accordion & 72px Uniform Geometry)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -141,7 +141,7 @@
     }
   ];
 
-  // 3. INJECT SIVME STYLES
+  // 3. INJECT SIVME STYLES (Strict 72px Uniform Geometry & 22px Top Padding)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -247,10 +247,11 @@
         margin-bottom: 24px !important;
       }
 
-      /* UNIFORM 72px CARD HEIGHT ACROSS ALL 33 CATEGORIES + CATEGORY 16 HEADER */
+      /* UNIFORM 72px CARD HEIGHT & CHAUDI PATTI ACROSS ALL 33 CATEGORIES + CATEGORY 16 HEADER */
       #categoryModal [data-cat-id]:not([data-cat-id="c16"]),
       #categoryModal [data-cat-id="c16"] > div:first-child {
         min-height: 72px !important;
+        height: 72px !important;
         padding: 22px 14px 14px 14px !important;
         border-radius: 14px !important;
         position: relative !important;
@@ -259,12 +260,14 @@
         justify-content: space-between !important;
         box-sizing: border-box !important;
         overflow: visible !important;
+        width: 100% !important;
       }
 
       #categoryModal [data-cat-id]:not([data-cat-id="c16"]) {
         margin-bottom: 20px !important;
       }
 
+      /* Category 16 Accordion Parent Container */
       #categoryModal [data-cat-id="c16"] {
         display: block !important;
         min-height: auto !important;
@@ -327,7 +330,7 @@
         gap: 3px !important;
       }
 
-      /* Category 16 Sub-Services */
+      /* Category 16 Sub-Services: 60px height, 18px top padding, 14px gap */
       #sub-c16 > div {
         min-height: 60px !important;
         padding: 18px 14px 12px 14px !important;
@@ -411,47 +414,59 @@
         }
       });
 
-      // 4.0.1 Infallible Capture-Phase Accordion Toggle for Category 16 Header & Button
+      // 4.0.1 Infallible Capture-Phase Accordion Toggle & 72px Height Enforcement for Category 16 Header
       var c16 = document.querySelector('#categoryModal [data-cat-id="c16"]');
       if (c16) {
         var c16Header = c16.querySelector(':scope > div:first-child');
-        if (c16Header && c16Header.getAttribute('data-sivme-toggle-bound') !== 'true') {
-          c16Header.setAttribute('data-sivme-toggle-bound', 'true');
-          c16Header.setAttribute('data-sivme-c16-head', 'true');
+        if (c16Header) {
+          // Direct Geometry Enforcement for Chaudi Patti
+          c16Header.style.setProperty('min-height', '72px', 'important');
+          c16Header.style.setProperty('height', '72px', 'important');
+          c16Header.style.setProperty('padding', '22px 14px 14px 14px', 'important');
+          c16Header.style.setProperty('display', 'flex', 'important');
+          c16Header.style.setProperty('align-items', 'center', 'important');
+          c16Header.style.setProperty('justify-content', 'space-between', 'important');
+          c16Header.style.setProperty('box-sizing', 'border-box', 'important');
+          c16Header.style.setProperty('width', '100%', 'important');
 
-          function doAccordionToggle(e) {
-            // Do not toggle accordion if clicking the Live/Hidden badge
-            if (e.target.closest('.sivme-inline-badge')) return;
+          if (c16Header.getAttribute('data-sivme-toggle-bound') !== 'true') {
+            c16Header.setAttribute('data-sivme-toggle-bound', 'true');
+            c16Header.setAttribute('data-sivme-c16-head', 'true');
 
-            if (e.cancelable) e.preventDefault();
-            e.stopPropagation();
+            function doAccordionToggle(e) {
+              // Do not toggle accordion if clicking the Live/Hidden badge
+              if (e.target.closest('.sivme-inline-badge')) return;
 
-            var now = Date.now();
-            if (now - lastAccordionToggleTime < 350) return;
-            lastAccordionToggleTime = now;
+              if (e.cancelable) e.preventDefault();
+              e.stopPropagation();
 
-            var sub = document.getElementById('sub-c16');
-            if (!sub) return;
+              var now = Date.now();
+              if (now - lastAccordionToggleTime < 350) return;
+              lastAccordionToggleTime = now;
 
-            // Computed layout visibility check
-            var isCurrentlyVisible = (sub.offsetHeight > 0) && (window.getComputedStyle(sub).display !== 'none') && !sub.classList.contains('sivme-collapsed');
-            var chevron = document.getElementById('chevron-c16') || c16Header.querySelector('svg, [id*="chevron"]');
+              var sub = document.getElementById('sub-c16');
+              if (!sub) return;
 
-            if (isCurrentlyVisible) {
-              // Collapse Accordion
-              sub.style.setProperty('display', 'none', 'important');
-              sub.classList.add('hidden', 'sivme-collapsed');
-              if (chevron) chevron.style.transform = 'rotate(0deg)';
-            } else {
-              // Expand Accordion
-              sub.style.setProperty('display', 'block', 'important');
-              sub.classList.remove('hidden', 'sivme-collapsed');
-              if (chevron) chevron.style.transform = 'rotate(180deg)';
+              // Computed layout visibility check
+              var isCurrentlyVisible = (sub.offsetHeight > 0) && (window.getComputedStyle(sub).display !== 'none') && !sub.classList.contains('sivme-collapsed');
+              var chevron = document.getElementById('chevron-c16') || c16Header.querySelector('svg, [id*="chevron"]');
+
+              if (isCurrentlyVisible) {
+                // Collapse Accordion
+                sub.style.setProperty('display', 'none', 'important');
+                sub.classList.add('hidden', 'sivme-collapsed');
+                if (chevron) chevron.style.transform = 'rotate(0deg)';
+              } else {
+                // Expand Accordion
+                sub.style.setProperty('display', 'block', 'important');
+                sub.classList.remove('hidden', 'sivme-collapsed');
+                if (chevron) chevron.style.transform = 'rotate(180deg)';
+              }
             }
-          }
 
-          // Bound in capture phase to reliably intercept taps on header or button
-          c16Header.addEventListener('click', doAccordionToggle, true);
+            // Bound in capture phase to reliably intercept taps on header or button
+            c16Header.addEventListener('click', doAccordionToggle, true);
+          }
         }
       }
 
