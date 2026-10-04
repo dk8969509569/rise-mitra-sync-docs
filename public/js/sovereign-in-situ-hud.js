@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Direct Sub-Card Wake-Up, Infallible Accordion & 72px Uniform Geometry)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Pass-Through Native Openers & 1-Tap Wake-Up)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -507,7 +507,7 @@
         } catch (_) {}
       });
 
-      // 4.3 Category 16 Sub-Services Resolution & Infallible 1-Tap Wake-Up Binding
+      // 4.3 Category 16 Sub-Services Resolution & Non-Blocking 1-Tap Wake-Up Binding
       var sub16Cards = document.querySelectorAll('#sub-c16 > div');
       var sub16HasHidden = false;
       sub16Cards.forEach(function (subCard, idx) {
@@ -526,23 +526,26 @@
           sub16HasHidden = true;
         }
 
-        // Unified 1-Tap Handler attached directly to sub-card with 550ms lock
+        // Dedicated Handler: ONLY blocks click if card is Dormant (wake-up) OR badge is tapped
         if (subCard.getAttribute('data-sivme-sub-bound') !== 'true') {
           subCard.setAttribute('data-sivme-sub-bound', 'true');
           function handleSubCardTap(e) {
-            if (e.cancelable) e.preventDefault();
-            e.stopPropagation();
+            if (!isConsoleAuthorized()) return;
 
-            var now = Date.now();
-            if (now - (lastUrnActionTimes[subUrn] || 0) < 550) return;
-            lastUrnActionTimes[subUrn] = now;
-
-            var curVis = getUrnVisibility(subUrn);
             var isDormant = subCard.classList.contains('sivme-ghost-dormant');
             var isBadgeClick = !!e.target.closest('.sivme-inline-badge');
 
-            // 1-Tap Wakes up if Dormant, or toggles on badge click
+            // CRITICAL FIX: Only intercept if the card is dormant (waking up) or user tapped the badge!
+            // When Live and user clicks "खोलें", event passes through natively!
             if (isDormant || isBadgeClick) {
+              if (e.cancelable) e.preventDefault();
+              e.stopPropagation();
+
+              var now = Date.now();
+              if (now - (lastUrnActionTimes[subUrn] || 0) < 550) return;
+              lastUrnActionTimes[subUrn] = now;
+
+              var curVis = getUrnVisibility(subUrn);
               var targetVis = isDormant ? true : !curVis;
 
               // Set sub-category visibility in registry + localStorage
