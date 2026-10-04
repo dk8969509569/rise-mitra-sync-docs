@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & Automation Engine (Strict Element Isolation: Budget Slider & Sub-Meter Decoupling)
+ * MODULE        : Surface-A Floating HUD & Automation Engine (Smart Filter-Panel Auto-Collapse & Action Buttons Decoupling)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -511,8 +511,9 @@
       });
 
       // 4.2 Robust & Exception-Safe 16-3 Dynamic Filters Resolution
+      var resolvedFilterCardContainer = null;
+
       function resolve16_3Filters() {
-        // Clean up any old buggy container if present
         var oldBuggy = document.getElementById('rm-budget-slider-container');
         if (oldBuggy) {
           while (oldBuggy.firstChild) {
@@ -637,6 +638,34 @@
               subTarget.setAttribute('data-sov-urn', 'rm:cat:16:sub:16-3:elem:submeter_checkbox');
               subTarget.setAttribute('data-sov-label', 'सब-मीटर फ़िल्टर');
               registerMatch(subTarget, 'rm:cat:16:sub:16-3:elem:submeter_checkbox', 'सब-मीटर फ़िल्टर');
+            }
+          }
+        } catch (_) {}
+
+        // 6. Search & Reset Action Buttons (खोजें व रीसेट रो)
+        try {
+          var searchBtn = null;
+          var allBtns = document.querySelectorAll('button');
+          allBtns.forEach(function (b) {
+            if ((b.textContent || '').trim() === 'खोजें') searchBtn = b;
+          });
+          if (searchBtn) {
+            var actionRow = searchBtn.closest('.flex, .flex-row') || searchBtn.parentElement;
+            if (actionRow) {
+              actionRow.setAttribute('data-sov-urn', 'rm:cat:16:sub:16-3:elem:search_actions');
+              actionRow.setAttribute('data-sov-label', 'खोज व रीसेट बटन');
+              registerMatch(actionRow, 'rm:cat:16:sub:16-3:elem:search_actions', 'खोज व रीसेट बटन');
+            }
+
+            // Find Outer Filter Card Container (Holding all 5 filters + action buttons)
+            var pNode = searchBtn.parentElement;
+            while (pNode && pNode !== document.body) {
+              var sib = pNode.nextElementSibling;
+              if (sib && (sib.textContent || '').indexOf('उपलब्ध आवास सूची') !== -1) {
+                resolvedFilterCardContainer = pNode;
+                break;
+              }
+              pNode = pNode.parentElement;
             }
           }
         } catch (_) {}
@@ -772,6 +801,34 @@
 
         mountInlineBadge(item.el, item.urn, isVis, item.label);
       });
+
+      // SMART AUTO-COLLAPSE FOR 16-3 FILTER PANEL IN PUBLIC MODE
+      if (resolvedFilterCardContainer) {
+        if (!isAuth) {
+          var innerFilterUrns = [
+            'rm:cat:16:sub:16-3:elem:smart_omnibox',
+            'rm:cat:16:sub:16-3:elem:state_filter',
+            'rm:cat:16:sub:16-3:elem:district_filter',
+            'rm:cat:16:sub:16-3:elem:budget_slider',
+            'rm:cat:16:sub:16-3:elem:submeter_checkbox'
+          ];
+          var allInnerHidden = innerFilterUrns.every(function (u) {
+            return !getUrnVisibility(u);
+          });
+
+          // If all 5 criteria are hidden, collapse the entire empty card (including Reset/Search)
+          if (allInnerHidden) {
+            resolvedFilterCardContainer.classList.add('sivme-public-hidden');
+            resolvedFilterCardContainer.style.setProperty('display', 'none', 'important');
+          } else {
+            resolvedFilterCardContainer.classList.remove('sivme-public-hidden');
+            resolvedFilterCardContainer.style.removeProperty('display');
+          }
+        } else {
+          resolvedFilterCardContainer.classList.remove('sivme-public-hidden');
+          resolvedFilterCardContainer.style.removeProperty('display');
+        }
+      }
 
       updateFloatingDock(isAuth, totalHidden, totalTracked);
     } finally {
