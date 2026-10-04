@@ -1,9 +1,9 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Event-Isolated Accordion & 1-Tap Sub-Toggle)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Direct Sub-Card Wake-Up & Event Isolation)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
- * GOVERNANCE    : GATE-23.4 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
- * REPO TARGET   : public/js/sovereign-in-situ-hud.js
+ * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
+ * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
  * DUAL-FOLDER REFERENCES:
  *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
  *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
@@ -100,7 +100,7 @@
     }
   ];
 
-  // 3. INJECT SIVME STYLES (Interactive Accordion, Header Buffers & Anti-Squish)
+  // 3. INJECT SIVME STYLES (Interactive Accordion, Header Buffers & Unblocked Pointers)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -127,12 +127,22 @@
         ) !important;
         cursor: pointer !important;
       }
-      /* Protect Category 16 header and sub-cards from losing pointer-events */
-      .sivme-ghost-dormant > *:not(.sivme-inline-badge):not(#sub-c16):not([data-sivme-c16-head]) {
+
+      /* Single Category Dormant Rows Pointer Lock (Cat 16 and Sub-cards completely unlocked) */
+      #categoryModal [data-cat-id]:not([data-cat-id="c16"]).sivme-ghost-dormant > *:not(.sivme-inline-badge) {
         opacity: 0.55 !important;
         filter: grayscale(50%) !important;
         pointer-events: none !important;
       }
+
+      /* Category 16 Accordion & All Sub-cards MUST ALWAYS have active touch pointers */
+      #categoryModal [data-cat-id="c16"],
+      #categoryModal [data-cat-id="c16"] *,
+      #sub-c16,
+      #sub-c16 * {
+        pointer-events: auto !important;
+      }
+
       .sivme-public-hidden {
         display: none !important;
       }
@@ -226,10 +236,9 @@
       }
 
       /* Category 16 Header Cursor */
-      #categoryModal [data-cat-id="c16"] > div:first-child,
-      #categoryModal [data-cat-id="c16"] > div:first-child * {
-        pointer-events: auto !important;
+      #categoryModal [data-cat-id="c16"] > div:first-child {
         cursor: pointer !important;
+        user-select: none !important;
       }
 
       /* Category 16 Drop-down Collapse/Expand Rules */
@@ -437,7 +446,7 @@
         } catch (_) {}
       });
 
-      // 4.3 Category 16 Sub-Services Resolution & Rollup Check
+      // 4.3 Category 16 Sub-Services Resolution & Direct 1-Tap Wake-Up Binding
       var sub16Cards = document.querySelectorAll('#sub-c16 > div');
       var sub16HasHidden = false;
       sub16Cards.forEach(function (subCard, idx) {
@@ -451,8 +460,39 @@
         }
         registerMatch(subCard, subUrn, subLabel);
 
-        if (registryEngine && !registryEngine.isVisible(subUrn)) {
+        var subIsVis = registryEngine ? registryEngine.isVisible(subUrn) : true;
+        if (!subIsVis) {
           sub16HasHidden = true;
+        }
+
+        // Direct 1-Tap Wake-Up Handler attached straight to each sub-card
+        if (subCard.getAttribute('data-sivme-sub-bound') !== 'true') {
+          subCard.setAttribute('data-sivme-sub-bound', 'true');
+          function handleSubCardDirectTap(e) {
+            if (e.cancelable) e.preventDefault();
+            e.stopPropagation();
+            if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+
+            var now = Date.now();
+            if (now - lastActionTime < 320) return;
+            lastActionTime = now;
+
+            var currentVis = registryEngine ? registryEngine.isVisible(subUrn) : true;
+            var isDormant = subCard.classList.contains('sivme-ghost-dormant');
+            var isBadgeClick = !!e.target.closest('.sivme-inline-badge');
+
+            // If dormant, 1-tap anywhere wakes it up. If live, clicking badge toggles it.
+            if (isDormant || isBadgeClick) {
+              var targetVis = isDormant ? true : !currentVis;
+              if (window.RM_SovereignRegistry) {
+                window.RM_SovereignRegistry.toggleVisibility(subUrn, targetVis, subLabel);
+                enforceZELTemplateRendering();
+                applyInSituAudit();
+              }
+            }
+          }
+          subCard.addEventListener('pointerup', handleSubCardDirectTap);
+          subCard.addEventListener('click', handleSubCardDirectTap);
         }
       });
 
@@ -482,7 +522,7 @@
       matchedElements.forEach(function (item) {
         var isVis = registryEngine ? registryEngine.isVisible(item.urn) : true;
 
-        // UPWARD ROLLUP ALERT
+        // UPWARD ROLLUP ALERT: Category 16 shows Hidden alert if any sub-service is hidden
         if (item.urn === 'rm:cat:16' && isAuth) {
           if (sub16HasHidden) {
             isVis = false;
@@ -527,11 +567,11 @@
     }
   }
 
-  // 5. MOUNT INLINE TOGGLE BADGE & 1-TAP WAKE-UP
+  // 5. MOUNT INLINE TOGGLE BADGE & FULL-CARD WAKE-UP
   function mountInlineBadge(parentEl, urn, isVisible, label) {
     var badge = parentEl.querySelector(':scope > .sivme-inline-badge');
     var targetClass = isVisible ? 'sivme-inline-badge sivme-badge-live' : 'sivme-inline-badge sivme-badge-dormant';
-    var targetHtml = isVisible ? '<span>👁️</span><span>Live</span>' : '<span>🚫</span><span>Hidden</span>';
+    var targetHtml = isVisible ? '<span>👁</span><span>Live</span>' : '<span>🚫</span><span>Hidden</span>';
 
     function executeToggle(e) {
       if (e.cancelable) e.preventDefault();
@@ -539,7 +579,7 @@
       if (e.stopImmediatePropagation) e.stopImmediatePropagation();
 
       var now = Date.now();
-      if (now - lastActionTime < 450) return;
+      if (now - lastActionTime < 320) return;
       lastActionTime = now;
 
       var bUrn = badge ? badge.getAttribute('data-badge-urn') : urn;
@@ -594,16 +634,13 @@
       badge.addEventListener('pointerup', executeToggle);
       badge.addEventListener('click', executeToggle);
 
-      // Card 1-Tap Wake-Up Handler
+      // Card wake-up listener for normal single categories (Excludes Cat 16 and Sub-cards)
       function handleCardWakeUp(e) {
         if (!parentEl.classList.contains('sivme-ghost-dormant')) return;
         if (e.target.closest('.sivme-inline-badge')) return;
 
-        // Category 16 main container doesn't wake on body click (only badge or accordion header toggle)
-        if (urn === 'rm:cat:16') return;
-
-        // Do not trigger wake-up if clicking an interactive link or button
-        if (e.target.closest('button') || e.target.closest('a')) return;
+        if (urn === 'rm:cat:16' || urn.indexOf('sub:') !== -1) return;
+        if (e.target.closest('#sub-c16') || e.target.closest('[data-sivme-c16-head]')) return;
 
         executeToggle(e);
       }
