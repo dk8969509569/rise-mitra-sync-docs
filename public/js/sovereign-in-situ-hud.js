@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & Automation Hard-Reload Engine (General Tab Screenshot & Cache-Bust Mode)
+ * MODULE        : Surface-A Floating HUD & Automation Engine (16-3 Filters & All 7 Rental Listings In-Situ Controls)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -119,7 +119,7 @@
     } catch (_) {}
   }
 
-  // 3. INJECT SIVME STYLES (2.5D Elevation, Inner Filters & Action Dock)
+  // 3. INJECT SIVME STYLES (2.5D Elevation, Inner Filters & Listings Dock)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -148,10 +148,11 @@
         cursor: pointer !important;
       }
 
-      /* Inner Filter Dormant State */
-      [data-sov-urn*="elem:"].sivme-ghost-dormant {
+      /* Inner Filter & Listing Dormant States */
+      [data-sov-urn*="elem:"].sivme-ghost-dormant,
+      [data-sov-urn*="listing:"].sivme-ghost-dormant {
         border: 1.5px dashed #ef4444 !important;
-        border-radius: 10px !important;
+        border-radius: 12px !important;
         background: rgba(239, 68, 68, 0.08) !important;
         opacity: 0.75 !important;
       }
@@ -226,6 +227,16 @@
         left: auto !important;
         font-size: 9px !important;
         padding: 2px 7px !important;
+        z-index: 50 !important;
+      }
+
+      /* Housing Listings Badges */
+      [data-sov-urn*="listing:"] > .sivme-inline-badge {
+        top: -9px !important;
+        left: 14px !important;
+        right: auto !important;
+        font-size: 10px !important;
+        padding: 3px 9px !important;
         z-index: 50 !important;
       }
 
@@ -502,116 +513,146 @@
         );
       });
 
-      // 4.2 Robust 16-3 Dynamic Filters Resolution
+      // 4.2 Robust & Exception-Safe 16-3 Dynamic Filters & 7 Listings Resolution
       function resolve16_3Filters() {
         // 1. Smart Omnibox
-        var omni = document.querySelector('#rm-search-locality, #smartOmniboxGroup, #smartOmnibox, input[placeholder*="लालपुर"], input[placeholder*="8340"], input[placeholder*="Lalpur"]');
-        if (omni) {
-          var omniTarget = omni.closest('.space-y-2, .mb-4, .form-group') || omni.parentElement;
-          if (omniTarget) {
-            omniTarget.setAttribute('data-sov-urn', 'rm:cat:16:sub:16-3:elem:smart_omnibox');
-            omniTarget.setAttribute('data-sov-label', 'स्मार्ट खोज');
-            registerMatch(omniTarget, 'rm:cat:16:sub:16-3:elem:smart_omnibox', 'स्मार्ट खोज');
+        try {
+          var omni = document.querySelector('#rm-search-locality, #smartOmniboxGroup, #smartOmnibox, input[placeholder*="लालपुर"], input[placeholder*="8340"], input[placeholder*="Lalpur"]');
+          if (omni) {
+            var omniTarget = omni.closest('.space-y-2, .mb-4, .form-group') || omni.parentElement;
+            if (omniTarget) {
+              omniTarget.setAttribute('data-sov-urn', 'rm:cat:16:sub:16-3:elem:smart_omnibox');
+              omniTarget.setAttribute('data-sov-label', 'स्मार्ट खोज');
+              registerMatch(omniTarget, 'rm:cat:16:sub:16-3:elem:smart_omnibox', 'स्मार्ट खोज');
+            }
           }
-        }
+        } catch (_) {}
 
         // 2. State Filter
-        var stateSelect = document.querySelector('#rm-cat16-search-state, #stateFilterGroup, #stateFilter, select[id*="state"]');
-        if (!stateSelect) {
-          var allSelects = document.querySelectorAll('select');
-          allSelects.forEach(function (s) {
-            if (s.textContent.indexOf('राज्य') !== -1 || s.textContent.indexOf('State') !== -1 || s.textContent.indexOf('India') !== -1) {
-              stateSelect = s;
-            }
-          });
-        }
-        if (stateSelect) {
-          var stateTarget = stateSelect.closest('div') || stateSelect.parentElement;
-          if (stateTarget) {
-            stateTarget.setAttribute('data-sov-urn', 'rm:cat:16:sub:16-3:elem:state_filter');
-            stateTarget.setAttribute('data-sov-label', 'राज्य फ़िल्टर');
-            registerMatch(stateTarget, 'rm:cat:16:sub:16-3:elem:state_filter', 'राज्य फ़िल्टर');
+        try {
+          var stateSelect = document.querySelector('#rm-cat16-search-state, #stateFilterGroup, #stateFilter, select[id*="state"]');
+          if (!stateSelect) {
+            var allSelects = document.querySelectorAll('select');
+            allSelects.forEach(function (s) {
+              var st = s.textContent || '';
+              if (st.indexOf('राज्य') !== -1 || st.indexOf('State') !== -1 || st.indexOf('India') !== -1) {
+                stateSelect = s;
+              }
+            });
           }
-        }
+          if (stateSelect) {
+            var stateTarget = stateSelect.closest('div') || stateSelect.parentElement;
+            if (stateTarget) {
+              stateTarget.setAttribute('data-sov-urn', 'rm:cat:16:sub:16-3:elem:state_filter');
+              stateTarget.setAttribute('data-sov-label', 'राज्य फ़िल्टर');
+              registerMatch(stateTarget, 'rm:cat:16:sub:16-3:elem:state_filter', 'राज्य फ़िल्टर');
+            }
+          }
+        } catch (_) {}
 
         // 3. District Filter
-        var distSelect = document.querySelector('#rm-cat16-search-district, #districtFilterGroup, #districtFilter, select[id*="district"]');
-        if (!distSelect) {
-          var allSelects2 = document.querySelectorAll('select');
-          allSelects2.forEach(function (s) {
-            if (s !== stateSelect && (s.textContent.indexOf('जिला') !== -1 || s.textContent.indexOf('District') !== -1)) {
-              distSelect = s;
-            }
-          });
-        }
-        if (distSelect) {
-          var distTarget = distSelect.closest('div') || distSelect.parentElement;
-          if (distTarget) {
-            distTarget.setAttribute('data-sov-urn', 'rm:cat:16:sub:16-3:elem:district_filter');
-            distTarget.setAttribute('data-sov-label', 'जिला फ़िल्टर');
-            registerMatch(distTarget, 'rm:cat:16:sub:16-3:elem:district_filter', 'जिला फ़िल्टर');
+        try {
+          var distSelect = document.querySelector('#rm-cat16-search-district, #districtFilterGroup, #districtFilter, select[id*="district"]');
+          if (!distSelect) {
+            var allSelects2 = document.querySelectorAll('select');
+            allSelects2.forEach(function (s) {
+              var dt = s.textContent || '';
+              if (s !== stateSelect && (dt.indexOf('जिला') !== -1 || dt.indexOf('District') !== -1)) {
+                distSelect = s;
+              }
+            });
           }
-        }
-
-        // 4. Budget Slider (Complete Section: Label + Value + Range Slider Bar)
-        var rangeInput = document.querySelector('input[type="range"]');
-        var budgetTarget = null;
-        if (rangeInput) {
-          var curr = rangeInput;
-          while (curr && curr.parentElement && curr.parentElement !== document.body) {
-            var parent = curr.parentElement;
-            var txt = (parent.textContent || '');
-            if ((txt.indexOf('बजट') !== -1 || txt.indexOf('किराया') !== -1) &&
-                txt.indexOf('सब-मीटर') === -1 &&
-                txt.indexOf('स्मार्ट खोज') === -1 &&
-                txt.indexOf('उपलब्ध आवास') === -1 &&
-                txt.indexOf('खोजें') === -1) {
-              budgetTarget = parent;
+          if (distSelect) {
+            var distTarget = distSelect.closest('div') || distSelect.parentElement;
+            if (distTarget) {
+              distTarget.setAttribute('data-sov-urn', 'rm:cat:16:sub:16-3:elem:district_filter');
+              distTarget.setAttribute('data-sov-label', 'जिला फ़िल्टर');
+              registerMatch(distTarget, 'rm:cat:16:sub:16-3:elem:district_filter', 'जिला फ़िल्टर');
             }
-            curr = parent;
-            if (budgetTarget && budgetTarget.parentElement && budgetTarget.parentElement.children.length > 2) {
+          }
+        } catch (_) {}
+
+        // 4. Budget Slider Section (Encompassing Label + 15000 + Range Bar)
+        try {
+          var range = document.querySelector('input[type="range"]');
+          if (range) {
+            var budgetBox = document.getElementById('rm-budget-slider-container');
+            var rangeRow = range.closest('div');
+            var prevRow = rangeRow ? rangeRow.previousElementSibling : null;
+
+            if (!budgetBox && rangeRow && prevRow && ((prevRow.textContent || '').indexOf('किराया') !== -1 || (prevRow.textContent || '').indexOf('बजट') !== -1)) {
+              budgetBox = document.createElement('div');
+              budgetBox.id = 'rm-budget-slider-container';
+              budgetBox.className = 'w-full mb-3';
+              rangeRow.parentNode.insertBefore(budgetBox, prevRow);
+              budgetBox.appendChild(prevRow);
+              budgetBox.appendChild(rangeRow);
+            } else if (!budgetBox) {
+              budgetBox = rangeRow || range.parentElement;
+            }
+
+            if (budgetBox) {
+              budgetBox.setAttribute('data-sov-urn', 'rm:cat:16:sub:16-3:elem:budget_slider');
+              budgetBox.setAttribute('data-sov-label', 'बजट स्लाइडर');
+              registerMatch(budgetBox, 'rm:cat:16:sub:16-3:elem:budget_slider', 'बजट स्लाइडर');
+            }
+          }
+        } catch (_) {}
+
+        // 5. Submeter Checkbox
+        try {
+          var submeter = document.querySelector('#rm-search-submeter, #submeterFilterGroup, input[type="checkbox"]');
+          if (!submeter) {
+            var allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+            if (allCheckboxes.length > 0) submeter = allCheckboxes[0];
+          }
+          if (submeter) {
+            var subTarget = submeter.closest('label') || submeter.parentElement;
+            if (subTarget) {
+              subTarget.setAttribute('data-sov-urn', 'rm:cat:16:sub:16-3:elem:submeter_checkbox');
+              subTarget.setAttribute('data-sov-label', 'सब-मीटर फ़िल्टर');
+              registerMatch(subTarget, 'rm:cat:16:sub:16-3:elem:submeter_checkbox', 'सब-मीटर फ़िल्टर');
+            }
+          }
+        } catch (_) {}
+
+        // 6. Rental Listings (All 7 Housing Cards in उपलब्ध आवास सूची)
+        try {
+          var listingHeading = null;
+          var headings = document.querySelectorAll('div, h2, h3, h4, span');
+          for (var h = 0; h < headings.length; h++) {
+            var ht = (headings[h].textContent || '').trim();
+            if (ht.indexOf('उपलब्ध आवास सूची') !== -1 && headings[h].children.length < 3) {
+              listingHeading = headings[h];
               break;
             }
           }
-          if (!budgetTarget) {
-            budgetTarget = rangeInput.closest('.space-y-2, .mb-4') || rangeInput.parentElement;
-          }
-        }
-        if (budgetTarget) {
-          var oldChild = budgetTarget.querySelector('[data-sov-urn="rm:cat:16:sub:16-3:elem:budget_slider"]');
-          if (oldChild && oldChild !== budgetTarget) {
-            oldChild.removeAttribute('data-sov-urn');
-            oldChild.removeAttribute('data-sov-label');
-            var oldB = oldChild.querySelector(':scope > .sivme-inline-badge');
-            if (oldB) oldB.remove();
-            oldChild.classList.remove('sivme-badge-anchor', 'sivme-ghost-dormant', 'sivme-public-hidden');
-            oldChild.style.removeProperty('display');
-          }
-
-          budgetTarget.setAttribute('data-sov-urn', 'rm:cat:16:sub:16-3:elem:budget_slider');
-          budgetTarget.setAttribute('data-sov-label', 'बजट स्लाइडर');
-          registerMatch(budgetTarget, 'rm:cat:16:sub:16-3:elem:budget_slider', 'बजट स्लाइडर');
-        }
-
-        // 5. Submeter Checkbox
-        var submeter = document.querySelector('#rm-search-submeter, #submeterFilterGroup, input[type="checkbox"]');
-        if (!submeter) {
-          var labels = document.querySelectorAll('label, span, div');
-          labels.forEach(function (l) {
-            if (l.textContent.indexOf('सब-मीटर') !== -1 || l.textContent.indexOf('Sub-Meter') !== -1) {
-              var chk = l.querySelector('input[type="checkbox"]') || l.closest('div').querySelector('input[type="checkbox"]');
-              if (chk) submeter = chk;
+          if (listingHeading) {
+            var container = listingHeading.nextElementSibling || listingHeading.parentElement;
+            if (container) {
+              var allCards = container.querySelectorAll(':scope > div, .space-y-3 > div, .space-y-4 > div, div');
+              var listingIdx = 1;
+              allCards.forEach(function (card) {
+                var cText = card.textContent || '';
+                if ((cText.indexOf('/माह') !== -1 || cText.indexOf('डिपॉजिट') !== -1) && cText.indexOf('उपलब्ध आवास सूची') === -1 && card.children.length >= 2) {
+                  if (card.parentElement && (card.parentElement.textContent || '').indexOf('/माह') !== -1 && card.parentElement.children.length === 1) {
+                    return;
+                  }
+                  var lUrn = 'rm:cat:16:sub:16-3:listing:' + listingIdx;
+                  var titleEl = card.querySelector('.font-bold, h4, h3, div:first-child') || card;
+                  var rawTitle = titleEl ? titleEl.textContent.trim().split('\n')[0] : ('आवास ' + listingIdx);
+                  var cleanTitle = rawTitle.replace(/[₹0-9,/माह]/g, '').trim().substring(0, 24);
+                  if (!card.hasAttribute('data-sov-urn')) {
+                    card.setAttribute('data-sov-urn', lUrn);
+                    card.setAttribute('data-sov-label', cleanTitle || ('आवास ' + listingIdx));
+                  }
+                  registerMatch(card, lUrn, cleanTitle || ('आवास ' + listingIdx));
+                  listingIdx++;
+                }
+              });
             }
-          });
-        }
-        if (submeter) {
-          var subTarget = submeter.closest('label') || submeter.parentElement;
-          if (subTarget) {
-            subTarget.setAttribute('data-sov-urn', 'rm:cat:16:sub:16-3:elem:submeter_checkbox');
-            subTarget.setAttribute('data-sov-label', 'सब-मीटर फ़िल्टर');
-            registerMatch(subTarget, 'rm:cat:16:sub:16-3:elem:submeter_checkbox', 'सब-मीटर फ़िल्टर');
           }
-        }
+        } catch (_) {}
       }
 
       resolve16_3Filters();
@@ -835,7 +876,7 @@
     badge.title = label + (isVisible ? ' छुपाने के लिए टैप करें (Hide)' : ' लाइव दिखाने के लिए टैप करें (Show)');
   }
 
-  // 6. FLOATING HUD DOCK WITH 1-TAP AUTOMATION HARD-RELOAD & SCREENSHOT GENERAL MODE
+  // 6. FLOATING HUD DOCK WITH AUTOMATION HARD-RELOAD
   function updateFloatingDock(isAuth, hiddenCount, trackedCount) {
     var existingDock = document.getElementById('sivmeFloatingDock');
 
@@ -855,7 +896,7 @@
         <span style="background:#0f172a;border:1px solid #334155;color:#94a3b8;font-size:10px;font-weight:700;padding:2px 6px;border-radius:9999px;">
           Hidden: <span id="sivmeHiddenCountNum" style="color:#f87171;">${hiddenCount}</span>
         </span>
-        <button id="btnHardReloadBust" title="1-टैप हार्ड रीलोड व कैश डिलीट (General Tab Screenshot Ready)" style="background:#0369a1;border:1px solid #38bdf8;color:#e0f2fe;font-size:10px;font-weight:900;padding:3px 8px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:3px;">
+        <button id="btnHardReloadBust" title="1-टैप हार्ड रीलोड व कैश डिलीट" style="background:#0369a1;border:1px solid #38bdf8;color:#e0f2fe;font-size:10px;font-weight:900;padding:3px 8px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:3px;">
           <span>⚡ Reload</span>
         </button>
         <button id="btnExitInSitu" title="पब्लिक मोड में जाएँ" style="background:#450a0a;border:1px solid #b91c1c;color:#fca5a5;font-size:10px;font-weight:800;padding:3px 7px;border-radius:8px;cursor:pointer;">
@@ -867,7 +908,6 @@
       `;
       document.body.appendChild(existingDock);
 
-      // 1-TAP AUTOMATION HARD RELOAD & CACHE BUST HANDLER
       var hardReloadBtn = document.getElementById('btnHardReloadBust');
       if (hardReloadBtn) {
         hardReloadBtn.addEventListener('click', async function (e) {
@@ -877,7 +917,6 @@
           hardReloadBtn.innerHTML = '<span>⏳ Clearing...</span>';
 
           try {
-            // 1. Delete all browser caches & service workers
             if ('caches' in window) {
               var cacheNames = await caches.keys();
               await Promise.all(cacheNames.map(function (k) { return caches.delete(k); }));
@@ -890,12 +929,10 @@
             }
           } catch (_) {}
 
-          // 2. Lock automation flag so general tab never drops in-situ mode
           localStorage.setItem(DEV_AUTO_KEY, 'true');
           sessionStorage.setItem(SESSION_KEY, 'SOV_ACTIVE_2026');
           localStorage.setItem(SESSION_KEY, 'SOV_ACTIVE_2026');
 
-          // 3. Force reload with fresh timestamp to bypass any CDN or HTTP cache
           var freshUrl = new URL(window.location.origin + window.location.pathname);
           freshUrl.searchParams.set('sov_mode', 'in_situ');
           freshUrl.searchParams.set('dev_auto', '1');
