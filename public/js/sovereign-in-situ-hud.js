@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Rollup Visibility & Uniform 72px Card Height)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Event-Isolated Accordion & 1-Tap Sub-Toggle)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.4 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-hud.js
@@ -100,7 +100,7 @@
     }
   ];
 
-  // 3. INJECT SIVME STYLES (Uniform 72px Card Height & Interactive Accordion)
+  // 3. INJECT SIVME STYLES (Interactive Accordion, Header Buffers & Anti-Squish)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -127,7 +127,8 @@
         ) !important;
         cursor: pointer !important;
       }
-      .sivme-ghost-dormant > *:not(.sivme-inline-badge):not(#sub-c16) {
+      /* Protect Category 16 header and sub-cards from losing pointer-events */
+      .sivme-ghost-dormant > *:not(.sivme-inline-badge):not(#sub-c16):not([data-sivme-c16-head]) {
         opacity: 0.55 !important;
         filter: grayscale(50%) !important;
         pointer-events: none !important;
@@ -195,10 +196,7 @@
         margin-bottom: 24px !important;
       }
 
-      /* ==========================================================================
-         UNIFORM 72px CARD HEIGHT ACROSS ALL 33 CATEGORIES + CATEGORY 16 HEADER
-         Ensures Category 16 header bar has identical width and thickness to others
-         ========================================================================== */
+      /* UNIFORM 72px CARD HEIGHT ACROSS ALL 33 CATEGORIES + CATEGORY 16 HEADER */
       #categoryModal [data-cat-id]:not([data-cat-id="c16"]),
       #categoryModal [data-cat-id="c16"] > div:first-child {
         min-height: 72px !important;
@@ -216,7 +214,7 @@
         margin-bottom: 20px !important;
       }
 
-      /* Category 16 Accordion Parent */
+      /* Category 16 Accordion Parent Container */
       #categoryModal [data-cat-id="c16"] {
         display: block !important;
         min-height: auto !important;
@@ -226,16 +224,20 @@
         box-sizing: border-box !important;
         overflow: visible !important;
       }
-      #categoryModal [data-cat-id="c16"] > div:first-child {
+
+      /* CRITICAL: Category 16 Header MUST ALWAYS have active pointer-events */
+      #categoryModal [data-cat-id="c16"] > div:first-child,
+      #categoryModal [data-cat-id="c16"] > div:first-child * {
+        pointer-events: auto !important;
         cursor: pointer !important;
-        user-select: none !important;
       }
 
-      /* Interactive Drop-down Collapse/Expand Rules */
+      /* Category 16 Drop-down Collapse/Expand Rules */
       #sub-c16 {
         width: 100% !important;
         margin-top: 14px !important;
         overflow: visible !important;
+        pointer-events: auto !important;
       }
       #sub-c16.hidden,
       #sub-c16[style*="display: none"],
@@ -293,6 +295,7 @@
         justify-content: space-between !important;
         overflow: visible !important;
         box-sizing: border-box !important;
+        pointer-events: auto !important;
       }
       #sub-c16 > div .sivme-inline-badge {
         top: -9px !important;
@@ -344,7 +347,7 @@
     document.head.appendChild(style);
   }
 
-  // 4. SCAN AND ATTACH IN-SITU CONTROLS (With Sub-Category Upward Rollup)
+  // 4. SCAN AND ATTACH IN-SITU CONTROLS
   function applyInSituAudit() {
     if (isAuditing) return;
     isAuditing = true;
@@ -365,24 +368,36 @@
         }
       });
 
-      // 4.0.1 Fallback Accordion Click Binder for Category 16
+      // 4.0.1 Dedicated Accordion Click Binder for Category 16 Header
       var c16Header = document.querySelector('#categoryModal [data-cat-id="c16"] > div:first-child');
-      if (c16Header && c16Header.getAttribute('data-sivme-toggle-bound') !== 'true') {
-        c16Header.setAttribute('data-sivme-toggle-bound', 'true');
-        c16Header.addEventListener('click', function (e) {
-          if (e.target.closest('.sivme-inline-badge')) return;
-          var sub = document.getElementById('sub-c16');
-          if (!sub) return;
-          setTimeout(function () {
-            if (typeof window.toggleSubCategory !== 'function') {
-              sub.classList.toggle('hidden');
-              var chevron = document.getElementById('chevron-c16');
-              if (chevron) {
-                chevron.style.transform = sub.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
-              }
+      if (c16Header) {
+        c16Header.setAttribute('data-sivme-c16-head', 'true');
+        if (c16Header.getAttribute('data-sivme-toggle-bound') !== 'true') {
+          c16Header.setAttribute('data-sivme-toggle-bound', 'true');
+          function handleAccordionToggle(e) {
+            // Never trigger accordion if clicking Category 16 badge
+            if (e.target.closest('.sivme-inline-badge')) return;
+            if (e.cancelable) e.preventDefault();
+            e.stopPropagation();
+
+            var sub = document.getElementById('sub-c16');
+            if (!sub) return;
+
+            var isCollapsed = sub.classList.contains('hidden') || sub.classList.contains('sivme-collapsed') || sub.style.display === 'none';
+            if (isCollapsed) {
+              sub.classList.remove('hidden', 'sivme-collapsed');
+              sub.style.removeProperty('display');
+              var chevronOpen = document.getElementById('chevron-c16');
+              if (chevronOpen) chevronOpen.style.transform = 'rotate(180deg)';
+            } else {
+              sub.classList.add('hidden', 'sivme-collapsed');
+              var chevronClose = document.getElementById('chevron-c16');
+              if (chevronClose) chevronClose.style.transform = 'rotate(0deg)';
             }
-          }, 15);
-        });
+          }
+          c16Header.addEventListener('pointerup', handleAccordionToggle);
+          c16Header.addEventListener('click', handleAccordionToggle);
+        }
       }
 
       var matchedElements = [];
@@ -513,7 +528,7 @@
     }
   }
 
-  // 5. MOUNT INLINE TOGGLE BADGE & FULL-CARD WAKE-UP (With Master Cascade)
+  // 5. MOUNT INLINE TOGGLE BADGE & FULL-CARD WAKE-UP
   function mountInlineBadge(parentEl, urn, isVisible, label) {
     var badge = parentEl.querySelector(':scope > .sivme-inline-badge');
     var targetClass = isVisible ? 'sivme-inline-badge sivme-badge-live' : 'sivme-inline-badge sivme-badge-dormant';
@@ -522,6 +537,7 @@
     function executeToggle(e) {
       if (e.cancelable) e.preventDefault();
       e.stopPropagation();
+      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
 
       var now = Date.now();
       if (now - lastActionTime < 240) return;
@@ -579,16 +595,21 @@
       badge.addEventListener('pointerup', executeToggle);
       badge.addEventListener('click', executeToggle);
 
-      parentEl.addEventListener('pointerup', function (e) {
+      // Card wake-up listener (Strictly isolated from Category 16 header and accordion)
+      function handleCardWakeUp(e) {
         if (!parentEl.classList.contains('sivme-ghost-dormant')) return;
         if (e.target.closest('.sivme-inline-badge')) return;
+
+        // CRITICAL: Category 16 parent container must NEVER wake up via click
+        // Accordion header clicks are strictly for opening/closing, and sub-cards have their own handlers!
+        if (urn === 'rm:cat:16') return;
+        if (e.target.closest('#sub-c16') || e.target.closest('[data-sivme-c16-head]')) return;
+
         executeToggle(e);
-      });
-      parentEl.addEventListener('click', function (e) {
-        if (!parentEl.classList.contains('sivme-ghost-dormant')) return;
-        if (e.target.closest('.sivme-inline-badge')) return;
-        executeToggle(e);
-      });
+      }
+
+      parentEl.addEventListener('pointerup', handleCardWakeUp);
+      parentEl.addEventListener('click', handleCardWakeUp);
     }
 
     badge.className = targetClass;
