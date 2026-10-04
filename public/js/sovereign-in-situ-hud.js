@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & Automation Engine (Full-Card Click Delegation & 16-3 Fail-Safe Opener)
+ * MODULE        : Surface-A Floating HUD & Automation Engine (Native Pass-Through Opener & Zero-Redirect 16-3 Navigation)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -20,6 +20,7 @@
   var lastActionTime = 0;
   var lastUrnActionTimes = {};
   var lastAccordionToggleTime = 0;
+  var lastSubCardOpenTime = 0;
 
   // 1. ZEL TEMPLATE SHIELD: Ensure legacy modules always render complete DOM
   function enforceZELTemplateRendering() {
@@ -117,21 +118,6 @@
       };
       localStorage.setItem(REGISTRY_STORAGE_KEY, JSON.stringify(reg));
     } catch (_) {}
-  }
-
-  // 16-3 Modal Identifier Helper
-  function find16_3Modal() {
-    var candidate = document.querySelector('#rentalSearchModal, #rentalModal, #rm-cat16-search-modal, #modal-16-3, [id*="rental-search"]');
-    if (candidate) return candidate;
-
-    var allModals = document.querySelectorAll('div.fixed, div[id*="modal"], div[class*="modal"]');
-    for (var i = 0; i < allModals.length; i++) {
-      var txt = allModals[i].textContent || '';
-      if (txt.indexOf('16-3. कमरा व फ्लैट खोज') !== -1 || txt.indexOf('पैन-इंडिया ब्रोकर-फ्री') !== -1) {
-        return allModals[i];
-      }
-    }
-    return null;
   }
 
   // 3. INJECT SIVME STYLES (2.5D Elevation, Filter Isolation & Clearances)
@@ -234,7 +220,7 @@
         transform: scale(0.92) !important;
       }
 
-      /* Inner Filter Badges */
+      /* Inner Filter Badges (Placed at Top-Right to prevent label squish) */
       [data-sov-urn*="elem:"] > .sivme-inline-badge {
         top: -8px !important;
         right: 12px !important;
@@ -297,7 +283,6 @@
         margin-bottom: 20px !important;
       }
 
-      /* Category 16 Accordion Parent Container */
       #categoryModal [data-cat-id="c16"] {
         display: block !important;
         min-height: auto !important;
@@ -435,6 +420,21 @@
       }
     `;
     document.head.appendChild(style);
+  }
+
+  // Helper to safely locate the native "खोलें" trigger element inside a card
+  function findSubCardOpenTrigger(subCard) {
+    if (!subCard) return null;
+    var candidates = subCard.querySelectorAll('button, a, [onclick], span, div');
+    for (var i = 0; i < candidates.length; i++) {
+      var el = candidates[i];
+      if (el.classList.contains('sivme-inline-badge')) continue;
+      var text = (el.textContent || '').trim();
+      if (text === 'खोलें' || text.indexOf('खोलें') !== -1) {
+        return el;
+      }
+    }
+    return subCard.querySelector('button, a, [onclick]');
   }
 
   // 4. SCAN AND ATTACH IN-SITU CONTROLS
@@ -595,7 +595,7 @@
           }
         } catch (_) {}
 
-        // 4. Budget Slider Section
+        // 4. Budget Slider Section (Strictly Encompassing ONLY: Label + 16000 + Range Slider Bar)
         try {
           var range = document.querySelector('input[type="range"]');
           if (range) {
@@ -638,7 +638,7 @@
           }
         } catch (_) {}
 
-        // 5. Submeter Checkbox
+        // 5. Submeter Checkbox (Completely Decoupled & Independent Standalone Target)
         try {
           var submeter = document.querySelector('#rm-search-submeter, #submeterFilterGroup, input[type="checkbox"]');
           if (!submeter) {
@@ -673,6 +673,7 @@
               registerMatch(actionRow, 'rm:cat:16:sub:16-3:elem:search_actions', 'खोज व रीसेट बटन');
             }
 
+            // Find Outer Filter Card Container (Holding all 5 filters + action buttons)
             var pNode = searchBtn.parentElement;
             while (pNode && pNode !== document.body) {
               var sib = pNode.nextElementSibling;
@@ -688,7 +689,7 @@
 
       resolve16_3Filters();
 
-      // 4.3 Category 16 Sub-Services Resolution & Non-Blocking Full-Card Click Delegation
+      // 4.3 Category 16 Sub-Services Resolution & Non-Blocking Native Pass-Through Opener
       var sub16Cards = document.querySelectorAll('#sub-c16 > div');
       var sub16HasHidden = false;
       sub16Cards.forEach(function (subCard, idx) {
@@ -709,13 +710,14 @@
 
         if (subCard.getAttribute('data-sivme-sub-bound') !== 'true') {
           subCard.setAttribute('data-sivme-sub-bound', 'true');
-          function handleSubCardTap(e) {
+
+          function handleSubCardClick(e) {
             if (!isConsoleAuthorized()) return;
 
             var isDormant = subCard.classList.contains('sivme-ghost-dormant');
             var isBadgeClick = !!e.target.closest('.sivme-inline-badge');
 
-            // 1. If badge tapped or dormant card tapped: Toggle visibility / 1-tap wake-up
+            // CASE 1: Badge Click or Dormant Wake-Up -> Toggle Visibility ONLY
             if (isDormant || isBadgeClick) {
               if (e.cancelable) e.preventDefault();
               e.stopPropagation();
@@ -750,38 +752,29 @@
               return;
             }
 
-            // 2. If card is LIVE and tapped anywhere on card body (not directly on badge):
-            // Seamlessly open the sub-service modal!
-            var actionBtn = subCard.querySelector('button, a');
-            if (actionBtn && !actionBtn.contains(e.target) && e.target !== actionBtn) {
-              if (e.cancelable) e.preventDefault();
-              actionBtn.click();
+            // CASE 2: Sub-Card is LIVE
+            var triggerBtn = findSubCardOpenTrigger(subCard);
+
+            // If user clicked directly on or inside the "खोलें" button:
+            // Allow native application open logic to execute completely unhindered!
+            if (triggerBtn && (e.target === triggerBtn || triggerBtn.contains(e.target))) {
+              setTimeout(applyInSituAudit, 100);
+              return;
             }
 
-            // Direct fail-safe trigger for 16-3 if modal doesn't show in 50ms
-            if (subUrn === 'rm:cat:16:sub:16-3') {
-              setTimeout(function () {
-                var m16 = find16_3Modal();
-                var cModal = document.getElementById('categoryModal');
-                var isAlreadyOpen = m16 && (m16.style.display === 'block' || (!m16.classList.contains('hidden') && m16.offsetHeight > 0));
+            // If user clicked anywhere else on the live card body (title, icon, whitespace):
+            // Delegate the click directly to the native "खोलें" button!
+            if (triggerBtn) {
+              var nowTime = Date.now();
+              if (nowTime - lastSubCardOpenTime < 400) return;
+              lastSubCardOpenTime = nowTime;
 
-                if (!isAlreadyOpen) {
-                  if (cModal) {
-                    cModal.style.setProperty('display', 'none', 'important');
-                    cModal.classList.add('hidden');
-                  }
-                  if (m16) {
-                    m16.style.setProperty('display', 'block', 'important');
-                    m16.classList.remove('hidden');
-                    m16.style.setProperty('z-index', '999999', 'important');
-                  }
-                  setTimeout(applyInSituAudit, 50);
-                }
-              }, 60);
+              triggerBtn.click();
+              setTimeout(applyInSituAudit, 100);
             }
           }
 
-          subCard.addEventListener('click', handleSubCardTap, false);
+          subCard.addEventListener('click', handleSubCardClick, false);
         }
       });
 
