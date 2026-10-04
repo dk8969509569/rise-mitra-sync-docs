@@ -149,7 +149,6 @@
         opacity: 0.75 !important;
       }
 
-      /* Single Category Dormant Rows Pointer Lock (Cat 16 and Sub-cards completely unlocked) */
       #categoryModal [data-cat-id]:not([data-cat-id="c16"]).sivme-ghost-dormant > *:not(.sivme-inline-badge) {
         opacity: 0.55 !important;
         filter: grayscale(50%) !important;
@@ -220,6 +219,7 @@
         left: auto !important;
         font-size: 9px !important;
         padding: 2px 7px !important;
+        z-index: 50 !important;
       }
 
       /* SECTION HEADERS CLEARANCE */
@@ -542,19 +542,45 @@
           }
         }
 
-        // 4. Budget Slider
-        var budget = document.querySelector('#rm-search-budget-slider, #budgetSliderGroup, input[type="range"], [id*="budget"]');
-        if (!budget) {
-          var allRanges = document.querySelectorAll('input[type="range"]');
-          if (allRanges.length > 0) budget = allRanges[0];
-        }
-        if (budget) {
-          var budgetTarget = budget.closest('.space-y-2, .mb-4') || budget.parentElement;
-          if (budgetTarget) {
-            budgetTarget.setAttribute('data-sov-urn', 'rm:cat:16:sub:16-3:elem:budget_slider');
-            budgetTarget.setAttribute('data-sov-label', 'बजट स्लाइडर');
-            registerMatch(budgetTarget, 'rm:cat:16:sub:16-3:elem:budget_slider', 'बजट स्लाइडर');
+        // 4. Budget Slider (Complete Section: Label + 15000 Value + Range Slider Bar)
+        var rangeInput = document.querySelector('input[type="range"]');
+        var budgetTarget = null;
+        if (rangeInput) {
+          var curr = rangeInput;
+          while (curr && curr.parentElement && curr.parentElement !== document.body) {
+            var parent = curr.parentElement;
+            var txt = (parent.textContent || '');
+            if ((txt.indexOf('बजट') !== -1 || txt.indexOf('किराया') !== -1) &&
+                txt.indexOf('सब-मीटर') === -1 &&
+                txt.indexOf('स्मार्ट खोज') === -1 &&
+                txt.indexOf('उपलब्ध आवास') === -1 &&
+                txt.indexOf('खोजें') === -1) {
+              budgetTarget = parent;
+            }
+            curr = parent;
+            if (budgetTarget && budgetTarget.parentElement && budgetTarget.parentElement.children.length > 2) {
+              break;
+            }
           }
+          if (!budgetTarget) {
+            budgetTarget = rangeInput.closest('.space-y-2, .mb-4') || rangeInput.parentElement;
+          }
+        }
+        if (budgetTarget) {
+          // Clean up any inner child that previously held the badge
+          var oldChild = budgetTarget.querySelector('[data-sov-urn="rm:cat:16:sub:16-3:elem:budget_slider"]');
+          if (oldChild && oldChild !== budgetTarget) {
+            oldChild.removeAttribute('data-sov-urn');
+            oldChild.removeAttribute('data-sov-label');
+            var oldB = oldChild.querySelector(':scope > .sivme-inline-badge');
+            if (oldB) oldB.remove();
+            oldChild.classList.remove('sivme-badge-anchor', 'sivme-ghost-dormant', 'sivme-public-hidden');
+            oldChild.style.removeProperty('display');
+          }
+
+          budgetTarget.setAttribute('data-sov-urn', 'rm:cat:16:sub:16-3:elem:budget_slider');
+          budgetTarget.setAttribute('data-sov-label', 'बजट स्लाइडर');
+          registerMatch(budgetTarget, 'rm:cat:16:sub:16-3:elem:budget_slider', 'बजट स्लाइडर');
         }
 
         // 5. Submeter Checkbox
@@ -569,7 +595,7 @@
           });
         }
         if (submeter) {
-          var subTarget = submeter.closest('label, div') || submeter.parentElement;
+          var subTarget = submeter.closest('label') || submeter.parentElement;
           if (subTarget) {
             subTarget.setAttribute('data-sov-urn', 'rm:cat:16:sub:16-3:elem:submeter_checkbox');
             subTarget.setAttribute('data-sov-label', 'सब-मीटर फ़िल्टर');
@@ -671,7 +697,6 @@
       matchedElements.forEach(function (item) {
         var isVis = getUrnVisibility(item.urn);
 
-        // Category 16 master alert only rolls up if a sub-service is hidden
         if (item.urn === 'rm:cat:16' && isAuth) {
           if (sub16HasHidden) {
             isVis = false;
@@ -746,7 +771,6 @@
         setUrnVisibility(bUrn, newTargetVis, bLabel);
       }
 
-      // Synchronize Surface-B storage bridge
       try {
         var match = bUrn.match(/^rm:cat:([0-9]{2})$/);
         if (match) {
@@ -886,7 +910,6 @@
     injectStyles();
     applyInSituAudit();
 
-    // Re-audit on any tap to catch dynamic modals immediately
     document.addEventListener('click', function () {
       setTimeout(applyInSituAudit, 60);
       setTimeout(applyInSituAudit, 300);
@@ -920,7 +943,6 @@
       }
     });
 
-    // Observe both DOM structure and modal style/class visibility changes
     observer.observe(document.body, {
       childList: true,
       subtree: true,
