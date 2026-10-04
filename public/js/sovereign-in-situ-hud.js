@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (2.5D Tactile Elevation, Uniform Geometry & Non-Blocking Opener)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (2.5D Tactile Elevation & 16-3 Inner Filter Controls)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -73,7 +73,7 @@
     }
   }
 
-  // Robust Direct Registry Access (Infallible Fallback)
+  // Robust Direct Registry Access
   function getRegistry() {
     try {
       var raw = localStorage.getItem(REGISTRY_STORAGE_KEY);
@@ -112,36 +112,7 @@
     } catch (_) {}
   }
 
-  // Element URN Selectors Map for Category 16 & Dynamic Nodes
-  var URN_SELECTORS = [
-    {
-      urn: 'rm:cat:16:sub:16-3:elem:smart_omnibox',
-      selector: '#rm-search-locality, #smartOmniboxGroup, #smartOmnibox, [data-sov-urn="rm:cat:16:sub:16-3:elem:smart_omnibox"]',
-      label: 'स्मार्ट खोज'
-    },
-    {
-      urn: 'rm:cat:16:sub:16-3:elem:state_filter',
-      selector: '#rm-cat16-search-state, #stateFilterGroup, #stateFilter, [data-sov-urn="rm:cat:16:sub:16-3:elem:state_filter"]',
-      label: 'राज्य फ़िल्टर'
-    },
-    {
-      urn: 'rm:cat:16:sub:16-3:elem:district_filter',
-      selector: '#rm-cat16-search-district, #districtFilterGroup, #districtFilter, [data-sov-urn="rm:cat:16:sub:16-3:elem:district_filter"]',
-      label: 'जिला फ़िल्टर'
-    },
-    {
-      urn: 'rm:cat:16:sub:16-3:elem:budget_slider',
-      selector: '#rm-search-budget-slider, #budgetSliderGroup, [data-sov-urn="rm:cat:16:sub:16-3:elem:budget_slider"]',
-      label: 'बजट स्लाइडर'
-    },
-    {
-      urn: 'rm:cat:16:sub:16-3:elem:submeter_checkbox',
-      selector: '#rm-search-submeter, #submeterFilterGroup, [data-sov-urn="rm:cat:16:sub:16-3:elem:submeter_checkbox"]',
-      label: 'सब-मीटर फ़िल्टर'
-    }
-  ];
-
-  // 3. INJECT SIVME STYLES (2.5D Tactile Elevation, Top Rim-Light & Uniform 72px Geometry)
+  // 3. INJECT SIVME STYLES (2.5D Elevation + Inner Filter Support)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -170,6 +141,14 @@
         cursor: pointer !important;
       }
 
+      /* Inner Filter Dormant State */
+      [data-sov-urn*="elem:"].sivme-ghost-dormant {
+        border: 1.5px dashed #ef4444 !important;
+        border-radius: 10px !important;
+        background: rgba(239, 68, 68, 0.08) !important;
+        opacity: 0.75 !important;
+      }
+
       /* Single Category Dormant Rows Pointer Lock (Cat 16 and Sub-cards completely unlocked) */
       #categoryModal [data-cat-id]:not([data-cat-id="c16"]).sivme-ghost-dormant > *:not(.sivme-inline-badge) {
         opacity: 0.55 !important;
@@ -177,7 +156,6 @@
         pointer-events: none !important;
       }
 
-      /* Category 16 Accordion & All Sub-cards MUST ALWAYS have active touch pointers */
       #categoryModal [data-cat-id="c16"],
       #categoryModal [data-cat-id="c16"] *,
       #sub-c16,
@@ -195,7 +173,7 @@
         top: -10px !important;
         left: 14px !important;
         right: auto !important;
-        z-index: 30 !important;
+        z-index: 40 !important;
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
         font-size: 10px !important;
         font-weight: 800;
@@ -235,7 +213,16 @@
         transform: scale(0.92) !important;
       }
 
-      /* SECTION HEADERS CLEARANCE & 2.5D RECESSED PILL */
+      /* Inner Filter Badges (Placed at Top-Right to prevent label squish) */
+      [data-sov-urn*="elem:"] > .sivme-inline-badge {
+        top: -8px !important;
+        right: 12px !important;
+        left: auto !important;
+        font-size: 9px !important;
+        padding: 2px 7px !important;
+      }
+
+      /* SECTION HEADERS CLEARANCE */
       .sivme-catalog-section-header {
         margin-top: 28px !important;
         margin-bottom: 24px !important;
@@ -249,7 +236,7 @@
         margin-bottom: 24px !important;
       }
 
-      /* 2.5D TACTILE ELEVATION & UNIFORM 72px GEOMETRY ACROSS ALL 33 CATEGORIES + CATEGORY 16 HEADER */
+      /* 2.5D TACTILE ELEVATION & UNIFORM 72px GEOMETRY */
       #categoryModal [data-cat-id]:not([data-cat-id="c16"]),
       #categoryModal [data-cat-id="c16"] > div:first-child {
         min-height: 72px !important;
@@ -270,7 +257,6 @@
         transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.12s cubic-bezier(0.4, 0, 0.2, 1) !important;
       }
 
-      /* 2.5D TACTILE PRESSED EFFECT */
       #categoryModal [data-cat-id]:not([data-cat-id="c16"]):active,
       #categoryModal [data-cat-id="c16"] > div:first-child:active {
         transform: translateY(1.5px) !important;
@@ -281,7 +267,6 @@
         margin-bottom: 20px !important;
       }
 
-      /* Category 16 Accordion Parent Container */
       #categoryModal [data-cat-id="c16"] {
         display: block !important;
         min-height: auto !important;
@@ -344,7 +329,7 @@
         gap: 3px !important;
       }
 
-      /* 2.5D TACTILE SUB-SERVICES (Category 16) */
+      /* 2.5D TACTILE SUB-SERVICES */
       #sub-c16 > div {
         min-height: 60px !important;
         padding: 18px 14px 12px 14px !important;
@@ -437,7 +422,7 @@
         }
       });
 
-      // 4.0.1 Infallible Capture-Phase Accordion Toggle & 72px Height Enforcement for Category 16 Header
+      // 4.0.1 Infallible Capture-Phase Accordion Toggle for Category 16 Header
       var c16 = document.querySelector('#categoryModal [data-cat-id="c16"]');
       if (c16) {
         var c16Header = c16.querySelector(':scope > div:first-child');
@@ -506,23 +491,94 @@
         );
       });
 
-      // 4.2 Category 16-3 Dynamic Filters Resolution
-      URN_SELECTORS.forEach(function (def) {
-        try {
-          var nodes = document.querySelectorAll(def.selector);
-          nodes.forEach(function (node) {
-            var targetNode = node;
-            if (['INPUT', 'SELECT'].indexOf(node.tagName) !== -1 && node.parentElement) {
-              targetNode = node.parentElement;
+      // 4.2 Robust 16-3 Dynamic Filters Resolution
+      function resolve16_3Filters() {
+        // 1. Smart Omnibox
+        var omni = document.querySelector('#rm-search-locality, #smartOmniboxGroup, #smartOmnibox, input[placeholder*="लालपुर"], input[placeholder*="8340"], input[placeholder*="Lalpur"]');
+        if (omni) {
+          var omniTarget = omni.closest('.space-y-2, .mb-4, .form-group') || omni.parentElement;
+          if (omniTarget) {
+            omniTarget.setAttribute('data-sov-urn', 'rm:cat:16:sub:16-3:elem:smart_omnibox');
+            omniTarget.setAttribute('data-sov-label', 'स्मार्ट खोज');
+            registerMatch(omniTarget, 'rm:cat:16:sub:16-3:elem:smart_omnibox', 'स्मार्ट खोज');
+          }
+        }
+
+        // 2. State Filter
+        var stateSelect = document.querySelector('#rm-cat16-search-state, #stateFilterGroup, #stateFilter, select[id*="state"]');
+        if (!stateSelect) {
+          var allSelects = document.querySelectorAll('select');
+          allSelects.forEach(function (s) {
+            if (s.textContent.indexOf('राज्य') !== -1 || s.textContent.indexOf('State') !== -1 || s.textContent.indexOf('India') !== -1) {
+              stateSelect = s;
             }
-            if (!targetNode.hasAttribute('data-sov-urn')) {
-              targetNode.setAttribute('data-sov-urn', def.urn);
-              targetNode.setAttribute('data-sov-label', def.label);
-            }
-            registerMatch(targetNode, def.urn, def.label);
           });
-        } catch (_) {}
-      });
+        }
+        if (stateSelect) {
+          var stateTarget = stateSelect.closest('div') || stateSelect.parentElement;
+          if (stateTarget) {
+            stateTarget.setAttribute('data-sov-urn', 'rm:cat:16:sub:16-3:elem:state_filter');
+            stateTarget.setAttribute('data-sov-label', 'राज्य फ़िल्टर');
+            registerMatch(stateTarget, 'rm:cat:16:sub:16-3:elem:state_filter', 'राज्य फ़िल्टर');
+          }
+        }
+
+        // 3. District Filter
+        var distSelect = document.querySelector('#rm-cat16-search-district, #districtFilterGroup, #districtFilter, select[id*="district"]');
+        if (!distSelect) {
+          var allSelects2 = document.querySelectorAll('select');
+          allSelects2.forEach(function (s) {
+            if (s !== stateSelect && (s.textContent.indexOf('जिला') !== -1 || s.textContent.indexOf('District') !== -1)) {
+              distSelect = s;
+            }
+          });
+        }
+        if (distSelect) {
+          var distTarget = distSelect.closest('div') || distSelect.parentElement;
+          if (distTarget) {
+            distTarget.setAttribute('data-sov-urn', 'rm:cat:16:sub:16-3:elem:district_filter');
+            distTarget.setAttribute('data-sov-label', 'जिला फ़िल्टर');
+            registerMatch(distTarget, 'rm:cat:16:sub:16-3:elem:district_filter', 'जिला फ़िल्टर');
+          }
+        }
+
+        // 4. Budget Slider
+        var budget = document.querySelector('#rm-search-budget-slider, #budgetSliderGroup, input[type="range"], [id*="budget"]');
+        if (!budget) {
+          var allRanges = document.querySelectorAll('input[type="range"]');
+          if (allRanges.length > 0) budget = allRanges[0];
+        }
+        if (budget) {
+          var budgetTarget = budget.closest('.space-y-2, .mb-4') || budget.parentElement;
+          if (budgetTarget) {
+            budgetTarget.setAttribute('data-sov-urn', 'rm:cat:16:sub:16-3:elem:budget_slider');
+            budgetTarget.setAttribute('data-sov-label', 'बजट स्लाइडर');
+            registerMatch(budgetTarget, 'rm:cat:16:sub:16-3:elem:budget_slider', 'बजट स्लाइडर');
+          }
+        }
+
+        // 5. Submeter Checkbox
+        var submeter = document.querySelector('#rm-search-submeter, #submeterFilterGroup, input[type="checkbox"]');
+        if (!submeter) {
+          var labels = document.querySelectorAll('label, span, div');
+          labels.forEach(function (l) {
+            if (l.textContent.indexOf('सब-मीटर') !== -1 || l.textContent.indexOf('Sub-Meter') !== -1) {
+              var chk = l.querySelector('input[type="checkbox"]') || l.closest('div').querySelector('input[type="checkbox"]');
+              if (chk) submeter = chk;
+            }
+          });
+        }
+        if (submeter) {
+          var subTarget = submeter.closest('label, div') || submeter.parentElement;
+          if (subTarget) {
+            subTarget.setAttribute('data-sov-urn', 'rm:cat:16:sub:16-3:elem:submeter_checkbox');
+            subTarget.setAttribute('data-sov-label', 'सब-मीटर फ़िल्टर');
+            registerMatch(subTarget, 'rm:cat:16:sub:16-3:elem:submeter_checkbox', 'सब-मीटर फ़िल्टर');
+          }
+        }
+      }
+
+      resolve16_3Filters();
 
       // 4.3 Category 16 Sub-Services Resolution & Non-Blocking 1-Tap Wake-Up Binding
       var sub16Cards = document.querySelectorAll('#sub-c16 > div');
@@ -615,6 +671,7 @@
       matchedElements.forEach(function (item) {
         var isVis = getUrnVisibility(item.urn);
 
+        // Category 16 master alert only rolls up if a sub-service is hidden
         if (item.urn === 'rm:cat:16' && isAuth) {
           if (sub16HasHidden) {
             isVis = false;
@@ -626,8 +683,10 @@
         if (!isAuth) {
           if (!isVis) {
             item.el.classList.add('sivme-public-hidden');
+            item.el.style.setProperty('display', 'none', 'important');
           } else {
             item.el.classList.remove('sivme-public-hidden');
+            item.el.style.removeProperty('display');
           }
           var oldBadge = item.el.querySelector(':scope > .sivme-inline-badge');
           if (oldBadge) oldBadge.remove();
@@ -687,6 +746,7 @@
         setUrnVisibility(bUrn, newTargetVis, bLabel);
       }
 
+      // Synchronize Surface-B storage bridge
       try {
         var match = bUrn.match(/^rm:cat:([0-9]{2})$/);
         if (match) {
@@ -717,9 +777,9 @@
       badge = document.createElement('div');
       parentEl.appendChild(badge);
 
-      if (urn.indexOf('sub:') === -1) {
-        badge.addEventListener('click', executeToggle);
+      badge.addEventListener('click', executeToggle);
 
+      if (urn.indexOf('sub:') === -1 && urn.indexOf('elem:') === -1) {
         function handleCardWakeUp(e) {
           if (!parentEl.classList.contains('sivme-ghost-dormant')) return;
           if (e.target.closest('.sivme-inline-badge')) return;
@@ -817,7 +877,7 @@
     if (auditTimer) clearTimeout(auditTimer);
     auditTimer = setTimeout(function () {
       applyInSituAudit();
-    }, 60);
+    }, 50);
   }
 
   // 7. OBSERVER & INITIALIZATION
@@ -825,6 +885,12 @@
     enforceZELTemplateRendering();
     injectStyles();
     applyInSituAudit();
+
+    // Re-audit on any tap to catch dynamic modals immediately
+    document.addEventListener('click', function () {
+      setTimeout(applyInSituAudit, 60);
+      setTimeout(applyInSituAudit, 300);
+    }, true);
 
     window.addEventListener('rm:sov:visibility-changed', function () {
       applyInSituAudit();
@@ -854,9 +920,12 @@
       }
     });
 
+    // Observe both DOM structure and modal style/class visibility changes
     observer.observe(document.body, {
       childList: true,
-      subtree: true
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'style', 'hidden']
     });
   }
 
