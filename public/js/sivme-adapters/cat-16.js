@@ -1,8 +1,8 @@
 /**
  * RISE MITRA — SIVME CATEGORY 16 ADAPTER
- * TARGET: Category 16 Accordion, 16-1, 16-2, 16-3 Sub-Cards & Transition Bridge
+ * TARGET: Category 16 Accordion, 16-1, 16-2, 16-3 Sub-Cards & Seamless Opener
  * GOVERNANCE: GATE-23.5 | ZEL SPECIFICATION
- * DUAL-FOLDER REFS: Folder A (SSOT) / Folder B (Mirror)
+ * DUAL-FOLDER REFS: Folder A (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) / Folder B (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
  */
 
 (function () {
@@ -10,27 +10,9 @@
 
   var lastAccordionToggleTime = 0;
   var lastUrnActionTimes = {};
-  var lastModalActionTime = 0;
 
   function getCore() {
     return window.RM_SIVME || null;
-  }
-
-  function get16_3ModalContainer() {
-    var omni = document.querySelector('#rm-search-locality, input[placeholder*="लालपुर"], input[placeholder*="8340"], input[placeholder*="Lalpur"]');
-    if (omni) {
-      var curr = omni;
-      while (curr && curr !== document.body) {
-        if (curr.id && (curr.id.toLowerCase().indexOf('modal') !== -1 || curr.id.toLowerCase().indexOf('search') !== -1 || curr.id.indexOf('16') !== -1)) {
-          return curr;
-        }
-        if (curr.classList.contains('fixed') || curr.classList.contains('absolute')) {
-          return curr;
-        }
-        curr = curr.parentElement;
-      }
-    }
-    return document.querySelector('#rentalSearchModal, #rentalModal, #modal16_3, #modal-16-3, #cat16SearchModal, #rm-cat16-search-modal');
   }
 
   function auditCategory16() {
@@ -72,7 +54,7 @@
       }
     }
 
-    // 2. Sub-Services 16-1, 16-2, 16-3 Resolution & Opener
+    // 2. Sub-Services 16-1, 16-2, 16-3 Resolution & Pure Pass-Through Opener
     var sub16Cards = document.querySelectorAll('#sub-c16 > div');
     sub16Cards.forEach(function (subCard, idx) {
       var subUrn = 'rm:cat:16:sub:16-' + (idx + 1);
@@ -136,61 +118,15 @@
             return;
           }
 
-          if (subUrn === 'rm:cat:16:sub:16-3') {
-            var nowModal = Date.now();
-            if (nowModal - lastModalActionTime < 400) return;
-            lastModalActionTime = nowModal;
-
-            var innerBtn = subCard.querySelector('button, a, [onclick]');
-            if (innerBtn && e.target !== innerBtn && !innerBtn.contains(e.target)) {
-              if (typeof innerBtn.onclick === 'function') {
-                try { innerBtn.onclick.call(innerBtn, e); } catch (_) {}
-              }
-            }
-
-            setTimeout(function () {
-              var m16 = get16_3ModalContainer();
-              var cModal = document.getElementById('categoryModal');
-              if (m16) {
-                var isAlreadyVis = (m16.style.display === 'block') || (!m16.classList.contains('hidden') && m16.offsetHeight > 0);
-                if (!isAlreadyVis) {
-                  if (cModal) {
-                    cModal.style.setProperty('display', 'none', 'important');
-                    cModal.classList.add('hidden');
-                  }
-                  m16.classList.remove('hidden');
-                  m16.style.setProperty('display', 'block', 'important');
-                  m16.style.setProperty('z-index', '999999', 'important');
-                }
-              }
-              setTimeout(core.applyInSituAudit, 60);
-            }, 40);
+          // Delegate to Native Open Action without closing catalog
+          var openTrigger = subCard.querySelector('button, a, [onclick]');
+          if (openTrigger && e.target !== openTrigger && !openTrigger.contains(e.target)) {
+            openTrigger.click();
           }
+          setTimeout(core.applyInSituAudit, 100);
         }, false);
       }
     });
-
-    // 3. Back Button Bridge inside 16-3 Modal
-    var m16Modal = get16_3ModalContainer();
-    if (m16Modal) {
-      var backBtns = m16Modal.querySelectorAll('button, a, span');
-      backBtns.forEach(function (btn) {
-        var bText = (btn.textContent || '').trim();
-        if ((bText === 'वापस' || bText.indexOf('वापस') !== -1 || bText === '‹') && btn.getAttribute('data-sivme-back-bound') !== 'true') {
-          btn.setAttribute('data-sivme-back-bound', 'true');
-          btn.addEventListener('click', function () {
-            var cModal = document.getElementById('categoryModal');
-            if (cModal) {
-              cModal.classList.remove('hidden');
-              cModal.style.setProperty('display', 'block', 'important');
-            }
-            m16Modal.style.setProperty('display', 'none', 'important');
-            m16Modal.classList.add('hidden');
-            setTimeout(core.applyInSituAudit, 80);
-          });
-        }
-      });
-    }
   }
 
   function register() {
