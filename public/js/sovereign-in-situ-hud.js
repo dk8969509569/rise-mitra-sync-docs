@@ -225,7 +225,7 @@
         overflow: visible !important;
       }
 
-      /* CRITICAL: Category 16 Header MUST ALWAYS have active pointer-events */
+      /* Category 16 Header Cursor */
       #categoryModal [data-cat-id="c16"] > div:first-child,
       #categoryModal [data-cat-id="c16"] > div:first-child * {
         pointer-events: auto !important;
@@ -296,6 +296,7 @@
         overflow: visible !important;
         box-sizing: border-box !important;
         pointer-events: auto !important;
+        cursor: pointer !important;
       }
       #sub-c16 > div .sivme-inline-badge {
         top: -9px !important;
@@ -375,7 +376,6 @@
         if (c16Header.getAttribute('data-sivme-toggle-bound') !== 'true') {
           c16Header.setAttribute('data-sivme-toggle-bound', 'true');
           function handleAccordionToggle(e) {
-            // Never trigger accordion if clicking Category 16 badge
             if (e.target.closest('.sivme-inline-badge')) return;
             if (e.cancelable) e.preventDefault();
             e.stopPropagation();
@@ -482,8 +482,7 @@
       matchedElements.forEach(function (item) {
         var isVis = registryEngine ? registryEngine.isVisible(item.urn) : true;
 
-        // UPWARD ROLLUP LOGIC: If any sub-service inside Category 16 is hidden,
-        // Category 16 itself displays as Hidden in Admin Mode to prevent missed hidden items!
+        // UPWARD ROLLUP ALERT
         if (item.urn === 'rm:cat:16' && isAuth) {
           if (sub16HasHidden) {
             isVis = false;
@@ -528,7 +527,7 @@
     }
   }
 
-  // 5. MOUNT INLINE TOGGLE BADGE & FULL-CARD WAKE-UP
+  // 5. MOUNT INLINE TOGGLE BADGE & 1-TAP WAKE-UP
   function mountInlineBadge(parentEl, urn, isVisible, label) {
     var badge = parentEl.querySelector(':scope > .sivme-inline-badge');
     var targetClass = isVisible ? 'sivme-inline-badge sivme-badge-live' : 'sivme-inline-badge sivme-badge-dormant';
@@ -540,7 +539,7 @@
       if (e.stopImmediatePropagation) e.stopImmediatePropagation();
 
       var now = Date.now();
-      if (now - lastActionTime < 240) return;
+      if (now - lastActionTime < 450) return;
       lastActionTime = now;
 
       var bUrn = badge ? badge.getAttribute('data-badge-urn') : urn;
@@ -550,7 +549,7 @@
       if (window.RM_SovereignRegistry) {
         var newTargetVis = !bVis;
 
-        // If toggling Category 16 master badge, cascade to all sub-services
+        // Category 16 master badge cascade
         if (bUrn === 'rm:cat:16') {
           window.RM_SovereignRegistry.toggleVisibility('rm:cat:16', newTargetVis, bLabel);
           for (var sIdx = 1; sIdx <= 3; sIdx++) {
@@ -595,15 +594,16 @@
       badge.addEventListener('pointerup', executeToggle);
       badge.addEventListener('click', executeToggle);
 
-      // Card wake-up listener (Strictly isolated from Category 16 header and accordion)
+      // Card 1-Tap Wake-Up Handler
       function handleCardWakeUp(e) {
         if (!parentEl.classList.contains('sivme-ghost-dormant')) return;
         if (e.target.closest('.sivme-inline-badge')) return;
 
-        // CRITICAL: Category 16 parent container must NEVER wake up via click
-        // Accordion header clicks are strictly for opening/closing, and sub-cards have their own handlers!
+        // Category 16 main container doesn't wake on body click (only badge or accordion header toggle)
         if (urn === 'rm:cat:16') return;
-        if (e.target.closest('#sub-c16') || e.target.closest('[data-sivme-c16-head]')) return;
+
+        // Do not trigger wake-up if clicking an interactive link or button
+        if (e.target.closest('button') || e.target.closest('a')) return;
 
         executeToggle(e);
       }
