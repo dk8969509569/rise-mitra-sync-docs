@@ -1,9 +1,9 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Event-Isolated Accordion & 1-Tap Sub-Toggle)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Pass-Through Native Openers & 1-Tap Wake-Up)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
- * GOVERNANCE    : GATE-23.4 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
- * REPO TARGET   : public/js/sovereign-in-situ-hud.js
+ * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
+ * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
  * DUAL-FOLDER REFERENCES:
  *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
  *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
@@ -17,6 +17,8 @@
   var isAuditing = false;
   var auditTimer = null;
   var lastActionTime = 0;
+  var lastUrnActionTimes = {};
+  var lastAccordionToggleTime = 0;
 
   // 1. ZEL TEMPLATE SHIELD: Ensure legacy modules always render complete DOM
   function enforceZELTemplateRendering() {
@@ -71,6 +73,45 @@
     }
   }
 
+  // Robust Direct Registry Access (Infallible Fallback)
+  function getRegistry() {
+    try {
+      var raw = localStorage.getItem(REGISTRY_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : { activeMode: 'in_situ_console', items: {} };
+    } catch (_) {
+      return { activeMode: 'in_situ_console', items: {} };
+    }
+  }
+
+  function getUrnVisibility(urn) {
+    if (window.RM_SovereignRegistry && typeof window.RM_SovereignRegistry.isVisible === 'function') {
+      return window.RM_SovereignRegistry.isVisible(urn);
+    }
+    var reg = getRegistry();
+    if (reg && reg.items && reg.items[urn] !== undefined) {
+      return reg.items[urn].visible !== false;
+    }
+    return true;
+  }
+
+  function setUrnVisibility(urn, nextVis, label) {
+    if (window.RM_SovereignRegistry && typeof window.RM_SovereignRegistry.toggleVisibility === 'function') {
+      try {
+        window.RM_SovereignRegistry.toggleVisibility(urn, nextVis, label);
+      } catch (_) {}
+    }
+    try {
+      var reg = getRegistry();
+      if (!reg.items) reg.items = {};
+      reg.items[urn] = {
+        visible: nextVis,
+        label: label,
+        updatedAt: Date.now()
+      };
+      localStorage.setItem(REGISTRY_STORAGE_KEY, JSON.stringify(reg));
+    } catch (_) {}
+  }
+
   // Element URN Selectors Map for Category 16 & Dynamic Nodes
   var URN_SELECTORS = [
     {
@@ -100,7 +141,7 @@
     }
   ];
 
-  // 3. INJECT SIVME STYLES (Interactive Accordion, Header Buffers & Anti-Squish)
+  // 3. INJECT SIVME STYLES (Strict 72px Uniform Geometry & 22px Top Padding)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -127,12 +168,22 @@
         ) !important;
         cursor: pointer !important;
       }
-      /* Protect Category 16 header and sub-cards from losing pointer-events */
-      .sivme-ghost-dormant > *:not(.sivme-inline-badge):not(#sub-c16):not([data-sivme-c16-head]) {
+
+      /* Single Category Dormant Rows Pointer Lock (Cat 16 and Sub-cards completely unlocked) */
+      #categoryModal [data-cat-id]:not([data-cat-id="c16"]).sivme-ghost-dormant > *:not(.sivme-inline-badge) {
         opacity: 0.55 !important;
         filter: grayscale(50%) !important;
         pointer-events: none !important;
       }
+
+      /* Category 16 Accordion & All Sub-cards MUST ALWAYS have active touch pointers */
+      #categoryModal [data-cat-id="c16"],
+      #categoryModal [data-cat-id="c16"] *,
+      #sub-c16,
+      #sub-c16 * {
+        pointer-events: auto !important;
+      }
+
       .sivme-public-hidden {
         display: none !important;
       }
@@ -169,10 +220,10 @@
       .sivme-inline-badge::before {
         content: '';
         position: absolute;
-        top: -6px;
-        bottom: -6px;
-        left: -8px;
-        right: -8px;
+        top: -8px;
+        bottom: -8px;
+        left: -10px;
+        right: -10px;
         z-index: 1;
       }
       .sivme-inline-badge * {
@@ -183,7 +234,7 @@
         transform: scale(0.92) !important;
       }
 
-      /* SECTION HEADERS CLEARANCE ('आजीविका' & 'खेल व मनोरंजन') */
+      /* SECTION HEADERS CLEARANCE */
       .sivme-catalog-section-header {
         margin-top: 28px !important;
         margin-bottom: 24px !important;
@@ -196,10 +247,11 @@
         margin-bottom: 24px !important;
       }
 
-      /* UNIFORM 72px CARD HEIGHT ACROSS ALL 33 CATEGORIES + CATEGORY 16 HEADER */
+      /* UNIFORM 72px CARD HEIGHT & CHAUDI PATTI ACROSS ALL 33 CATEGORIES + CATEGORY 16 HEADER */
       #categoryModal [data-cat-id]:not([data-cat-id="c16"]),
       #categoryModal [data-cat-id="c16"] > div:first-child {
         min-height: 72px !important;
+        height: 72px !important;
         padding: 22px 14px 14px 14px !important;
         border-radius: 14px !important;
         position: relative !important;
@@ -208,6 +260,7 @@
         justify-content: space-between !important;
         box-sizing: border-box !important;
         overflow: visible !important;
+        width: 100% !important;
       }
 
       #categoryModal [data-cat-id]:not([data-cat-id="c16"]) {
@@ -225,14 +278,11 @@
         overflow: visible !important;
       }
 
-      /* Category 16 Header Cursor */
-      #categoryModal [data-cat-id="c16"] > div:first-child,
-      #categoryModal [data-cat-id="c16"] > div:first-child * {
-        pointer-events: auto !important;
+      #categoryModal [data-cat-id="c16"] > div:first-child {
         cursor: pointer !important;
+        user-select: none !important;
       }
 
-      /* Category 16 Drop-down Collapse/Expand Rules */
       #sub-c16 {
         width: 100% !important;
         margin-top: 14px !important;
@@ -248,7 +298,6 @@
         display: block !important;
       }
 
-      /* Category Title Text Safe Container */
       #categoryModal [data-cat-id] > div:first-child > div:first-child,
       #categoryModal [data-cat-id]:not([data-cat-id="c16"]) > div:first-child {
         min-width: 0 !important;
@@ -256,7 +305,6 @@
         padding-right: 12px !important;
       }
 
-      /* Font-Safe Typography */
       #categoryModal [data-cat-id] .text-xs,
       #categoryModal [data-cat-id] .font-bold,
       #categoryModal [data-cat-id] span,
@@ -266,7 +314,6 @@
         overflow: visible !important;
       }
 
-      /* Anti-Wrapping Lock for Action Buttons */
       #categoryModal [data-cat-id] button,
       #categoryModal [data-cat-id] a,
       #categoryModal [data-cat-id] .text-cyan-400,
@@ -304,7 +351,6 @@
         right: auto !important;
       }
 
-      /* Top & Bottom Scroll Buffers */
       #categoryModal .overflow-y-auto,
       #categoryModal > div > div:last-child {
         padding-top: 20px !important;
@@ -356,7 +402,6 @@
     try {
       enforceZELTemplateRendering();
       var isAuth = isConsoleAuthorized();
-      var registryEngine = window.RM_SovereignRegistry;
 
       // 4.0 Section Headers Buffer Enforcement
       var modalElements = document.querySelectorAll('#categoryModal button, #categoryModal [onclick], #categoryModal .cursor-pointer, #categoryModal div');
@@ -369,34 +414,59 @@
         }
       });
 
-      // 4.0.1 Dedicated Accordion Click Binder for Category 16 Header
-      var c16Header = document.querySelector('#categoryModal [data-cat-id="c16"] > div:first-child');
-      if (c16Header) {
-        c16Header.setAttribute('data-sivme-c16-head', 'true');
-        if (c16Header.getAttribute('data-sivme-toggle-bound') !== 'true') {
-          c16Header.setAttribute('data-sivme-toggle-bound', 'true');
-          function handleAccordionToggle(e) {
-            if (e.target.closest('.sivme-inline-badge')) return;
-            if (e.cancelable) e.preventDefault();
-            e.stopPropagation();
+      // 4.0.1 Infallible Capture-Phase Accordion Toggle & 72px Height Enforcement for Category 16 Header
+      var c16 = document.querySelector('#categoryModal [data-cat-id="c16"]');
+      if (c16) {
+        var c16Header = c16.querySelector(':scope > div:first-child');
+        if (c16Header) {
+          // Direct Geometry Enforcement for Chaudi Patti
+          c16Header.style.setProperty('min-height', '72px', 'important');
+          c16Header.style.setProperty('height', '72px', 'important');
+          c16Header.style.setProperty('padding', '22px 14px 14px 14px', 'important');
+          c16Header.style.setProperty('display', 'flex', 'important');
+          c16Header.style.setProperty('align-items', 'center', 'important');
+          c16Header.style.setProperty('justify-content', 'space-between', 'important');
+          c16Header.style.setProperty('box-sizing', 'border-box', 'important');
+          c16Header.style.setProperty('width', '100%', 'important');
 
-            var sub = document.getElementById('sub-c16');
-            if (!sub) return;
+          if (c16Header.getAttribute('data-sivme-toggle-bound') !== 'true') {
+            c16Header.setAttribute('data-sivme-toggle-bound', 'true');
+            c16Header.setAttribute('data-sivme-c16-head', 'true');
 
-            var isCollapsed = sub.classList.contains('hidden') || sub.classList.contains('sivme-collapsed') || sub.style.display === 'none';
-            if (isCollapsed) {
-              sub.classList.remove('hidden', 'sivme-collapsed');
-              sub.style.removeProperty('display');
-              var chevronOpen = document.getElementById('chevron-c16');
-              if (chevronOpen) chevronOpen.style.transform = 'rotate(180deg)';
-            } else {
-              sub.classList.add('hidden', 'sivme-collapsed');
-              var chevronClose = document.getElementById('chevron-c16');
-              if (chevronClose) chevronClose.style.transform = 'rotate(0deg)';
+            function doAccordionToggle(e) {
+              // Do not toggle accordion if clicking the Live/Hidden badge
+              if (e.target.closest('.sivme-inline-badge')) return;
+
+              if (e.cancelable) e.preventDefault();
+              e.stopPropagation();
+
+              var now = Date.now();
+              if (now - lastAccordionToggleTime < 350) return;
+              lastAccordionToggleTime = now;
+
+              var sub = document.getElementById('sub-c16');
+              if (!sub) return;
+
+              // Computed layout visibility check
+              var isCurrentlyVisible = (sub.offsetHeight > 0) && (window.getComputedStyle(sub).display !== 'none') && !sub.classList.contains('sivme-collapsed');
+              var chevron = document.getElementById('chevron-c16') || c16Header.querySelector('svg, [id*="chevron"]');
+
+              if (isCurrentlyVisible) {
+                // Collapse Accordion
+                sub.style.setProperty('display', 'none', 'important');
+                sub.classList.add('hidden', 'sivme-collapsed');
+                if (chevron) chevron.style.transform = 'rotate(0deg)';
+              } else {
+                // Expand Accordion
+                sub.style.setProperty('display', 'block', 'important');
+                sub.classList.remove('hidden', 'sivme-collapsed');
+                if (chevron) chevron.style.transform = 'rotate(180deg)';
+              }
             }
+
+            // Bound in capture phase to reliably intercept taps on header or button
+            c16Header.addEventListener('click', doAccordionToggle, true);
           }
-          c16Header.addEventListener('pointerup', handleAccordionToggle);
-          c16Header.addEventListener('click', handleAccordionToggle);
         }
       }
 
@@ -437,7 +507,7 @@
         } catch (_) {}
       });
 
-      // 4.3 Category 16 Sub-Services Resolution & Rollup Check
+      // 4.3 Category 16 Sub-Services Resolution & Non-Blocking 1-Tap Wake-Up Binding
       var sub16Cards = document.querySelectorAll('#sub-c16 > div');
       var sub16HasHidden = false;
       sub16Cards.forEach(function (subCard, idx) {
@@ -451,8 +521,60 @@
         }
         registerMatch(subCard, subUrn, subLabel);
 
-        if (registryEngine && !registryEngine.isVisible(subUrn)) {
+        var subIsVis = getUrnVisibility(subUrn);
+        if (!subIsVis) {
           sub16HasHidden = true;
+        }
+
+        // Dedicated Handler: ONLY blocks click if card is Dormant (wake-up) OR badge is tapped
+        if (subCard.getAttribute('data-sivme-sub-bound') !== 'true') {
+          subCard.setAttribute('data-sivme-sub-bound', 'true');
+          function handleSubCardTap(e) {
+            if (!isConsoleAuthorized()) return;
+
+            var isDormant = subCard.classList.contains('sivme-ghost-dormant');
+            var isBadgeClick = !!e.target.closest('.sivme-inline-badge');
+
+            // CRITICAL FIX: Only intercept if the card is dormant (waking up) or user tapped the badge!
+            // When Live and user clicks "खोलें", event passes through natively!
+            if (isDormant || isBadgeClick) {
+              if (e.cancelable) e.preventDefault();
+              e.stopPropagation();
+
+              var now = Date.now();
+              if (now - (lastUrnActionTimes[subUrn] || 0) < 550) return;
+              lastUrnActionTimes[subUrn] = now;
+
+              var curVis = getUrnVisibility(subUrn);
+              var targetVis = isDormant ? true : !curVis;
+
+              // Set sub-category visibility in registry + localStorage
+              setUrnVisibility(subUrn, targetVis, subLabel);
+
+              // Auto-wake Category 16 parent if a child is activated
+              if (targetVis) {
+                setUrnVisibility('rm:cat:16', true, 'घर व मकान');
+              }
+
+              // Instant 0ms Visual UI Swap on device
+              if (targetVis) {
+                subCard.classList.remove('sivme-ghost-dormant');
+              } else {
+                subCard.classList.add('sivme-ghost-dormant');
+              }
+              var subBadge = subCard.querySelector(':scope > .sivme-inline-badge');
+              if (subBadge) {
+                subBadge.className = targetVis ? 'sivme-inline-badge sivme-badge-live' : 'sivme-inline-badge sivme-badge-dormant';
+                subBadge.innerHTML = targetVis ? '<span>👁️</span><span>Live</span>' : '<span>🚫</span><span>Hidden</span>';
+                subBadge.setAttribute('data-badge-vis', String(targetVis));
+              }
+
+              enforceZELTemplateRendering();
+              setTimeout(applyInSituAudit, 50);
+            }
+          }
+
+          subCard.addEventListener('click', handleSubCardTap, true);
         }
       });
 
@@ -480,9 +602,9 @@
       var totalHidden = 0;
 
       matchedElements.forEach(function (item) {
-        var isVis = registryEngine ? registryEngine.isVisible(item.urn) : true;
+        var isVis = getUrnVisibility(item.urn);
 
-        // UPWARD ROLLUP ALERT
+        // UPWARD ROLLUP ALERT: Category 16 shows Hidden alert if any sub-service is hidden
         if (item.urn === 'rm:cat:16' && isAuth) {
           if (sub16HasHidden) {
             isVis = false;
@@ -527,7 +649,7 @@
     }
   }
 
-  // 5. MOUNT INLINE TOGGLE BADGE & 1-TAP WAKE-UP
+  // 5. MOUNT INLINE TOGGLE BADGE & FULL-CARD WAKE-UP
   function mountInlineBadge(parentEl, urn, isVisible, label) {
     var badge = parentEl.querySelector(':scope > .sivme-inline-badge');
     var targetClass = isVisible ? 'sivme-inline-badge sivme-badge-live' : 'sivme-inline-badge sivme-badge-dormant';
@@ -536,80 +658,72 @@
     function executeToggle(e) {
       if (e.cancelable) e.preventDefault();
       e.stopPropagation();
-      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
 
       var now = Date.now();
-      if (now - lastActionTime < 450) return;
-      lastActionTime = now;
+      if (now - (lastUrnActionTimes[urn] || 0) < 550) return;
+      lastUrnActionTimes[urn] = now;
 
       var bUrn = badge ? badge.getAttribute('data-badge-urn') : urn;
       var bVis = badge ? (badge.getAttribute('data-badge-vis') === 'true') : isVisible;
       var bLabel = badge ? (badge.getAttribute('data-badge-label') || label) : label;
+      var newTargetVis = !bVis;
 
-      if (window.RM_SovereignRegistry) {
-        var newTargetVis = !bVis;
-
-        // Category 16 master badge cascade
-        if (bUrn === 'rm:cat:16') {
-          window.RM_SovereignRegistry.toggleVisibility('rm:cat:16', newTargetVis, bLabel);
-          for (var sIdx = 1; sIdx <= 3; sIdx++) {
-            window.RM_SovereignRegistry.toggleVisibility('rm:cat:16:sub:16-' + sIdx, newTargetVis, '16-' + sIdx + ' सेवा');
-          }
-        } else {
-          window.RM_SovereignRegistry.toggleVisibility(bUrn, newTargetVis, bLabel);
+      // Category 16 master badge cascade
+      if (bUrn === 'rm:cat:16') {
+        setUrnVisibility('rm:cat:16', newTargetVis, bLabel);
+        for (var sIdx = 1; sIdx <= 3; sIdx++) {
+          setUrnVisibility('rm:cat:16:sub:16-' + sIdx, newTargetVis, '16-' + sIdx + ' सेवा');
         }
-
-        // Surface-B Category Synchronization Bridge
-        try {
-          var match = bUrn.match(/^rm:cat:([0-9]{2})$/);
-          if (match) {
-            var catNum = match[1];
-            var rawActive = localStorage.getItem('rm_active_categories_v1');
-            var activeArr = rawActive ? JSON.parse(rawActive) : [];
-            var id1 = 'c' + catNum;
-            var id2 = 'g' + catNum;
-            var id3 = catNum;
-            if (!bVis) {
-              if (activeArr.indexOf(id1) === -1) activeArr.push(id1);
-              if (activeArr.indexOf(id2) === -1) activeArr.push(id2);
-              if (activeArr.indexOf(id3) === -1) activeArr.push(id3);
-            } else {
-              activeArr = activeArr.filter(function (x) {
-                return x !== id1 && x !== id2 && x !== id3;
-              });
-            }
-            localStorage.setItem('rm_active_categories_v1', JSON.stringify(activeArr));
-          }
-        } catch (_) {}
-
-        enforceZELTemplateRendering();
-        applyInSituAudit();
+      } else {
+        setUrnVisibility(bUrn, newTargetVis, bLabel);
       }
+
+      // Surface-B Category Synchronization Bridge
+      try {
+        var match = bUrn.match(/^rm:cat:([0-9]{2})$/);
+        if (match) {
+          var catNum = match[1];
+          var rawActive = localStorage.getItem('rm_active_categories_v1');
+          var activeArr = rawActive ? JSON.parse(rawActive) : [];
+          var id1 = 'c' + catNum;
+          var id2 = 'g' + catNum;
+          var id3 = catNum;
+          if (!bVis) {
+            if (activeArr.indexOf(id1) === -1) activeArr.push(id1);
+            if (activeArr.indexOf(id2) === -1) activeArr.push(id2);
+            if (activeArr.indexOf(id3) === -1) activeArr.push(id3);
+          } else {
+            activeArr = activeArr.filter(function (x) {
+              return x !== id1 && x !== id2 && x !== id3;
+            });
+          }
+          localStorage.setItem('rm_active_categories_v1', JSON.stringify(activeArr));
+        }
+      } catch (_) {}
+
+      enforceZELTemplateRendering();
+      applyInSituAudit();
     }
 
     if (!badge) {
       badge = document.createElement('div');
       parentEl.appendChild(badge);
 
-      badge.addEventListener('pointerup', executeToggle);
-      badge.addEventListener('click', executeToggle);
+      // Sub-cards use their direct handler to avoid double-toggle
+      if (urn.indexOf('sub:') === -1) {
+        badge.addEventListener('click', executeToggle);
 
-      // Card 1-Tap Wake-Up Handler
-      function handleCardWakeUp(e) {
-        if (!parentEl.classList.contains('sivme-ghost-dormant')) return;
-        if (e.target.closest('.sivme-inline-badge')) return;
+        function handleCardWakeUp(e) {
+          if (!parentEl.classList.contains('sivme-ghost-dormant')) return;
+          if (e.target.closest('.sivme-inline-badge')) return;
+          if (urn === 'rm:cat:16') return;
+          if (e.target.closest('button') || e.target.closest('a')) return;
 
-        // Category 16 main container doesn't wake on body click (only badge or accordion header toggle)
-        if (urn === 'rm:cat:16') return;
+          executeToggle(e);
+        }
 
-        // Do not trigger wake-up if clicking an interactive link or button
-        if (e.target.closest('button') || e.target.closest('a')) return;
-
-        executeToggle(e);
+        parentEl.addEventListener('click', handleCardWakeUp);
       }
-
-      parentEl.addEventListener('pointerup', handleCardWakeUp);
-      parentEl.addEventListener('click', handleCardWakeUp);
     }
 
     badge.className = targetClass;
@@ -620,7 +734,7 @@
     badge.title = label + (isVisible ? ' छुपाने के लिए टैप करें (Hide)' : ' लाइव दिखाने के लिए टैप करें (Show)');
   }
 
-  // 6. FLOATING HUD DOCK (With Absolute Clean-Exit Protocol)
+  // 6. FLOATING HUD DOCK
   function updateFloatingDock(isAuth, hiddenCount, trackedCount) {
     var existingDock = document.getElementById('sivmeFloatingDock');
 
@@ -682,7 +796,6 @@
           window.location.replace(cleanTargetUrl);
         }
 
-        exitBtn.addEventListener('pointerup', handleCleanExit);
         exitBtn.addEventListener('click', handleCleanExit);
       }
     } else {
