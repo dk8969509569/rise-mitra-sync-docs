@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Pass-Through Native Openers & 1-Tap Wake-Up)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (2.5D Tactile Elevation, Uniform Geometry & Non-Blocking Opener)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -141,7 +141,7 @@
     }
   ];
 
-  // 3. INJECT SIVME STYLES (Strict 72px Uniform Geometry & 22px Top Padding)
+  // 3. INJECT SIVME STYLES (2.5D Tactile Elevation, Top Rim-Light & Uniform 72px Geometry)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -166,6 +166,7 @@
           transparent 10px,
           transparent 20px
         ) !important;
+        box-shadow: none !important;
         cursor: pointer !important;
       }
 
@@ -234,12 +235,13 @@
         transform: scale(0.92) !important;
       }
 
-      /* SECTION HEADERS CLEARANCE */
+      /* SECTION HEADERS CLEARANCE & 2.5D RECESSED PILL */
       .sivme-catalog-section-header {
         margin-top: 28px !important;
         margin-bottom: 24px !important;
         position: relative !important;
         z-index: 10 !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
       }
       #categoryModal > div > div > button:first-of-type,
       #categoryModal .sivme-first-header {
@@ -247,7 +249,7 @@
         margin-bottom: 24px !important;
       }
 
-      /* UNIFORM 72px CARD HEIGHT & CHAUDI PATTI ACROSS ALL 33 CATEGORIES + CATEGORY 16 HEADER */
+      /* 2.5D TACTILE ELEVATION & UNIFORM 72px GEOMETRY ACROSS ALL 33 CATEGORIES + CATEGORY 16 HEADER */
       #categoryModal [data-cat-id]:not([data-cat-id="c16"]),
       #categoryModal [data-cat-id="c16"] > div:first-child {
         min-height: 72px !important;
@@ -261,6 +263,18 @@
         box-sizing: border-box !important;
         overflow: visible !important;
         width: 100% !important;
+        background: linear-gradient(180deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.98) 100%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.22) !important;
+        box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.75), 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+        transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.12s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      }
+
+      /* 2.5D TACTILE PRESSED EFFECT */
+      #categoryModal [data-cat-id]:not([data-cat-id="c16"]):active,
+      #categoryModal [data-cat-id="c16"] > div:first-child:active {
+        transform: translateY(1.5px) !important;
+        box-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.85), inset 0 2px 4px rgba(0, 0, 0, 0.5) !important;
       }
 
       #categoryModal [data-cat-id]:not([data-cat-id="c16"]) {
@@ -330,7 +344,7 @@
         gap: 3px !important;
       }
 
-      /* Category 16 Sub-Services: 60px height, 18px top padding, 14px gap */
+      /* 2.5D TACTILE SUB-SERVICES (Category 16) */
       #sub-c16 > div {
         min-height: 60px !important;
         padding: 18px 14px 12px 14px !important;
@@ -344,6 +358,15 @@
         box-sizing: border-box !important;
         pointer-events: auto !important;
         cursor: pointer !important;
+        background: linear-gradient(180deg, rgba(24, 33, 47, 0.85) 0%, rgba(11, 17, 30, 0.95) 100%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.06) !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.16) !important;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+        transition: transform 0.12s ease, box-shadow 0.12s ease !important;
+      }
+      #sub-c16 > div:active {
+        transform: translateY(1.5px) !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.75), inset 0 2px 3px rgba(0, 0, 0, 0.45) !important;
       }
       #sub-c16 > div .sivme-inline-badge {
         top: -9px !important;
@@ -419,7 +442,6 @@
       if (c16) {
         var c16Header = c16.querySelector(':scope > div:first-child');
         if (c16Header) {
-          // Direct Geometry Enforcement for Chaudi Patti
           c16Header.style.setProperty('min-height', '72px', 'important');
           c16Header.style.setProperty('height', '72px', 'important');
           c16Header.style.setProperty('padding', '22px 14px 14px 14px', 'important');
@@ -434,7 +456,6 @@
             c16Header.setAttribute('data-sivme-c16-head', 'true');
 
             function doAccordionToggle(e) {
-              // Do not toggle accordion if clicking the Live/Hidden badge
               if (e.target.closest('.sivme-inline-badge')) return;
 
               if (e.cancelable) e.preventDefault();
@@ -447,24 +468,20 @@
               var sub = document.getElementById('sub-c16');
               if (!sub) return;
 
-              // Computed layout visibility check
               var isCurrentlyVisible = (sub.offsetHeight > 0) && (window.getComputedStyle(sub).display !== 'none') && !sub.classList.contains('sivme-collapsed');
               var chevron = document.getElementById('chevron-c16') || c16Header.querySelector('svg, [id*="chevron"]');
 
               if (isCurrentlyVisible) {
-                // Collapse Accordion
                 sub.style.setProperty('display', 'none', 'important');
                 sub.classList.add('hidden', 'sivme-collapsed');
                 if (chevron) chevron.style.transform = 'rotate(0deg)';
               } else {
-                // Expand Accordion
                 sub.style.setProperty('display', 'block', 'important');
                 sub.classList.remove('hidden', 'sivme-collapsed');
                 if (chevron) chevron.style.transform = 'rotate(180deg)';
               }
             }
 
-            // Bound in capture phase to reliably intercept taps on header or button
             c16Header.addEventListener('click', doAccordionToggle, true);
           }
         }
@@ -526,7 +543,6 @@
           sub16HasHidden = true;
         }
 
-        // Dedicated Handler: ONLY blocks click if card is Dormant (wake-up) OR badge is tapped
         if (subCard.getAttribute('data-sivme-sub-bound') !== 'true') {
           subCard.setAttribute('data-sivme-sub-bound', 'true');
           function handleSubCardTap(e) {
@@ -535,8 +551,6 @@
             var isDormant = subCard.classList.contains('sivme-ghost-dormant');
             var isBadgeClick = !!e.target.closest('.sivme-inline-badge');
 
-            // CRITICAL FIX: Only intercept if the card is dormant (waking up) or user tapped the badge!
-            // When Live and user clicks "खोलें", event passes through natively!
             if (isDormant || isBadgeClick) {
               if (e.cancelable) e.preventDefault();
               e.stopPropagation();
@@ -548,15 +562,12 @@
               var curVis = getUrnVisibility(subUrn);
               var targetVis = isDormant ? true : !curVis;
 
-              // Set sub-category visibility in registry + localStorage
               setUrnVisibility(subUrn, targetVis, subLabel);
 
-              // Auto-wake Category 16 parent if a child is activated
               if (targetVis) {
                 setUrnVisibility('rm:cat:16', true, 'घर व मकान');
               }
 
-              // Instant 0ms Visual UI Swap on device
               if (targetVis) {
                 subCard.classList.remove('sivme-ghost-dormant');
               } else {
@@ -604,7 +615,6 @@
       matchedElements.forEach(function (item) {
         var isVis = getUrnVisibility(item.urn);
 
-        // UPWARD ROLLUP ALERT: Category 16 shows Hidden alert if any sub-service is hidden
         if (item.urn === 'rm:cat:16' && isAuth) {
           if (sub16HasHidden) {
             isVis = false;
@@ -668,7 +678,6 @@
       var bLabel = badge ? (badge.getAttribute('data-badge-label') || label) : label;
       var newTargetVis = !bVis;
 
-      // Category 16 master badge cascade
       if (bUrn === 'rm:cat:16') {
         setUrnVisibility('rm:cat:16', newTargetVis, bLabel);
         for (var sIdx = 1; sIdx <= 3; sIdx++) {
@@ -678,7 +687,6 @@
         setUrnVisibility(bUrn, newTargetVis, bLabel);
       }
 
-      // Surface-B Category Synchronization Bridge
       try {
         var match = bUrn.match(/^rm:cat:([0-9]{2})$/);
         if (match) {
@@ -709,7 +717,6 @@
       badge = document.createElement('div');
       parentEl.appendChild(badge);
 
-      // Sub-cards use their direct handler to avoid double-toggle
       if (urn.indexOf('sub:') === -1) {
         badge.addEventListener('click', executeToggle);
 
