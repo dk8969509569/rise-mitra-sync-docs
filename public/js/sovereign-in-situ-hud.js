@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Direct Sub-Card Wake-Up & Infallible Event Isolation)
+ * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (Direct Sub-Card Wake-Up & Infallible Accordion)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -18,6 +18,7 @@
   var auditTimer = null;
   var lastActionTime = 0;
   var lastUrnActionTimes = {};
+  var lastAccordionToggleTime = 0;
 
   // 1. ZEL TEMPLATE SHIELD: Ensure legacy modules always render complete DOM
   function enforceZELTemplateRendering() {
@@ -410,33 +411,47 @@
         }
       });
 
-      // 4.0.1 Dedicated Accordion Click Binder for Category 16 Header
-      var c16Header = document.querySelector('#categoryModal [data-cat-id="c16"] > div:first-child');
-      if (c16Header) {
-        c16Header.setAttribute('data-sivme-c16-head', 'true');
-        if (c16Header.getAttribute('data-sivme-toggle-bound') !== 'true') {
+      // 4.0.1 Infallible Capture-Phase Accordion Toggle for Category 16 Header & Button
+      var c16 = document.querySelector('#categoryModal [data-cat-id="c16"]');
+      if (c16) {
+        var c16Header = c16.querySelector(':scope > div:first-child');
+        if (c16Header && c16Header.getAttribute('data-sivme-toggle-bound') !== 'true') {
           c16Header.setAttribute('data-sivme-toggle-bound', 'true');
-          function handleAccordionToggle(e) {
+          c16Header.setAttribute('data-sivme-c16-head', 'true');
+
+          function doAccordionToggle(e) {
+            // Do not toggle accordion if clicking the Live/Hidden badge
             if (e.target.closest('.sivme-inline-badge')) return;
+
             if (e.cancelable) e.preventDefault();
             e.stopPropagation();
+
+            var now = Date.now();
+            if (now - lastAccordionToggleTime < 350) return;
+            lastAccordionToggleTime = now;
 
             var sub = document.getElementById('sub-c16');
             if (!sub) return;
 
-            var isCollapsed = sub.classList.contains('hidden') || sub.classList.contains('sivme-collapsed') || sub.style.display === 'none';
-            if (isCollapsed) {
-              sub.classList.remove('hidden', 'sivme-collapsed');
-              sub.style.removeProperty('display');
-              var chevronOpen = document.getElementById('chevron-c16');
-              if (chevronOpen) chevronOpen.style.transform = 'rotate(180deg)';
-            } else {
+            // Computed layout visibility check
+            var isCurrentlyVisible = (sub.offsetHeight > 0) && (window.getComputedStyle(sub).display !== 'none') && !sub.classList.contains('sivme-collapsed');
+            var chevron = document.getElementById('chevron-c16') || c16Header.querySelector('svg, [id*="chevron"]');
+
+            if (isCurrentlyVisible) {
+              // Collapse Accordion
+              sub.style.setProperty('display', 'none', 'important');
               sub.classList.add('hidden', 'sivme-collapsed');
-              var chevronClose = document.getElementById('chevron-c16');
-              if (chevronClose) chevronClose.style.transform = 'rotate(0deg)';
+              if (chevron) chevron.style.transform = 'rotate(0deg)';
+            } else {
+              // Expand Accordion
+              sub.style.setProperty('display', 'block', 'important');
+              sub.classList.remove('hidden', 'sivme-collapsed');
+              if (chevron) chevron.style.transform = 'rotate(180deg)';
             }
           }
-          c16Header.addEventListener('click', handleAccordionToggle);
+
+          // Bound in capture phase to reliably intercept taps on header or button
+          c16Header.addEventListener('click', doAccordionToggle, true);
         }
       }
 
