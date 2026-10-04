@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & Automation Engine (16-3 Filters & All 7 Rental Listings In-Situ Controls)
+ * MODULE        : Surface-A Floating HUD & Automation Engine (Strict Element Isolation: Budget Slider & Sub-Meter Decoupling)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -119,7 +119,7 @@
     } catch (_) {}
   }
 
-  // 3. INJECT SIVME STYLES (2.5D Elevation, Inner Filters & Listings Dock)
+  // 3. INJECT SIVME STYLES (2.5D Elevation, Filter Isolation & Clearances)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -148,11 +148,10 @@
         cursor: pointer !important;
       }
 
-      /* Inner Filter & Listing Dormant States */
-      [data-sov-urn*="elem:"].sivme-ghost-dormant,
-      [data-sov-urn*="listing:"].sivme-ghost-dormant {
+      /* Inner Filter Dormant State */
+      [data-sov-urn*="elem:"].sivme-ghost-dormant {
         border: 1.5px dashed #ef4444 !important;
-        border-radius: 12px !important;
+        border-radius: 10px !important;
         background: rgba(239, 68, 68, 0.08) !important;
         opacity: 0.75 !important;
       }
@@ -230,14 +229,12 @@
         z-index: 50 !important;
       }
 
-      /* Housing Listings Badges */
-      [data-sov-urn*="listing:"] > .sivme-inline-badge {
-        top: -9px !important;
-        left: 14px !important;
-        right: auto !important;
-        font-size: 10px !important;
-        padding: 3px 9px !important;
-        z-index: 50 !important;
+      /* Submeter specific standalone inline badge anchor */
+      [data-sov-urn="rm:cat:16:sub:16-3:elem:submeter_checkbox"] {
+        display: inline-flex !important;
+        align-items: center !important;
+        padding: 4px 8px !important;
+        margin: 2px 0 !important;
       }
 
       /* SECTION HEADERS CLEARANCE */
@@ -513,8 +510,17 @@
         );
       });
 
-      // 4.2 Robust & Exception-Safe 16-3 Dynamic Filters & 7 Listings Resolution
+      // 4.2 Robust & Exception-Safe 16-3 Dynamic Filters Resolution
       function resolve16_3Filters() {
+        // Clean up any old buggy container if present
+        var oldBuggy = document.getElementById('rm-budget-slider-container');
+        if (oldBuggy) {
+          while (oldBuggy.firstChild) {
+            oldBuggy.parentNode.insertBefore(oldBuggy.firstChild, oldBuggy);
+          }
+          oldBuggy.remove();
+        }
+
         // 1. Smart Omnibox
         try {
           var omni = document.querySelector('#rm-search-locality, #smartOmniboxGroup, #smartOmnibox, input[placeholder*="लालपुर"], input[placeholder*="8340"], input[placeholder*="Lalpur"]');
@@ -572,34 +578,50 @@
           }
         } catch (_) {}
 
-        // 4. Budget Slider Section (Encompassing Label + 15000 + Range Bar)
+        // 4. Budget Slider Section (Strictly Encompassing ONLY: Label + 16000 + Range Slider Bar)
         try {
           var range = document.querySelector('input[type="range"]');
           if (range) {
-            var budgetBox = document.getElementById('rm-budget-slider-container');
-            var rangeRow = range.closest('div');
-            var prevRow = rangeRow ? rangeRow.previousElementSibling : null;
+            var budgetWrapper = document.getElementById('rm-budget-slider-wrapper');
 
-            if (!budgetBox && rangeRow && prevRow && ((prevRow.textContent || '').indexOf('किराया') !== -1 || (prevRow.textContent || '').indexOf('बजट') !== -1)) {
-              budgetBox = document.createElement('div');
-              budgetBox.id = 'rm-budget-slider-container';
-              budgetBox.className = 'w-full mb-3';
-              rangeRow.parentNode.insertBefore(budgetBox, prevRow);
-              budgetBox.appendChild(prevRow);
-              budgetBox.appendChild(rangeRow);
-            } else if (!budgetBox) {
-              budgetBox = rangeRow || range.parentElement;
+            if (!budgetWrapper) {
+              var prevEl = range.previousElementSibling;
+              var isRangeInOwnDiv = false;
+
+              if (!prevEl && range.parentElement && range.parentElement.tagName === 'DIV' && range.parentElement.children.length === 1) {
+                prevEl = range.parentElement.previousElementSibling;
+                isRangeInOwnDiv = true;
+              }
+
+              var hasBudgetText = prevEl && ((prevEl.textContent || '').indexOf('किराया') !== -1 || (prevEl.textContent || '').indexOf('बजट') !== -1);
+
+              if (hasBudgetText) {
+                budgetWrapper = document.createElement('div');
+                budgetWrapper.id = 'rm-budget-slider-wrapper';
+                budgetWrapper.className = 'w-full mb-3 sivme-badge-anchor';
+
+                var targetToWrap = isRangeInOwnDiv ? range.parentElement : range;
+                prevEl.parentNode.insertBefore(budgetWrapper, prevEl);
+                budgetWrapper.appendChild(prevEl);
+                budgetWrapper.appendChild(targetToWrap);
+              } else {
+                budgetWrapper = document.createElement('div');
+                budgetWrapper.id = 'rm-budget-slider-wrapper';
+                budgetWrapper.className = 'w-full mb-3 sivme-badge-anchor';
+                range.parentNode.insertBefore(budgetWrapper, range);
+                budgetWrapper.appendChild(range);
+              }
             }
 
-            if (budgetBox) {
-              budgetBox.setAttribute('data-sov-urn', 'rm:cat:16:sub:16-3:elem:budget_slider');
-              budgetBox.setAttribute('data-sov-label', 'बजट स्लाइडर');
-              registerMatch(budgetBox, 'rm:cat:16:sub:16-3:elem:budget_slider', 'बजट स्लाइडर');
+            if (budgetWrapper) {
+              budgetWrapper.setAttribute('data-sov-urn', 'rm:cat:16:sub:16-3:elem:budget_slider');
+              budgetWrapper.setAttribute('data-sov-label', 'बजट स्लाइडर');
+              registerMatch(budgetWrapper, 'rm:cat:16:sub:16-3:elem:budget_slider', 'बजट स्लाइडर');
             }
           }
         } catch (_) {}
 
-        // 5. Submeter Checkbox
+        // 5. Submeter Checkbox (Completely Decoupled & Independent Standalone Target)
         try {
           var submeter = document.querySelector('#rm-search-submeter, #submeterFilterGroup, input[type="checkbox"]');
           if (!submeter) {
@@ -607,49 +629,14 @@
             if (allCheckboxes.length > 0) submeter = allCheckboxes[0];
           }
           if (submeter) {
-            var subTarget = submeter.closest('label') || submeter.parentElement;
+            var subTarget = submeter.closest('label');
+            if (!subTarget) {
+              subTarget = submeter.parentElement;
+            }
             if (subTarget) {
               subTarget.setAttribute('data-sov-urn', 'rm:cat:16:sub:16-3:elem:submeter_checkbox');
               subTarget.setAttribute('data-sov-label', 'सब-मीटर फ़िल्टर');
               registerMatch(subTarget, 'rm:cat:16:sub:16-3:elem:submeter_checkbox', 'सब-मीटर फ़िल्टर');
-            }
-          }
-        } catch (_) {}
-
-        // 6. Rental Listings (All 7 Housing Cards in उपलब्ध आवास सूची)
-        try {
-          var listingHeading = null;
-          var headings = document.querySelectorAll('div, h2, h3, h4, span');
-          for (var h = 0; h < headings.length; h++) {
-            var ht = (headings[h].textContent || '').trim();
-            if (ht.indexOf('उपलब्ध आवास सूची') !== -1 && headings[h].children.length < 3) {
-              listingHeading = headings[h];
-              break;
-            }
-          }
-          if (listingHeading) {
-            var container = listingHeading.nextElementSibling || listingHeading.parentElement;
-            if (container) {
-              var allCards = container.querySelectorAll(':scope > div, .space-y-3 > div, .space-y-4 > div, div');
-              var listingIdx = 1;
-              allCards.forEach(function (card) {
-                var cText = card.textContent || '';
-                if ((cText.indexOf('/माह') !== -1 || cText.indexOf('डिपॉजिट') !== -1) && cText.indexOf('उपलब्ध आवास सूची') === -1 && card.children.length >= 2) {
-                  if (card.parentElement && (card.parentElement.textContent || '').indexOf('/माह') !== -1 && card.parentElement.children.length === 1) {
-                    return;
-                  }
-                  var lUrn = 'rm:cat:16:sub:16-3:listing:' + listingIdx;
-                  var titleEl = card.querySelector('.font-bold, h4, h3, div:first-child') || card;
-                  var rawTitle = titleEl ? titleEl.textContent.trim().split('\n')[0] : ('आवास ' + listingIdx);
-                  var cleanTitle = rawTitle.replace(/[₹0-9,/माह]/g, '').trim().substring(0, 24);
-                  if (!card.hasAttribute('data-sov-urn')) {
-                    card.setAttribute('data-sov-urn', lUrn);
-                    card.setAttribute('data-sov-label', cleanTitle || ('आवास ' + listingIdx));
-                  }
-                  registerMatch(card, lUrn, cleanTitle || ('आवास ' + listingIdx));
-                  listingIdx++;
-                }
-              });
             }
           }
         } catch (_) {}
