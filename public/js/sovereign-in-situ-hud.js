@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Unified Core Engine (Lightweight Kernel - Modular CSS Linked)
+ * MODULE        : Surface-A Unified Core Engine (Kernel v2.1 - Home Widgets Decoupled)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -145,7 +145,7 @@
     return (clone.textContent || '').trim();
   }
 
-  // 5. LIGHTWEIGHT MODULAR STYLESHEET LOADER (Replaces 160+ Lines of Raw CSS)
+  // 5. LIGHTWEIGHT MODULAR STYLESHEET LOADER
   function injectStyles() {
     if (document.getElementById('sivme-core-stylesheet')) return;
     var link = document.createElement('link');
@@ -173,9 +173,10 @@
     badge.setAttribute('data-badge-vis', String(isVisible));
   }
 
-  // 7. AUDIT ELEMENT DISPATCHER
+  // 7. AUDIT ELEMENT DISPATCHER (Exposed to Micro-Adapters)
   function auditElement(el, urn, label, isAuth) {
     if (!el) return;
+    if (typeof isAuth === 'undefined') isAuth = isConsoleAuthorized();
     el.setAttribute('data-sov-urn', urn);
     el.setAttribute('data-sov-label', label || '');
     var isVis = getUrnVisibility(urn);
@@ -236,7 +237,7 @@
     }
   }
 
-  // 8. UNIVERSAL AUDIT ENGINE
+  // 8. UNIVERSAL AUDIT ENGINE (Clean Kernel Loop)
   function applyInSituAudit() {
     if (isAuditing) return;
     isAuditing = true;
@@ -245,7 +246,7 @@
       enforceZELTemplateRendering();
       var isAuth = isConsoleAuthorized();
 
-      // Dynamic Full-Screen DOM Enforcement
+      // Dynamic Full-Screen DOM Enforcement for Open Modals
       var openModals = document.querySelectorAll('#categoryModal, #rentalLedgerModal, #rentalSearchModal, [id*="Modal"]');
       openModals.forEach(function (m) {
         if (m.classList.contains('hidden') || m.style.display === 'none') return;
@@ -253,60 +254,7 @@
         m.style.setProperty('max-height', '100dvh', 'important');
       });
 
-      // 1. App Install Button
-      document.querySelectorAll('span, button, a').forEach(function (el) {
-        if (cleanText(el).indexOf('ऐप इंस्टॉल') !== -1) {
-          var target = el.closest('button, a, div[onclick]') || el;
-          target.classList.add('sivme-btn-pill');
-          auditElement(target, 'rm:elem:app-install', 'ऐप इंस्टॉल बटन', isAuth);
-        }
-      });
-
-      // 2. Global Search Box
-      var searchBox = document.querySelector('input[placeholder*="खोजें"], input[placeholder*="search"]');
-      if (searchBox) {
-        var searchParent = searchBox.parentElement;
-        if (searchParent) {
-          searchParent.style.setProperty('overflow', 'visible', 'important');
-          searchParent.classList.add('sivme-search-container');
-          auditElement(searchParent, 'rm:elem:home-search', 'ग्लोबल खोज बार', isAuth);
-        }
-      }
-
-      // 3. RM CASH ATOMIC CARD
-      var allDivs = document.querySelectorAll('div, section');
-      for (var d = 0; d < allDivs.length; d++) {
-        var card = allDivs[d];
-        var txt = cleanText(card);
-        if (txt.indexOf('उपलब्ध शेष राशि (RM CASH)') !== -1 && txt.indexOf('खाता सक्रिय') !== -1 && card.offsetHeight > 140) {
-          card.style.setProperty('overflow', 'visible', 'important');
-          card.classList.add('sivme-cash-atomic-card');
-          auditElement(card, 'rm:card:rm-cash', 'RM CASH बहीखाता कार्ड', isAuth);
-
-          card.querySelectorAll('button, a, div[onclick]').forEach(function (btn) {
-            btn.classList.remove('sivme-btn-pill', 'sivme-badge-anchor', 'sivme-ghost-dormant');
-            var oldChildBadge = btn.querySelector('.sivme-inline-badge');
-            if (oldChildBadge) oldChildBadge.remove();
-          });
-          break;
-        }
-      }
-
-      // 4. "जुड़ना मुफ़्त" Button
-      var potentialJoinBtns = document.querySelectorAll('button, a, span, div');
-      for (var j = 0; j < potentialJoinBtns.length; j++) {
-        var jEl = potentialJoinBtns[j];
-        if (cleanText(jEl) === 'जुड़ना मुफ़्त' || cleanText(jEl).indexOf('जुड़ना मुफ़्त') !== -1) {
-          var jTarget = jEl.closest('button, a, div[onclick]') || jEl;
-          if (jTarget.offsetHeight < 70) {
-            jTarget.classList.add('sivme-btn-pill');
-            auditElement(jTarget, 'rm:elem:join-free', 'जुड़ना मुफ़्त बटन', isAuth);
-            break;
-          }
-        }
-      }
-
-      // 5. Category 16 Dedicated Header Audit
+      // Category 16 Header Audit
       var c16 = document.querySelector('#categoryModal [data-cat-id="c16"]');
       if (c16) {
         var c16Header = c16.querySelector(':scope > div:first-child');
@@ -342,7 +290,7 @@
         }
       }
 
-      // 6. Scan All Other 49 Categories in Universal Catalog
+      // Universal Catalog Cards Scanner (Except c16 handled above)
       var catalogCards = document.querySelectorAll(
         '#categoryModal [data-cat-id], ' +
         '#categoryModal [id*="cat-"], ' +
@@ -379,7 +327,7 @@
         auditElement(cCard, urn, label, isAuth);
       });
 
-      // 7. Audit 9 Core Verticals
+      // Audit 9 Core Verticals (Home Screen Grid)
       var verticalCards = document.querySelectorAll('.grid > div, [data-vertical-id]');
       verticalCards.forEach(function (vCard) {
         var txt = cleanText(vCard);
@@ -402,7 +350,7 @@
         auditElement(vCard, vUrn, vLabel, isAuth);
       });
 
-      // Execute Micro-Adapters
+      // Execute Micro-Adapters (home-widgets, cat-16, sub-16-1, sub-16-2, sub-16-3)
       Object.keys(adapters).forEach(function (key) {
         try { adapters[key](); } catch (_) {}
       });
@@ -463,6 +411,7 @@
     }
 
     var scripts = [
+      basePath + 'home-widgets.js',
       basePath + 'cat-16.js',
       basePath + 'sub-16-1.js',
       basePath + 'sub-16-2.js',
@@ -472,14 +421,14 @@
     scripts.forEach(function (src) {
       if (!document.querySelector('script[src*="' + src + '"]')) {
         var s = document.createElement('script');
-        s.src = src + '?v=20261006_v4';
+        s.src = src + '?v=20261006_v5';
         s.async = true;
         document.head.appendChild(s);
       }
     });
   }
 
-  // 11. BULLETPROOF GLOBAL BADGE CAPTURE LISTENER (PREVENTS CASCADE ON SUB-CARDS)
+  // 11. BULLETPROOF GLOBAL BADGE CAPTURE LISTENER
   document.addEventListener('click', function (e) {
     var badge = e.target.closest('.sivme-inline-badge');
     if (!badge || !isConsoleAuthorized()) return;
@@ -513,6 +462,7 @@
     getUrnVisibility: getUrnVisibility,
     setUrnVisibility: setUrnVisibility,
     mountInlineBadge: mountInlineBadge,
+    auditElement: auditElement,
     applyInSituAudit: applyInSituAudit,
     registerAdapter: function (id, fn) {
       adapters[id] = fn;
