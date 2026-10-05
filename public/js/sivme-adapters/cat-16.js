@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SIVME CATEGORY 16 ADAPTER
- * TARGET: Category 16 Accordion, 16-1, 16-2, 16-3 Single-Tap & Parent Auto-Sync
+ * TARGET: Category 16 Accordion, 16-1, 16-2, 16-3 Single-Tap Sovereign Toggle & Instant Parent Sync
  * GOVERNANCE: GATE-23.5 | ZEL SPECIFICATION
  * DUAL-FOLDER REFS:
  *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
@@ -14,6 +14,20 @@
     return window.RM_SIVME || null;
   }
 
+  // 1. NEUTRALIZE NATIVE DOUBLE-TRIGGER ON CATEGORY 16 DROPDOWN
+  if (typeof window.toggleCategory === 'function' && !window.__sivme_c16_hooked) {
+    window.__sivme_c16_hooked = true;
+    var origToggle = window.toggleCategory;
+    window.toggleCategory = function (id) {
+      if (id === '16' || id === 'c16') {
+        // Handled exclusively by SIVME cat-16 adapter to prevent open-close clashing
+        return;
+      }
+      return origToggle.apply(this, arguments);
+    };
+  }
+
+  // 2. BI-DIRECTIONAL PARENT SYNC
   function syncCategory16Parent() {
     var core = getCore();
     if (!core) return;
@@ -33,14 +47,13 @@
     if (!core || !core.isConsoleAuthorized) return;
     var isAuth = core.isConsoleAuthorized();
 
-    // 1. Single-Tap Sovereign Accordion Toggle (Neutralizes Conflicting Double Triggers)
+    // 3. SINGLE-TAP SOVEREIGN ACCORDION (1-Tap Smooth Open/Close)
     var c16 = document.querySelector('#categoryModal [data-cat-id="c16"]');
     if (c16) {
       var c16Header = c16.querySelector(':scope > div:first-child');
-      if (c16Header && c16Header.getAttribute('data-sivme-toggle-bound') !== 'true') {
-        c16Header.setAttribute('data-sivme-toggle-bound', 'true');
+      if (c16Header && c16Header.getAttribute('data-sivme-c16-bound') !== 'true') {
+        c16Header.setAttribute('data-sivme-c16-bound', 'true');
 
-        // Neutralize conflicting native inline handlers
         if (c16Header.hasAttribute('onclick')) c16Header.removeAttribute('onclick');
         c16Header.querySelectorAll('[onclick]').forEach(function (el) {
           el.removeAttribute('onclick');
@@ -49,7 +62,6 @@
         c16Header.addEventListener('click', function (e) {
           if (e.target.closest('.sivme-inline-badge')) return;
           if (e.cancelable) e.preventDefault();
-          e.stopImmediatePropagation();
           e.stopPropagation();
 
           var sub = document.getElementById('sub-c16');
@@ -71,7 +83,7 @@
       }
     }
 
-    // 2. Sub-Services 16-1, 16-2, 16-3 Single-Tap Resolution
+    // 4. SUB-SERVICES 16-1, 16-2, 16-3: GUARANTEED 1-TAP VISIBILITY TOGGLE
     var sub16Cards = document.querySelectorAll('#sub-c16 > div');
     sub16Cards.forEach(function (subCard, idx) {
       var subNum = idx + 1;
@@ -111,41 +123,37 @@
 
       core.mountInlineBadge(subCard, subUrn, isVis, subLabel);
 
-      // Single-Tap Dispatcher
-      if (subCard.getAttribute('data-sivme-tap-bound') !== 'true') {
-        subCard.setAttribute('data-sivme-tap-bound', 'true');
+      // SINGLE-TAP CAPTURE DISPATCHER
+      if (subCard.getAttribute('data-sivme-tap-active') !== 'true') {
+        subCard.setAttribute('data-sivme-tap-active', 'true');
 
         subCard.addEventListener('click', function (e) {
           if (!core.isConsoleAuthorized()) return;
 
-          // If badge was directly clicked, let HUD badge handler process and then sync parent
-          if (e.target.closest('.sivme-inline-badge')) {
-            setTimeout(function () {
-              syncCategory16Parent();
-              core.applyInSituAudit();
-            }, 30);
+          // Check if user specifically tapped the Action Button ("खोलें" / "जल्द उपलब्ध")
+          var actionBtn = e.target.closest('button, a');
+          var isCardLive = core.getUrnVisibility(subUrn);
+
+          // If the card is Live AND user tapped specifically on the action button: Run native action!
+          if (actionBtn && isCardLive) {
             return;
           }
 
-          var isDormant = subCard.classList.contains('sivme-ghost-dormant');
+          // Otherwise (Card body, text, icon, badge, or dormant button tapped): STRICT 1-TAP TOGGLE!
+          if (e.cancelable) e.preventDefault();
+          e.stopPropagation();
 
-          // If card is Dormant: 1-Tap Wake Up to Live!
-          if (isDormant) {
-            if (e.cancelable) e.preventDefault();
-            e.stopPropagation();
+          var curVis = core.getUrnVisibility(subUrn);
+          var nextVis = !curVis;
 
-            core.setUrnVisibility(subUrn, true, subLabel);
-            syncCategory16Parent();
-            core.applyInSituAudit();
-            return;
-          }
+          core.setUrnVisibility(subUrn, nextVis, subLabel);
 
-          // If already Live: trigger native service opener
-          var btn = subCard.querySelector('button, a, [onclick]');
-          if (btn && e.target !== btn && !btn.contains(e.target)) {
-            btn.click();
-          }
-        }, false);
+          // Instant Bi-Directional Parent Cascade
+          syncCategory16Parent();
+
+          // Instant UI Re-Audit
+          core.applyInSituAudit();
+        }, true);
       }
     });
 
