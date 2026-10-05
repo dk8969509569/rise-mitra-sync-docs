@@ -1,0 +1,300 @@
+/**
+ * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
+ * MODULE        : Dedicated SIVME Stylesheet (Fullscreen Modals, Badges, Dock & Cards)
+ * GOVERNANCE    : GATE-23.5 | ZERO-ELEMENT-LOSS (ZEL)
+ * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
+ */
+
+/* Hidden Utility States */
+.hidden,
+[style*="display: none"],
+[style*="display:none"] {
+  display: none !important;
+}
+
+/* =========================================================
+   FULLSCREEN NATIVE MODALS (Eliminates Bottom Void & Truncation)
+   ========================================================= */
+#categoryModal:not(.hidden):not([style*="display: none"]):not([style*="display:none"]),
+#rentalLedgerModal:not(.hidden):not([style*="display: none"]):not([style*="display:none"]),
+#rentalSearchModal:not(.hidden):not([style*="display: none"]):not([style*="display:none"]),
+[id*="Modal"]:not(.hidden):not([style*="display: none"]):not([style*="display:none"]) {
+  position: fixed !important;
+  inset: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  max-height: 100vh !important;
+  max-height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  display: flex !important;
+  flex-direction: column !important;
+  z-index: 99999 !important;
+  background: #030712 !important;
+}
+
+/* Inner Dialog Card: Stretch to 100% Full Screen */
+#categoryModal:not(.hidden) > div,
+#rentalLedgerModal:not(.hidden) > div,
+#rentalSearchModal:not(.hidden) > div,
+[id*="Modal"]:not(.hidden) > div {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  min-height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  border: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-shadow: none !important;
+  background: #0b111e !important;
+}
+
+/* Modal Header */
+#categoryModal > div > div:first-child,
+#rentalLedgerModal > div > div:first-child,
+#rentalSearchModal > div > div:first-child,
+[id*="Modal"] > div > div:first-child {
+  flex-shrink: 0 !important;
+  border-radius: 0 !important;
+}
+
+/* Modal Scrollable Body: Full Viewport Scroll with 160px Bottom Clearance */
+#categoryModal .overflow-y-auto,
+#rentalLedgerModal .overflow-y-auto,
+#rentalSearchModal .overflow-y-auto,
+[id*="Modal"] .overflow-y-auto {
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+  padding-bottom: 160px !important;
+}
+
+#categoryModal .overflow-y-auto {
+  padding-top: 22px !important;
+}
+
+/* Master Category Cards Layout */
+#categoryModal [data-cat-id],
+#categoryModal .sivme-catalog-card {
+  overflow: visible !important;
+  position: relative !important;
+  margin-bottom: 24px !important;
+}
+
+#categoryModal [data-cat-id="c16"] {
+  display: block !important;
+  min-height: auto !important;
+  margin-top: 18px !important;
+  margin-bottom: 26px !important;
+  overflow: visible !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Uniform Header Styling for All Categories */
+#categoryModal [data-cat-id]:not([data-cat-id="c16"]),
+#categoryModal .sivme-catalog-card:not([data-cat-id="c16"]),
+#categoryModal [data-cat-id="c16"] > div:first-child {
+  min-height: 72px !important;
+  height: 72px !important;
+  padding: 22px 14px 14px 14px !important;
+  border-radius: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  overflow: visible !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  background: linear-gradient(180deg, rgba(30,41,59,0.9) 0%, rgba(15,23,42,0.98) 100%) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  border-top: 1px solid rgba(255,255,255,0.22) !important;
+  box-shadow: 0 6px 16px -2px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.15) !important;
+  cursor: pointer !important;
+}
+
+/* Clean Inner Title Container for Category 16 */
+#categoryModal [data-cat-id="c16"] > div:first-child > div:first-child {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  min-height: auto !important;
+  height: auto !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex: 1 1 auto !important;
+}
+
+#categoryModal button,
+#categoryModal a,
+#categoryModal span.text-cyan-400,
+#categoryModal span.text-emerald-400,
+#categoryModal span.text-slate-400,
+#sub-c16 button,
+#sub-c16 a {
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  flex-shrink: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+}
+
+.sivme-badge-anchor {
+  position: relative !important;
+  isolation: isolate !important;
+  overflow: visible !important;
+}
+
+.sivme-ghost-dormant {
+  border: 2px dashed #ef4444 !important;
+  border-radius: 14px !important;
+  position: relative !important;
+  background: repeating-linear-gradient(-45deg, rgba(239,68,68,0.12), rgba(239,68,68,0.12) 10px, transparent 10px, transparent 20px) !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+}
+
+.sivme-public-hidden {
+  display: none !important;
+}
+
+.sivme-inline-badge {
+  position: absolute !important;
+  top: -11px !important;
+  left: 14px !important;
+  right: auto !important;
+  z-index: 9999 !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px !important;
+  font-weight: 800;
+  padding: 3px 9px !important;
+  border-radius: 9999px;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.9);
+  width: max-content !important;
+  line-height: 1.2 !important;
+  user-select: none !important;
+  touch-action: manipulation !important;
+  pointer-events: auto !important;
+}
+
+.sivme-search-container {
+  position: relative !important;
+  overflow: visible !important;
+  margin-top: 14px !important;
+}
+
+.sivme-search-container > .sivme-inline-badge {
+  top: -11px !important;
+  left: 14px !important;
+}
+
+.sivme-cash-atomic-card {
+  position: relative !important;
+  overflow: visible !important;
+  margin-top: 16px !important;
+  cursor: pointer !important;
+}
+
+.sivme-cash-atomic-card > .sivme-inline-badge {
+  top: -11px !important;
+  left: 14px !important;
+}
+
+.sivme-btn-pill {
+  position: relative !important;
+  overflow: visible !important;
+  touch-action: manipulation !important;
+  cursor: pointer !important;
+}
+
+.sivme-btn-pill > .sivme-inline-badge {
+  top: -12px !important;
+  right: 6px !important;
+  left: auto !important;
+  font-size: 9px !important;
+  padding: 2px 7px !important;
+}
+
+.sivme-vertical-card .sivme-inline-badge {
+  top: -8px !important;
+  left: 8px !important;
+  font-size: 9px !important;
+  padding: 2px 7px !important;
+}
+
+.sivme-badge-live {
+  background: #064e3b !important;
+  color: #6ee7b7 !important;
+  border: 1.5px solid #10b981 !important;
+}
+
+.sivme-badge-dormant {
+  background: #7f1d1d !important;
+  color: #fca5a5 !important;
+  border: 1.5px solid #ef4444 !important;
+}
+
+#sub-c16 > div {
+  min-height: 60px !important;
+  padding: 18px 14px 12px 14px !important;
+  margin-bottom: 14px !important;
+  border-radius: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background: linear-gradient(180deg, rgba(24,33,47,0.85) 0%, rgba(11,17,30,0.95) 100%) !important;
+  border-top: 1px solid rgba(255,255,255,0.16) !important;
+  touch-action: manipulation !important;
+  cursor: pointer !important;
+}
+
+.sivme-catalog-section-header {
+  margin-top: 30px !important;
+  margin-bottom: 24px !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+#sivmeFloatingDock {
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999999 !important;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(3,7,18,0.96);
+  backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(6,182,212,0.6);
+  border-radius: 9999px;
+  padding: 6px 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+  font-family: ui-monospace, monospace;
+  max-width: 96vw;
+}
