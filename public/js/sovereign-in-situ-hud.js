@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Unified Core Engine (Full Home Widgets, 50 Categories & 9 Verticals)
+ * MODULE        : Surface-A Unified Core Engine (Universal 1-Tap Body Toggle, RM CASH & Full Widget Suite)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -133,7 +133,16 @@
     return Object.keys(hiddenUrns).length;
   }
 
-  // 5. CORE STYLES (Full-Screen Modals & Non-Disruptive Widget Badges)
+  // Clean text helper to ignore injected badge text
+  function cleanText(el) {
+    if (!el) return '';
+    var clone = el.cloneNode(true);
+    var badges = clone.querySelectorAll('.sivme-inline-badge');
+    badges.forEach(function (b) { b.remove(); });
+    return (clone.textContent || '').trim();
+  }
+
+  // 5. CORE STYLES
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -284,12 +293,16 @@
         overflow: visible !important;
       }
       .sivme-widget-anchor > .sivme-inline-badge {
-        top: -10px !important;
-        left: 12px !important;
+        top: -11px !important;
+        left: 14px !important;
         z-index: 60 !important;
       }
+      .sivme-btn-anchor {
+        position: relative !important;
+        overflow: visible !important;
+      }
       .sivme-btn-anchor > .sivme-inline-badge {
-        top: -10px !important;
+        top: -11px !important;
         right: 8px !important;
         left: auto !important;
         font-size: 9px !important;
@@ -379,6 +392,7 @@
     badge.setAttribute('data-badge-vis', String(isVisible));
   }
 
+  // 7. UNIVERSAL 1-TAP AUDIT ELEMENT DISPATCHER
   function auditElement(el, urn, label, isAuth) {
     if (!el) return;
     el.setAttribute('data-sov-urn', urn);
@@ -404,10 +418,41 @@
         el.classList.remove('sivme-ghost-dormant');
       }
       mountInlineBadge(el, urn, isVis, label);
+
+      // Universal 1-Tap Toggle On The Element Body Itself
+      if (el.getAttribute('data-sivme-tap-bound') !== 'true') {
+        el.setAttribute('data-sivme-tap-bound', 'true');
+
+        el.addEventListener('click', function (e) {
+          if (!isConsoleAuthorized()) return;
+          if (e.target.closest('.sivme-inline-badge')) return;
+
+          var curVis = getUrnVisibility(urn);
+
+          // If dormant (hidden), tapping anywhere on the element immediately awakens it!
+          if (!curVis) {
+            if (e.cancelable) e.preventDefault();
+            e.stopPropagation();
+            setUrnVisibility(urn, true, label);
+            applyInSituAudit();
+            return;
+          }
+
+          // If live, allow native actions on inputs/buttons inside complex cards, otherwise toggle
+          if (e.target.tagName === 'INPUT' || (el.classList.contains('sivme-widget-anchor') && e.target.closest('button, a'))) {
+            return;
+          }
+
+          if (e.cancelable) e.preventDefault();
+          e.stopPropagation();
+          setUrnVisibility(urn, false, label);
+          applyInSituAudit();
+        }, false);
+      }
     }
   }
 
-  // 7. UNIVERSAL AUDIT ENGINE
+  // 8. UNIVERSAL AUDIT ENGINE
   function applyInSituAudit() {
     if (isAuditing) return;
     isAuditing = true;
@@ -428,9 +473,8 @@
       // A. HOME ELEMENTS & WIDGETS ABOVE 9 VERTICALS
       // ==========================================
       // 1. App Install Button
-      var installBtn = document.querySelector('button:has(span), a:has(span), div:has(span)');
       document.querySelectorAll('span, button, a').forEach(function (el) {
-        if ((el.textContent || '').indexOf('ऐप इंस्टॉल') !== -1) {
+        if (cleanText(el).indexOf('ऐप इंस्टॉल') !== -1) {
           var target = el.closest('button, a, div[onclick]') || el;
           target.classList.add('sivme-btn-anchor');
           auditElement(target, 'rm:elem:app-install', 'ऐप इंस्टॉल बटन', isAuth);
@@ -442,21 +486,24 @@
       if (searchBox) {
         var searchParent = searchBox.parentElement;
         if (searchParent) {
+          searchParent.style.setProperty('overflow', 'visible', 'important');
           searchParent.classList.add('sivme-widget-anchor');
           auditElement(searchParent, 'rm:elem:home-search', 'ग्लोबल खोज बार', isAuth);
         }
       }
 
       // 3. RM CASH Ledger Green Card & Internal Action Buttons
-      document.querySelectorAll('div').forEach(function (card) {
-        var txt = card.textContent || '';
-        if (txt.indexOf('उपलब्ध शेष राशि (RM CASH)') !== -1 && card.offsetHeight > 100 && card.offsetHeight < 320) {
+      var allDivs = document.querySelectorAll('div, section');
+      for (var d = 0; d < allDivs.length; d++) {
+        var card = allDivs[d];
+        var txt = cleanText(card);
+        if (txt.indexOf('उपलब्ध शेष राशि (RM CASH)') !== -1 && txt.indexOf('खाता सक्रिय') !== -1) {
+          card.style.setProperty('overflow', 'visible', 'important');
           card.classList.add('sivme-widget-anchor');
           auditElement(card, 'rm:card:rm-cash', 'RM CASH बहीखाता कार्ड', isAuth);
 
-          // Action 1: + नया लेन-देन
           card.querySelectorAll('button, a, div[onclick]').forEach(function (btn) {
-            var bTxt = btn.textContent || '';
+            var bTxt = cleanText(btn);
             if (bTxt.indexOf('नया लेन-देन') !== -1) {
               btn.classList.add('sivme-btn-anchor');
               auditElement(btn, 'rm:elem:cash-add-txn', '+ नया लेन-देन', isAuth);
@@ -465,17 +512,23 @@
               auditElement(btn, 'rm:elem:cash-statement', 'खाता विवरणी', isAuth);
             }
           });
+          break; // Outer card found
         }
-      });
+      }
 
-      // 4. "जुड़ना मुफ़्त" Button
-      document.querySelectorAll('button, span, div').forEach(function (el) {
-        if ((el.textContent || '').trim() === 'जुड़ना मुफ़्त') {
-          var jTarget = el.closest('button, a, div[onclick]') || el;
-          jTarget.classList.add('sivme-btn-anchor');
-          auditElement(jTarget, 'rm:elem:join-free', 'जुड़ना मुफ़्त बटन', isAuth);
+      // 4. "जुड़ना मुफ़्त" Button (Clean Text Match)
+      var potentialJoinBtns = document.querySelectorAll('button, a, span, div');
+      for (var j = 0; j < potentialJoinBtns.length; j++) {
+        var jEl = potentialJoinBtns[j];
+        if (cleanText(jEl) === 'जुड़ना मुफ़्त' || cleanText(jEl).indexOf('जुड़ना मुफ़्त') !== -1) {
+          var jTarget = jEl.closest('button, a, div[onclick]') || jEl;
+          if (jTarget.offsetHeight < 70) {
+            jTarget.classList.add('sivme-btn-anchor');
+            auditElement(jTarget, 'rm:elem:join-free', 'जुड़ना मुफ़्त बटन', isAuth);
+            break;
+          }
         }
-      });
+      }
 
       // ==========================================
       // B. SCAN ALL 50 CATEGORIES IN UNIVERSAL CATALOG
@@ -495,7 +548,7 @@
         var numStr = catId.replace(/[^0-9]/g, '');
 
         if (!numStr) {
-          var text = (card.textContent || '').trim();
+          var text = cleanText(card);
           var match = text.match(/([0-9]{1,2})\./);
           if (match) numStr = match[1];
         }
@@ -511,7 +564,7 @@
         card.classList.add('sivme-catalog-card');
 
         var labelEl = card.querySelector('.text-xs.font-bold') || card.querySelector('.font-bold');
-        var label = labelEl ? labelEl.textContent.trim() : ('श्रेणी ' + numStr);
+        var label = labelEl ? cleanText(labelEl) : ('श्रेणी ' + numStr);
 
         var isVis = getUrnVisibility(urn);
 
@@ -550,7 +603,7 @@
       // ==========================================
       var verticalCards = document.querySelectorAll('.grid > div, [data-vertical-id]');
       verticalCards.forEach(function (card) {
-        var txt = (card.textContent || '').trim();
+        var txt = cleanText(card);
         var vUrn = null;
         var vLabel = null;
 
@@ -581,7 +634,7 @@
     }
   }
 
-  // 8. FLOATING HUD DOCK
+  // 9. FLOATING HUD DOCK
   function updateFloatingDock(isAuth, hiddenCount) {
     var dock = document.getElementById('sivmeFloatingDock');
     if (!isAuth) { if (dock) dock.remove(); return; }
@@ -619,7 +672,7 @@
     }
   }
 
-  // 9. MICRO-MODULAR ADAPTER AUTOLOADER
+  // 10. MICRO-MODULAR ADAPTER AUTOLOADER
   function loadAdapters() {
     var basePath = '/js/sivme-adapters/';
     var curr = document.currentScript;
@@ -640,14 +693,14 @@
     scripts.forEach(function (src) {
       if (!document.querySelector('script[src*="' + src + '"]')) {
         var s = document.createElement('script');
-        s.src = src + '?v=20261005_v6';
+        s.src = src + '?v=20261005_v7';
         s.async = true;
         document.head.appendChild(s);
       }
     });
   }
 
-  // 10. GLOBAL SIVME API & OBSERVER
+  // 11. GLOBAL SIVME API & DYNAMIC OBSERVER
   window.RM_SIVME = {
     isConsoleAuthorized: isConsoleAuthorized,
     getUrnVisibility: getUrnVisibility,
