@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Unified Core Engine (Universal 1-Tap Body Toggle, RM CASH & Full Widget Suite)
+ * MODULE        : Surface-A Unified Core Engine (Bulletproof Mobile 1-Tap, Non-Colliding Widgets & Modals)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -270,7 +270,7 @@
         top: -11px !important;
         left: 14px !important;
         right: auto !important;
-        z-index: 50 !important;
+        z-index: 90 !important;
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
         font-size: 10px !important;
         font-weight: 800;
@@ -285,29 +285,47 @@
         line-height: 1.2 !important;
         user-select: none !important;
         touch-action: manipulation !important;
+        pointer-events: auto !important;
       }
 
-      /* Home Widgets Badge Positioning */
-      .sivme-widget-anchor {
+      /* Home Search Bar & Widget Container Clearances */
+      .sivme-search-container {
         position: relative !important;
         overflow: visible !important;
+        margin-top: 14px !important;
       }
-      .sivme-widget-anchor > .sivme-inline-badge {
+      .sivme-search-container > .sivme-inline-badge {
         top: -11px !important;
         left: 14px !important;
-        z-index: 60 !important;
+        z-index: 100 !important;
       }
-      .sivme-btn-anchor {
+
+      /* RM CASH Card */
+      .sivme-cash-card {
         position: relative !important;
         overflow: visible !important;
+        margin-top: 14px !important;
       }
-      .sivme-btn-anchor > .sivme-inline-badge {
+      .sivme-cash-card > .sivme-inline-badge {
         top: -11px !important;
-        right: 8px !important;
+        left: 14px !important;
+        z-index: 95 !important;
+      }
+
+      /* Action Buttons inside Card and Section Header */
+      .sivme-btn-pill {
+        position: relative !important;
+        overflow: visible !important;
+        touch-action: manipulation !important;
+        cursor: pointer !important;
+      }
+      .sivme-btn-pill > .sivme-inline-badge {
+        top: -12px !important;
+        right: 6px !important;
         left: auto !important;
         font-size: 9px !important;
         padding: 2px 7px !important;
-        z-index: 70 !important;
+        z-index: 110 !important;
       }
 
       .sivme-vertical-card .sivme-inline-badge {
@@ -365,25 +383,6 @@
     if (!badge) {
       badge = document.createElement('div');
       parentEl.appendChild(badge);
-
-      badge.addEventListener('click', function (e) {
-        if (e.cancelable) e.preventDefault();
-        e.stopPropagation();
-
-        var cur = badge.getAttribute('data-badge-vis') === 'true';
-        var nextVis = !cur;
-
-        if (urn === 'rm:cat:16') {
-          ['rm:cat:16:sub:16-1', 'rm:cat:16:sub:16-2', 'rm:cat:16:sub:16-3'].forEach(function (su) {
-            setUrnVisibility(su, nextVis);
-          });
-          setUrnVisibility(urn, nextVis, label);
-        } else {
-          setUrnVisibility(urn, nextVis, label);
-        }
-
-        applyInSituAudit();
-      }, false);
     }
 
     badge.className = targetClass;
@@ -392,7 +391,7 @@
     badge.setAttribute('data-badge-vis', String(isVisible));
   }
 
-  // 7. UNIVERSAL 1-TAP AUDIT ELEMENT DISPATCHER
+  // 7. UNIVERSAL 1-TAP AUDIT ELEMENT DISPATCHER (Capture Phase)
   function auditElement(el, urn, label, isAuth) {
     if (!el) return;
     el.setAttribute('data-sov-urn', urn);
@@ -419,35 +418,56 @@
       }
       mountInlineBadge(el, urn, isVis, label);
 
-      // Universal 1-Tap Toggle On The Element Body Itself
+      // 1-Tap Toggle On Capture Phase (Overrides Native Mobile Button Blocks)
       if (el.getAttribute('data-sivme-tap-bound') !== 'true') {
         el.setAttribute('data-sivme-tap-bound', 'true');
 
         el.addEventListener('click', function (e) {
           if (!isConsoleAuthorized()) return;
-          if (e.target.closest('.sivme-inline-badge')) return;
 
+          var clickedBadge = e.target.closest('.sivme-inline-badge');
+          var isSelfBadge = clickedBadge && clickedBadge.parentElement === el;
           var curVis = getUrnVisibility(urn);
 
-          // If dormant (hidden), tapping anywhere on the element immediately awakens it!
+          // If child button clicked, stop event from reaching parent card!
+          if (el.classList.contains('sivme-btn-pill')) {
+            e.stopPropagation();
+          }
+
+          // Case 1: Tapping directly on the badge -> Always toggle!
+          if (isSelfBadge) {
+            if (e.cancelable) e.preventDefault();
+            e.stopImmediatePropagation();
+            e.stopPropagation();
+            setUrnVisibility(urn, !curVis, label);
+            applyInSituAudit();
+            return;
+          }
+
+          // Case 2: Element is Dormant (Hidden) -> 1 Tap anywhere on it awakens it!
           if (!curVis) {
             if (e.cancelable) e.preventDefault();
+            e.stopImmediatePropagation();
             e.stopPropagation();
             setUrnVisibility(urn, true, label);
             applyInSituAudit();
             return;
           }
 
-          // If live, allow native actions on inputs/buttons inside complex cards, otherwise toggle
-          if (e.target.tagName === 'INPUT' || (el.classList.contains('sivme-widget-anchor') && e.target.closest('button, a'))) {
+          // Case 3: If Live and clicked an actual input or inner child button, allow native action!
+          if (e.target.tagName === 'INPUT' || (el.classList.contains('sivme-cash-card') && e.target.closest('.sivme-btn-pill'))) {
             return;
           }
 
-          if (e.cancelable) e.preventDefault();
-          e.stopPropagation();
-          setUrnVisibility(urn, false, label);
-          applyInSituAudit();
-        }, false);
+          // Case 4: Live action button/tile body tapped in Console mode -> Toggle off
+          if (el.classList.contains('sivme-btn-pill') || el.classList.contains('sivme-vertical-card')) {
+            if (e.cancelable) e.preventDefault();
+            e.stopImmediatePropagation();
+            e.stopPropagation();
+            setUrnVisibility(urn, false, label);
+            applyInSituAudit();
+          }
+        }, true); // Use Capture phase to guarantee interception on Android
       }
     }
   }
@@ -476,7 +496,7 @@
       document.querySelectorAll('span, button, a').forEach(function (el) {
         if (cleanText(el).indexOf('ऐप इंस्टॉल') !== -1) {
           var target = el.closest('button, a, div[onclick]') || el;
-          target.classList.add('sivme-btn-anchor');
+          target.classList.add('sivme-btn-pill');
           auditElement(target, 'rm:elem:app-install', 'ऐप इंस्टॉल बटन', isAuth);
         }
       });
@@ -487,7 +507,7 @@
         var searchParent = searchBox.parentElement;
         if (searchParent) {
           searchParent.style.setProperty('overflow', 'visible', 'important');
-          searchParent.classList.add('sivme-widget-anchor');
+          searchParent.classList.add('sivme-search-container');
           auditElement(searchParent, 'rm:elem:home-search', 'ग्लोबल खोज बार', isAuth);
         }
       }
@@ -497,18 +517,18 @@
       for (var d = 0; d < allDivs.length; d++) {
         var card = allDivs[d];
         var txt = cleanText(card);
-        if (txt.indexOf('उपलब्ध शेष राशि (RM CASH)') !== -1 && txt.indexOf('खाता सक्रिय') !== -1) {
+        if (txt.indexOf('उपलब्ध शेष राशि (RM CASH)') !== -1 && txt.indexOf('खाता सक्रिय') !== -1 && card.offsetHeight > 140) {
           card.style.setProperty('overflow', 'visible', 'important');
-          card.classList.add('sivme-widget-anchor');
+          card.classList.add('sivme-cash-card');
           auditElement(card, 'rm:card:rm-cash', 'RM CASH बहीखाता कार्ड', isAuth);
 
           card.querySelectorAll('button, a, div[onclick]').forEach(function (btn) {
             var bTxt = cleanText(btn);
             if (bTxt.indexOf('नया लेन-देन') !== -1) {
-              btn.classList.add('sivme-btn-anchor');
+              btn.classList.add('sivme-btn-pill');
               auditElement(btn, 'rm:elem:cash-add-txn', '+ नया लेन-देन', isAuth);
             } else if (bTxt.indexOf('खाता विवरणी') !== -1) {
-              btn.classList.add('sivme-btn-anchor');
+              btn.classList.add('sivme-btn-pill');
               auditElement(btn, 'rm:elem:cash-statement', 'खाता विवरणी', isAuth);
             }
           });
@@ -516,14 +536,14 @@
         }
       }
 
-      // 4. "जुड़ना मुफ़्त" Button (Clean Text Match)
+      // 4. "जुड़ना मुफ़्त" Button
       var potentialJoinBtns = document.querySelectorAll('button, a, span, div');
       for (var j = 0; j < potentialJoinBtns.length; j++) {
         var jEl = potentialJoinBtns[j];
         if (cleanText(jEl) === 'जुड़ना मुफ़्त' || cleanText(jEl).indexOf('जुड़ना मुफ़्त') !== -1) {
           var jTarget = jEl.closest('button, a, div[onclick]') || jEl;
           if (jTarget.offsetHeight < 70) {
-            jTarget.classList.add('sivme-btn-anchor');
+            jTarget.classList.add('sivme-btn-pill');
             auditElement(jTarget, 'rm:elem:join-free', 'जुड़ना मुफ़्त बटन', isAuth);
             break;
           }
@@ -693,7 +713,7 @@
     scripts.forEach(function (src) {
       if (!document.querySelector('script[src*="' + src + '"]')) {
         var s = document.createElement('script');
-        s.src = src + '?v=20261005_v7';
+        s.src = src + '?v=20261005_v8';
         s.async = true;
         document.head.appendChild(s);
       }
