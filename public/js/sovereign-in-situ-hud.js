@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Core Engine (Isolated Sub-Card SSOT & Non-Mutating Parent Computed Display)
+ * MODULE        : Surface-A Unified Core Engine (Universal Catalog + 9 Core Verticals In-Situ Control)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -88,7 +88,6 @@
   }
 
   function setUrnVisibility(urn, nextVis, label) {
-    // Direct Isolated LocalStorage Write
     try {
       var reg = getRegistry();
       if (!reg.items) reg.items = {};
@@ -96,7 +95,6 @@
       localStorage.setItem(REGISTRY_STORAGE_KEY, JSON.stringify(reg));
     } catch (_) {}
 
-    // Safe Sync to Sovereign Registry without circular double-toggle
     if (window.RM_SovereignRegistry) {
       try {
         if (typeof window.RM_SovereignRegistry.setVisibility === 'function') {
@@ -108,7 +106,7 @@
     }
   }
 
-  // 4. BULLETPROOF DOM & REGISTRY RECONCILED HIDDEN COUNTER
+  // 4. BULLETPROOF RECONCILED HIDDEN COUNTER
   function getHiddenCount() {
     var hiddenUrns = {};
     var reg = getRegistry();
@@ -135,22 +133,25 @@
     return Object.keys(hiddenUrns).length;
   }
 
-  // 5. CORE STYLES (Anti-Clipping, Top Clearance & Touch Action)
+  // 5. CORE STYLES (Anti-Clipping, Top Clearance & Vertical Tiles Anchor)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
     style.id = 'sivme-core-styles';
     style.textContent = `
       #categoryModal .overflow-y-auto {
-        padding-top: 18px !important;
+        padding-top: 22px !important;
         padding-bottom: 130px !important;
       }
 
-      #categoryModal [data-cat-id] {
+      #categoryModal [data-cat-id],
+      #categoryModal div[onclick*="toggleCategory"],
+      #categoryModal div[id*="cat-"] {
         overflow: visible !important;
         position: relative !important;
         margin-bottom: 22px !important;
       }
+
       #categoryModal [data-cat-id="c16"] {
         display: block !important;
         min-height: auto !important;
@@ -175,7 +176,6 @@
         border: 1px solid rgba(255,255,255,0.08) !important;
         border-top: 1px solid rgba(255,255,255,0.22) !important;
         box-shadow: 0 6px 16px -2px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.15) !important;
-        cursor: pointer !important;
       }
 
       #categoryModal [data-cat-id] > div:first-child > div:first-child,
@@ -185,6 +185,7 @@
         padding-right: 14px !important;
         overflow: visible !important;
       }
+
       #categoryModal [data-cat-id] button,
       #categoryModal [data-cat-id] a,
       #categoryModal [data-cat-id] span.text-cyan-400,
@@ -200,7 +201,7 @@
         gap: 3px !important;
       }
 
-      .sivme-badge-anchor { position: relative !important; isolation: isolate !important; }
+      .sivme-badge-anchor { position: relative !important; isolation: isolate !important; overflow: visible !important; }
       .sivme-ghost-dormant {
         border: 2px dashed #ef4444 !important;
         border-radius: 14px !important;
@@ -208,11 +209,6 @@
         background: repeating-linear-gradient(-45deg, rgba(239,68,68,0.12), rgba(239,68,68,0.12) 10px, transparent 10px, transparent 20px) !important;
         box-shadow: none !important;
         cursor: pointer !important;
-      }
-      [data-sov-urn*="elem:"].sivme-ghost-dormant, [data-sov-urn*="listing:"].sivme-ghost-dormant {
-        border: 1.5px dashed #ef4444 !important;
-        border-radius: 10px !important;
-        background: rgba(239,68,68,0.08) !important;
       }
       .sivme-public-hidden { display: none !important; }
 
@@ -237,12 +233,13 @@
         user-select: none !important;
         touch-action: manipulation !important;
       }
-      [data-sov-urn*="elem:"] > .sivme-inline-badge {
-        top: -9px !important;
-        right: 12px !important;
-        left: auto !important;
+      .sivme-vertical-card .sivme-inline-badge {
+        top: -8px !important;
+        left: 8px !important;
         font-size: 9px !important;
+        padding: 2px 7px !important;
       }
+
       .sivme-badge-live { background: #064e3b !important; color: #6ee7b7 !important; border: 1.5px solid #10b981 !important; }
       .sivme-badge-dormant { background: #7f1d1d !important; color: #fca5a5 !important; border: 1.5px solid #ef4444 !important; }
 
@@ -306,7 +303,6 @@
         var cur = badge.getAttribute('data-badge-vis') === 'true';
         var nextVis = !cur;
 
-        // If Category 16 Master Badge is clicked directly, toggle all 3 children
         if (urn === 'rm:cat:16') {
           ['rm:cat:16:sub:16-1', 'rm:cat:16:sub:16-2', 'rm:cat:16:sub:16-3'].forEach(function (su) {
             setUrnVisibility(su, nextVis);
@@ -326,7 +322,7 @@
     badge.setAttribute('data-badge-vis', String(isVisible));
   }
 
-  // 7. AUDIT 50 UNIVERSAL CATALOG CATEGORIES & DISPLAY COMPUTED PARENT STATUS
+  // 7. AUDIT 50 UNIVERSAL CATALOG CATEGORIES & 9 CORE VERTICALS
   function applyInSituAudit() {
     if (isAuditing) return;
     isAuditing = true;
@@ -335,6 +331,7 @@
       enforceZELTemplateRendering();
       var isAuth = isConsoleAuthorized();
 
+      // SECTION HEADERS
       var modalElements = document.querySelectorAll('#categoryModal button, #categoryModal [onclick], #categoryModal div');
       modalElements.forEach(function (el) {
         var t = (el.textContent || '').trim();
@@ -343,11 +340,17 @@
         }
       });
 
-      var catalogCards = document.querySelectorAll('#categoryModal [data-cat-id]');
+      // A. AUDIT ALL CATALOG CARDS (Includes Cat 15, 16, 17...)
+      var catalogCards = document.querySelectorAll('#categoryModal [data-cat-id], #categoryModal [id*="cat-"]');
       catalogCards.forEach(function (card) {
-        var catId = card.getAttribute('data-cat-id');
-        if (!catId) return;
+        var catId = card.getAttribute('data-cat-id') || card.id || '';
         var numStr = catId.replace(/[^0-9]/g, '');
+        if (!numStr) {
+          var t = card.textContent || '';
+          var m = t.match(/([0-9]{1,2})\./);
+          if (m) numStr = m[1];
+        }
+        if (!numStr) return;
         if (numStr.length === 1) numStr = '0' + numStr;
         var urn = 'rm:cat:' + numStr;
         var labelEl = card.querySelector('.text-xs.font-bold') || card.querySelector('.font-bold');
@@ -355,9 +358,6 @@
 
         var isVis = getUrnVisibility(urn);
 
-        // COMPUTED DISPLAY FOR CATEGORY 16 (NON-MUTATING):
-        // If ANY sub-category is Hidden -> Category 16 displays Red Hidden.
-        // If ALL sub-categories are Live -> Category 16 displays Green Live.
         if (urn === 'rm:cat:16') {
           var sub1 = getUrnVisibility('rm:cat:16:sub:16-1');
           var sub2 = getUrnVisibility('rm:cat:16:sub:16-2');
@@ -388,6 +388,59 @@
         }
       });
 
+      // B. AUDIT 9 CORE VERTICALS (HOME SCREEN TILES)
+      var verticalCards = document.querySelectorAll('.grid > div, [data-vertical-id]');
+      verticalCards.forEach(function (card) {
+        var txt = (card.textContent || '').trim();
+        var vUrn = null;
+        var vLabel = null;
+
+        if (txt.indexOf('स्वस्थ मन') !== -1) { vUrn = 'rm:vertical:mind'; vLabel = 'स्वस्थ मन'; }
+        else if (txt.indexOf('कौशल') !== -1) { vUrn = 'rm:vertical:skills'; vLabel = 'कौशल सीखें'; }
+        else if (txt.indexOf('किराना') !== -1) { vUrn = 'rm:vertical:grocery'; vLabel = 'किराना'; }
+        else if (txt.indexOf('डिलीवरी') !== -1) { vUrn = 'rm:vertical:delivery'; vLabel = 'डिलीवरी'; }
+        else if (txt.indexOf('व्यापार टूल्स') !== -1) { vUrn = 'rm:vertical:biztools'; vLabel = 'व्यापार टूल्स'; }
+        else if (txt.indexOf('विशेषज्ञ') !== -1) { vUrn = 'rm:vertical:expert'; vLabel = 'विशेषज्ञ सलाह'; }
+        else if (txt.indexOf('वाउचर') !== -1) { vUrn = 'rm:vertical:voucher'; vLabel = 'वाउचर'; }
+        else if (txt.indexOf('बहीखाता') !== -1) { vUrn = 'rm:vertical:ledger'; vLabel = 'बहीखाता'; }
+        else if (txt.indexOf('आपात') !== -1) { vUrn = 'rm:vertical:emergency'; vLabel = 'आपात सहायता'; }
+
+        if (!vUrn || card.closest('#categoryModal')) return;
+
+        card.classList.add('sivme-vertical-card');
+        var isVis = getUrnVisibility(vUrn);
+
+        // Sync with Category 16-2 if it's the Ledger tile
+        if (vUrn === 'rm:vertical:ledger') {
+          if (!getUrnVisibility('rm:cat:16:sub:16-2')) {
+            isVis = false;
+          }
+        }
+
+        if (!isAuth) {
+          if (!isVis) {
+            card.classList.add('sivme-public-hidden');
+            card.style.setProperty('display', 'none', 'important');
+          } else {
+            card.classList.remove('sivme-public-hidden');
+            card.style.removeProperty('display');
+          }
+          var oldVB = card.querySelector(':scope > .sivme-inline-badge');
+          if (oldVB) oldVB.remove();
+          card.classList.remove('sivme-ghost-dormant', 'sivme-badge-anchor');
+        } else {
+          card.classList.remove('sivme-public-hidden');
+          card.classList.add('sivme-badge-anchor');
+          if (!isVis) {
+            card.classList.add('sivme-ghost-dormant');
+          } else {
+            card.classList.remove('sivme-ghost-dormant');
+          }
+          mountInlineBadge(card, vUrn, isVis, vLabel);
+        }
+      });
+
+      // EXECUTE REGISTERED ADAPTERS
       Object.keys(adapters).forEach(function (key) {
         try { adapters[key](); } catch (_) {}
       });
