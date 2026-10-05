@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Lightweight Core Engine (Anti-Clip, DOM-Reconciled Counter & ZEL Host)
+ * MODULE        : Surface-A Lightweight Core Engine (Anti-Clip, Priority LocalStorage Bridge & Auto-Wake)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -18,7 +18,7 @@
   var isAuditing = false;
   var adapters = {};
 
-  // 1. ZEL TEMPLATE SHIELD: Ensure legacy modules always render complete DOM
+  // 1. ZEL TEMPLATE SHIELD
   function enforceZELTemplateRendering() {
     try {
       var keys = ['rm_local_acct_owner_config', 'rm_local_acctdefault_owner_config', 'rm_owner_filter_config_v1'];
@@ -64,7 +64,7 @@
     }
   }
 
-  // 3. REGISTRY BRIDGE
+  // 3. REGISTRY BRIDGE (LocalStorage Priority SSOT)
   function getRegistry() {
     try {
       var raw = localStorage.getItem(REGISTRY_STORAGE_KEY);
@@ -75,42 +75,61 @@
   }
 
   function getUrnVisibility(urn) {
-    if (window.RM_SovereignRegistry && typeof window.RM_SovereignRegistry.isVisible === 'function') {
-      return window.RM_SovereignRegistry.isVisible(urn);
-    }
+    // A. Priority 1: Direct LocalStorage User Action (Prevents Stale Registry Overwrite)
     var reg = getRegistry();
-    return !(reg && reg.items && reg.items[urn] && reg.items[urn].visible === false);
+    if (reg && reg.items && reg.items[urn] !== undefined && reg.items[urn].visible !== undefined) {
+      return !!reg.items[urn].visible;
+    }
+
+    // B. Priority 2: Sovereign Registry Fallback
+    if (window.RM_SovereignRegistry && typeof window.RM_SovereignRegistry.isVisible === 'function') {
+      try {
+        return window.RM_SovereignRegistry.isVisible(urn);
+      } catch (_) {}
+    }
+
+    // C. Default: Sub-elements and items default to Live unless explicitly hidden
+    return true;
   }
 
   function setUrnVisibility(urn, nextVis, label) {
-    if (window.RM_SovereignRegistry && typeof window.RM_SovereignRegistry.toggleVisibility === 'function') {
-      try { window.RM_SovereignRegistry.toggleVisibility(urn, nextVis, label); } catch (_) {}
+    // A. Sync with all Sovereign Registry APIs
+    if (window.RM_SovereignRegistry) {
+      try {
+        if (typeof window.RM_SovereignRegistry.setVisibility === 'function') {
+          window.RM_SovereignRegistry.setVisibility(urn, nextVis, label);
+        }
+        if (typeof window.RM_SovereignRegistry.toggleVisibility === 'function') {
+          window.RM_SovereignRegistry.toggleVisibility(urn, nextVis, label);
+        }
+        if (typeof window.RM_SovereignRegistry.set === 'function') {
+          window.RM_SovereignRegistry.set(urn, nextVis);
+        }
+      } catch (_) {}
     }
+
+    // B. Save to LocalStorage Registry
     try {
       var reg = getRegistry();
       if (!reg.items) reg.items = {};
       reg.items[urn] = { visible: nextVis, label: label, updatedAt: Date.now() };
       localStorage.setItem(REGISTRY_STORAGE_KEY, JSON.stringify(reg));
     } catch (_) {}
+
+    // C. Auto-Wake Parent: If sub-category becomes Live, wake up parent Category 16
+    if (nextVis === true && urn.indexOf('sub:') !== -1) {
+      var parts = urn.split(':sub:');
+      var parentUrn = parts[0];
+      if (!getUrnVisibility(parentUrn)) {
+        setUrnVisibility(parentUrn, true, 'घर व मकान');
+      }
+    }
   }
 
   // 4. BULLETPROOF DOM & REGISTRY RECONCILED HIDDEN COUNTER
   function getHiddenCount() {
     var hiddenUrns = {};
 
-    // A. Read SSOT Sovereign Registry
-    if (window.RM_SovereignRegistry && typeof window.RM_SovereignRegistry.getAll === 'function') {
-      try {
-        var all = window.RM_SovereignRegistry.getAll();
-        if (all) {
-          Object.keys(all).forEach(function (k) {
-            if (all[k] && all[k].visible === false) hiddenUrns[k] = true;
-          });
-        }
-      } catch (_) {}
-    }
-
-    // B. Read LocalStorage Registry
     var reg = getRegistry();
     if (reg && reg.items) {
       Object.keys(reg.items).forEach(function (k) {
@@ -122,7 +141,6 @@
       });
     }
 
-    // C. Reconcile with active DOM Badges
     document.querySelectorAll('.sivme-badge-dormant').forEach(function (badge) {
       var u = badge.getAttribute('data-badge-urn');
       if (u) hiddenUrns[u] = true;
@@ -136,7 +154,7 @@
     return Object.keys(hiddenUrns).length;
   }
 
-  // 5. CORE STYLES (Anti-Clipping, 2.5D Elevation, Clearance & No-Wrap)
+  // 5. CORE STYLES
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -285,7 +303,7 @@
     document.head.appendChild(style);
   }
 
-  // 6. MOUNT INLINE BADGES & CARD WAKE-UP
+  // 6. MOUNT INLINE BADGES WITH INTERCEPTIVE CAPTURE
   function mountInlineBadge(parentEl, urn, isVisible, label) {
     var badge = parentEl.querySelector(':scope > .sivme-inline-badge');
     var targetClass = isVisible ? 'sivme-inline-badge sivme-badge-live' : 'sivme-inline-badge sivme-badge-dormant';
@@ -294,14 +312,16 @@
     if (!badge) {
       badge = document.createElement('div');
       parentEl.appendChild(badge);
+
       badge.addEventListener('click', function (e) {
         if (e.cancelable) e.preventDefault();
         e.stopPropagation();
-        var targetVis = !(badge.getAttribute('data-badge-vis') === 'true');
-        setUrnVisibility(urn, targetVis, label);
+        var cur = badge.getAttribute('data-badge-vis') === 'true';
+        setUrnVisibility(urn, !cur, label);
         applyInSituAudit();
-      });
+      }, true);
 
+      // Card wake-up for dormant items
       if (urn.indexOf('sub:') === -1 && urn.indexOf('elem:') === -1 && urn.indexOf('listing:') === -1) {
         parentEl.addEventListener('click', function (e) {
           if (!parentEl.classList.contains('sivme-ghost-dormant')) return;
@@ -397,7 +417,7 @@
         </span>
         <button id="btnHardReloadBust" style="background:#0369a1;border:1px solid #38bdf8;color:#e0f2fe;font-size:10px;font-weight:900;padding:3px 8px;border-radius:8px;cursor:pointer;">⚡ Reload</button>
         <button id="btnExitInSitu" style="background:#450a0a;border:1px solid #b91c1c;color:#fca5a5;font-size:10px;font-weight:800;padding:3px 7px;border-radius:8px;cursor:pointer;">Exit ✕</button>
-        <a href="/owner-console.html" style="background:#1e1b4b;border:1px solid #4338ca;color:#a5b4fc;font-size:10px;font-weight:800;padding:3px 7px;border-radius:8px;text-decoration:none;">B ⚙️️</a>
+        <a href="/owner-console.html" style="background:#1e1b4b;border:1px solid #4338ca;color:#a5b4fc;font-size:10px;font-weight:800;padding:3px 7px;border-radius:8px;text-decoration:none;">B ⚙</a>
       `;
       document.body.appendChild(dock);
 
