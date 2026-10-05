@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Unified Core Engine (Kernel v2.2 - Core Verticals Decoupled)
+ * MODULE        : Surface-A Unified Core Engine (Final Pure Kernel v3.0 - Fully Decoupled)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -237,7 +237,7 @@
     }
   }
 
-  // 8. UNIVERSAL AUDIT ENGINE (Clean Master Kernel)
+  // 8. PURE KERNEL AUDIT ENGINE (Delegates to Registered Micro-Adapters)
   function applyInSituAudit() {
     if (isAuditing) return;
     isAuditing = true;
@@ -254,7 +254,7 @@
         m.style.setProperty('max-height', '100dvh', 'important');
       });
 
-      // Category 16 Dedicated Header Audit
+      // Category 16 Header Audit
       var c16 = document.querySelector('#categoryModal [data-cat-id="c16"]');
       if (c16) {
         var c16Header = c16.querySelector(':scope > div:first-child');
@@ -290,44 +290,7 @@
         }
       }
 
-      // Universal Catalog Cards Scanner (Except c16 handled above)
-      var catalogCards = document.querySelectorAll(
-        '#categoryModal [data-cat-id], ' +
-        '#categoryModal [id*="cat-"], ' +
-        '#categoryModal div[onclick*="category"], ' +
-        '#categoryModal div[onclick*="Category"]'
-      );
-
-      var processedUrns = {};
-      catalogCards.forEach(function (cCard) {
-        if (cCard.closest('#sub-c16')) return;
-
-        var catId = cCard.getAttribute('data-cat-id') || cCard.id || '';
-        var numStr = catId.replace(/[^0-9]/g, '');
-
-        if (!numStr) {
-          var text = cleanText(cCard);
-          var match = text.match(/([0-9]{1,2})\./);
-          if (match) numStr = match[1];
-        }
-
-        if (!numStr || numStr === '16') return;
-        if (numStr.length === 1) numStr = '0' + numStr;
-
-        var urn = 'rm:cat:' + numStr;
-        if (processedUrns[urn]) return;
-        processedUrns[urn] = true;
-
-        cCard.setAttribute('data-cat-id', 'c' + numStr);
-        cCard.classList.add('sivme-catalog-card');
-
-        var labelEl = cCard.querySelector('.text-xs.font-bold') || cCard.querySelector('.font-bold');
-        var label = labelEl ? cleanText(labelEl) : ('श्रेणी ' + numStr);
-
-        auditElement(cCard, urn, label, isAuth);
-      });
-
-      // Execute Micro-Adapters (home-widgets, core-verticals-9, cat-16, sub-16-1, sub-16-2, sub-16-3)
+      // Execute All Registered Micro-Adapters (home-widgets, core-verticals-9, catalog-50, cat-16, sub-16-1, sub-16-2, sub-16-3)
       Object.keys(adapters).forEach(function (key) {
         try { adapters[key](); } catch (_) {}
       });
@@ -376,7 +339,7 @@
     }
   }
 
-  // 10. MICRO-MODULAR ADAPTER AUTOLOADER
+  // 10. MICRO-MODULAR ADAPTER AUTOLOADER (7 Complete Modules)
   function loadAdapters() {
     var basePath = '/js/sivme-adapters/';
     var curr = document.currentScript;
@@ -390,6 +353,7 @@
     var scripts = [
       basePath + 'home-widgets.js',
       basePath + 'core-verticals-9.js',
+      basePath + 'catalog-50.js',
       basePath + 'cat-16.js',
       basePath + 'sub-16-1.js',
       basePath + 'sub-16-2.js',
@@ -399,7 +363,7 @@
     scripts.forEach(function (src) {
       if (!document.querySelector('script[src*="' + src + '"]')) {
         var s = document.createElement('script');
-        s.src = src + '?v=20261006_v6';
+        s.src = src + '?v=20261006_v7';
         s.async = true;
         document.head.appendChild(s);
       }
