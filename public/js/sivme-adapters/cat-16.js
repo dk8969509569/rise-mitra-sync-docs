@@ -1,8 +1,10 @@
 /**
  * RISE MITRA — SIVME CATEGORY 16 ADAPTER
- * TARGET: Category 16 Accordion, 16-1, 16-2, 16-3 Sub-Cards & Seamless Opener
+ * TARGET: Category 16 Accordion, 16-1, 16-2, 16-3 Sub-Cards & Seamless Native Opener
  * GOVERNANCE: GATE-23.5 | ZEL SPECIFICATION
- * DUAL-FOLDER REFS: Folder A (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) / Folder B (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
+ * DUAL-FOLDER REFS:
+ *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
+ *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
  */
 
 (function () {
@@ -54,7 +56,7 @@
       }
     }
 
-    // 2. Sub-Services 16-1, 16-2, 16-3 Resolution & Pure Pass-Through Opener
+    // 2. Sub-Services 16-1, 16-2, 16-3 Resolution & Pure Native Opener
     var sub16Cards = document.querySelectorAll('#sub-c16 > div');
     sub16Cards.forEach(function (subCard, idx) {
       var subUrn = 'rm:cat:16:sub:16-' + (idx + 1);
@@ -101,6 +103,7 @@
           var isDormant = subCard.classList.contains('sivme-ghost-dormant');
           var isBadgeClick = !!e.target.closest('.sivme-inline-badge');
 
+          // If Dormant or Badge clicked: Toggle Visibility
           if (isDormant || isBadgeClick) {
             if (e.cancelable) e.preventDefault();
             e.stopPropagation();
@@ -118,7 +121,7 @@
             return;
           }
 
-          // Delegate to Native Open Action without closing catalog
+          // If LIVE: Trigger Native Opener Seamlessly
           var openTrigger = subCard.querySelector('button, a, [onclick]');
           if (openTrigger && e.target !== openTrigger && !openTrigger.contains(e.target)) {
             openTrigger.click();
