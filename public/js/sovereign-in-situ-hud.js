@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Unified Core Engine (Full-Screen Mobile Modals, 50 Categories & 9 Verticals)
+ * MODULE        : Surface-A Unified Core Engine (Full Home Widgets, 50 Categories & 9 Verticals)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -133,60 +133,44 @@
     return Object.keys(hiddenUrns).length;
   }
 
-  // 5. CORE STYLES (Full Screen Mobile Modals + Clean Pill Headers)
+  // 5. CORE STYLES (Full-Screen Modals & Non-Disruptive Widget Badges)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
     style.id = 'sivme-core-styles';
     style.textContent = `
-      /* Hidden Utility States */
-      .hidden,
-      [style*="display: none"],
-      [style*="display:none"] {
+      .hidden, [style*="display: none"], [style*="display:none"] {
         display: none !important;
       }
 
-      /* =========================================================
-         FULLSCREEN NATIVE MODALS (Eliminates Bottom Void & Truncation)
-         ========================================================= */
+      /* Native Full-Screen Modals */
       #categoryModal:not(.hidden):not([style*="display: none"]):not([style*="display:none"]),
       #rentalLedgerModal:not(.hidden):not([style*="display: none"]):not([style*="display:none"]),
       #rentalSearchModal:not(.hidden):not([style*="display: none"]):not([style*="display:none"]),
       [id*="Modal"]:not(.hidden):not([style*="display: none"]):not([style*="display:none"]) {
         position: fixed !important;
         inset: 0 !important;
-        top: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        bottom: 0 !important;
         width: 100vw !important;
         max-width: 100vw !important;
-        height: 100vh !important;
         height: 100dvh !important;
-        max-height: 100vh !important;
         max-height: 100dvh !important;
         margin: 0 !important;
         padding: 0 !important;
         border-radius: 0 !important;
-        align-items: stretch !important;
-        justify-content: flex-start !important;
         display: flex !important;
         flex-direction: column !important;
         z-index: 99999 !important;
         background: #030712 !important;
       }
 
-      /* Inner Dialog Card: Stretch to 100% Full Screen */
       #categoryModal:not(.hidden) > div,
       #rentalLedgerModal:not(.hidden) > div,
       #rentalSearchModal:not(.hidden) > div,
       [id*="Modal"]:not(.hidden) > div {
         width: 100% !important;
         max-width: 100% !important;
-        min-width: 100% !important;
         height: 100% !important;
         max-height: 100% !important;
-        min-height: 100% !important;
         margin: 0 !important;
         padding: 0 !important;
         border-radius: 0 !important;
@@ -197,16 +181,6 @@
         background: #0b111e !important;
       }
 
-      /* Modal Header */
-      #categoryModal > div > div:first-child,
-      #rentalLedgerModal > div > div:first-child,
-      #rentalSearchModal > div > div:first-child,
-      [id*="Modal"] > div > div:first-child {
-        flex-shrink: 0 !important;
-        border-radius: 0 !important;
-      }
-
-      /* Modal Scrollable Body: Full Viewport Scroll with 160px Bottom Clearance */
       #categoryModal .overflow-y-auto,
       #rentalLedgerModal .overflow-y-auto,
       #rentalSearchModal .overflow-y-auto,
@@ -221,13 +195,10 @@
         padding-bottom: 160px !important;
       }
 
-      #categoryModal .overflow-y-auto {
-        padding-top: 22px !important;
-      }
+      #categoryModal .overflow-y-auto { padding-top: 22px !important; }
 
-      /* Master Category Cards Layout */
-      #categoryModal [data-cat-id],
-      #categoryModal .sivme-catalog-card {
+      /* Category Cards */
+      #categoryModal [data-cat-id], #categoryModal .sivme-catalog-card {
         overflow: visible !important;
         position: relative !important;
         margin-bottom: 24px !important;
@@ -241,7 +212,6 @@
         overflow: visible !important;
       }
 
-      /* Uniform Header Styling for All Categories */
       #categoryModal [data-cat-id]:not([data-cat-id="c16"]),
       #categoryModal .sivme-catalog-card:not([data-cat-id="c16"]),
       #categoryModal [data-cat-id="c16"] > div:first-child {
@@ -262,7 +232,6 @@
         cursor: pointer !important;
       }
 
-      /* Clean Inner Title Container for Category 16 (Anti-Nesting Shield) */
       #categoryModal [data-cat-id="c16"] > div:first-child > div:first-child {
         background: transparent !important;
         border: none !important;
@@ -274,21 +243,6 @@
         align-items: center !important;
         gap: 12px !important;
         flex: 1 1 auto !important;
-      }
-
-      #categoryModal button,
-      #categoryModal a,
-      #categoryModal span.text-cyan-400,
-      #categoryModal span.text-emerald-400,
-      #categoryModal span.text-slate-400,
-      #sub-c16 button,
-      #sub-c16 a {
-        white-space: nowrap !important;
-        word-break: keep-all !important;
-        flex-shrink: 0 !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 3px !important;
       }
 
       .sivme-badge-anchor { position: relative !important; isolation: isolate !important; overflow: visible !important; }
@@ -324,6 +278,25 @@
         touch-action: manipulation !important;
       }
 
+      /* Home Widgets Badge Positioning */
+      .sivme-widget-anchor {
+        position: relative !important;
+        overflow: visible !important;
+      }
+      .sivme-widget-anchor > .sivme-inline-badge {
+        top: -10px !important;
+        left: 12px !important;
+        z-index: 60 !important;
+      }
+      .sivme-btn-anchor > .sivme-inline-badge {
+        top: -10px !important;
+        right: 8px !important;
+        left: auto !important;
+        font-size: 9px !important;
+        padding: 2px 7px !important;
+        z-index: 70 !important;
+      }
+
       .sivme-vertical-card .sivme-inline-badge {
         top: -8px !important;
         left: 8px !important;
@@ -346,13 +319,6 @@
         border-top: 1px solid rgba(255,255,255,0.16) !important;
         touch-action: manipulation !important;
         cursor: pointer !important;
-      }
-
-      .sivme-catalog-section-header {
-        margin-top: 30px !important;
-        margin-bottom: 24px !important;
-        position: relative !important;
-        z-index: 10 !important;
       }
 
       #sivmeFloatingDock {
@@ -413,6 +379,34 @@
     badge.setAttribute('data-badge-vis', String(isVisible));
   }
 
+  function auditElement(el, urn, label, isAuth) {
+    if (!el) return;
+    el.setAttribute('data-sov-urn', urn);
+    var isVis = getUrnVisibility(urn);
+
+    if (!isAuth) {
+      if (!isVis) {
+        el.classList.add('sivme-public-hidden');
+        el.style.setProperty('display', 'none', 'important');
+      } else {
+        el.classList.remove('sivme-public-hidden');
+        el.style.removeProperty('display');
+      }
+      var oldB = el.querySelector(':scope > .sivme-inline-badge');
+      if (oldB) oldB.remove();
+      el.classList.remove('sivme-ghost-dormant', 'sivme-badge-anchor');
+    } else {
+      el.classList.remove('sivme-public-hidden');
+      el.classList.add('sivme-badge-anchor');
+      if (!isVis) {
+        el.classList.add('sivme-ghost-dormant');
+      } else {
+        el.classList.remove('sivme-ghost-dormant');
+      }
+      mountInlineBadge(el, urn, isVis, label);
+    }
+  }
+
   // 7. UNIVERSAL AUDIT ENGINE
   function applyInSituAudit() {
     if (isAuditing) return;
@@ -426,31 +420,66 @@
       var openModals = document.querySelectorAll('#categoryModal, #rentalLedgerModal, #rentalSearchModal, [id*="Modal"]');
       openModals.forEach(function (m) {
         if (m.classList.contains('hidden') || m.style.display === 'none') return;
-        m.style.setProperty('padding', '0px', 'important');
-        m.style.setProperty('margin', '0px', 'important');
-        m.style.setProperty('border-radius', '0px', 'important');
         m.style.setProperty('height', '100dvh', 'important');
         m.style.setProperty('max-height', '100dvh', 'important');
+      });
 
-        var inner = m.firstElementChild;
-        if (inner) {
-          inner.style.setProperty('max-height', '100dvh', 'important');
-          inner.style.setProperty('height', '100%', 'important');
-          inner.style.setProperty('max-width', '100%', 'important');
-          inner.style.setProperty('border-radius', '0px', 'important');
+      // ==========================================
+      // A. HOME ELEMENTS & WIDGETS ABOVE 9 VERTICALS
+      // ==========================================
+      // 1. App Install Button
+      var installBtn = document.querySelector('button:has(span), a:has(span), div:has(span)');
+      document.querySelectorAll('span, button, a').forEach(function (el) {
+        if ((el.textContent || '').indexOf('ऐप इंस्टॉल') !== -1) {
+          var target = el.closest('button, a, div[onclick]') || el;
+          target.classList.add('sivme-btn-anchor');
+          auditElement(target, 'rm:elem:app-install', 'ऐप इंस्टॉल बटन', isAuth);
         }
       });
 
-      // Section Headers
-      var modalElements = document.querySelectorAll('#categoryModal button, #categoryModal [onclick], #categoryModal div');
-      modalElements.forEach(function (el) {
-        var t = (el.textContent || '').trim();
-        if ((t.indexOf('आजीविका') !== -1 || t.indexOf('खेल व मनोरंजन') !== -1) && el.children.length > 0 && el.offsetHeight > 30 && el.offsetHeight < 70) {
-          el.classList.add('sivme-catalog-section-header');
+      // 2. Global Search Box
+      var searchBox = document.querySelector('input[placeholder*="खोजें"], input[placeholder*="search"]');
+      if (searchBox) {
+        var searchParent = searchBox.parentElement;
+        if (searchParent) {
+          searchParent.classList.add('sivme-widget-anchor');
+          auditElement(searchParent, 'rm:elem:home-search', 'ग्लोबल खोज बार', isAuth);
+        }
+      }
+
+      // 3. RM CASH Ledger Green Card & Internal Action Buttons
+      document.querySelectorAll('div').forEach(function (card) {
+        var txt = card.textContent || '';
+        if (txt.indexOf('उपलब्ध शेष राशि (RM CASH)') !== -1 && card.offsetHeight > 100 && card.offsetHeight < 320) {
+          card.classList.add('sivme-widget-anchor');
+          auditElement(card, 'rm:card:rm-cash', 'RM CASH बहीखाता कार्ड', isAuth);
+
+          // Action 1: + नया लेन-देन
+          card.querySelectorAll('button, a, div[onclick]').forEach(function (btn) {
+            var bTxt = btn.textContent || '';
+            if (bTxt.indexOf('नया लेन-देन') !== -1) {
+              btn.classList.add('sivme-btn-anchor');
+              auditElement(btn, 'rm:elem:cash-add-txn', '+ नया लेन-देन', isAuth);
+            } else if (bTxt.indexOf('खाता विवरणी') !== -1) {
+              btn.classList.add('sivme-btn-anchor');
+              auditElement(btn, 'rm:elem:cash-statement', 'खाता विवरणी', isAuth);
+            }
+          });
         }
       });
 
-      // A. SCAN ALL 50 CATEGORIES IN UNIVERSAL CATALOG
+      // 4. "जुड़ना मुफ़्त" Button
+      document.querySelectorAll('button, span, div').forEach(function (el) {
+        if ((el.textContent || '').trim() === 'जुड़ना मुफ़्त') {
+          var jTarget = el.closest('button, a, div[onclick]') || el;
+          jTarget.classList.add('sivme-btn-anchor');
+          auditElement(jTarget, 'rm:elem:join-free', 'जुड़ना मुफ़्त बटन', isAuth);
+        }
+      });
+
+      // ==========================================
+      // B. SCAN ALL 50 CATEGORIES IN UNIVERSAL CATALOG
+      // ==========================================
       var catalogCards = document.querySelectorAll(
         '#categoryModal [data-cat-id], ' +
         '#categoryModal [id*="cat-"], ' +
@@ -459,7 +488,6 @@
       );
 
       var processedUrns = {};
-
       catalogCards.forEach(function (card) {
         if (card.closest('#sub-c16')) return;
 
@@ -517,7 +545,9 @@
         }
       });
 
-      // B. AUDIT 9 CORE VERTICALS (HOME SCREEN TILES)
+      // ==========================================
+      // C. AUDIT 9 CORE VERTICALS (HOME SCREEN TILES)
+      // ==========================================
       var verticalCards = document.querySelectorAll('.grid > div, [data-vertical-id]');
       verticalCards.forEach(function (card) {
         var txt = (card.textContent || '').trim();
@@ -537,32 +567,10 @@
         if (!vUrn || card.closest('#categoryModal')) return;
 
         card.classList.add('sivme-vertical-card');
-        var isVis = getUrnVisibility(vUrn);
-
-        if (!isAuth) {
-          if (!isVis) {
-            card.classList.add('sivme-public-hidden');
-            card.style.setProperty('display', 'none', 'important');
-          } else {
-            card.classList.remove('sivme-public-hidden');
-            card.style.removeProperty('display');
-          }
-          var oldVB = card.querySelector(':scope > .sivme-inline-badge');
-          if (oldVB) oldVB.remove();
-          card.classList.remove('sivme-ghost-dormant', 'sivme-badge-anchor');
-        } else {
-          card.classList.remove('sivme-public-hidden');
-          card.classList.add('sivme-badge-anchor');
-          if (!isVis) {
-            card.classList.add('sivme-ghost-dormant');
-          } else {
-            card.classList.remove('sivme-ghost-dormant');
-          }
-          mountInlineBadge(card, vUrn, isVis, vLabel);
-        }
+        auditElement(card, vUrn, vLabel, isAuth);
       });
 
-      // Execute Micro-Adapters
+      // Execute Micro-Adapters (cat-16, sub-16-1, sub-16-2, sub-16-3)
       Object.keys(adapters).forEach(function (key) {
         try { adapters[key](); } catch (_) {}
       });
@@ -632,14 +640,14 @@
     scripts.forEach(function (src) {
       if (!document.querySelector('script[src*="' + src + '"]')) {
         var s = document.createElement('script');
-        s.src = src + '?v=20261005_v5';
+        s.src = src + '?v=20261005_v6';
         s.async = true;
         document.head.appendChild(s);
       }
     });
   }
 
-  // 10. GLOBAL SIVME API & DYNAMIC OBSERVER
+  // 10. GLOBAL SIVME API & OBSERVER
   window.RM_SIVME = {
     isConsoleAuthorized: isConsoleAuthorized,
     getUrnVisibility: getUrnVisibility,
