@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Unified Core Engine (Isolated Sub-Card Toggles & Anti-Cascade Architecture)
+ * MODULE        : Surface-A Unified Core Engine (Lightweight Kernel - Modular CSS Linked)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -64,7 +64,7 @@
     }
   }
 
-  // 3. REGISTRY BRIDGE (STRICT SINGLE-ITEM PRIMITIVE SETTER - NO RECURSIVE CASCADE)
+  // 3. REGISTRY BRIDGE (Strict Single-Item Setter - No Recursive Cascade)
   function getRegistry() {
     try {
       var raw = localStorage.getItem(REGISTRY_STORAGE_KEY);
@@ -75,7 +75,6 @@
   }
 
   function getUrnVisibility(urn) {
-    // Dynamic real-time computation for Category 16: Live only if all 3 sub-cards are Live
     if (urn === 'rm:cat:16') {
       var s1 = getUrnVisibility('rm:cat:16:sub:16-1');
       var s2 = getUrnVisibility('rm:cat:16:sub:16-2');
@@ -95,7 +94,6 @@
     return true;
   }
 
-  // PURE PRIMITIVE: Sets visibility strictly for the specified URN (zero side-effects)
   function setUrnVisibility(urn, nextVis, label) {
     try {
       var reg = getRegistry();
@@ -121,7 +119,7 @@
     var reg = getRegistry();
     if (reg && reg.items) {
       Object.keys(reg.items).forEach(function (k) {
-        if (k === 'rm:cat:16') return; // Cat 16 counted via derived state below
+        if (k === 'rm:cat:16') return;
         if (reg.items[k] && reg.items[k].visible === false) {
           hiddenUrns[k] = true;
         } else if (reg.items[k] && reg.items[k].visible === true) {
@@ -130,7 +128,6 @@
       });
     }
 
-    // Include Cat 16 derived state
     if (!getUrnVisibility('rm:cat:16')) {
       hiddenUrns['rm:cat:16'] = true;
     } else {
@@ -148,235 +145,14 @@
     return (clone.textContent || '').trim();
   }
 
-  // 5. CORE STYLES
+  // 5. LIGHTWEIGHT MODULAR STYLESHEET LOADER (Replaces 160+ Lines of Raw CSS)
   function injectStyles() {
-    if (document.getElementById('sivme-core-styles')) return;
-    var style = document.createElement('style');
-    style.id = 'sivme-core-styles';
-    style.textContent = `
-      .hidden, [style*="display: none"], [style*="display:none"] {
-        display: none !important;
-      }
-
-      /* Native Full-Screen Modals */
-      #categoryModal:not(.hidden):not([style*="display: none"]):not([style*="display:none"]),
-      #rentalLedgerModal:not(.hidden):not([style*="display: none"]):not([style*="display:none"]),
-      #rentalSearchModal:not(.hidden):not([style*="display: none"]):not([style*="display:none"]),
-      [id*="Modal"]:not(.hidden):not([style*="display: none"]):not([style*="display:none"]) {
-        position: fixed !important;
-        inset: 0 !important;
-        width: 100vw !important;
-        max-width: 100vw !important;
-        height: 100dvh !important;
-        max-height: 100dvh !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        border-radius: 0 !important;
-        display: flex !important;
-        flex-direction: column !important;
-        z-index: 99999 !important;
-        background: #030712 !important;
-      }
-
-      #categoryModal:not(.hidden) > div,
-      #rentalLedgerModal:not(.hidden) > div,
-      #rentalSearchModal:not(.hidden) > div,
-      [id*="Modal"]:not(.hidden) > div {
-        width: 100% !important;
-        max-width: 100% !important;
-        height: 100% !important;
-        max-height: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        border-radius: 0 !important;
-        border: none !important;
-        display: flex !important;
-        flex-direction: column !important;
-        box-shadow: none !important;
-        background: #0b111e !important;
-      }
-
-      #categoryModal .overflow-y-auto,
-      #rentalLedgerModal .overflow-y-auto,
-      #rentalSearchModal .overflow-y-auto,
-      [id*="Modal"] .overflow-y-auto {
-        flex: 1 1 auto !important;
-        height: 100% !important;
-        max-height: none !important;
-        overflow-y: auto !important;
-        -webkit-overflow-scrolling: touch !important;
-        padding-left: 14px !important;
-        padding-right: 14px !important;
-        padding-bottom: 160px !important;
-      }
-
-      #categoryModal .overflow-y-auto { padding-top: 22px !important; }
-
-      /* Category Cards */
-      #categoryModal [data-cat-id], #categoryModal .sivme-catalog-card {
-        overflow: visible !important;
-        position: relative !important;
-        margin-bottom: 24px !important;
-      }
-
-      #categoryModal [data-cat-id="c16"] {
-        display: block !important;
-        min-height: auto !important;
-        margin-top: 18px !important;
-        margin-bottom: 26px !important;
-        overflow: visible !important;
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-      }
-
-      /* Uniform Header Styling for All Categories */
-      #categoryModal [data-cat-id]:not([data-cat-id="c16"]),
-      #categoryModal .sivme-catalog-card:not([data-cat-id="c16"]),
-      #categoryModal [data-cat-id="c16"] > div:first-child {
-        min-height: 72px !important;
-        height: 72px !important;
-        padding: 22px 14px 14px 14px !important;
-        border-radius: 14px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        overflow: visible !important;
-        width: 100% !important;
-        box-sizing: border-box !important;
-        background: linear-gradient(180deg, rgba(30,41,59,0.9) 0%, rgba(15,23,42,0.98) 100%) !important;
-        border: 1px solid rgba(255,255,255,0.08) !important;
-        border-top: 1px solid rgba(255,255,255,0.22) !important;
-        box-shadow: 0 6px 16px -2px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.15) !important;
-        cursor: pointer !important;
-      }
-
-      #categoryModal [data-cat-id="c16"] > div:first-child > div:first-child {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        min-height: auto !important;
-        height: auto !important;
-        padding: 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        gap: 12px !important;
-        flex: 1 1 auto !important;
-      }
-
-      .sivme-badge-anchor { position: relative !important; isolation: isolate !important; overflow: visible !important; }
-      .sivme-ghost-dormant {
-        border: 2px dashed #ef4444 !important;
-        border-radius: 14px !important;
-        position: relative !important;
-        background: repeating-linear-gradient(-45deg, rgba(239,68,68,0.12), rgba(239,68,68,0.12) 10px, transparent 10px, transparent 20px) !important;
-        box-shadow: none !important;
-        cursor: pointer !important;
-      }
-      .sivme-public-hidden { display: none !important; }
-
-      .sivme-inline-badge {
-        position: absolute !important;
-        top: -11px !important;
-        left: 14px !important;
-        right: auto !important;
-        z-index: 9999 !important;
-        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-        font-size: 10px !important;
-        font-weight: 800;
-        padding: 3px 9px !important;
-        border-radius: 9999px;
-        cursor: pointer !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 4px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.9);
-        width: max-content !important;
-        line-height: 1.2 !important;
-        user-select: none !important;
-        touch-action: manipulation !important;
-        pointer-events: auto !important;
-      }
-
-      .sivme-search-container {
-        position: relative !important;
-        overflow: visible !important;
-        margin-top: 14px !important;
-      }
-      .sivme-search-container > .sivme-inline-badge {
-        top: -11px !important;
-        left: 14px !important;
-      }
-
-      .sivme-cash-atomic-card {
-        position: relative !important;
-        overflow: visible !important;
-        margin-top: 16px !important;
-        cursor: pointer !important;
-      }
-      .sivme-cash-atomic-card > .sivme-inline-badge {
-        top: -11px !important;
-        left: 14px !important;
-      }
-
-      .sivme-btn-pill {
-        position: relative !important;
-        overflow: visible !important;
-        touch-action: manipulation !important;
-        cursor: pointer !important;
-      }
-      .sivme-btn-pill > .sivme-inline-badge {
-        top: -12px !important;
-        right: 6px !important;
-        left: auto !important;
-        font-size: 9px !important;
-        padding: 2px 7px !important;
-      }
-
-      .sivme-vertical-card .sivme-inline-badge {
-        top: -8px !important;
-        left: 8px !important;
-        font-size: 9px !important;
-        padding: 2px 7px !important;
-      }
-
-      .sivme-badge-live { background: #064e3b !important; color: #6ee7b7 !important; border: 1.5px solid #10b981 !important; }
-      .sivme-badge-dormant { background: #7f1d1d !important; color: #fca5a5 !important; border: 1.5px solid #ef4444 !important; }
-
-      #sub-c16 > div {
-        min-height: 60px !important;
-        padding: 18px 14px 12px 14px !important;
-        margin-bottom: 14px !important;
-        border-radius: 12px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        background: linear-gradient(180deg, rgba(24,33,47,0.85) 0%, rgba(11,17,30,0.95) 100%) !important;
-        border-top: 1px solid rgba(255,255,255,0.16) !important;
-        touch-action: manipulation !important;
-        cursor: pointer !important;
-      }
-
-      #sivmeFloatingDock {
-        position: fixed;
-        bottom: 18px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 9999999 !important;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        background: rgba(3,7,18,0.96);
-        backdrop-filter: blur(16px);
-        border: 1.5px solid rgba(6,182,212,0.6);
-        border-radius: 9999px;
-        padding: 6px 12px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.9);
-        font-family: ui-monospace, monospace;
-        max-width: 96vw;
-      }
-    `;
-    document.head.appendChild(style);
+    if (document.getElementById('sivme-core-stylesheet')) return;
+    var link = document.createElement('link');
+    link.id = 'sivme-core-stylesheet';
+    link.rel = 'stylesheet';
+    link.href = '/css/sivme-hud.css?v=20261006_css1';
+    document.head.appendChild(link);
   }
 
   // 6. MOUNT INLINE BADGES
@@ -430,7 +206,7 @@
 
         el.addEventListener('click', function (e) {
           if (!isConsoleAuthorized()) return;
-          if (e.target.closest('.sivme-inline-badge')) return; // Global listener takes care of badges
+          if (e.target.closest('.sivme-inline-badge')) return;
 
           var curVis = getUrnVisibility(urn);
 
@@ -469,7 +245,7 @@
       enforceZELTemplateRendering();
       var isAuth = isConsoleAuthorized();
 
-      // Dynamic Full-Screen DOM Enforcement for Modals
+      // Dynamic Full-Screen DOM Enforcement
       var openModals = document.querySelectorAll('#categoryModal, #rentalLedgerModal, #rentalSearchModal, [id*="Modal"]');
       openModals.forEach(function (m) {
         if (m.classList.contains('hidden') || m.style.display === 'none') return;
@@ -530,7 +306,7 @@
         }
       }
 
-      // 5. Category 16 Dedicated Header Audit (No Ghost Border on Container)
+      // 5. Category 16 Dedicated Header Audit
       var c16 = document.querySelector('#categoryModal [data-cat-id="c16"]');
       if (c16) {
         var c16Header = c16.querySelector(':scope > div:first-child');
@@ -626,7 +402,7 @@
         auditElement(vCard, vUrn, vLabel, isAuth);
       });
 
-      // Execute Micro-Adapters (cat-16, sub-16-1, sub-16-2, sub-16-3)
+      // Execute Micro-Adapters
       Object.keys(adapters).forEach(function (key) {
         try { adapters[key](); } catch (_) {}
       });
@@ -696,16 +472,14 @@
     scripts.forEach(function (src) {
       if (!document.querySelector('script[src*="' + src + '"]')) {
         var s = document.createElement('script');
-        s.src = src + '?v=20261006_v3';
+        s.src = src + '?v=20261006_v4';
         s.async = true;
         document.head.appendChild(s);
       }
     });
   }
 
-  // =========================================================================
   // 11. BULLETPROOF GLOBAL BADGE CAPTURE LISTENER (PREVENTS CASCADE ON SUB-CARDS)
-  // =========================================================================
   document.addEventListener('click', function (e) {
     var badge = e.target.closest('.sivme-inline-badge');
     if (!badge || !isConsoleAuthorized()) return;
@@ -721,14 +495,12 @@
 
     if (!urn) return;
 
-    // ONLY IF USER CLICKS PARENT BADGE -> CASCADE TO 3 SUB-CARDS
     if (urn === 'rm:cat:16') {
       ['rm:cat:16:sub:16-1', 'rm:cat:16:sub:16-2', 'rm:cat:16:sub:16-3'].forEach(function (su) {
         setUrnVisibility(su, nextVis);
       });
       setUrnVisibility(urn, nextVis, label);
     } else {
-      // INDEPENDENT TOGGLE FOR SPECIFIC SUB-CARD OR CARD (ZERO CASCADE)
       setUrnVisibility(urn, nextVis, label);
     }
 
