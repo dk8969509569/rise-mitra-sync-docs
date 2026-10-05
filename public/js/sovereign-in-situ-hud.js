@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Core Engine (Bi-Directional Parent-Child Sync & Single-Tap Lock)
+ * MODULE        : Surface-A Core Engine (Isolated Sub-Card SSOT & Non-Mutating Parent Computed Display)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -64,7 +64,7 @@
     }
   }
 
-  // 3. REGISTRY BRIDGE (LocalStorage Priority SSOT)
+  // 3. REGISTRY BRIDGE (LocalStorage Strict SSOT)
   function getRegistry() {
     try {
       var raw = localStorage.getItem(REGISTRY_STORAGE_KEY);
@@ -88,23 +88,24 @@
   }
 
   function setUrnVisibility(urn, nextVis, label) {
-    if (window.RM_SovereignRegistry) {
-      try {
-        if (typeof window.RM_SovereignRegistry.setVisibility === 'function') {
-          window.RM_SovereignRegistry.setVisibility(urn, nextVis, label);
-        }
-        if (typeof window.RM_SovereignRegistry.toggleVisibility === 'function') {
-          window.RM_SovereignRegistry.toggleVisibility(urn, nextVis, label);
-        }
-      } catch (_) {}
-    }
-
+    // Save to LocalStorage SSOT directly
     try {
       var reg = getRegistry();
       if (!reg.items) reg.items = {};
       reg.items[urn] = { visible: nextVis, label: label, updatedAt: Date.now() };
       localStorage.setItem(REGISTRY_STORAGE_KEY, JSON.stringify(reg));
     } catch (_) {}
+
+    // Synchronize cleanly with Sovereign Registry without double-trigger
+    if (window.RM_SovereignRegistry) {
+      try {
+        if (typeof window.RM_SovereignRegistry.setVisibility === 'function') {
+          window.RM_SovereignRegistry.setVisibility(urn, nextVis, label);
+        } else if (typeof window.RM_SovereignRegistry.set === 'function') {
+          window.RM_SovereignRegistry.set(urn, nextVis);
+        }
+      } catch (_) {}
+    }
   }
 
   // 4. BULLETPROOF DOM & REGISTRY RECONCILED HIDDEN COUNTER
@@ -134,7 +135,7 @@
     return Object.keys(hiddenUrns).length;
   }
 
-  // 5. CORE STYLES (Anti-Clipping, Top Clearance & Single-Tap Optimization)
+  // 5. CORE STYLES (Anti-Clipping & Touch Target Optimization)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -288,7 +289,7 @@
     document.head.appendChild(style);
   }
 
-  // 6. MOUNT INLINE BADGES WITH INSTANT SINGLE-TAP DISPATCH
+  // 6. MOUNT INLINE BADGES
   function mountInlineBadge(parentEl, urn, isVisible, label) {
     var badge = parentEl.querySelector(':scope > .sivme-inline-badge');
     var targetClass = isVisible ? 'sivme-inline-badge sivme-badge-live' : 'sivme-inline-badge sivme-badge-dormant';
@@ -305,28 +306,18 @@
         var cur = badge.getAttribute('data-badge-vis') === 'true';
         var nextVis = !cur;
 
-        // If Category 16 Parent Badge is toggled manually, cascade to all 3 children
+        // If Category 16 Master Badge is clicked directly, toggle all 3 children
         if (urn === 'rm:cat:16') {
           ['rm:cat:16:sub:16-1', 'rm:cat:16:sub:16-2', 'rm:cat:16:sub:16-3'].forEach(function (su) {
             setUrnVisibility(su, nextVis);
           });
+          setUrnVisibility(urn, nextVis, label);
+        } else {
+          setUrnVisibility(urn, nextVis, label);
         }
 
-        setUrnVisibility(urn, nextVis, label);
         applyInSituAudit();
       }, false);
-
-      // Card wake-up for dormant cards (1-tap wake up)
-      if (urn.indexOf('sub:') === -1 && urn.indexOf('elem:') === -1 && urn.indexOf('listing:') === -1) {
-        parentEl.addEventListener('click', function (e) {
-          if (!parentEl.classList.contains('sivme-ghost-dormant')) return;
-          if (e.target.closest('.sivme-inline-badge')) return;
-          if (urn === 'rm:cat:16') return; // Handled by accordion
-          if (e.target.closest('button') || e.target.closest('a')) return;
-          setUrnVisibility(urn, true, label);
-          applyInSituAudit();
-        }, false);
-      }
     }
 
     badge.className = targetClass;
@@ -335,7 +326,7 @@
     badge.setAttribute('data-badge-vis', String(isVisible));
   }
 
-  // 7. AUDIT 50 UNIVERSAL CATALOG CATEGORIES & ENFORCE BI-DIRECTIONAL PARENT-CHILD SYNC
+  // 7. AUDIT 50 UNIVERSAL CATALOG CATEGORIES & DISPLAY COMPUTED PARENT STATUS
   function applyInSituAudit() {
     if (isAuditing) return;
     isAuditing = true;
@@ -364,21 +355,14 @@
 
         var isVis = getUrnVisibility(urn);
 
-        // OWNER STRICT RULE: BI-DIRECTIONAL SYNC FOR CATEGORY 16
-        // 1. If ANY sub-category is Hidden -> Parent 16 MUST be Red Hidden
-        // 2. If ALL sub-categories are Live -> Parent 16 MUST be Green Live
+        // COMPUTED DISPLAY FOR CATEGORY 16 (NON-MUTATING):
+        // If ANY sub-category is Hidden -> Category 16 displays Red Hidden.
+        // If ALL sub-categories are Live -> Category 16 displays Green Live.
         if (urn === 'rm:cat:16') {
-          var subUrns = ['rm:cat:16:sub:16-1', 'rm:cat:16:sub:16-2', 'rm:cat:16:sub:16-3'];
-          var hasAnySubHidden = false;
-          for (var s = 0; s < subUrns.length; s++) {
-            if (!getUrnVisibility(subUrns[s])) {
-              hasAnySubHidden = true;
-              break;
-            }
-          }
-          isVis = !hasAnySubHidden;
-          // Keep registry and localStorage strictly in sync
-          setUrnVisibility('rm:cat:16', isVis, 'घर व मकान');
+          var sub1 = getUrnVisibility('rm:cat:16:sub:16-1');
+          var sub2 = getUrnVisibility('rm:cat:16:sub:16-2');
+          var sub3 = getUrnVisibility('rm:cat:16:sub:16-3');
+          isVis = (sub1 && sub2 && sub3);
         }
 
         if (!isAuth) {
