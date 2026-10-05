@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Unified Core Engine (Bulletproof Mobile 1-Tap, Non-Colliding Widgets & Modals)
+ * MODULE        : Surface-A Unified Core Engine (Atomic Component Governance - Zero Nested Toggles)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -106,7 +106,7 @@
     }
   }
 
-  // 4. BULLETPROOF DOM & REGISTRY RECONCILED HIDDEN COUNTER
+  // 4. RECONCILED HIDDEN COUNTER
   function getHiddenCount() {
     var hiddenUrns = {};
     var reg = getRegistry();
@@ -133,7 +133,6 @@
     return Object.keys(hiddenUrns).length;
   }
 
-  // Clean text helper to ignore injected badge text
   function cleanText(el) {
     if (!el) return '';
     var clone = el.cloneNode(true);
@@ -288,7 +287,6 @@
         pointer-events: auto !important;
       }
 
-      /* Home Search Bar & Widget Container Clearances */
       .sivme-search-container {
         position: relative !important;
         overflow: visible !important;
@@ -300,19 +298,20 @@
         z-index: 100 !important;
       }
 
-      /* RM CASH Card */
-      .sivme-cash-card {
+      /* Single Atomic RM CASH Card */
+      .sivme-cash-atomic-card {
         position: relative !important;
         overflow: visible !important;
-        margin-top: 14px !important;
+        margin-top: 16px !important;
+        cursor: pointer !important;
       }
-      .sivme-cash-card > .sivme-inline-badge {
+      .sivme-cash-atomic-card > .sivme-inline-badge {
         top: -11px !important;
         left: 14px !important;
         z-index: 95 !important;
       }
 
-      /* Action Buttons inside Card and Section Header */
+      /* Single Buttons */
       .sivme-btn-pill {
         position: relative !important;
         overflow: visible !important;
@@ -391,7 +390,7 @@
     badge.setAttribute('data-badge-vis', String(isVisible));
   }
 
-  // 7. UNIVERSAL 1-TAP AUDIT ELEMENT DISPATCHER (Capture Phase)
+  // 7. UNIVERSAL 1-TAP DISPATCHER (Capture Phase)
   function auditElement(el, urn, label, isAuth) {
     if (!el) return;
     el.setAttribute('data-sov-urn', urn);
@@ -418,7 +417,6 @@
       }
       mountInlineBadge(el, urn, isVis, label);
 
-      // 1-Tap Toggle On Capture Phase (Overrides Native Mobile Button Blocks)
       if (el.getAttribute('data-sivme-tap-bound') !== 'true') {
         el.setAttribute('data-sivme-tap-bound', 'true');
 
@@ -429,12 +427,7 @@
           var isSelfBadge = clickedBadge && clickedBadge.parentElement === el;
           var curVis = getUrnVisibility(urn);
 
-          // If child button clicked, stop event from reaching parent card!
-          if (el.classList.contains('sivme-btn-pill')) {
-            e.stopPropagation();
-          }
-
-          // Case 1: Tapping directly on the badge -> Always toggle!
+          // If self badge is tapped, toggle immediately
           if (isSelfBadge) {
             if (e.cancelable) e.preventDefault();
             e.stopImmediatePropagation();
@@ -444,7 +437,7 @@
             return;
           }
 
-          // Case 2: Element is Dormant (Hidden) -> 1 Tap anywhere on it awakens it!
+          // If element is dormant, any tap on it awakens it
           if (!curVis) {
             if (e.cancelable) e.preventDefault();
             e.stopImmediatePropagation();
@@ -454,12 +447,12 @@
             return;
           }
 
-          // Case 3: If Live and clicked an actual input or inner child button, allow native action!
-          if (e.target.tagName === 'INPUT' || (el.classList.contains('sivme-cash-card') && e.target.closest('.sivme-btn-pill'))) {
+          // If Live and user clicks an inner action button/input, allow business logic
+          if (e.target.tagName === 'INPUT' || (el.classList.contains('sivme-cash-atomic-card') && e.target.closest('button, a, div[onclick]'))) {
             return;
           }
 
-          // Case 4: Live action button/tile body tapped in Console mode -> Toggle off
+          // Otherwise toggle off
           if (el.classList.contains('sivme-btn-pill') || el.classList.contains('sivme-vertical-card')) {
             if (e.cancelable) e.preventDefault();
             e.stopImmediatePropagation();
@@ -467,7 +460,7 @@
             setUrnVisibility(urn, false, label);
             applyInSituAudit();
           }
-        }, true); // Use Capture phase to guarantee interception on Android
+        }, true);
       }
     }
   }
@@ -481,7 +474,7 @@
       enforceZELTemplateRendering();
       var isAuth = isConsoleAuthorized();
 
-      // Dynamic Full-Screen DOM Enforcement for Open Modals
+      // Dynamic Full-Screen DOM Enforcement for Modals
       var openModals = document.querySelectorAll('#categoryModal, #rentalLedgerModal, #rentalSearchModal, [id*="Modal"]');
       openModals.forEach(function (m) {
         if (m.classList.contains('hidden') || m.style.display === 'none') return;
@@ -489,9 +482,6 @@
         m.style.setProperty('max-height', '100dvh', 'important');
       });
 
-      // ==========================================
-      // A. HOME ELEMENTS & WIDGETS ABOVE 9 VERTICALS
-      // ==========================================
       // 1. App Install Button
       document.querySelectorAll('span, button, a').forEach(function (el) {
         if (cleanText(el).indexOf('ऐप इंस्टॉल') !== -1) {
@@ -512,27 +502,23 @@
         }
       }
 
-      // 3. RM CASH Ledger Green Card & Internal Action Buttons
+      // 3. RM CASH ATOMIC SINGLE CARD (Clean Architecture: No Nested Badges Inside!)
       var allDivs = document.querySelectorAll('div, section');
       for (var d = 0; d < allDivs.length; d++) {
         var card = allDivs[d];
         var txt = cleanText(card);
         if (txt.indexOf('उपलब्ध शेष राशि (RM CASH)') !== -1 && txt.indexOf('खाता सक्रिय') !== -1 && card.offsetHeight > 140) {
           card.style.setProperty('overflow', 'visible', 'important');
-          card.classList.add('sivme-cash-card');
+          card.classList.add('sivme-cash-atomic-card');
           auditElement(card, 'rm:card:rm-cash', 'RM CASH बहीखाता कार्ड', isAuth);
 
+          // Strip any old nested badges from child buttons to maintain Zero Nested Clutter
           card.querySelectorAll('button, a, div[onclick]').forEach(function (btn) {
-            var bTxt = cleanText(btn);
-            if (bTxt.indexOf('नया लेन-देन') !== -1) {
-              btn.classList.add('sivme-btn-pill');
-              auditElement(btn, 'rm:elem:cash-add-txn', '+ नया लेन-देन', isAuth);
-            } else if (bTxt.indexOf('खाता विवरणी') !== -1) {
-              btn.classList.add('sivme-btn-pill');
-              auditElement(btn, 'rm:elem:cash-statement', 'खाता विवरणी', isAuth);
-            }
+            btn.classList.remove('sivme-btn-pill', 'sivme-badge-anchor', 'sivme-ghost-dormant');
+            var oldChildBadge = btn.querySelector('.sivme-inline-badge');
+            if (oldChildBadge) oldChildBadge.remove();
           });
-          break; // Outer card found
+          break;
         }
       }
 
@@ -550,9 +536,7 @@
         }
       }
 
-      // ==========================================
-      // B. SCAN ALL 50 CATEGORIES IN UNIVERSAL CATALOG
-      // ==========================================
+      // 5. Scan 50 Categories in Universal Catalog
       var catalogCards = document.querySelectorAll(
         '#categoryModal [data-cat-id], ' +
         '#categoryModal [id*="cat-"], ' +
@@ -561,14 +545,14 @@
       );
 
       var processedUrns = {};
-      catalogCards.forEach(function (card) {
-        if (card.closest('#sub-c16')) return;
+      catalogCards.forEach(function (cCard) {
+        if (cCard.closest('#sub-c16')) return;
 
-        var catId = card.getAttribute('data-cat-id') || card.id || '';
+        var catId = cCard.getAttribute('data-cat-id') || cCard.id || '';
         var numStr = catId.replace(/[^0-9]/g, '');
 
         if (!numStr) {
-          var text = cleanText(card);
+          var text = cleanText(cCard);
           var match = text.match(/([0-9]{1,2})\./);
           if (match) numStr = match[1];
         }
@@ -580,10 +564,10 @@
         if (processedUrns[urn]) return;
         processedUrns[urn] = true;
 
-        card.setAttribute('data-cat-id', 'c' + numStr);
-        card.classList.add('sivme-catalog-card');
+        cCard.setAttribute('data-cat-id', 'c' + numStr);
+        cCard.classList.add('sivme-catalog-card');
 
-        var labelEl = card.querySelector('.text-xs.font-bold') || card.querySelector('.font-bold');
+        var labelEl = cCard.querySelector('.text-xs.font-bold') || cCard.querySelector('.font-bold');
         var label = labelEl ? cleanText(labelEl) : ('श्रेणी ' + numStr);
 
         var isVis = getUrnVisibility(urn);
@@ -597,33 +581,31 @@
 
         if (!isAuth) {
           if (!isVis) {
-            card.classList.add('sivme-public-hidden');
-            card.style.setProperty('display', 'none', 'important');
+            cCard.classList.add('sivme-public-hidden');
+            cCard.style.setProperty('display', 'none', 'important');
           } else {
-            card.classList.remove('sivme-public-hidden');
-            card.style.removeProperty('display');
+            cCard.classList.remove('sivme-public-hidden');
+            cCard.style.removeProperty('display');
           }
-          var oldB = card.querySelector(':scope > .sivme-inline-badge');
+          var oldB = cCard.querySelector(':scope > .sivme-inline-badge');
           if (oldB) oldB.remove();
-          card.classList.remove('sivme-ghost-dormant', 'sivme-badge-anchor');
+          cCard.classList.remove('sivme-ghost-dormant', 'sivme-badge-anchor');
         } else {
-          card.classList.remove('sivme-public-hidden');
-          card.classList.add('sivme-badge-anchor');
+          cCard.classList.remove('sivme-public-hidden');
+          cCard.classList.add('sivme-badge-anchor');
           if (!isVis) {
-            card.classList.add('sivme-ghost-dormant');
+            cCard.classList.add('sivme-ghost-dormant');
           } else {
-            card.classList.remove('sivme-ghost-dormant');
+            cCard.classList.remove('sivme-ghost-dormant');
           }
-          mountInlineBadge(card, urn, isVis, label);
+          mountInlineBadge(cCard, urn, isVis, label);
         }
       });
 
-      // ==========================================
-      // C. AUDIT 9 CORE VERTICALS (HOME SCREEN TILES)
-      // ==========================================
+      // 6. Audit 9 Core Verticals
       var verticalCards = document.querySelectorAll('.grid > div, [data-vertical-id]');
-      verticalCards.forEach(function (card) {
-        var txt = cleanText(card);
+      verticalCards.forEach(function (vCard) {
+        var txt = cleanText(vCard);
         var vUrn = null;
         var vLabel = null;
 
@@ -637,10 +619,10 @@
         else if (txt.indexOf('बहीखाता') !== -1) { vUrn = 'rm:vertical:ledger'; vLabel = 'बहीखाता'; }
         else if (txt.indexOf('आपात') !== -1) { vUrn = 'rm:vertical:emergency'; vLabel = 'आपात सहायता'; }
 
-        if (!vUrn || card.closest('#categoryModal')) return;
+        if (!vUrn || vCard.closest('#categoryModal')) return;
 
-        card.classList.add('sivme-vertical-card');
-        auditElement(card, vUrn, vLabel, isAuth);
+        vCard.classList.add('sivme-vertical-card');
+        auditElement(vCard, vUrn, vLabel, isAuth);
       });
 
       // Execute Micro-Adapters (cat-16, sub-16-1, sub-16-2, sub-16-3)
@@ -713,7 +695,7 @@
     scripts.forEach(function (src) {
       if (!document.querySelector('script[src*="' + src + '"]')) {
         var s = document.createElement('script');
-        s.src = src + '?v=20261005_v8';
+        s.src = src + '?v=20261005_v9';
         s.async = true;
         document.head.appendChild(s);
       }
