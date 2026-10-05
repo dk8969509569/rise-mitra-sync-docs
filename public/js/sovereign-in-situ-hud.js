@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Unified Core Engine (Permanent Zero-Desync & Clean Accordion Architecture)
+ * MODULE        : Surface-A Unified Core Engine (Isolated Sub-Card Toggles & Anti-Cascade Architecture)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -64,7 +64,7 @@
     }
   }
 
-  // 3. REGISTRY BRIDGE (Real-Time Dynamic Parent Computation)
+  // 3. REGISTRY BRIDGE (STRICT SINGLE-ITEM PRIMITIVE SETTER - NO RECURSIVE CASCADE)
   function getRegistry() {
     try {
       var raw = localStorage.getItem(REGISTRY_STORAGE_KEY);
@@ -75,7 +75,7 @@
   }
 
   function getUrnVisibility(urn) {
-    // Dynamic real-time truth for Category 16: Live only if all 3 sub-cards are Live
+    // Dynamic real-time computation for Category 16: Live only if all 3 sub-cards are Live
     if (urn === 'rm:cat:16') {
       var s1 = getUrnVisibility('rm:cat:16:sub:16-1');
       var s2 = getUrnVisibility('rm:cat:16:sub:16-2');
@@ -95,14 +95,8 @@
     return true;
   }
 
+  // PURE PRIMITIVE: Sets visibility strictly for the specified URN (zero side-effects)
   function setUrnVisibility(urn, nextVis, label) {
-    // If Category 16 toggled directly, cascade to all 3 sub-cards
-    if (urn === 'rm:cat:16') {
-      ['rm:cat:16:sub:16-1', 'rm:cat:16:sub:16-2', 'rm:cat:16:sub:16-3'].forEach(function (su) {
-        setUrnVisibility(su, nextVis);
-      });
-    }
-
     try {
       var reg = getRegistry();
       if (!reg.items) reg.items = {};
@@ -121,13 +115,13 @@
     }
   }
 
-  // 4. BULLETPROOF DOM & REGISTRY RECONCILED HIDDEN COUNTER
+  // 4. BULLETPROOF RECONCILED HIDDEN COUNTER
   function getHiddenCount() {
     var hiddenUrns = {};
     var reg = getRegistry();
     if (reg && reg.items) {
       Object.keys(reg.items).forEach(function (k) {
-        if (k === 'rm:cat:16') return; // Derived from sub-elements
+        if (k === 'rm:cat:16') return; // Cat 16 counted via derived state below
         if (reg.items[k] && reg.items[k].visible === false) {
           hiddenUrns[k] = true;
         } else if (reg.items[k] && reg.items[k].visible === true) {
@@ -136,7 +130,7 @@
       });
     }
 
-    // Check Cat 16 derived state
+    // Include Cat 16 derived state
     if (!getUrnVisibility('rm:cat:16')) {
       hiddenUrns['rm:cat:16'] = true;
     } else {
@@ -403,7 +397,7 @@
     badge.setAttribute('data-badge-vis', String(isVisible));
   }
 
-  // 7. AUDIT ELEMENT
+  // 7. AUDIT ELEMENT DISPATCHER
   function auditElement(el, urn, label, isAuth) {
     if (!el) return;
     el.setAttribute('data-sov-urn', urn);
@@ -436,7 +430,7 @@
 
         el.addEventListener('click', function (e) {
           if (!isConsoleAuthorized()) return;
-          if (e.target.closest('.sivme-inline-badge')) return;
+          if (e.target.closest('.sivme-inline-badge')) return; // Global listener takes care of badges
 
           var curVis = getUrnVisibility(urn);
 
@@ -475,7 +469,7 @@
       enforceZELTemplateRendering();
       var isAuth = isConsoleAuthorized();
 
-      // Dynamic Full-Screen DOM Enforcement
+      // Dynamic Full-Screen DOM Enforcement for Modals
       var openModals = document.querySelectorAll('#categoryModal, #rentalLedgerModal, #rentalSearchModal, [id*="Modal"]');
       openModals.forEach(function (m) {
         if (m.classList.contains('hidden') || m.style.display === 'none') return;
@@ -536,7 +530,7 @@
         }
       }
 
-      // 5. Category 16 Dedicated Header Audit (No Red Border on Outer Accordion Wrapper!)
+      // 5. Category 16 Dedicated Header Audit (No Ghost Border on Container)
       var c16 = document.querySelector('#categoryModal [data-cat-id="c16"]');
       if (c16) {
         var c16Header = c16.querySelector(':scope > div:first-child');
@@ -558,7 +552,7 @@
         } else {
           c16.classList.remove('sivme-public-hidden');
           c16.style.removeProperty('display');
-          c16.classList.remove('sivme-ghost-dormant', 'sivme-badge-anchor'); // Outer container stays clean
+          c16.classList.remove('sivme-ghost-dormant', 'sivme-badge-anchor');
 
           if (c16Header) {
             c16Header.classList.add('sivme-badge-anchor');
@@ -593,7 +587,7 @@
           if (match) numStr = match[1];
         }
 
-        if (!numStr || numStr === '16') return; // Cat 16 handled above
+        if (!numStr || numStr === '16') return;
         if (numStr.length === 1) numStr = '0' + numStr;
 
         var urn = 'rm:cat:' + numStr;
@@ -702,7 +696,7 @@
     scripts.forEach(function (src) {
       if (!document.querySelector('script[src*="' + src + '"]')) {
         var s = document.createElement('script');
-        s.src = src + '?v=20261006_v2';
+        s.src = src + '?v=20261006_v3';
         s.async = true;
         document.head.appendChild(s);
       }
@@ -710,7 +704,7 @@
   }
 
   // =========================================================================
-  // 11. BULLETPROOF GLOBAL BADGE CAPTURE LISTENER (UNIVERSAL 1-TAP DISPATCHER)
+  // 11. BULLETPROOF GLOBAL BADGE CAPTURE LISTENER (PREVENTS CASCADE ON SUB-CARDS)
   // =========================================================================
   document.addEventListener('click', function (e) {
     var badge = e.target.closest('.sivme-inline-badge');
@@ -727,7 +721,17 @@
 
     if (!urn) return;
 
-    setUrnVisibility(urn, nextVis, label);
+    // ONLY IF USER CLICKS PARENT BADGE -> CASCADE TO 3 SUB-CARDS
+    if (urn === 'rm:cat:16') {
+      ['rm:cat:16:sub:16-1', 'rm:cat:16:sub:16-2', 'rm:cat:16:sub:16-3'].forEach(function (su) {
+        setUrnVisibility(su, nextVis);
+      });
+      setUrnVisibility(urn, nextVis, label);
+    } else {
+      // INDEPENDENT TOGGLE FOR SPECIFIC SUB-CARD OR CARD (ZERO CASCADE)
+      setUrnVisibility(urn, nextVis, label);
+    }
+
     applyInSituAudit();
   }, true);
 
