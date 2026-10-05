@@ -1,12 +1,12 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Unified Core Engine (Anti-Nesting Shield, Clean Header & Micro-Modular Loader)
+ * MODULE        : Surface-A Unified Core Engine (Full 50 Categories + 9 Core Verticals + Auto Observer)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
  * DUAL-FOLDER REFS:
- *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
- *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
+ *   Folder A (Master Document SSOT)
+ *   Folder B (GitHub Mirror)
  */
 
 (function () {
@@ -133,7 +133,7 @@
     return Object.keys(hiddenUrns).length;
   }
 
-  // 5. CORE STYLES (Anti-Collision, Clean Single-Pill Header & Dock Padding)
+  // 5. CORE STYLES (Single Pill Uniform Headers, Clearance & Anti-Nesting)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -187,7 +187,7 @@
         cursor: pointer !important;
       }
 
-      /* Prevent inner title div inside Category 16 from inheriting card background */
+      /* Anti-Nesting Shield: Prevent inner title inside Category 16 from inheriting card styling */
       #categoryModal [data-cat-id="c16"] > div:first-child > div:first-child {
         background: transparent !important;
         border: none !important;
@@ -247,6 +247,13 @@
         line-height: 1.2 !important;
         user-select: none !important;
         touch-action: manipulation !important;
+      }
+
+      .sivme-vertical-card .sivme-inline-badge {
+        top: -8px !important;
+        left: 8px !important;
+        font-size: 9px !important;
+        padding: 2px 7px !important;
       }
 
       .sivme-badge-live { background: #064e3b !important; color: #6ee7b7 !important; border: 1.5px solid #10b981 !important; }
@@ -331,7 +338,7 @@
     badge.setAttribute('data-badge-vis', String(isVisible));
   }
 
-  // 7. AUDIT ENGINE (With Anti-Nesting Shield)
+  // 7. UNIVERSAL AUDIT ENGINE (ALL 50 CATEGORIES + 9 CORE VERTICALS)
   function applyInSituAudit() {
     if (isAuditing) return;
     isAuditing = true;
@@ -340,47 +347,54 @@
       enforceZELTemplateRendering();
       var isAuth = isConsoleAuthorized();
 
-      // Clean up any inner child elements wrongly tagged with data-cat-id
-      document.querySelectorAll('#sub-c16 [data-cat-id], [data-cat-id="c16"] > div > div[data-cat-id]').forEach(function (el) {
-        el.removeAttribute('data-cat-id');
-        el.classList.remove('sivme-catalog-card');
+      // Section Headers
+      var modalElements = document.querySelectorAll('#categoryModal button, #categoryModal [onclick], #categoryModal div');
+      modalElements.forEach(function (el) {
+        var t = (el.textContent || '').trim();
+        if ((t.indexOf('आजीविका') !== -1 || t.indexOf('खेल व मनोरंजन') !== -1) && el.children.length > 0 && el.offsetHeight > 30 && el.offsetHeight < 70) {
+          el.classList.add('sivme-catalog-section-header');
+        }
       });
 
-      var potentialCards = document.querySelectorAll('#categoryModal [data-cat-id], #categoryModal .overflow-y-auto > div');
+      // A. SCAN ALL 50 CATEGORIES IN UNIVERSAL CATALOG
+      var catalogCards = document.querySelectorAll(
+        '#categoryModal [data-cat-id], ' +
+        '#categoryModal [id*="cat-"], ' +
+        '#categoryModal div[onclick*="category"], ' +
+        '#categoryModal div[onclick*="Category"]'
+      );
+
       var processedUrns = {};
 
-      potentialCards.forEach(function (card) {
-        // Exclude sub-category containers or inner nested divs
-        if (card.closest('#sub-c16') || card.closest('[id^="sub-"]') || card.parentElement.closest('[data-cat-id]')) {
-          return;
-        }
+      catalogCards.forEach(function (card) {
+        // Exclude sub-category cards inside #sub-c16
+        if (card.closest('#sub-c16')) return;
 
-        var catId = card.getAttribute('data-cat-id') || '';
-        var numStr = '';
+        var catId = card.getAttribute('data-cat-id') || card.id || '';
+        var numStr = catId.replace(/[^0-9]/g, '');
 
-        if (catId) {
-          numStr = catId.replace(/[^0-9]/g, '');
-        } else if (card.children.length >= 1 && card.offsetHeight >= 45 && card.offsetHeight <= 130) {
+        if (!numStr) {
           var text = (card.textContent || '').trim();
-          var match = text.match(/^([0-9]{1,2})\.\s*/);
-          if (match) {
-            numStr = match[1];
-            card.setAttribute('data-cat-id', 'c' + numStr);
-            card.classList.add('sivme-catalog-card');
-          }
+          var match = text.match(/([0-9]{1,2})\./);
+          if (match) numStr = match[1];
         }
 
         if (!numStr) return;
         if (numStr.length === 1) numStr = '0' + numStr;
+
         var urn = 'rm:cat:' + numStr;
         if (processedUrns[urn]) return;
         processedUrns[urn] = true;
+
+        card.setAttribute('data-cat-id', 'c' + numStr);
+        card.classList.add('sivme-catalog-card');
 
         var labelEl = card.querySelector('.text-xs.font-bold') || card.querySelector('.font-bold');
         var label = labelEl ? labelEl.textContent.trim() : ('श्रेणी ' + numStr);
 
         var isVis = getUrnVisibility(urn);
 
+        // Bi-Directional Computed Display for Cat 16
         if (urn === 'rm:cat:16') {
           var sub1 = getUrnVisibility('rm:cat:16:sub:16-1');
           var sub2 = getUrnVisibility('rm:cat:16:sub:16-2');
@@ -411,7 +425,52 @@
         }
       });
 
-      // Execute Micro-Adapters (sub-16-1, sub-16-2, sub-16-3, cat-16)
+      // B. AUDIT 9 CORE VERTICALS (HOME SCREEN TILES)
+      var verticalCards = document.querySelectorAll('.grid > div, [data-vertical-id]');
+      verticalCards.forEach(function (card) {
+        var txt = (card.textContent || '').trim();
+        var vUrn = null;
+        var vLabel = null;
+
+        if (txt.indexOf('स्वस्थ मन') !== -1) { vUrn = 'rm:vertical:mind'; vLabel = 'स्वस्थ मन'; }
+        else if (txt.indexOf('कौशल') !== -1) { vUrn = 'rm:vertical:skills'; vLabel = 'कौशल सीखें'; }
+        else if (txt.indexOf('किराना') !== -1) { vUrn = 'rm:vertical:grocery'; vLabel = 'किराना'; }
+        else if (txt.indexOf('डिलीवरी') !== -1) { vUrn = 'rm:vertical:delivery'; vLabel = 'डिलीवरी'; }
+        else if (txt.indexOf('व्यापार टूल्स') !== -1) { vUrn = 'rm:vertical:biztools'; vLabel = 'व्यापार टूल्स'; }
+        else if (txt.indexOf('विशेषज्ञ') !== -1) { vUrn = 'rm:vertical:expert'; vLabel = 'विशेषज्ञ सलाह'; }
+        else if (txt.indexOf('वाउचर') !== -1) { vUrn = 'rm:vertical:voucher'; vLabel = 'वाउचर'; }
+        else if (txt.indexOf('बहीखाता') !== -1) { vUrn = 'rm:vertical:ledger'; vLabel = 'बहीखाता'; }
+        else if (txt.indexOf('आपात') !== -1) { vUrn = 'rm:vertical:emergency'; vLabel = 'आपात सहायता'; }
+
+        if (!vUrn || card.closest('#categoryModal')) return;
+
+        card.classList.add('sivme-vertical-card');
+        var isVis = getUrnVisibility(vUrn);
+
+        if (!isAuth) {
+          if (!isVis) {
+            card.classList.add('sivme-public-hidden');
+            card.style.setProperty('display', 'none', 'important');
+          } else {
+            card.classList.remove('sivme-public-hidden');
+            card.style.removeProperty('display');
+          }
+          var oldVB = card.querySelector(':scope > .sivme-inline-badge');
+          if (oldVB) oldVB.remove();
+          card.classList.remove('sivme-ghost-dormant', 'sivme-badge-anchor');
+        } else {
+          card.classList.remove('sivme-public-hidden');
+          card.classList.add('sivme-badge-anchor');
+          if (!isVis) {
+            card.classList.add('sivme-ghost-dormant');
+          } else {
+            card.classList.remove('sivme-ghost-dormant');
+          }
+          mountInlineBadge(card, vUrn, isVis, vLabel);
+        }
+      });
+
+      // Execute Micro-Adapters (cat-16, sub-16-1, sub-16-2, sub-16-3)
       Object.keys(adapters).forEach(function (key) {
         try { adapters[key](); } catch (_) {}
       });
@@ -481,14 +540,14 @@
     scripts.forEach(function (src) {
       if (!document.querySelector('script[src*="' + src + '"]')) {
         var s = document.createElement('script');
-        s.src = src + '?v=20261005_v3';
+        s.src = src + '?v=20261005_v4';
         s.async = true;
         document.head.appendChild(s);
       }
     });
   }
 
-  // 10. GLOBAL SIVME API
+  // 10. GLOBAL SIVME API & DYNAMIC OBSERVER
   window.RM_SIVME = {
     isConsoleAuthorized: isConsoleAuthorized,
     getUrnVisibility: getUrnVisibility,
@@ -507,7 +566,12 @@
   loadAdapters();
   applyInSituAudit();
 
-  document.addEventListener('click', function () { setTimeout(applyInSituAudit, 60); }, false);
+  document.addEventListener('click', function () { setTimeout(applyInSituAudit, 50); }, false);
   window.addEventListener('storage', applyInSituAudit);
   window.addEventListener('rm:sov:visibility-changed', applyInSituAudit);
+
+  var obs = new MutationObserver(function () {
+    if (!isAuditing) applyInSituAudit();
+  });
+  obs.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'] });
 })();
