@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Lightweight Core Engine (Anti-Clip Badges, Anti-Squish & ZEL Host)
+ * MODULE        : Surface-A Lightweight Core Engine (Anti-Clip, DOM-Reconciled Counter & ZEL Host)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -16,7 +16,6 @@
   var REGISTRY_STORAGE_KEY = 'rm_sovereign_visibility_registry_v1';
   var DEV_AUTO_KEY = 'rm_sov_automation_mode_active';
   var isAuditing = false;
-  var auditTimer = null;
   var adapters = {};
 
   // 1. ZEL TEMPLATE SHIELD: Ensure legacy modules always render complete DOM
@@ -38,7 +37,7 @@
     } catch (_) {}
   }
 
-  // 2. CONSOLE AUTHORIZATION (General Tab Permanent Support)
+  // 2. CONSOLE AUTHORIZATION
   function isConsoleAuthorized() {
     try {
       var params = new URLSearchParams(window.location.search);
@@ -95,20 +94,49 @@
     } catch (_) {}
   }
 
+  // 4. BULLETPROOF DOM & REGISTRY RECONCILED HIDDEN COUNTER
   function getHiddenCount() {
+    var hiddenUrns = {};
+
+    // A. Read SSOT Sovereign Registry
+    if (window.RM_SovereignRegistry && typeof window.RM_SovereignRegistry.getAll === 'function') {
+      try {
+        var all = window.RM_SovereignRegistry.getAll();
+        if (all) {
+          Object.keys(all).forEach(function (k) {
+            if (all[k] && all[k].visible === false) hiddenUrns[k] = true;
+          });
+        }
+      } catch (_) {}
+    }
+
+    // B. Read LocalStorage Registry
     var reg = getRegistry();
-    var count = 0;
     if (reg && reg.items) {
       Object.keys(reg.items).forEach(function (k) {
         if (reg.items[k] && reg.items[k].visible === false) {
-          count++;
+          hiddenUrns[k] = true;
+        } else if (reg.items[k] && reg.items[k].visible === true) {
+          delete hiddenUrns[k];
         }
       });
     }
-    return count;
+
+    // C. Reconcile with active DOM Badges
+    document.querySelectorAll('.sivme-badge-dormant').forEach(function (badge) {
+      var u = badge.getAttribute('data-badge-urn');
+      if (u) hiddenUrns[u] = true;
+    });
+
+    document.querySelectorAll('.sivme-badge-live').forEach(function (badge) {
+      var u = badge.getAttribute('data-badge-urn');
+      if (u) delete hiddenUrns[u];
+    });
+
+    return Object.keys(hiddenUrns).length;
   }
 
-  // 4. CORE STYLES (Anti-Clipping, 2.5D Elevation, Clearance & No-Wrap Buttons)
+  // 5. CORE STYLES (Anti-Clipping, 2.5D Elevation, Clearance & No-Wrap)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -257,7 +285,7 @@
     document.head.appendChild(style);
   }
 
-  // 5. MOUNT INLINE BADGES & CARD WAKE-UP
+  // 6. MOUNT INLINE BADGES & CARD WAKE-UP
   function mountInlineBadge(parentEl, urn, isVisible, label) {
     var badge = parentEl.querySelector(':scope > .sivme-inline-badge');
     var targetClass = isVisible ? 'sivme-inline-badge sivme-badge-live' : 'sivme-inline-badge sivme-badge-dormant';
@@ -292,7 +320,7 @@
     badge.setAttribute('data-badge-vis', String(isVisible));
   }
 
-  // 6. AUDIT 50 UNIVERSAL CATALOG CATEGORIES & EXECUTE MODULAR ADAPTERS
+  // 7. AUDIT 50 UNIVERSAL CATALOG CATEGORIES & EXECUTE ADAPTERS
   function applyInSituAudit() {
     if (isAuditing) return;
     isAuditing = true;
@@ -354,7 +382,7 @@
     }
   }
 
-  // 7. FLOATING HUD DOCK
+  // 8. FLOATING HUD DOCK
   function updateFloatingDock(isAuth, hiddenCount) {
     var dock = document.getElementById('sivmeFloatingDock');
     if (!isAuth) { if (dock) dock.remove(); return; }
@@ -369,7 +397,7 @@
         </span>
         <button id="btnHardReloadBust" style="background:#0369a1;border:1px solid #38bdf8;color:#e0f2fe;font-size:10px;font-weight:900;padding:3px 8px;border-radius:8px;cursor:pointer;">⚡ Reload</button>
         <button id="btnExitInSitu" style="background:#450a0a;border:1px solid #b91c1c;color:#fca5a5;font-size:10px;font-weight:800;padding:3px 7px;border-radius:8px;cursor:pointer;">Exit ✕</button>
-        <a href="/owner-console.html" style="background:#1e1b4b;border:1px solid #4338ca;color:#a5b4fc;font-size:10px;font-weight:800;padding:3px 7px;border-radius:8px;text-decoration:none;">B ⚙️</a>
+        <a href="/owner-console.html" style="background:#1e1b4b;border:1px solid #4338ca;color:#a5b4fc;font-size:10px;font-weight:800;padding:3px 7px;border-radius:8px;text-decoration:none;">B ⚙️️</a>
       `;
       document.body.appendChild(dock);
 
@@ -392,7 +420,7 @@
     }
   }
 
-  // 8. AUTO-LOAD REGISTERED ADAPTER SCRIPTS
+  // 9. AUTO-LOAD REGISTERED ADAPTER SCRIPTS
   function loadAdapters() {
     var basePath = '/js/';
     var curr = document.currentScript;
@@ -414,7 +442,7 @@
     });
   }
 
-  // 9. EXPOSE SIVME CORE GLOBAL API
+  // 10. EXPOSE SIVME CORE GLOBAL API
   window.RM_SIVME = {
     isConsoleAuthorized: isConsoleAuthorized,
     getUrnVisibility: getUrnVisibility,
