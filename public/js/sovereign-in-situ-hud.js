@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Unified Core Engine (Permanent Global Capture & Anti-Regression Architecture)
+ * MODULE        : Surface-A Unified Core Engine (Permanent Zero-Desync & Clean Accordion Architecture)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -64,7 +64,7 @@
     }
   }
 
-  // 3. REGISTRY BRIDGE (Strict LocalStorage SSOT)
+  // 3. REGISTRY BRIDGE (Real-Time Dynamic Parent Computation)
   function getRegistry() {
     try {
       var raw = localStorage.getItem(REGISTRY_STORAGE_KEY);
@@ -75,6 +75,14 @@
   }
 
   function getUrnVisibility(urn) {
+    // Dynamic real-time truth for Category 16: Live only if all 3 sub-cards are Live
+    if (urn === 'rm:cat:16') {
+      var s1 = getUrnVisibility('rm:cat:16:sub:16-1');
+      var s2 = getUrnVisibility('rm:cat:16:sub:16-2');
+      var s3 = getUrnVisibility('rm:cat:16:sub:16-3');
+      return (s1 && s2 && s3);
+    }
+
     var reg = getRegistry();
     if (reg && reg.items && reg.items[urn] !== undefined && reg.items[urn].visible !== undefined) {
       return !!reg.items[urn].visible;
@@ -88,6 +96,13 @@
   }
 
   function setUrnVisibility(urn, nextVis, label) {
+    // If Category 16 toggled directly, cascade to all 3 sub-cards
+    if (urn === 'rm:cat:16') {
+      ['rm:cat:16:sub:16-1', 'rm:cat:16:sub:16-2', 'rm:cat:16:sub:16-3'].forEach(function (su) {
+        setUrnVisibility(su, nextVis);
+      });
+    }
+
     try {
       var reg = getRegistry();
       if (!reg.items) reg.items = {};
@@ -112,6 +127,7 @@
     var reg = getRegistry();
     if (reg && reg.items) {
       Object.keys(reg.items).forEach(function (k) {
+        if (k === 'rm:cat:16') return; // Derived from sub-elements
         if (reg.items[k] && reg.items[k].visible === false) {
           hiddenUrns[k] = true;
         } else if (reg.items[k] && reg.items[k].visible === true) {
@@ -120,15 +136,12 @@
       });
     }
 
-    document.querySelectorAll('.sivme-badge-dormant').forEach(function (b) {
-      var u = b.getAttribute('data-badge-urn');
-      if (u) hiddenUrns[u] = true;
-    });
-
-    document.querySelectorAll('.sivme-badge-live').forEach(function (b) {
-      var u = b.getAttribute('data-badge-urn');
-      if (u) delete hiddenUrns[u];
-    });
+    // Check Cat 16 derived state
+    if (!getUrnVisibility('rm:cat:16')) {
+      hiddenUrns['rm:cat:16'] = true;
+    } else {
+      delete hiddenUrns['rm:cat:16'];
+    }
 
     return Object.keys(hiddenUrns).length;
   }
@@ -218,8 +231,12 @@
         margin-top: 18px !important;
         margin-bottom: 26px !important;
         overflow: visible !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
       }
 
+      /* Uniform Header Styling for All Categories */
       #categoryModal [data-cat-id]:not([data-cat-id="c16"]),
       #categoryModal .sivme-catalog-card:not([data-cat-id="c16"]),
       #categoryModal [data-cat-id="c16"] > div:first-child {
@@ -386,7 +403,7 @@
     badge.setAttribute('data-badge-vis', String(isVisible));
   }
 
-  // 7. UNIFIED AUDIT FUNCTION (ALL UI COMPONENTS)
+  // 7. AUDIT ELEMENT
   function auditElement(el, urn, label, isAuth) {
     if (!el) return;
     el.setAttribute('data-sov-urn', urn);
@@ -414,17 +431,15 @@
       }
       mountInlineBadge(el, urn, isVis, label);
 
-      // Card body tap handler (if dormant, awakens it)
       if (el.getAttribute('data-sivme-tap-bound') !== 'true') {
         el.setAttribute('data-sivme-tap-bound', 'true');
 
         el.addEventListener('click', function (e) {
           if (!isConsoleAuthorized()) return;
-          if (e.target.closest('.sivme-inline-badge')) return; // Handled by global capture listener
+          if (e.target.closest('.sivme-inline-badge')) return;
 
           var curVis = getUrnVisibility(urn);
 
-          // If dormant, tapping card awakens it
           if (!curVis) {
             if (e.cancelable) e.preventDefault();
             e.stopImmediatePropagation();
@@ -434,14 +449,12 @@
             return;
           }
 
-          // If live and clicked "खोलें" or an action, let it proceed
-          if (e.target.tagName === 'INPUT' || e.target.closest('button, a')) {
+          if (e.target.tagName === 'INPUT' || (el.classList.contains('sivme-cash-atomic-card') && e.target.closest('button, a, div[onclick]'))) {
             return;
           }
 
-          // If live card body clicked, toggle off
           if (el.classList.contains('sivme-btn-pill') || el.classList.contains('sivme-vertical-card') || el.classList.contains('sivme-catalog-card')) {
-            if (urn === 'rm:cat:16') return; // Handled by accordion
+            if (urn === 'rm:cat:16') return;
             if (e.cancelable) e.preventDefault();
             e.stopImmediatePropagation();
             e.stopPropagation();
@@ -462,7 +475,7 @@
       enforceZELTemplateRendering();
       var isAuth = isConsoleAuthorized();
 
-      // Dynamic Full-Screen DOM Enforcement for Modals
+      // Dynamic Full-Screen DOM Enforcement
       var openModals = document.querySelectorAll('#categoryModal, #rentalLedgerModal, #rentalSearchModal, [id*="Modal"]');
       openModals.forEach(function (m) {
         if (m.classList.contains('hidden') || m.style.display === 'none') return;
@@ -490,7 +503,7 @@
         }
       }
 
-      // 3. RM CASH ATOMIC SINGLE CARD
+      // 3. RM CASH ATOMIC CARD
       var allDivs = document.querySelectorAll('div, section');
       for (var d = 0; d < allDivs.length; d++) {
         var card = allDivs[d];
@@ -500,7 +513,6 @@
           card.classList.add('sivme-cash-atomic-card');
           auditElement(card, 'rm:card:rm-cash', 'RM CASH बहीखाता कार्ड', isAuth);
 
-          // Strip any inner nested badges from child buttons
           card.querySelectorAll('button, a, div[onclick]').forEach(function (btn) {
             btn.classList.remove('sivme-btn-pill', 'sivme-badge-anchor', 'sivme-ghost-dormant');
             var oldChildBadge = btn.querySelector('.sivme-inline-badge');
@@ -524,7 +536,43 @@
         }
       }
 
-      // 5. UNIFIED SCAN FOR ALL 50 CATEGORIES (EXACT AUDIT ELEMENT PIPELINE)
+      // 5. Category 16 Dedicated Header Audit (No Red Border on Outer Accordion Wrapper!)
+      var c16 = document.querySelector('#categoryModal [data-cat-id="c16"]');
+      if (c16) {
+        var c16Header = c16.querySelector(':scope > div:first-child');
+        var isCat16Vis = getUrnVisibility('rm:cat:16');
+
+        if (!isAuth) {
+          if (!isCat16Vis) {
+            c16.classList.add('sivme-public-hidden');
+            c16.style.setProperty('display', 'none', 'important');
+          } else {
+            c16.classList.remove('sivme-public-hidden');
+            c16.style.removeProperty('display');
+          }
+          if (c16Header) {
+            var oldB = c16Header.querySelector(':scope > .sivme-inline-badge');
+            if (oldB) oldB.remove();
+            c16Header.classList.remove('sivme-ghost-dormant', 'sivme-badge-anchor');
+          }
+        } else {
+          c16.classList.remove('sivme-public-hidden');
+          c16.style.removeProperty('display');
+          c16.classList.remove('sivme-ghost-dormant', 'sivme-badge-anchor'); // Outer container stays clean
+
+          if (c16Header) {
+            c16Header.classList.add('sivme-badge-anchor');
+            if (!isCat16Vis) {
+              c16Header.classList.add('sivme-ghost-dormant');
+            } else {
+              c16Header.classList.remove('sivme-ghost-dormant');
+            }
+            mountInlineBadge(c16Header, 'rm:cat:16', isCat16Vis, 'घर व मकान (House & Home)');
+          }
+        }
+      }
+
+      // 6. Scan All Other 49 Categories in Universal Catalog
       var catalogCards = document.querySelectorAll(
         '#categoryModal [data-cat-id], ' +
         '#categoryModal [id*="cat-"], ' +
@@ -545,7 +593,7 @@
           if (match) numStr = match[1];
         }
 
-        if (!numStr) return;
+        if (!numStr || numStr === '16') return; // Cat 16 handled above
         if (numStr.length === 1) numStr = '0' + numStr;
 
         var urn = 'rm:cat:' + numStr;
@@ -561,7 +609,7 @@
         auditElement(cCard, urn, label, isAuth);
       });
 
-      // 6. Audit 9 Core Verticals
+      // 7. Audit 9 Core Verticals
       var verticalCards = document.querySelectorAll('.grid > div, [data-vertical-id]');
       verticalCards.forEach(function (vCard) {
         var txt = cleanText(vCard);
@@ -654,7 +702,7 @@
     scripts.forEach(function (src) {
       if (!document.querySelector('script[src*="' + src + '"]')) {
         var s = document.createElement('script');
-        s.src = src + '?v=20261006_v1';
+        s.src = src + '?v=20261006_v2';
         s.async = true;
         document.head.appendChild(s);
       }
@@ -662,7 +710,7 @@
   }
 
   // =========================================================================
-  // 11. BULLETPROOF GLOBAL BADGE CAPTURE LISTENER (PREVENTS ALL FUTURE REGRESSIONS)
+  // 11. BULLETPROOF GLOBAL BADGE CAPTURE LISTENER (UNIVERSAL 1-TAP DISPATCHER)
   // =========================================================================
   document.addEventListener('click', function (e) {
     var badge = e.target.closest('.sivme-inline-badge');
@@ -679,17 +727,9 @@
 
     if (!urn) return;
 
-    if (urn === 'rm:cat:16') {
-      ['rm:cat:16:sub:16-1', 'rm:cat:16:sub:16-2', 'rm:cat:16:sub:16-3'].forEach(function (su) {
-        setUrnVisibility(su, nextVis);
-      });
-      setUrnVisibility(urn, nextVis, label);
-    } else {
-      setUrnVisibility(urn, nextVis, label);
-    }
-
+    setUrnVisibility(urn, nextVis, label);
     applyInSituAudit();
-  }, true); // Capture phase: intercepts BEFORE any inner component or modal cancels it
+  }, true);
 
   // 12. GLOBAL SIVME API & DYNAMIC OBSERVER
   window.RM_SIVME = {
