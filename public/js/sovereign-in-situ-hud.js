@@ -64,7 +64,7 @@
     }
   }
 
-  // 3. REGISTRY BRIDGE (LocalStorage Strict SSOT)
+  // 3. REGISTRY BRIDGE (LocalStorage Strict Isolated SSOT)
   function getRegistry() {
     try {
       var raw = localStorage.getItem(REGISTRY_STORAGE_KEY);
@@ -88,7 +88,7 @@
   }
 
   function setUrnVisibility(urn, nextVis, label) {
-    // Save to LocalStorage SSOT directly
+    // Direct Isolated LocalStorage Write
     try {
       var reg = getRegistry();
       if (!reg.items) reg.items = {};
@@ -96,7 +96,7 @@
       localStorage.setItem(REGISTRY_STORAGE_KEY, JSON.stringify(reg));
     } catch (_) {}
 
-    // Synchronize cleanly with Sovereign Registry without double-trigger
+    // Safe Sync to Sovereign Registry without circular double-toggle
     if (window.RM_SovereignRegistry) {
       try {
         if (typeof window.RM_SovereignRegistry.setVisibility === 'function') {
@@ -135,7 +135,7 @@
     return Object.keys(hiddenUrns).length;
   }
 
-  // 5. CORE STYLES (Anti-Clipping & Touch Target Optimization)
+  // 5. CORE STYLES (Anti-Clipping, Top Clearance & Touch Action)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
