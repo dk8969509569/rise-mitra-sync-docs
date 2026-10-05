@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Unified Core Engine (Kernel v2.1 - Home Widgets Decoupled)
+ * MODULE        : Surface-A Unified Core Engine (Kernel v2.2 - Core Verticals Decoupled)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -64,7 +64,7 @@
     }
   }
 
-  // 3. REGISTRY BRIDGE (Strict Single-Item Setter - No Recursive Cascade)
+  // 3. REGISTRY BRIDGE (Strict Single-Item Setter - Zero Recursive Cascades)
   function getRegistry() {
     try {
       var raw = localStorage.getItem(REGISTRY_STORAGE_KEY);
@@ -173,7 +173,7 @@
     badge.setAttribute('data-badge-vis', String(isVisible));
   }
 
-  // 7. AUDIT ELEMENT DISPATCHER (Exposed to Micro-Adapters)
+  // 7. AUDIT ELEMENT DISPATCHER (Exposed To All Micro-Adapters)
   function auditElement(el, urn, label, isAuth) {
     if (!el) return;
     if (typeof isAuth === 'undefined') isAuth = isConsoleAuthorized();
@@ -237,7 +237,7 @@
     }
   }
 
-  // 8. UNIVERSAL AUDIT ENGINE (Clean Kernel Loop)
+  // 8. UNIVERSAL AUDIT ENGINE (Clean Master Kernel)
   function applyInSituAudit() {
     if (isAuditing) return;
     isAuditing = true;
@@ -254,7 +254,7 @@
         m.style.setProperty('max-height', '100dvh', 'important');
       });
 
-      // Category 16 Header Audit
+      // Category 16 Dedicated Header Audit
       var c16 = document.querySelector('#categoryModal [data-cat-id="c16"]');
       if (c16) {
         var c16Header = c16.querySelector(':scope > div:first-child');
@@ -327,30 +327,7 @@
         auditElement(cCard, urn, label, isAuth);
       });
 
-      // Audit 9 Core Verticals (Home Screen Grid)
-      var verticalCards = document.querySelectorAll('.grid > div, [data-vertical-id]');
-      verticalCards.forEach(function (vCard) {
-        var txt = cleanText(vCard);
-        var vUrn = null;
-        var vLabel = null;
-
-        if (txt.indexOf('स्वस्थ मन') !== -1) { vUrn = 'rm:vertical:mind'; vLabel = 'स्वस्थ मन'; }
-        else if (txt.indexOf('कौशल') !== -1) { vUrn = 'rm:vertical:skills'; vLabel = 'कौशल सीखें'; }
-        else if (txt.indexOf('किराना') !== -1) { vUrn = 'rm:vertical:grocery'; vLabel = 'किराना'; }
-        else if (txt.indexOf('डिलीवरी') !== -1) { vUrn = 'rm:vertical:delivery'; vLabel = 'डिलीवरी'; }
-        else if (txt.indexOf('व्यापार टूल्स') !== -1) { vUrn = 'rm:vertical:biztools'; vLabel = 'व्यापार टूल्स'; }
-        else if (txt.indexOf('विशेषज्ञ') !== -1) { vUrn = 'rm:vertical:expert'; vLabel = 'विशेषज्ञ सलाह'; }
-        else if (txt.indexOf('वाउचर') !== -1) { vUrn = 'rm:vertical:voucher'; vLabel = 'वाउचर'; }
-        else if (txt.indexOf('बहीखाता') !== -1) { vUrn = 'rm:vertical:ledger'; vLabel = 'बहीखाता'; }
-        else if (txt.indexOf('आपात') !== -1) { vUrn = 'rm:vertical:emergency'; vLabel = 'आपात सहायता'; }
-
-        if (!vUrn || vCard.closest('#categoryModal')) return;
-
-        vCard.classList.add('sivme-vertical-card');
-        auditElement(vCard, vUrn, vLabel, isAuth);
-      });
-
-      // Execute Micro-Adapters (home-widgets, cat-16, sub-16-1, sub-16-2, sub-16-3)
+      // Execute Micro-Adapters (home-widgets, core-verticals-9, cat-16, sub-16-1, sub-16-2, sub-16-3)
       Object.keys(adapters).forEach(function (key) {
         try { adapters[key](); } catch (_) {}
       });
@@ -412,6 +389,7 @@
 
     var scripts = [
       basePath + 'home-widgets.js',
+      basePath + 'core-verticals-9.js',
       basePath + 'cat-16.js',
       basePath + 'sub-16-1.js',
       basePath + 'sub-16-2.js',
@@ -421,7 +399,7 @@
     scripts.forEach(function (src) {
       if (!document.querySelector('script[src*="' + src + '"]')) {
         var s = document.createElement('script');
-        s.src = src + '?v=20261006_v5';
+        s.src = src + '?v=20261006_v6';
         s.async = true;
         document.head.appendChild(s);
       }
