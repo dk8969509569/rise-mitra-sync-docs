@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SIVME CATEGORY 16 ADAPTER
- * TARGET: Category 16 Accordion, 16-1, 16-2, 16-3 Strict Event-Capture & Native Opener
+ * TARGET: Category 16 Accordion, 16-1, 16-2, 16-3 Single-Tap & Parent Auto-Sync
  * GOVERNANCE: GATE-23.5 | ZEL SPECIFICATION
  * DUAL-FOLDER REFS:
  *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
@@ -10,11 +10,22 @@
 (function () {
   'use strict';
 
-  var lastAccordionToggleTime = 0;
-  var lastActionTime = 0;
-
   function getCore() {
     return window.RM_SIVME || null;
+  }
+
+  function syncCategory16Parent() {
+    var core = getCore();
+    if (!core) return;
+    var subUrns = ['rm:cat:16:sub:16-1', 'rm:cat:16:sub:16-2', 'rm:cat:16:sub:16-3'];
+    var allLive = true;
+    for (var i = 0; i < subUrns.length; i++) {
+      if (!core.getUrnVisibility(subUrns[i])) {
+        allLive = false;
+        break;
+      }
+    }
+    core.setUrnVisibility('rm:cat:16', allLive, 'घर व मकान');
   }
 
   function auditCategory16() {
@@ -22,18 +33,24 @@
     if (!core || !core.isConsoleAuthorized) return;
     var isAuth = core.isConsoleAuthorized();
 
-    // 1. Category 16 Header Accordion Toggle
+    // 1. Single-Tap Sovereign Accordion Toggle (Neutralizes Conflicting Double Triggers)
     var c16 = document.querySelector('#categoryModal [data-cat-id="c16"]');
     if (c16) {
       var c16Header = c16.querySelector(':scope > div:first-child');
       if (c16Header && c16Header.getAttribute('data-sivme-toggle-bound') !== 'true') {
         c16Header.setAttribute('data-sivme-toggle-bound', 'true');
+
+        // Neutralize conflicting native inline handlers
+        if (c16Header.hasAttribute('onclick')) c16Header.removeAttribute('onclick');
+        c16Header.querySelectorAll('[onclick]').forEach(function (el) {
+          el.removeAttribute('onclick');
+        });
+
         c16Header.addEventListener('click', function (e) {
           if (e.target.closest('.sivme-inline-badge')) return;
-
-          var now = Date.now();
-          if (now - lastAccordionToggleTime < 300) return;
-          lastAccordionToggleTime = now;
+          if (e.cancelable) e.preventDefault();
+          e.stopImmediatePropagation();
+          e.stopPropagation();
 
           var sub = document.getElementById('sub-c16');
           if (!sub) return;
@@ -50,11 +67,11 @@
             sub.classList.remove('hidden', 'sivme-collapsed');
             if (chevron) chevron.style.transform = 'rotate(180deg)';
           }
-        }, false);
+        }, true);
       }
     }
 
-    // 2. Sub-Services 16-1, 16-2, 16-3 Capture Phase Click Interception
+    // 2. Sub-Services 16-1, 16-2, 16-3 Single-Tap Resolution
     var sub16Cards = document.querySelectorAll('#sub-c16 > div');
     sub16Cards.forEach(function (subCard, idx) {
       var subNum = idx + 1;
@@ -94,42 +111,45 @@
 
       core.mountInlineBadge(subCard, subUrn, isVis, subLabel);
 
-      // Event Binding with Capture Phase (Handles button & container clicks infallibly)
-      if (subCard.getAttribute('data-sivme-capture-bound') !== 'true') {
-        subCard.setAttribute('data-sivme-capture-bound', 'true');
+      // Single-Tap Dispatcher
+      if (subCard.getAttribute('data-sivme-tap-bound') !== 'true') {
+        subCard.setAttribute('data-sivme-tap-bound', 'true');
 
         subCard.addEventListener('click', function (e) {
           if (!core.isConsoleAuthorized()) return;
 
-          var isDormant = subCard.classList.contains('sivme-ghost-dormant');
-          var isBadgeTarget = !!e.target.closest('.sivme-inline-badge');
+          // If badge was directly clicked, let HUD badge handler process and then sync parent
+          if (e.target.closest('.sivme-inline-badge')) {
+            setTimeout(function () {
+              syncCategory16Parent();
+              core.applyInSituAudit();
+            }, 30);
+            return;
+          }
 
-          // If Card is Dormant OR Badge is directly clicked: STRICTLY TOGGLE TO LIVE
-          if (isDormant || isBadgeTarget) {
+          var isDormant = subCard.classList.contains('sivme-ghost-dormant');
+
+          // If card is Dormant: 1-Tap Wake Up to Live!
+          if (isDormant) {
             if (e.cancelable) e.preventDefault();
-            e.stopImmediatePropagation();
             e.stopPropagation();
 
-            var now = Date.now();
-            if (now - lastActionTime < 300) return;
-            lastActionTime = now;
-
-            var curVis = core.getUrnVisibility(subUrn);
-            var nextVis = isDormant ? true : !curVis;
-
-            core.setUrnVisibility(subUrn, nextVis, subLabel);
+            core.setUrnVisibility(subUrn, true, subLabel);
+            syncCategory16Parent();
             core.applyInSituAudit();
             return;
           }
 
-          // If Already LIVE and button/card clicked: Allow native opener without redirection
+          // If already Live: trigger native service opener
           var btn = subCard.querySelector('button, a, [onclick]');
           if (btn && e.target !== btn && !btn.contains(e.target)) {
             btn.click();
           }
-        }, true); // TRUE = Capture Phase guarantees click is captured before button swallows it
+        }, false);
       }
     });
+
+    syncCategory16Parent();
   }
 
   function register() {
