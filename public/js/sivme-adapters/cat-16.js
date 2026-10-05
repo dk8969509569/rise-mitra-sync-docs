@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SIVME CATEGORY 16 ADAPTER
- * TARGET: Category 16 Accordion, 16-1, 16-2, 16-3 Single-Tap Sovereign Toggle & Instant Parent Sync
+ * TARGET: Category 16 Accordion (1-Tap Strict), 16-1/16-2/16-3 Isolated Single-Tap & Native Opener
  * GOVERNANCE: GATE-23.5 | ZEL SPECIFICATION
  * DUAL-FOLDER REFS:
  *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
@@ -14,32 +14,20 @@
     return window.RM_SIVME || null;
   }
 
-  // 1. NEUTRALIZE NATIVE DOUBLE-TRIGGER ON CATEGORY 16 DROPDOWN
-  if (typeof window.toggleCategory === 'function' && !window.__sivme_c16_hooked) {
-    window.__sivme_c16_hooked = true;
-    var origToggle = window.toggleCategory;
-    window.toggleCategory = function (id) {
-      if (id === '16' || id === 'c16') {
-        // Handled exclusively by SIVME cat-16 adapter to prevent open-close clashing
-        return;
-      }
-      return origToggle.apply(this, arguments);
-    };
-  }
-
-  // 2. BI-DIRECTIONAL PARENT SYNC
-  function syncCategory16Parent() {
-    var core = getCore();
-    if (!core) return;
-    var subUrns = ['rm:cat:16:sub:16-1', 'rm:cat:16:sub:16-2', 'rm:cat:16:sub:16-3'];
-    var allLive = true;
-    for (var i = 0; i < subUrns.length; i++) {
-      if (!core.getUrnVisibility(subUrns[i])) {
-        allLive = false;
-        break;
-      }
+  // 1. ISOLATED SUB-URN MATCHER
+  function getSubUrnAndLabel(subCard, idx) {
+    var txt = (subCard.textContent || '').trim();
+    if (txt.indexOf('मिस्त्री') !== -1 || txt.indexOf('मरम्मत') !== -1) {
+      return { urn: 'rm:cat:16:sub:16-1', label: 'मिस्त्री व गृह मरम्मत' };
     }
-    core.setUrnVisibility('rm:cat:16', allLive, 'घर व मकान');
+    if (txt.indexOf('किराया') !== -1 || txt.indexOf('बहीखाता') !== -1) {
+      return { urn: 'rm:cat:16:sub:16-2', label: 'किराया बहीखाता (Rental Ledger)' };
+    }
+    if (txt.indexOf('कमरा') !== -1 || txt.indexOf('फ्लैट') !== -1) {
+      return { urn: 'rm:cat:16:sub:16-3', label: 'कमरा व फ्लैट खोज (Rental Search)' };
+    }
+    var num = idx + 1;
+    return { urn: 'rm:cat:16:sub:16-' + num, label: '16-' + num + ' सेवा' };
   }
 
   function auditCategory16() {
@@ -47,12 +35,12 @@
     if (!core || !core.isConsoleAuthorized) return;
     var isAuth = core.isConsoleAuthorized();
 
-    // 3. SINGLE-TAP SOVEREIGN ACCORDION (1-Tap Smooth Open/Close)
+    // 2. AUTHORITATIVE 1-TAP ACCORDION CONTROLLER
     var c16 = document.querySelector('#categoryModal [data-cat-id="c16"]');
     if (c16) {
       var c16Header = c16.querySelector(':scope > div:first-child');
-      if (c16Header && c16Header.getAttribute('data-sivme-c16-bound') !== 'true') {
-        c16Header.setAttribute('data-sivme-c16-bound', 'true');
+      if (c16Header && c16Header.getAttribute('data-sivme-c16-ctrl') !== 'true') {
+        c16Header.setAttribute('data-sivme-c16-ctrl', 'true');
 
         if (c16Header.hasAttribute('onclick')) c16Header.removeAttribute('onclick');
         c16Header.querySelectorAll('[onclick]').forEach(function (el) {
@@ -61,40 +49,42 @@
 
         c16Header.addEventListener('click', function (e) {
           if (e.target.closest('.sivme-inline-badge')) return;
+
           if (e.cancelable) e.preventDefault();
+          e.stopImmediatePropagation();
           e.stopPropagation();
 
           var sub = document.getElementById('sub-c16');
           if (!sub) return;
 
-          var isCurrentlyVisible = (sub.offsetHeight > 0) && (window.getComputedStyle(sub).display !== 'none') && !sub.classList.contains('sivme-collapsed');
-          var chevron = document.getElementById('chevron-c16') || c16Header.querySelector('svg, [id*="chevron"]');
+          var isHidden = sub.classList.contains('hidden') || 
+                         window.getComputedStyle(sub).display === 'none' || 
+                         sub.style.display === 'none';
 
-          if (isCurrentlyVisible) {
-            sub.style.setProperty('display', 'none', 'important');
-            sub.classList.add('hidden', 'sivme-collapsed');
-            if (chevron) chevron.style.transform = 'rotate(0deg)';
-          } else {
-            sub.style.setProperty('display', 'block', 'important');
+          var chevron = c16Header.querySelector('svg, [id*="chevron"]');
+
+          if (isHidden) {
             sub.classList.remove('hidden', 'sivme-collapsed');
+            sub.style.setProperty('display', 'block', 'important');
             if (chevron) chevron.style.transform = 'rotate(180deg)';
+          } else {
+            sub.classList.add('hidden', 'sivme-collapsed');
+            sub.style.setProperty('display', 'none', 'important');
+            if (chevron) chevron.style.transform = 'rotate(0deg)';
           }
-        }, true);
+        }, true); // Capture phase with stopImmediatePropagation stops duplicate triggers
       }
     }
 
-    // 4. SUB-SERVICES 16-1, 16-2, 16-3: GUARANTEED 1-TAP VISIBILITY TOGGLE
+    // 3. ISOLATED SUB-SERVICES (16-1, 16-2, 16-3): NO CROSS-MUTATION & INSTANT 1-TAP
     var sub16Cards = document.querySelectorAll('#sub-c16 > div');
     sub16Cards.forEach(function (subCard, idx) {
-      var subNum = idx + 1;
-      var subUrn = 'rm:cat:16:sub:16-' + subNum;
-      var subLabelEl = subCard.querySelector('.text-xs') || subCard;
-      var subLabel = subLabelEl ? subLabelEl.textContent.trim() : ('16-' + subNum + ' सेवा');
+      var info = getSubUrnAndLabel(subCard, idx);
+      var subUrn = info.urn;
+      var subLabel = info.label;
 
-      if (!subCard.hasAttribute('data-sov-urn')) {
-        subCard.setAttribute('data-sov-urn', subUrn);
-        subCard.setAttribute('data-sov-label', subLabel);
-      }
+      subCard.setAttribute('data-sov-urn', subUrn);
+      subCard.setAttribute('data-sov-label', subLabel);
 
       var isVis = core.getUrnVisibility(subUrn);
 
@@ -106,8 +96,8 @@
           subCard.classList.remove('sivme-public-hidden');
           subCard.style.removeProperty('display');
         }
-        var oldBadge = subCard.querySelector(':scope > .sivme-inline-badge');
-        if (oldBadge) oldBadge.remove();
+        var oldB = subCard.querySelector(':scope > .sivme-inline-badge');
+        if (oldB) oldB.remove();
         subCard.classList.remove('sivme-ghost-dormant', 'sivme-badge-anchor');
         return;
       }
@@ -123,41 +113,36 @@
 
       core.mountInlineBadge(subCard, subUrn, isVis, subLabel);
 
-      // SINGLE-TAP CAPTURE DISPATCHER
-      if (subCard.getAttribute('data-sivme-tap-active') !== 'true') {
-        subCard.setAttribute('data-sivme-tap-active', 'true');
+      // SINGLE-POINT OF TOUCH CONTROL
+      if (subCard.getAttribute('data-sivme-card-bound') !== 'true') {
+        subCard.setAttribute('data-sivme-card-bound', 'true');
 
         subCard.addEventListener('click', function (e) {
           if (!core.isConsoleAuthorized()) return;
 
-          // Check if user specifically tapped the Action Button ("खोलें" / "जल्द उपलब्ध")
-          var actionBtn = e.target.closest('button, a');
-          var isCardLive = core.getUrnVisibility(subUrn);
+          // If badge was tapped, badge listener handles it cleanly
+          if (e.target.closest('.sivme-inline-badge')) {
+            return;
+          }
 
-          // If the card is Live AND user tapped specifically on the action button: Run native action!
+          var isCardLive = core.getUrnVisibility(subUrn);
+          var actionBtn = e.target.closest('button, a');
+
+          // If card is Live and user clicked action button ("खोलें"): run native opener
           if (actionBtn && isCardLive) {
             return;
           }
 
-          // Otherwise (Card body, text, icon, badge, or dormant button tapped): STRICT 1-TAP TOGGLE!
+          // Card body, text or dormant card clicked: Strictly toggle this card only!
           if (e.cancelable) e.preventDefault();
           e.stopPropagation();
 
-          var curVis = core.getUrnVisibility(subUrn);
-          var nextVis = !curVis;
-
+          var nextVis = !isCardLive;
           core.setUrnVisibility(subUrn, nextVis, subLabel);
-
-          // Instant Bi-Directional Parent Cascade
-          syncCategory16Parent();
-
-          // Instant UI Re-Audit
           core.applyInSituAudit();
-        }, true);
+        }, false);
       }
     });
-
-    syncCategory16Parent();
   }
 
   function register() {
