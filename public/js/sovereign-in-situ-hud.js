@@ -1,12 +1,12 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Unified Core Engine (Full 50 Categories + 9 Core Verticals + Auto Observer)
+ * MODULE        : Surface-A Unified Core Engine (Full-Screen Mobile Modals, 50 Categories & 9 Verticals)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
  * DUAL-FOLDER REFS:
- *   Folder A (Master Document SSOT)
- *   Folder B (GitHub Mirror)
+ *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
+ *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
  */
 
 (function () {
@@ -133,24 +133,99 @@
     return Object.keys(hiddenUrns).length;
   }
 
-  // 5. CORE STYLES (Single Pill Uniform Headers, Clearance & Anti-Nesting)
+  // 5. CORE STYLES (Full Screen Mobile Modals + Clean Pill Headers)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
     style.id = 'sivme-core-styles';
     style.textContent = `
+      /* Hidden Utility States */
+      .hidden,
+      [style*="display: none"],
+      [style*="display:none"] {
+        display: none !important;
+      }
+
+      /* =========================================================
+         FULLSCREEN NATIVE MODALS (Eliminates Bottom Void & Truncation)
+         ========================================================= */
+      #categoryModal:not(.hidden):not([style*="display: none"]):not([style*="display:none"]),
+      #rentalLedgerModal:not(.hidden):not([style*="display: none"]):not([style*="display:none"]),
+      #rentalSearchModal:not(.hidden):not([style*="display: none"]):not([style*="display:none"]),
+      [id*="Modal"]:not(.hidden):not([style*="display: none"]):not([style*="display:none"]) {
+        position: fixed !important;
+        inset: 0 !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        max-height: 100vh !important;
+        max-height: 100dvh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border-radius: 0 !important;
+        align-items: stretch !important;
+        justify-content: flex-start !important;
+        display: flex !important;
+        flex-direction: column !important;
+        z-index: 99999 !important;
+        background: #030712 !important;
+      }
+
+      /* Inner Dialog Card: Stretch to 100% Full Screen */
+      #categoryModal:not(.hidden) > div,
+      #rentalLedgerModal:not(.hidden) > div,
+      #rentalSearchModal:not(.hidden) > div,
+      [id*="Modal"]:not(.hidden) > div {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 100% !important;
+        height: 100% !important;
+        max-height: 100% !important;
+        min-height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border-radius: 0 !important;
+        border: none !important;
+        display: flex !important;
+        flex-direction: column !important;
+        box-shadow: none !important;
+        background: #0b111e !important;
+      }
+
+      /* Modal Header */
+      #categoryModal > div > div:first-child,
+      #rentalLedgerModal > div > div:first-child,
+      #rentalSearchModal > div > div:first-child,
+      [id*="Modal"] > div > div:first-child {
+        flex-shrink: 0 !important;
+        border-radius: 0 !important;
+      }
+
+      /* Modal Scrollable Body: Full Viewport Scroll with 160px Bottom Clearance */
       #categoryModal .overflow-y-auto,
       #rentalLedgerModal .overflow-y-auto,
-      .overflow-y-auto,
-      [id*="Modal"] > div > div:last-child {
-        padding-bottom: 140px !important;
+      #rentalSearchModal .overflow-y-auto,
+      [id*="Modal"] .overflow-y-auto {
+        flex: 1 1 auto !important;
+        height: 100% !important;
+        max-height: none !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+        padding-bottom: 160px !important;
       }
 
       #categoryModal .overflow-y-auto {
         padding-top: 22px !important;
       }
 
-      /* Master Category Cards */
+      /* Master Category Cards Layout */
       #categoryModal [data-cat-id],
       #categoryModal .sivme-catalog-card {
         overflow: visible !important;
@@ -166,7 +241,7 @@
         overflow: visible !important;
       }
 
-      /* Uniform 1-Pill Header for all categories */
+      /* Uniform Header Styling for All Categories */
       #categoryModal [data-cat-id]:not([data-cat-id="c16"]),
       #categoryModal .sivme-catalog-card:not([data-cat-id="c16"]),
       #categoryModal [data-cat-id="c16"] > div:first-child {
@@ -187,7 +262,7 @@
         cursor: pointer !important;
       }
 
-      /* Anti-Nesting Shield: Prevent inner title inside Category 16 from inheriting card styling */
+      /* Clean Inner Title Container for Category 16 (Anti-Nesting Shield) */
       #categoryModal [data-cat-id="c16"] > div:first-child > div:first-child {
         background: transparent !important;
         border: none !important;
@@ -338,7 +413,7 @@
     badge.setAttribute('data-badge-vis', String(isVisible));
   }
 
-  // 7. UNIVERSAL AUDIT ENGINE (ALL 50 CATEGORIES + 9 CORE VERTICALS)
+  // 7. UNIVERSAL AUDIT ENGINE
   function applyInSituAudit() {
     if (isAuditing) return;
     isAuditing = true;
@@ -346,6 +421,25 @@
     try {
       enforceZELTemplateRendering();
       var isAuth = isConsoleAuthorized();
+
+      // Dynamic Full-Screen DOM Enforcement for Open Modals
+      var openModals = document.querySelectorAll('#categoryModal, #rentalLedgerModal, #rentalSearchModal, [id*="Modal"]');
+      openModals.forEach(function (m) {
+        if (m.classList.contains('hidden') || m.style.display === 'none') return;
+        m.style.setProperty('padding', '0px', 'important');
+        m.style.setProperty('margin', '0px', 'important');
+        m.style.setProperty('border-radius', '0px', 'important');
+        m.style.setProperty('height', '100dvh', 'important');
+        m.style.setProperty('max-height', '100dvh', 'important');
+
+        var inner = m.firstElementChild;
+        if (inner) {
+          inner.style.setProperty('max-height', '100dvh', 'important');
+          inner.style.setProperty('height', '100%', 'important');
+          inner.style.setProperty('max-width', '100%', 'important');
+          inner.style.setProperty('border-radius', '0px', 'important');
+        }
+      });
 
       // Section Headers
       var modalElements = document.querySelectorAll('#categoryModal button, #categoryModal [onclick], #categoryModal div');
@@ -367,7 +461,6 @@
       var processedUrns = {};
 
       catalogCards.forEach(function (card) {
-        // Exclude sub-category cards inside #sub-c16
         if (card.closest('#sub-c16')) return;
 
         var catId = card.getAttribute('data-cat-id') || card.id || '';
@@ -394,7 +487,6 @@
 
         var isVis = getUrnVisibility(urn);
 
-        // Bi-Directional Computed Display for Cat 16
         if (urn === 'rm:cat:16') {
           var sub1 = getUrnVisibility('rm:cat:16:sub:16-1');
           var sub2 = getUrnVisibility('rm:cat:16:sub:16-2');
@@ -470,7 +562,7 @@
         }
       });
 
-      // Execute Micro-Adapters (cat-16, sub-16-1, sub-16-2, sub-16-3)
+      // Execute Micro-Adapters
       Object.keys(adapters).forEach(function (key) {
         try { adapters[key](); } catch (_) {}
       });
@@ -540,7 +632,7 @@
     scripts.forEach(function (src) {
       if (!document.querySelector('script[src*="' + src + '"]')) {
         var s = document.createElement('script');
-        s.src = src + '?v=20261005_v4';
+        s.src = src + '?v=20261005_v5';
         s.async = true;
         document.head.appendChild(s);
       }
