@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Core Engine (Micro-Modular Adapter Loader & Non-Mutating Registry Hub)
+ * MODULE        : Surface-A Unified Core Engine (Anti-Nesting Shield, Clean Header & Micro-Modular Loader)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -84,7 +84,7 @@
         return window.RM_SovereignRegistry.isVisible(urn);
       } catch (_) {}
     }
-    return true; // Default Live
+    return true;
   }
 
   function setUrnVisibility(urn, nextVis, label) {
@@ -133,7 +133,7 @@
     return Object.keys(hiddenUrns).length;
   }
 
-  // 5. CORE STYLES
+  // 5. CORE STYLES (Anti-Collision, Clean Single-Pill Header & Dock Padding)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -142,7 +142,6 @@
       #categoryModal .overflow-y-auto,
       #rentalLedgerModal .overflow-y-auto,
       .overflow-y-auto,
-      form,
       [id*="Modal"] > div > div:last-child {
         padding-bottom: 140px !important;
       }
@@ -151,6 +150,7 @@
         padding-top: 22px !important;
       }
 
+      /* Master Category Cards */
       #categoryModal [data-cat-id],
       #categoryModal .sivme-catalog-card {
         overflow: visible !important;
@@ -166,6 +166,7 @@
         overflow: visible !important;
       }
 
+      /* Uniform 1-Pill Header for all categories */
       #categoryModal [data-cat-id]:not([data-cat-id="c16"]),
       #categoryModal .sivme-catalog-card:not([data-cat-id="c16"]),
       #categoryModal [data-cat-id="c16"] > div:first-child {
@@ -184,6 +185,20 @@
         border-top: 1px solid rgba(255,255,255,0.22) !important;
         box-shadow: 0 6px 16px -2px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.15) !important;
         cursor: pointer !important;
+      }
+
+      /* Prevent inner title div inside Category 16 from inheriting card background */
+      #categoryModal [data-cat-id="c16"] > div:first-child > div:first-child {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        min-height: auto !important;
+        height: auto !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        flex: 1 1 auto !important;
       }
 
       #categoryModal button,
@@ -232,31 +247,6 @@
         line-height: 1.2 !important;
         user-select: none !important;
         touch-action: manipulation !important;
-      }
-
-      [data-sov-urn*="elem:"],
-      [data-sov-urn*="listing:"] {
-        position: relative !important;
-        margin-top: 18px !important;
-        margin-bottom: 12px !important;
-        overflow: visible !important;
-      }
-
-      [data-sov-urn*="elem:"] > .sivme-inline-badge,
-      [data-sov-urn*="listing:"] > .sivme-inline-badge {
-        top: -12px !important;
-        right: 12px !important;
-        left: auto !important;
-        font-size: 9px !important;
-        padding: 2px 7px !important;
-        z-index: 60 !important;
-      }
-
-      .sivme-vertical-card .sivme-inline-badge {
-        top: -8px !important;
-        left: 8px !important;
-        font-size: 9px !important;
-        padding: 2px 7px !important;
       }
 
       .sivme-badge-live { background: #064e3b !important; color: #6ee7b7 !important; border: 1.5px solid #10b981 !important; }
@@ -341,7 +331,7 @@
     badge.setAttribute('data-badge-vis', String(isVisible));
   }
 
-  // 7. AUDIT ENGINE
+  // 7. AUDIT ENGINE (With Anti-Nesting Shield)
   function applyInSituAudit() {
     if (isAuditing) return;
     isAuditing = true;
@@ -350,10 +340,21 @@
       enforceZELTemplateRendering();
       var isAuth = isConsoleAuthorized();
 
-      var potentialCards = document.querySelectorAll('#categoryModal [data-cat-id], #categoryModal div');
+      // Clean up any inner child elements wrongly tagged with data-cat-id
+      document.querySelectorAll('#sub-c16 [data-cat-id], [data-cat-id="c16"] > div > div[data-cat-id]').forEach(function (el) {
+        el.removeAttribute('data-cat-id');
+        el.classList.remove('sivme-catalog-card');
+      });
+
+      var potentialCards = document.querySelectorAll('#categoryModal [data-cat-id], #categoryModal .overflow-y-auto > div');
       var processedUrns = {};
 
       potentialCards.forEach(function (card) {
+        // Exclude sub-category containers or inner nested divs
+        if (card.closest('#sub-c16') || card.closest('[id^="sub-"]') || card.parentElement.closest('[data-cat-id]')) {
+          return;
+        }
+
         var catId = card.getAttribute('data-cat-id') || '';
         var numStr = '';
 
@@ -410,7 +411,7 @@
         }
       });
 
-      // Execute Micro-Adapters
+      // Execute Micro-Adapters (sub-16-1, sub-16-2, sub-16-3, cat-16)
       Object.keys(adapters).forEach(function (key) {
         try { adapters[key](); } catch (_) {}
       });
@@ -480,7 +481,7 @@
     scripts.forEach(function (src) {
       if (!document.querySelector('script[src*="' + src + '"]')) {
         var s = document.createElement('script');
-        s.src = src + '?v=20261005_modular';
+        s.src = src + '?v=20261005_v3';
         s.async = true;
         document.head.appendChild(s);
       }
