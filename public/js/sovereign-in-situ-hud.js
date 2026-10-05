@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Core Engine (Parent Cascade Dormancy, Anti-Clip & Top Clearance)
+ * MODULE        : Surface-A Core Engine (Bi-Directional Parent-Child Sync & Single-Tap Lock)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -18,7 +18,7 @@
   var isAuditing = false;
   var adapters = {};
 
-  // 1. ZEL TEMPLATE SHIELD: Ensure legacy modules always render complete DOM
+  // 1. ZEL TEMPLATE SHIELD
   function enforceZELTemplateRendering() {
     try {
       var keys = ['rm_local_acct_owner_config', 'rm_local_acctdefault_owner_config', 'rm_owner_filter_config_v1'];
@@ -134,7 +134,7 @@
     return Object.keys(hiddenUrns).length;
   }
 
-  // 5. CORE STYLES (Anti-Clipping, Top Clearance & No-Wrap)
+  // 5. CORE STYLES (Anti-Clipping, Top Clearance & Single-Tap Optimization)
   function injectStyles() {
     if (document.getElementById('sivme-core-styles')) return;
     var style = document.createElement('style');
@@ -174,6 +174,7 @@
         border: 1px solid rgba(255,255,255,0.08) !important;
         border-top: 1px solid rgba(255,255,255,0.22) !important;
         box-shadow: 0 6px 16px -2px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.15) !important;
+        cursor: pointer !important;
       }
 
       #categoryModal [data-cat-id] > div:first-child > div:first-child,
@@ -225,7 +226,7 @@
         font-weight: 800;
         padding: 3px 9px !important;
         border-radius: 9999px;
-        cursor: pointer;
+        cursor: pointer !important;
         display: inline-flex !important;
         align-items: center !important;
         gap: 4px;
@@ -233,6 +234,7 @@
         width: max-content !important;
         line-height: 1.2 !important;
         user-select: none !important;
+        touch-action: manipulation !important;
       }
       [data-sov-urn*="elem:"] > .sivme-inline-badge {
         top: -9px !important;
@@ -253,6 +255,8 @@
         justify-content: space-between !important;
         background: linear-gradient(180deg, rgba(24,33,47,0.85) 0%, rgba(11,17,30,0.95) 100%) !important;
         border-top: 1px solid rgba(255,255,255,0.16) !important;
+        touch-action: manipulation !important;
+        cursor: pointer !important;
       }
 
       .sivme-catalog-section-header {
@@ -284,7 +288,7 @@
     document.head.appendChild(style);
   }
 
-  // 6. MOUNT INLINE BADGES WITH STRICT EVENT CAPTURE
+  // 6. MOUNT INLINE BADGES WITH INSTANT SINGLE-TAP DISPATCH
   function mountInlineBadge(parentEl, urn, isVisible, label) {
     var badge = parentEl.querySelector(':scope > .sivme-inline-badge');
     var targetClass = isVisible ? 'sivme-inline-badge sivme-badge-live' : 'sivme-inline-badge sivme-badge-dormant';
@@ -296,13 +300,12 @@
 
       badge.addEventListener('click', function (e) {
         if (e.cancelable) e.preventDefault();
-        e.stopImmediatePropagation();
         e.stopPropagation();
 
         var cur = badge.getAttribute('data-badge-vis') === 'true';
         var nextVis = !cur;
 
-        // Cascade to children if Category 16 Parent Badge is toggled
+        // If Category 16 Parent Badge is toggled manually, cascade to all 3 children
         if (urn === 'rm:cat:16') {
           ['rm:cat:16:sub:16-1', 'rm:cat:16:sub:16-2', 'rm:cat:16:sub:16-3'].forEach(function (su) {
             setUrnVisibility(su, nextVis);
@@ -311,18 +314,18 @@
 
         setUrnVisibility(urn, nextVis, label);
         applyInSituAudit();
-      }, true);
+      }, false);
 
-      // Card wake-up for dormant cards
+      // Card wake-up for dormant cards (1-tap wake up)
       if (urn.indexOf('sub:') === -1 && urn.indexOf('elem:') === -1 && urn.indexOf('listing:') === -1) {
         parentEl.addEventListener('click', function (e) {
           if (!parentEl.classList.contains('sivme-ghost-dormant')) return;
           if (e.target.closest('.sivme-inline-badge')) return;
-          if (urn === 'rm:cat:16') return;
+          if (urn === 'rm:cat:16') return; // Handled by accordion
           if (e.target.closest('button') || e.target.closest('a')) return;
           setUrnVisibility(urn, true, label);
           applyInSituAudit();
-        });
+        }, false);
       }
     }
 
@@ -332,7 +335,7 @@
     badge.setAttribute('data-badge-vis', String(isVisible));
   }
 
-  // 7. AUDIT 50 UNIVERSAL CATALOG CATEGORIES & ENFORCE PARENT DORMANT CASCADE
+  // 7. AUDIT 50 UNIVERSAL CATALOG CATEGORIES & ENFORCE BI-DIRECTIONAL PARENT-CHILD SYNC
   function applyInSituAudit() {
     if (isAuditing) return;
     isAuditing = true;
@@ -361,7 +364,9 @@
 
         var isVis = getUrnVisibility(urn);
 
-        // OWNER RULE: If ANY sub-category of Category 16 is Hidden, Parent Category 16 MUST be Red Hidden
+        // OWNER STRICT RULE: BI-DIRECTIONAL SYNC FOR CATEGORY 16
+        // 1. If ANY sub-category is Hidden -> Parent 16 MUST be Red Hidden
+        // 2. If ALL sub-categories are Live -> Parent 16 MUST be Green Live
         if (urn === 'rm:cat:16') {
           var subUrns = ['rm:cat:16:sub:16-1', 'rm:cat:16:sub:16-2', 'rm:cat:16:sub:16-3'];
           var hasAnySubHidden = false;
@@ -371,9 +376,9 @@
               break;
             }
           }
-          if (hasAnySubHidden) {
-            isVis = false;
-          }
+          isVis = !hasAnySubHidden;
+          // Keep registry and localStorage strictly in sync
+          setUrnVisibility('rm:cat:16', isVis, 'घर व मकान');
         }
 
         if (!isAuth) {
@@ -405,7 +410,7 @@
 
       updateFloatingDock(isAuth, getHiddenCount());
     } finally {
-      setTimeout(function () { isAuditing = false; }, 40);
+      setTimeout(function () { isAuditing = false; }, 30);
     }
   }
 
