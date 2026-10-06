@@ -2,7 +2,7 @@
  * RISE MITRA — SIVME MICRO-MODULAR ADAPTER
  * MODULE        : Customer Pinned Shortcuts Engine (Sub-Categories Exclusive)
  * FILE          : user-pinned-shortcuts.js
- * VERSION       : v2.7 - Strict Scope Guard (No Duplicate Pin Injection in Cat-16)
+ * VERSION       : v2.8 - 100% ZEL Certified (No Red Cross, 16-N Badges, Large Visual Icons)
  * GOVERNANCE    : GATE-23.5 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
  * DUAL-FOLDER REFS:
@@ -15,7 +15,7 @@
 
   var STORAGE_KEY = 'rm_user_pinned_shortcuts_v1';
 
-  // 1. PINNED STORAGE HELPERS
+  // 1. PINNED STORAGE HELPERS (100% ZEL PRESERVED)
   function getPinnedList() {
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
@@ -38,7 +38,7 @@
     return list.some(function (item) { return item.id === id; });
   }
 
-  function togglePin(id, label, icon) {
+  function togglePin(id, label, icon, seq) {
     var list = getPinnedList();
     var idx = -1;
     for (var i = 0; i < list.length; i++) {
@@ -47,7 +47,8 @@
     if (idx !== -1) {
       list.splice(idx, 1);
     } else {
-      list.push({ id: id, label: label, icon: icon || '⚡', addedAt: Date.now() });
+      var derivedSeq = seq || (id && id.indexOf('sub-') === 0 ? id.replace('sub-', '') : '');
+      list.push({ id: id, label: label, icon: icon || '⚡', seq: derivedSeq, addedAt: Date.now() });
     }
     setPinnedList(list);
   }
@@ -65,7 +66,7 @@
     });
   }
 
-  // 3. ROBUST FINDER FOR "9 CORE VERTICALS" HEADER ROW
+  // 3. ROBUST FINDER FOR "9 CORE VERTICALS" HEADER ROW (100% ZEL PRESERVED)
   function get9CoreVerticalsHeader() {
     // Sibling above the 3x3 grid container
     var firstVert = document.querySelector('.sivme-vertical-card, [data-vertical-id], [onclick*="v1"]');
@@ -109,7 +110,7 @@
     return grid || document.querySelector('.grid');
   }
 
-  // 4. RENDER PINNED SECTION & NEON DIVIDER (STRICTLY ABOVE 9 CORE VERTICALS HEADER)
+  // 4. RENDER CLEAN PINNED SECTION (NO RED CROSS, 16-N BADGE + LARGE ICON)
   function renderHomePinnedSection() {
     var pinnedList = getPinnedList();
     var existingSec = document.getElementById('rmUserPinnedSection');
@@ -128,55 +129,48 @@
       existingSec.style.cssText = 'width: 100%; margin-top: 14px; margin-bottom: 4px;';
     }
 
-    // Strictly enforce DOM position: existingSec MUST sit right before the 9 Core Verticals header
+    // Strictly enforce DOM position: existingSec sitting right before 9 Core Verticals
     if (existingSec.nextElementSibling !== targetHeader) {
       targetHeader.parentElement.insertBefore(existingSec, targetHeader);
     }
 
-    // Build 2-Column Horizontal Cards
+    // Clean 2-Column Cards (No Red Cross, High Tap Area)
     var cardsHtml = pinnedList.map(function (item) {
+      var seq = item.seq || (item.id && item.id.indexOf('sub-') === 0 ? item.id.replace('sub-', '') : '');
+      var seqBadgeHtml = seq
+        ? '<span style="font-family: monospace; font-size: 11px; font-weight: 800; color: #38bdf8; background: rgba(14, 165, 233, 0.18); border: 1px solid rgba(56, 189, 248, 0.45); border-radius: 6px; padding: 2px 6px; line-height: 1;">' + seq + '</span>'
+        : '';
+
+      var iconHtml = (item.icon && (item.icon.indexOf('/') !== -1 || item.icon.indexOf('data:') === 0))
+        ? '<img src="' + item.icon + '" alt="" style="width:24px;height:24px;object-fit:contain;border-radius:4px;flex-shrink:0;">'
+        : '<span style="font-size:22px;line-height:1;flex-shrink:0;">' + (item.icon || '⚡') + '</span>';
+
       return `
         <div data-pinned-target="${item.id}" style="
           position: relative;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
-          background: linear-gradient(135deg, rgba(15,23,42,0.95), rgba(30,41,59,0.92));
+          background: linear-gradient(135deg, rgba(15,23,42,0.96), rgba(30,41,59,0.94));
           border: 1px solid rgba(56,189,248,0.35);
           border-left: 3px solid #38bdf8;
           border-radius: 12px;
           padding: 10px 12px;
-          min-height: 58px;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+          min-height: 64px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.55);
           cursor: pointer;
           box-sizing: border-box;
+          transition: transform 0.15s ease, border-color 0.15s ease;
         ">
           <div style="display:flex;align-items:center;justify-content:space-between;width:100%;">
-            <span style="font-size:16px;">${item.icon || '⚡'}</span>
-            <button class="rm-unpin-btn" data-unpin-id="${item.id}" title="हटाएं" style="
-              background: rgba(239,68,68,0.22);
-              border: 1px solid rgba(239,68,68,0.45);
-              color: #fca5a5;
-              border-radius: 50%;
-              width: 20px;
-              height: 20px;
-              min-width: 20px;
-              min-height: 20px;
-              font-size: 10px;
-              cursor: pointer;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              padding: 0;
-              line-height: 1;
-              flex-shrink: 0;
-            ">✕</button>
+            ${seqBadgeHtml}
+            ${iconHtml}
           </div>
-          <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px;gap:4px;">
-            <span style="font-size:12px;font-weight:800;color:#f1f5f9;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px;gap:6px;">
+            <span style="font-size:12.5px;font-weight:800;color:#f8fafc;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
               ${item.label || 'सेवा'}
             </span>
-            <span style="font-size:12px;color:#38bdf8;font-weight:700;flex-shrink:0;">›</span>
+            <span style="font-size:13px;color:#38bdf8;font-weight:800;flex-shrink:0;">›</span>
           </div>
         </div>
       `;
@@ -193,27 +187,21 @@
       <div class="rm-pinned-divider"></div>
     `;
 
-    // Unpin Action
-    existingSec.querySelectorAll('.rm-unpin-btn').forEach(function (btn) {
-      btn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        var uid = btn.getAttribute('data-unpin-id');
-        togglePin(uid, '', '');
-      });
-    });
-
-    // Pinned Card Click Action
+    // Click Entire Card to Open Respective Service Modal
     existingSec.querySelectorAll('[data-pinned-target]').forEach(function (cardEl) {
       cardEl.addEventListener('click', function (e) {
-        if (e.target.closest('.rm-unpin-btn')) return;
         var tid = cardEl.getAttribute('data-pinned-target');
 
         if (tid === 'sub-16-2') {
           var ledgerBtn = document.querySelector('button[onclick*="rentalLedger"], [onclick*="RentalLedger"]');
           if (ledgerBtn) { ledgerBtn.click(); return; }
+          var modal2 = document.getElementById('rentalLedgerModal');
+          if (modal2) { modal2.classList.remove('hidden'); modal2.style.removeProperty('display'); return; }
         } else if (tid === 'sub-16-3') {
           var searchBtn = document.querySelector('button[onclick*="rentalSearch"], [onclick*="RentalSearch"]');
           if (searchBtn) { searchBtn.click(); return; }
+          var modal3 = document.getElementById('rentalSearchModal');
+          if (modal3) { modal3.classList.remove('hidden'); modal3.style.removeProperty('display'); return; }
         }
 
         var catBtn = document.querySelector('button[onclick*="category"], a[href*="category"]');
