@@ -2,7 +2,7 @@
  * RISE MITRA — SIVME CATEGORY 16 MASTER ADAPTER
  * MODULE        : Category 16 (House & Home) Unified Master Adapter
  * FILE          : cat-16.js
- * VERSION       : v3.5 - 100% ZEL Certified (Absolute Ghost Purge + Two-Tier 75:25 + Pill Buttons)
+ * VERSION       : v3.6 - 100% ZEL Certified (Strict 16-N Sequence + Ghost Purge + Two-Tier 75:25)
  * GOVERNANCE    : GATE-23.5 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
  * DUAL-FOLDER REFS:
@@ -17,12 +17,12 @@
   var SUB_URNS = ['rm:cat:16:sub:16-1', 'rm:cat:16:sub:16-2', 'rm:cat:16:sub:16-3'];
   var PIN_STORAGE_KEY = 'rm_user_pinned_shortcuts_v1';
 
-  // 1. MASTER SUB-CATEGORIES REGISTRY (SSOT)
+  // 1. MASTER SUB-CATEGORIES REGISTRY (COMPACT 16-N NUMBERING)
   var SUB_CATEGORIES = [
     {
       id: 'sub-16-1',
       urn: 'rm:cat:16:sub:16-1',
-      seq: '01.',
+      seq: '16-1',
       icon: '🛠️',
       en: 'Mistry & Home Repair',
       hi: 'मिस्त्री व गृह मरम्मत',
@@ -32,7 +32,7 @@
     {
       id: 'sub-16-2',
       urn: 'rm:cat:16:sub:16-2',
-      seq: '02.',
+      seq: '16-2',
       icon: '📋',
       en: 'Rental Ledger',
       hi: 'किराया बहीखाता',
@@ -42,7 +42,7 @@
     {
       id: 'sub-16-3',
       urn: 'rm:cat:16:sub:16-3',
-      seq: '03.',
+      seq: '16-3',
       icon: '🏠',
       en: 'Room & Flat Search',
       hi: 'कमरा व फ्लैट खोज',
