@@ -1,7 +1,7 @@
 /**
  * RISE MITRA — MODULAR CATALOG RUNTIME & DATA REGISTRY ENGINE
  * SPECIFICATION : FOLDER A (SSOT: 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) | 14_04__EXT_004
- * GOVERNANCE    : 75:25 RATIO | FULL-WIDTH BILINGUAL (NO TRUNCATION) | ZERO-ELEMENT-LOSS (ZEL)
+ * GOVERNANCE    : 75:25 RATIO | 3-PILL ACTION STRIP (PIN + VIDEO + OPEN) | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/categories-data.js
  */
 
@@ -42,7 +42,7 @@ const RM_SERVICES_DATA = [
   { id: 'c30', num: '30', enName: 'Tools & Utilities', hiName: 'कैलकुलेटर व टूल्स', name: 'Tools & Utilities (कैलकुलेटर)', icon: '🧮' },
   { id: 'c31', num: '31', enName: 'Travel & Local', hiName: 'यात्रा व स्थानीय सेवाएं', name: 'Travel & Local (यात्रा)', icon: '🧭' },
   { id: 'c32', num: '32', enName: 'Video Players & Editors', hiName: 'वीडियो प्लेयर व संपादन', name: 'Video Players & Editors (वीडियो)', icon: '🎬' },
-  { id: 'c33', num: '33', enName: 'Weather', hiName: 'मौसम पूर्वानुमान', name: 'Weather (मौसम पूर्वानुमान)', icon: '🌤️' }
+  { id: 'c33', num: '33', enName: 'Weather', hiName: 'मौसम पूर्वानुमान', name: 'Weather (मौसम पूर्वानुमान)', icon: '🌤️️' }
 ];
 
 const RM_GAMES_DATA = [
@@ -66,9 +66,9 @@ const RM_GAMES_DATA = [
 ];
 
 const C16_CHILDREN = [
-  { id: '16-1', enName: 'Mistry & Home Repair', hiName: 'मिस्त्री व गृह मरम्मत', icon: '🛠️', badge: 'जल्द उपलब्ध', state: 'upcoming', action: 'upcoming' },
-  { id: '16-2', enName: 'Rental Ledger', hiName: 'किराया बहीखाता (Rental Ledger)', icon: '📋', badge: 'खोलें ›', state: 'active', action: 'launch' },
-  { id: '16-3', enName: 'Room & Flat Search', hiName: 'कमरा व फ्लैट खोज (Rental Search)', icon: '🏠', badge: 'खोलें ›', state: 'active', action: 'launch' }
+  { id: '16-1', enName: 'Mistry & Home Repair', hiName: 'मिस्त्री व गृह मरम्मत', icon: '🛠️', badge: 'जल्द उपलब्ध', state: 'upcoming', action: 'upcoming', videoUrl: null },
+  { id: '16-2', enName: 'Rental Ledger', hiName: 'किराया बहीखाता', icon: '📋', badge: 'खोलें ›', state: 'active', action: 'launch', videoUrl: 'rental-ledger-intro' },
+  { id: '16-3', enName: 'Room & Flat Search', hiName: 'कमरा व फ्लैट खोज', icon: '🏠', badge: 'खोलें ›', state: 'active', action: 'launch', videoUrl: 'rental-search-intro' }
 ];
 
 // Helper: LocalStorage Pin Manager
@@ -106,8 +106,13 @@ window.togglePinService = function (code, icon, enTitle, hiTitle, event) {
   }
 };
 
+window.handleLaunchVideo = function (subId, title, event) {
+  if (event) event.stopPropagation();
+  alert('🎬 [' + subId + '] ' + title + '\n\nवीडियो ट्यूटोरियल व गाइड जल्द उपलब्ध होगी।');
+};
+
 // ==============================================================================
-// SECTION 2: DOM CARD RENDER ENGINE (75:25 RATIO & FULL-WIDTH TYPOGRAPHY)
+// SECTION 2: DOM CARD RENDER ENGINE (75:25 RATIO & 3-PILL ACTION STRIP)
 // ==============================================================================
 
 function renderCatalogItems() {
@@ -123,7 +128,7 @@ function renderCatalogItems() {
             <span class="text-xl shrink-0 leading-none">${item.icon}</span>
             <div class="flex flex-col min-w-0 text-left flex-1">
               <span class="text-[13.5px] font-bold text-slate-100 tracking-wide leading-tight break-normal">${item.enName}</span>
-              <span class="text-[11.5px] font-medium text-slate-400 leading-tight mt-0.5 break-normal">${item.hiName}</span>
+              <span class="text-[11.5px] font-medium text-slate-400 leading-tight mt-0.5 break-normal">(${item.hiName})</span>
             </div>
           </div>
           <div class="flex items-center space-x-1.5 shrink-0">
@@ -142,15 +147,17 @@ function renderCatalogItems() {
             ${C16_CHILDREN.map(ch => {
               const isPinned = isItemPinned(ch.id);
               const pinBtn = isPinned 
-                ? `<button type="button" onclick="togglePinService('${ch.id}', '${ch.icon}', '${ch.enName}', '${ch.hiName}', event)" class="bg-cyan-950/90 border border-cyan-500/60 text-cyan-300 px-2.5 py-0.5 rounded-full text-[10px] font-bold flex items-center space-x-1 cursor-pointer"><span>📌</span><span>पिन है</span></button>`
-                : `<button type="button" onclick="togglePinService('${ch.id}', '${ch.icon}', '${ch.enName}', '${ch.hiName}', event)" class="bg-slate-800/90 border border-slate-700 text-slate-300 hover:text-white px-2.5 py-0.5 rounded-full text-[10px] font-medium flex items-center space-x-1 cursor-pointer"><span>📌</span><span>पिन करें</span></button>`;
+                ? `<button type="button" onclick="togglePinService('${ch.id}', '${ch.icon}', '${ch.enName}', '${ch.hiName}', event)" class="flex-1 bg-cyan-950/90 border border-cyan-500/60 text-cyan-300 px-2 py-1 rounded-lg text-[10px] font-bold flex items-center justify-center space-x-1 cursor-pointer"><span>📌</span><span>पिन है</span></button>`
+                : `<button type="button" onclick="togglePinService('${ch.id}', '${ch.icon}', '${ch.enName}', '${ch.hiName}', event)" class="flex-1 bg-slate-800/90 border border-slate-700 text-slate-300 hover:text-white px-2 py-1 rounded-lg text-[10px] font-medium flex items-center justify-center space-x-1 cursor-pointer"><span>📌</span><span>पिन करें</span></button>`;
               
+              const videoBtn = `<button type="button" onclick="handleLaunchVideo('${ch.id}', '${ch.enName}', event)" class="flex-1 bg-indigo-950/90 hover:bg-indigo-900 border border-indigo-700/60 text-indigo-300 px-2 py-1 rounded-lg text-[10px] font-bold flex items-center justify-center space-x-1 cursor-pointer"><span>▶</span><span>वीडियो</span></button>`;
+
               const actBtn = ch.action === 'launch'
-                ? `<button type="button" onclick="handleLaunchCategory('c16', '${ch.id}')" class="bg-emerald-950/90 border border-emerald-600/60 text-emerald-300 hover:bg-emerald-900/90 px-3 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap cursor-pointer">खोलें ›</button>`
-                : `<span class="bg-slate-800/80 border border-slate-700/60 text-slate-400 px-2.5 py-0.5 rounded-full text-[10px] font-medium whitespace-nowrap">जल्द उपलब्ध</span>`;
+                ? `<button type="button" onclick="handleLaunchCategory('c16', '${ch.id}')" class="flex-1 bg-emerald-950/90 border border-emerald-600/60 text-emerald-300 hover:bg-emerald-900/90 px-2 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap text-center cursor-pointer">खोलें ›</button>`
+                : `<span class="flex-1 bg-slate-800/80 border border-slate-700/60 text-slate-400 px-2 py-1 rounded-lg text-[10px] font-medium whitespace-nowrap text-center">जल्द उपलब्ध</span>`;
 
               return `
-                <div class="sivme-subcat-card w-full bg-[#0d1424] border border-slate-800/90 rounded-xl overflow-hidden shadow-md flex flex-col justify-between" style="min-height: 110px;">
+                <div class="sivme-subcat-card w-full bg-[#0d1424] border border-slate-800/90 rounded-xl overflow-hidden shadow-md flex flex-col justify-between" style="min-height: 114px;">
                   <!-- 75% BILINGUAL CONTENT ZONE (Full Width Typography) -->
                   <div class="p-3 pb-2 flex-1 flex flex-col justify-between relative bg-gradient-to-b from-[#111a30]/80 to-[#0d1424]">
                     <div class="flex items-center justify-between mb-1">
@@ -162,12 +169,13 @@ function renderCatalogItems() {
                     </div>
                     <div class="flex flex-col text-left w-full mt-0.5">
                       <span class="text-[13.5px] font-bold text-slate-100 tracking-wide leading-tight break-normal">${ch.enName}</span>
-                      <span class="text-[11.5px] font-medium text-slate-400 leading-tight mt-0.5 break-normal">${ch.hiName}</span>
+                      <span class="text-[11.5px] font-medium text-slate-400 leading-tight mt-0.5 break-normal">(${ch.hiName})</span>
                     </div>
                   </div>
-                  <!-- 25% ACTION STRIP ZONE (Slim 28px Strip) -->
-                  <div class="px-3 py-1.5 bg-slate-950/90 border-t border-slate-800/70 flex items-center justify-between min-h-[28px]">
+                  <!-- 25% ACTION STRIP ZONE (Symmetrical 3-Pill Grid: 32% - 32% - 32%) -->
+                  <div class="px-2.5 py-1.5 bg-slate-950/90 border-t border-slate-800/70 flex items-center justify-between space-x-2 min-h-[30px]">
                     ${pinBtn}
+                    ${videoBtn}
                     ${actBtn}
                   </div>
                 </div>
@@ -188,7 +196,7 @@ function renderCatalogItems() {
           <span class="text-xl shrink-0 leading-none">${item.icon}</span>
           <div class="flex flex-col min-w-0 text-left flex-1">
             <span class="text-[13.5px] font-bold text-slate-100 tracking-wide leading-tight break-normal">${item.enName}</span>
-            <span class="text-[11.5px] font-medium text-slate-400 leading-tight mt-0.5 break-normal">${item.hiName}</span>
+            <span class="text-[11.5px] font-medium text-slate-400 leading-tight mt-0.5 break-normal">(${item.hiName})</span>
           </div>
         </div>
         <span class="shrink-0 text-xs text-cyan-400 font-bold px-3 py-1 bg-cyan-950/70 rounded-full border border-cyan-800/50 whitespace-nowrap">खेलें ›</span>
