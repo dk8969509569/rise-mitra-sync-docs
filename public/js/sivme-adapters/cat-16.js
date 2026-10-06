@@ -2,7 +2,7 @@
  * RISE MITRA — SIVME CATEGORY 16 MASTER ADAPTER
  * MODULE        : Category 16 (House & Home) Unified Master Adapter
  * FILE          : cat-16.js
- * VERSION       : v3.7 - True Bilingual Vertical Stack + Single Pin Fix + Inline Lockdown
+ * VERSION       : v3.9 - 75% Large Bilingual Area + 25% Touch-Friendly Actions
  * GOVERNANCE    : GATE-23.5 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
  * DUAL-FOLDER REFS:
@@ -17,7 +17,7 @@
   var SUB_URNS = ['rm:cat:16:sub:16-1', 'rm:cat:16:sub:16-2', 'rm:cat:16:sub:16-3'];
   var PIN_STORAGE_KEY = 'rm_user_pinned_shortcuts_v1';
 
-  // 1. MASTER REGISTRY (COMPACT 16-N SEQUENCE + BILINGUAL METADATA)
+  // 1. MASTER REGISTRY (COMPACT 16-N + BILINGUAL METADATA)
   var SUB_CATEGORIES = [
     {
       id: 'sub-16-1',
@@ -28,7 +28,7 @@
       hi: 'मिस्त्री व गृह मरम्मत',
       actionType: 'badge',
       actionText: 'जल्द उपलब्ध',
-      btnStyle: 'color: #94a3b8; background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(71, 85, 105, 0.6);'
+      btnStyle: 'color: #94a3b8 !important; background: rgba(30, 41, 59, 0.9) !important; border: 1px solid rgba(71, 85, 105, 0.6) !important;'
     },
     {
       id: 'sub-16-2',
@@ -39,7 +39,7 @@
       hi: 'किराया बहीखाता',
       actionType: 'button',
       actionText: 'खोलें ›',
-      btnStyle: 'color: #34d399; background: rgba(6, 78, 59, 0.7); border: 1px solid rgba(16, 185, 129, 0.6);'
+      btnStyle: 'color: #34d399 !important; background: rgba(6, 78, 59, 0.8) !important; border: 1px solid rgba(16, 185, 129, 0.6) !important;'
     },
     {
       id: 'sub-16-3',
@@ -50,7 +50,7 @@
       hi: 'कमरा व फ्लैट खोज',
       actionType: 'button',
       actionText: 'खोलें ›',
-      btnStyle: 'color: #34d399; background: rgba(6, 78, 59, 0.7); border: 1px solid rgba(16, 185, 129, 0.6);'
+      btnStyle: 'color: #34d399 !important; background: rgba(6, 78, 59, 0.8) !important; border: 1px solid rgba(16, 185, 129, 0.6) !important;'
     }
   ];
 
@@ -58,14 +58,12 @@
     return window.RM_SIVME || null;
   }
 
-  // 2. PINNED SHORTCUTS STATE MANAGEMENT
+  // 2. PINNED LOCAL STORAGE HELPERS
   function getPinnedList() {
     try {
       var raw = localStorage.getItem(PIN_STORAGE_KEY);
       return raw ? JSON.parse(raw) : [];
-    } catch (_) {
-      return [];
-    }
+    } catch (_) { return []; }
   }
 
   function isPinned(id) {
@@ -91,9 +89,7 @@
     auditCat16SubCategories();
   }
 
-  // =========================================================
   // 3. BI-DIRECTIONAL COMPUTED PARENT SYNC (100% ZEL Preserved)
-  // =========================================================
   function syncCategory16Parent() {
     var core = getCore();
     if (!core) return;
@@ -108,9 +104,7 @@
     core.setUrnVisibility(PARENT_URN, allLive, 'घर व मकान (House & Home)');
   }
 
-  // =========================================================
   // 4. AUTHORITATIVE 1-TAP ACCORDION CONTROLLER (100% ZEL Preserved)
-  // =========================================================
   function auditCategory16Parent() {
     var core = getCore();
     if (!core || !core.isConsoleAuthorized) return;
@@ -158,9 +152,7 @@
     syncCategory16Parent();
   }
 
-  // =========================================================
-  // 5. LANGUAGE RESOLVER (Default English-First + Settings Hook)
-  // =========================================================
+  // 5. LANGUAGE RESOLVER (Default English-First)
   function resolveTitles(item) {
     var pref = 'en_first';
     try {
@@ -173,9 +165,7 @@
     return { primary: item.en, secondary: '(' + item.hi + ')' };
   }
 
-  // =========================================================
-  // 6. UNCONGESTED TWO-TIER SUB-CATEGORY RENDERER WITH GHOST & DUPLICATE PURGE
-  // =========================================================
+  // 6. ENLARGED 75% BILINGUAL SECTION + 25% TOUCH ACTION STRIP
   function auditCat16SubCategories() {
     var container = document.getElementById('sub-c16');
     if (!container) return;
@@ -207,41 +197,44 @@
         container.appendChild(card);
       }
 
-      // Purge any foreign duplicate pin buttons injected from outside
+      // Purge any foreign injected pin buttons inside card
       card.querySelectorAll('.sivme-pin-action-btn, button[class*="pin"]:not(.rm-clean-pin)').forEach(function (el) {
         el.remove();
       });
 
       card.className = 'sivme-subcat-card';
-      card.style.cssText = 'min-height: 84px !important; padding: 10px 12px 8px 12px !important; margin-bottom: 10px !important; border-radius: 12px !important; display: flex !important; flex-direction: column !important; justify-content: space-between !important; background: linear-gradient(180deg, rgba(24,33,47,0.95) 0%, rgba(11,17,30,0.98) 100%) !important; border: 1px solid rgba(255,255,255,0.08) !important; border-top: 1px solid rgba(255,255,255,0.2) !important; box-shadow: 0 4px 12px rgba(0,0,0,0.55) !important; box-sizing: border-box !important; position: relative !important;';
+      
+      // Card Lockdown: Generous height (96px) to give 75% area to clear typography
+      card.style.cssText = 'box-sizing: border-box !important; min-height: 96px !important; padding: 10px 14px 8px 14px !important; margin-bottom: 10px !important; border-radius: 14px !important; display: flex !important; flex-direction: column !important; justify-content: space-between !important; background: linear-gradient(180deg, rgba(24,33,47,0.96) 0%, rgba(11,17,30,0.98) 100%) !important; border: 1px solid rgba(255,255,255,0.08) !important; border-top: 1px solid rgba(255,255,255,0.2) !important; box-shadow: 0 4px 14px rgba(0,0,0,0.55) !important; position: relative !important;';
 
+      // Touch-Friendly Pin Button (24px height, easy finger tap)
       var pinBtnHtml = pinned
-        ? '<button type="button" class="rm-clean-pin" style="height: 22px; font-size: 10px; font-weight: 700; border-radius: 9999px; padding: 0 10px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: #38bdf8; background: rgba(3, 105, 161, 0.3); border: 1px solid rgba(56, 189, 248, 0.6); box-shadow: 0 0 8px rgba(56, 189, 248, 0.35);">📌 पिन है</button>'
-        : '<button type="button" class="rm-clean-pin" style="height: 22px; font-size: 10px; font-weight: 700; border-radius: 9999px; padding: 0 10px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: #94a3b8; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(71, 85, 105, 0.6);">📌 पिन करें</button>';
+        ? '<button type="button" class="rm-clean-pin" style="height: 24px !important; min-height: 24px !important; max-height: 24px !important; width: auto !important; font-size: 10.5px !important; font-weight: 700 !important; border-radius: 9999px !important; padding: 0 10px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; white-space: nowrap !important; line-height: 1 !important; color: #38bdf8 !important; background: rgba(3, 105, 161, 0.3) !important; border: 1px solid rgba(56, 189, 248, 0.6) !important; box-shadow: 0 0 6px rgba(56, 189, 248, 0.3) !important;">📌 पिन है</button>'
+        : '<button type="button" class="rm-clean-pin" style="height: 24px !important; min-height: 24px !important; max-height: 24px !important; width: auto !important; font-size: 10.5px !important; font-weight: 700 !important; border-radius: 9999px !important; padding: 0 10px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; white-space: nowrap !important; line-height: 1 !important; color: #94a3b8 !important; background: rgba(15, 23, 42, 0.8) !important; border: 1px solid rgba(71, 85, 105, 0.6) !important;">📌 पिन करें</button>';
 
+      // Touch-Friendly Action Button (24px height, easy finger tap)
       var actBtnHtml = item.actionType === 'button'
-        ? '<button type="button" class="rm-clean-act" style="height: 22px; font-size: 10px; font-weight: 700; border-radius: 9999px; padding: 0 12px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; ' + item.btnStyle + '">' + item.actionText + '</button>'
-        : '<span class="rm-clean-act" style="height: 22px; font-size: 10px; font-weight: 700; border-radius: 9999px; padding: 0 10px; display: inline-flex; align-items: center; justify-content: center; ' + item.btnStyle + '">' + item.actionText + '</span>';
+        ? '<button type="button" class="rm-clean-act" style="height: 24px !important; min-height: 24px !important; max-height: 24px !important; width: auto !important; font-size: 10.5px !important; font-weight: 700 !important; border-radius: 9999px !important; padding: 0 12px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; white-space: nowrap !important; line-height: 1 !important; ' + item.btnStyle + '">' + item.actionText + '</button>'
+        : '<span class="rm-clean-act" style="height: 24px !important; min-height: 24px !important; max-height: 24px !important; width: auto !important; font-size: 10.5px !important; font-weight: 700 !important; border-radius: 9999px !important; padding: 0 10px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; white-space: nowrap !important; line-height: 1 !important; ' + item.btnStyle + '">' + item.actionText + '</span>';
 
-      // 1. Top Section: Sequence + Icon + Separate 2-Line Bilingual Stack
-      // 2. Middle: Thin divider
-      // 3. Bottom Row: Single Pin on Left, Single Action on Right
+      // 75% Top Area: Sequence + Icon + Large Clear Bilingual Typography (14px English + 12px Hindi)
+      // 25% Bottom Area: 24px Touch-Friendly Action Strip (Pin Left, Action Right)
       card.innerHTML = 
-        '<div style="display: flex; align-items: flex-start; gap: 10px; width: 100%;">' +
-          '<span style="font-family: monospace; font-size: 11px; font-weight: 800; color: #38bdf8; background: rgba(14, 165, 233, 0.15); border: 1px solid rgba(56, 189, 248, 0.4); border-radius: 6px; padding: 2px 6px; line-height: 1; margin-top: 2px; flex-shrink: 0;">' + item.seq + '</span>' +
-          '<span style="font-size: 18px; line-height: 1; flex-shrink: 0; margin-top: 1px;">' + item.icon + '</span>' +
-          '<div style="display: flex; flex-direction: column; gap: 2px; flex: 1 1 auto; min-width: 0;">' +
-            '<span style="font-size: 13px; font-weight: 700; color: #f8fafc; line-height: 1.25; white-space: normal;">' + titles.primary + '</span>' +
-            '<span style="font-size: 11px; font-weight: 500; color: #94a3b8; line-height: 1.2; white-space: normal;">' + titles.secondary + '</span>' +
+        '<div style="display: flex !important; align-items: flex-start !important; gap: 10px !important; width: 100% !important; flex: 1 1 auto !important; padding-bottom: 2px !important;">' +
+          '<span style="font-family: monospace !important; font-size: 11px !important; font-weight: 800 !important; color: #38bdf8 !important; background: rgba(14, 165, 233, 0.15) !important; border: 1px solid rgba(56, 189, 248, 0.4) !important; border-radius: 6px !important; padding: 2px 6px !important; line-height: 1 !important; margin-top: 2px !important; flex-shrink: 0 !important;">' + item.seq + '</span>' +
+          '<span style="font-size: 20px !important; line-height: 1 !important; flex-shrink: 0 !important; margin-top: 1px !important;">' + item.icon + '</span>' +
+          '<div style="display: flex !important; flex-direction: column !important; justify-content: center !important; gap: 3px !important; flex: 1 1 auto !important; min-width: 0 !important;">' +
+            '<span style="font-size: 14px !important; font-weight: 700 !important; color: #f8fafc !important; line-height: 1.3 !important; letter-spacing: 0.01em !important;">' + titles.primary + '</span>' +
+            '<span style="font-size: 12px !important; font-weight: 500 !important; color: #94a3b8 !important; line-height: 1.25 !important;">' + titles.secondary + '</span>' +
           '</div>' +
         '</div>' +
-        '<div style="width: 100%; height: 1px; background: rgba(255, 255, 255, 0.08); margin: 6px 0 4px 0;"></div>' +
-        '<div style="display: flex; align-items: center; justify-content: space-between; width: 100%; box-sizing: border-box;">' +
+        '<div style="width: 100% !important; height: 1px !important; background: rgba(255, 255, 255, 0.08) !important; margin: 6px 0 !important;"></div>' +
+        '<div style="height: 26px !important; display: flex !important; align-items: center !important; justify-content: space-between !important; width: 100% !important; box-sizing: border-box !important;">' +
           pinBtnHtml +
           actBtnHtml +
         '</div>';
 
-      // Pin button click binding
+      // Pin button binding
       var pinBtn = card.querySelector('.rm-clean-pin');
       if (pinBtn) {
         pinBtn.addEventListener('click', function (e) {
@@ -282,16 +275,13 @@
         }
       }
 
-      // SIVME in-situ visibility audit
       if (core && typeof core.auditElement === 'function') {
         core.auditElement(card, item.urn, item.en + ' (' + item.hi + ')', isAuth);
       }
     });
   }
 
-  // =========================================================
   // 7. MASTER EXECUTION & REGISTRATION
-  // =========================================================
   function auditCategory16Complete() {
     auditCategory16Parent();
     auditCat16SubCategories();
