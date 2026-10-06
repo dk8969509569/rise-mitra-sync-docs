@@ -2,7 +2,7 @@
  * RISE MITRA — SIVME CATEGORY 16 MASTER ADAPTER
  * MODULE        : Category 16 (House & Home) Unified Master Adapter
  * FILE          : cat-16.js
- * VERSION       : v3.9 - 75% Large Bilingual Area + 25% Touch-Friendly Actions
+ * VERSION       : v4.0 - Enhanced Visibility (108px Height, 15px English, 12.5px Hindi, Touch-Friendly)
  * GOVERNANCE    : GATE-23.5 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
  * DUAL-FOLDER REFS:
@@ -39,7 +39,7 @@
       hi: 'किराया बहीखाता',
       actionType: 'button',
       actionText: 'खोलें ›',
-      btnStyle: 'color: #34d399 !important; background: rgba(6, 78, 59, 0.8) !important; border: 1px solid rgba(16, 185, 129, 0.6) !important;'
+      btnStyle: 'color: #34d399 !important; background: rgba(6, 78, 59, 0.85) !important; border: 1px solid rgba(16, 185, 129, 0.6) !important;'
     },
     {
       id: 'sub-16-3',
@@ -50,7 +50,7 @@
       hi: 'कमरा व फ्लैट खोज',
       actionType: 'button',
       actionText: 'खोलें ›',
-      btnStyle: 'color: #34d399 !important; background: rgba(6, 78, 59, 0.8) !important; border: 1px solid rgba(16, 185, 129, 0.6) !important;'
+      btnStyle: 'color: #34d399 !important; background: rgba(6, 78, 59, 0.85) !important; border: 1px solid rgba(16, 185, 129, 0.6) !important;'
     }
   ];
 
@@ -165,7 +165,7 @@
     return { primary: item.en, secondary: '(' + item.hi + ')' };
   }
 
-  // 6. ENLARGED 75% BILINGUAL SECTION + 25% TOUCH ACTION STRIP
+  // 6. ENLARGED SUB-CATEGORY RENDERER (108px HEIGHT, CLEAR TYPOGRAPHY)
   function auditCat16SubCategories() {
     var container = document.getElementById('sub-c16');
     if (!container) return;
@@ -203,33 +203,33 @@
       });
 
       card.className = 'sivme-subcat-card';
-      
-      // Card Lockdown: Generous height (96px) to give 75% area to clear typography
-      card.style.cssText = 'box-sizing: border-box !important; min-height: 96px !important; padding: 10px 14px 8px 14px !important; margin-bottom: 10px !important; border-radius: 14px !important; display: flex !important; flex-direction: column !important; justify-content: space-between !important; background: linear-gradient(180deg, rgba(24,33,47,0.96) 0%, rgba(11,17,30,0.98) 100%) !important; border: 1px solid rgba(255,255,255,0.08) !important; border-top: 1px solid rgba(255,255,255,0.2) !important; box-shadow: 0 4px 14px rgba(0,0,0,0.55) !important; position: relative !important;';
 
-      // Touch-Friendly Pin Button (24px height, easy finger tap)
+      // Card Lockdown: Roomy 108px minimum height for clear, bold typography
+      card.style.cssText = 'box-sizing: border-box !important; min-height: 108px !important; padding: 12px 14px 10px 14px !important; margin-bottom: 12px !important; border-radius: 14px !important; display: flex !important; flex-direction: column !important; justify-content: space-between !important; background: linear-gradient(180deg, rgba(24,33,47,0.96) 0%, rgba(11,17,30,0.98) 100%) !important; border: 1px solid rgba(255,255,255,0.08) !important; border-top: 1px solid rgba(255,255,255,0.22) !important; box-shadow: 0 4px 14px rgba(0,0,0,0.6) !important; position: relative !important;';
+
+      // Touch-Friendly Pin Button (26px height, spacious tap target)
       var pinBtnHtml = pinned
-        ? '<button type="button" class="rm-clean-pin" style="height: 24px !important; min-height: 24px !important; max-height: 24px !important; width: auto !important; font-size: 10.5px !important; font-weight: 700 !important; border-radius: 9999px !important; padding: 0 10px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; white-space: nowrap !important; line-height: 1 !important; color: #38bdf8 !important; background: rgba(3, 105, 161, 0.3) !important; border: 1px solid rgba(56, 189, 248, 0.6) !important; box-shadow: 0 0 6px rgba(56, 189, 248, 0.3) !important;">📌 पिन है</button>'
-        : '<button type="button" class="rm-clean-pin" style="height: 24px !important; min-height: 24px !important; max-height: 24px !important; width: auto !important; font-size: 10.5px !important; font-weight: 700 !important; border-radius: 9999px !important; padding: 0 10px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; white-space: nowrap !important; line-height: 1 !important; color: #94a3b8 !important; background: rgba(15, 23, 42, 0.8) !important; border: 1px solid rgba(71, 85, 105, 0.6) !important;">📌 पिन करें</button>';
+        ? '<button type="button" class="rm-clean-pin" style="height: 26px !important; min-height: 26px !important; max-height: 26px !important; width: auto !important; font-size: 11px !important; font-weight: 700 !important; border-radius: 9999px !important; padding: 0 12px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; white-space: nowrap !important; line-height: 1 !important; color: #38bdf8 !important; background: rgba(3, 105, 161, 0.3) !important; border: 1px solid rgba(56, 189, 248, 0.6) !important; box-shadow: 0 0 8px rgba(56, 189, 248, 0.3) !important;">📌 पिन है</button>'
+        : '<button type="button" class="rm-clean-pin" style="height: 26px !important; min-height: 26px !important; max-height: 26px !important; width: auto !important; font-size: 11px !important; font-weight: 700 !important; border-radius: 9999px !important; padding: 0 12px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; white-space: nowrap !important; line-height: 1 !important; color: #94a3b8 !important; background: rgba(15, 23, 42, 0.8) !important; border: 1px solid rgba(71, 85, 105, 0.6) !important;">📌 पिन करें</button>';
 
-      // Touch-Friendly Action Button (24px height, easy finger tap)
+      // Touch-Friendly Action Button (26px height, spacious tap target)
       var actBtnHtml = item.actionType === 'button'
-        ? '<button type="button" class="rm-clean-act" style="height: 24px !important; min-height: 24px !important; max-height: 24px !important; width: auto !important; font-size: 10.5px !important; font-weight: 700 !important; border-radius: 9999px !important; padding: 0 12px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; white-space: nowrap !important; line-height: 1 !important; ' + item.btnStyle + '">' + item.actionText + '</button>'
-        : '<span class="rm-clean-act" style="height: 24px !important; min-height: 24px !important; max-height: 24px !important; width: auto !important; font-size: 10.5px !important; font-weight: 700 !important; border-radius: 9999px !important; padding: 0 10px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; white-space: nowrap !important; line-height: 1 !important; ' + item.btnStyle + '">' + item.actionText + '</span>';
+        ? '<button type="button" class="rm-clean-act" style="height: 26px !important; min-height: 26px !important; max-height: 26px !important; width: auto !important; font-size: 11px !important; font-weight: 700 !important; border-radius: 9999px !important; padding: 0 14px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; white-space: nowrap !important; line-height: 1 !important; ' + item.btnStyle + '">' + item.actionText + '</button>'
+        : '<span class="rm-clean-act" style="height: 26px !important; min-height: 26px !important; max-height: 26px !important; width: auto !important; font-size: 11px !important; font-weight: 700 !important; border-radius: 9999px !important; padding: 0 12px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; white-space: nowrap !important; line-height: 1 !important; ' + item.btnStyle + '">' + item.actionText + '</span>';
 
-      // 75% Top Area: Sequence + Icon + Large Clear Bilingual Typography (14px English + 12px Hindi)
-      // 25% Bottom Area: 24px Touch-Friendly Action Strip (Pin Left, Action Right)
+      // 75% Top: Sequence + Icon + Large Crisp Typography (15px English Bold + 12.5px Hindi)
+      // 25% Bottom: 26px Action Row with comfortable tap spacing
       card.innerHTML = 
-        '<div style="display: flex !important; align-items: flex-start !important; gap: 10px !important; width: 100% !important; flex: 1 1 auto !important; padding-bottom: 2px !important;">' +
-          '<span style="font-family: monospace !important; font-size: 11px !important; font-weight: 800 !important; color: #38bdf8 !important; background: rgba(14, 165, 233, 0.15) !important; border: 1px solid rgba(56, 189, 248, 0.4) !important; border-radius: 6px !important; padding: 2px 6px !important; line-height: 1 !important; margin-top: 2px !important; flex-shrink: 0 !important;">' + item.seq + '</span>' +
-          '<span style="font-size: 20px !important; line-height: 1 !important; flex-shrink: 0 !important; margin-top: 1px !important;">' + item.icon + '</span>' +
-          '<div style="display: flex !important; flex-direction: column !important; justify-content: center !important; gap: 3px !important; flex: 1 1 auto !important; min-width: 0 !important;">' +
-            '<span style="font-size: 14px !important; font-weight: 700 !important; color: #f8fafc !important; line-height: 1.3 !important; letter-spacing: 0.01em !important;">' + titles.primary + '</span>' +
-            '<span style="font-size: 12px !important; font-weight: 500 !important; color: #94a3b8 !important; line-height: 1.25 !important;">' + titles.secondary + '</span>' +
+        '<div style="display: flex !important; align-items: flex-start !important; gap: 11px !important; width: 100% !important; flex: 1 1 auto !important;">' +
+          '<span style="font-family: monospace !important; font-size: 12px !important; font-weight: 800 !important; color: #38bdf8 !important; background: rgba(14, 165, 233, 0.18) !important; border: 1px solid rgba(56, 189, 248, 0.45) !important; border-radius: 7px !important; padding: 3px 7px !important; line-height: 1 !important; margin-top: 2px !important; flex-shrink: 0 !important;">' + item.seq + '</span>' +
+          '<span style="font-size: 22px !important; line-height: 1 !important; flex-shrink: 0 !important; margin-top: 1px !important;">' + item.icon + '</span>' +
+          '<div style="display: flex !important; flex-direction: column !important; justify-content: center !important; gap: 4px !important; flex: 1 1 auto !important; min-width: 0 !important;">' +
+            '<span style="font-size: 15px !important; font-weight: 700 !important; color: #f8fafc !important; line-height: 1.3 !important; letter-spacing: 0.01em !important;">' + titles.primary + '</span>' +
+            '<span style="font-size: 12.5px !important; font-weight: 500 !important; color: #94a3b8 !important; line-height: 1.25 !important;">' + titles.secondary + '</span>' +
           '</div>' +
         '</div>' +
-        '<div style="width: 100% !important; height: 1px !important; background: rgba(255, 255, 255, 0.08) !important; margin: 6px 0 !important;"></div>' +
-        '<div style="height: 26px !important; display: flex !important; align-items: center !important; justify-content: space-between !important; width: 100% !important; box-sizing: border-box !important;">' +
+        '<div style="width: 100% !important; height: 1px !important; background: rgba(255, 255, 255, 0.08) !important; margin: 8px 0 6px 0 !important;"></div>' +
+        '<div style="height: 28px !important; display: flex !important; align-items: center !important; justify-content: space-between !important; width: 100% !important; box-sizing: border-box !important;">' +
           pinBtnHtml +
           actBtnHtml +
         '</div>';
