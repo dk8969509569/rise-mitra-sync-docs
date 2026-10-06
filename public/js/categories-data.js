@@ -1,11 +1,11 @@
 /**
  * RISE MITRA — UNIVERSAL 50-CATEGORY & 150 REAL REVENUE SUB-SERVICES ENGINE
- * SPECIFICATION : FOLDER A (SSOT: 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) | 14_04__EXT_004
+ * SPECIFICATION : FOLDER A (SSOT) | 14_04__EXT_004
  * GOVERNANCE    : GATE-23.5 | 75:25 RATIO | 3-PILL ACTION STRIP | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/categories-data.js
  * DUAL-FOLDER REFERENCES:
- *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
- *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
+ *   Folder A (Master Document SSOT)
+ *   Folder B (GitHub Mirror)
  */
 
 (function (window, document) {
@@ -259,7 +259,7 @@
     {
       id: 'c31', num: '31', enName: 'Travel & Local', hiName: 'यात्रा व स्थानीय सेवाएं', icon: '🧭', hasChildren: true,
       children: [
-        { id: '31-1', enName: 'Bus Stand & Auto Timings', hiName: 'रोडवेज बस व ऑटो स्टैंड समय सारणी', icon: '🚌', badge: 'खोलें ›', state: 'active', action: 'action' },
+        { id: '31-1', enName: 'Bus Stand & Auto Timings', hiName: 'रोडवेज bus व ऑटो स्टैंड समय सारणी', icon: '🚌', badge: 'खोलें ›', state: 'active', action: 'action' },
         { id: '31-2', enName: 'Local Taxi Driver Stand', hiName: 'कस्बा टैक्सी व पिकअप ड्राइवर संपर्क', icon: '🚖', badge: 'खोलें ›', state: 'active', action: 'action' },
         { id: '31-3', enName: 'Tirth Yatra Dharmshala', hiName: 'तीर्थ यात्रा बस व धर्मशाला कमरा', icon: '🛕', badge: 'खोलें ›', state: 'active', action: 'action' }
       ]
@@ -428,22 +428,6 @@
   window.RM_SERVICES_DATA = RM_SERVICES_DATA;
   window.RM_GAMES_DATA = RM_GAMES_DATA;
   window.C16_CHILDREN = C16_CHILDREN;
-
-  // Curated 12 Core Cashflow Set (Default Staged Display)
-  var DEFAULT_CORE_CASHFLOW_IDS = new Set([
-    'c01', '01',
-    'c02', '02',
-    'c03', '03',
-    'c05', '05',
-    'c09', '09',
-    'c13', '13',
-    'c14', '14',
-    'c16', '16',
-    'c20', '20',
-    'c26', '26',
-    'c27', '27',
-    'c30', '30'
-  ]);
 
   // ==============================================================================
   // SECTION 2: HELPER FUNCTIONS (PIN MANAGER & ACTION MODAL)
@@ -650,7 +634,7 @@
   }
 
   // ==============================================================================
-  // SECTION 4: OWNER CONSOLE VISIBILITY SYNC (CURATED 12 CORE DEFAULT)
+  // SECTION 4: OWNER CONSOLE VISIBILITY SYNC (ALL 50 CANONICAL CATEGORIES LIVE)
   // ==============================================================================
 
   function syncCategoryVisibilityFromOwner() {
@@ -661,17 +645,16 @@
       if (raw) {
         try {
           var parsed = JSON.parse(raw);
-          if (Array.isArray(parsed)) {
+          if (Array.isArray(parsed) && parsed.length > 0) {
             parsed.forEach(function (id) { activeIds.add(String(id)); });
           }
         } catch (_) {}
       }
 
-      // Default to Curated 12 Core High-Cashflow Services to avoid clutter on first load
+      // Universal Catalog Default: ALL 50 Categories Active (33 Services + 17 Games)
       if (activeIds.size === 0) {
-        DEFAULT_CORE_CASHFLOW_IDS.forEach(function (id) {
-          activeIds.add(id);
-        });
+        RM_SERVICES_DATA.forEach(function (s) { activeIds.add(s.id); activeIds.add(s.num); });
+        RM_GAMES_DATA.forEach(function (g) { activeIds.add(g.id); activeIds.add(g.num); });
       }
 
       activeIds.add('c16');
