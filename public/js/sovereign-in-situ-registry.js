@@ -112,7 +112,7 @@
         window.dispatchEvent(event);
       }
 
-      // Apply In-Situ visual inspection outline & badges
+      // Apply In-Situ visual inspection outline & notches
       applyInSituVisualInspection();
       return true;
     } catch (err) {
@@ -198,7 +198,7 @@
     for (var i = 0; i < parents.length; i++) {
       var p = parents[i];
       if (reg[p] && reg[p].hidden === true) {
-        return false; // Inherited Dormant
+        return false;
       }
     }
 
@@ -206,7 +206,7 @@
   }
 
   /**
-   * Toggle Visibility of a specific URN
+   * Toggle Visibility of a specific URN (1-Tap Live/Hidden Switch)
    */
   function toggleVisibility(urn, explicitState, label) {
     if (!urn) return false;
@@ -370,17 +370,35 @@
   }
 
   // ==============================================================================
-  // CANONICAL IN-SITU DASHED BORDER INJECTION & UNIFIED DOCK ENGINE
+  // INTERACTIVE UPPER-RIGHT NOTCH TOGGLE & DASHED BOUNDARIES ENGINE
   // ==============================================================================
+
+  function getUrnFromElement(el) {
+    if (el.getAttribute('data-sivme-urn')) return el.getAttribute('data-sivme-urn');
+    var catId = el.getAttribute('data-cat-id');
+    if (catId) {
+      var num = catId.replace('c', '').replace('g', '');
+      return 'rm:cat:' + num;
+    }
+    var subMatch = el.innerHTML.match(/\[(16-[123])\]/);
+    if (subMatch && subMatch[1]) {
+      return 'rm:cat:16:sub:' + subMatch[1];
+    }
+    return null;
+  }
 
   function applyInSituVisualInspection() {
     var active = isConsoleModeActive();
 
-    // 1. Hide any redundant legacy HUD bar
+    // 1. Hide legacy redundant HUD if present
     var legacyHud = document.getElementById('sivme-hud') || document.querySelector('.sivme-legacy-hud');
     if (legacyHud) legacyHud.style.display = 'none';
 
-    // 2. Create or Update Top-Level Floating Control Dock
+    // 2. Clean any orphan or dangling badges outside subcat cards
+    var danglingBadges = document.querySelectorAll('.sivme-subcat-card + .sivme-inline-badge, #sub-c16 > .sivme-inline-badge');
+    danglingBadges.forEach(function (b) { b.remove(); });
+
+    // 3. Create or Update Top-Level Floating Control Dock
     var dock = document.getElementById('sivme-floating-console-dock');
     if (!dock) {
       dock = document.createElement('div');
@@ -391,10 +409,10 @@
         'left: 50% !important',
         'transform: translateX(-50%) !important',
         'z-index: 99999 !important',
-        'background: rgba(15, 23, 42, 0.95) !important',
-        'backdrop-filter: blur(12px) !important',
-        'border: 1px solid rgba(16, 185, 129, 0.5) !important',
-        'box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.8), 0 0 15px rgba(16, 185, 129, 0.3) !important',
+        'background: rgba(15, 23, 42, 0.96) !important',
+        'backdrop-filter: blur(14px) !important',
+        'border: 1px solid rgba(16, 185, 129, 0.6) !important',
+        'box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.85), 0 0 15px rgba(16, 185, 129, 0.3) !important',
         'border-radius: 9999px !important',
         'padding: 6px 14px !important',
         'display: flex !important',
@@ -408,15 +426,19 @@
       document.body.appendChild(dock);
     }
 
+    var state = loadRegistry();
+    var hiddenCount = (state.metrics && state.metrics.totalHidden !== undefined) ? state.metrics.totalHidden : 0;
+
     dock.style.display = active ? 'flex' : 'none';
     dock.innerHTML = [
-      '<span style="display:flex;align-items:center;gap:4px;color:#34d399;">',
-      '  <span style="width:7px;height:7px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span>',
+      '<span style="display:flex;align-items:center;gap:5px;color:#34d399;">',
+      '  <span style="width:7px;height:7px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;"></span>',
       '  <span>OWNER IN-SITU</span>',
       '</span>',
       '<span style="color:#64748b;">|</span>',
-      '<button id="sivme-toggle-mode-btn" style="background:#1e293b;border:1px solid #475569;color:#e2e8f0;padding:3px 8px;border-radius:9999px;cursor:pointer;">' + (active ? 'Disable' : 'Enable') + '</button>',
-      '<button id="sivme-reload-btn" style="background:#065f46;border:1px solid #10b981;color:#a7f3d0;padding:3px 8px;border-radius:9999px;cursor:pointer;">⚡ Reload</button>'
+      '<span style="font-size:10px;color:' + (hiddenCount > 0 ? '#f87171' : '#94a3b8') + ';">Hidden: ' + hiddenCount + '</span>',
+      '<button id="sivme-toggle-mode-btn" style="background:#1e293b;border:1px solid #475569;color:#e2e8f0;padding:3px 9px;border-radius:9999px;cursor:pointer;font-size:10.5px;">' + (active ? 'Disable' : 'Enable') + '</button>',
+      '<button id="sivme-reload-btn" style="background:#065f46;border:1px solid #10b981;color:#a7f3d0;padding:3px 9px;border-radius:9999px;cursor:pointer;font-size:10.5px;">⚡ Reload</button>'
     ].join('');
 
     var toggleBtn = document.getElementById('sivme-toggle-mode-btn');
@@ -435,13 +457,24 @@
       };
     }
 
-    // 3. Scan and Inject Green/Red Dashed Boundaries via setProperty
+    // 4. Scan and Inject Upper-Right Interactive Notch + Green/Red Dashed Outline
     var targets = document.querySelectorAll('[data-cat-id], .sivme-subcat-card');
     targets.forEach(function (el) {
-      var urn = el.getAttribute('data-sivme-urn') || el.getAttribute('data-cat-id');
+      var urn = getUrnFromElement(el);
+      if (!urn) return;
+
       var live = isVisible(urn);
 
+      // Clean existing notch pill
+      var oldNotch = el.querySelector(':scope > .sivme-notch-pill');
+      if (oldNotch) oldNotch.remove();
+
       if (active) {
+        if (window.getComputedStyle(el).position === 'static') {
+          el.style.position = 'relative';
+        }
+
+        // Apply Green or Red Dashed Ghera using setProperty
         if (live) {
           el.style.setProperty('outline', '2px dashed #10b981', 'important');
           el.style.setProperty('outline-offset', '2px', 'important');
@@ -449,18 +482,79 @@
         } else {
           el.style.setProperty('outline', '2px dashed #ef4444', 'important');
           el.style.setProperty('outline-offset', '2px', 'important');
-          el.style.opacity = '0.65';
+          el.style.opacity = '0.55'; // Ghost mode for hidden element
         }
+
+        // Create Upper-Right Interactive Notch
+        var notch = document.createElement('div');
+        notch.className = 'sivme-notch-pill';
+        notch.setAttribute('data-target-urn', urn);
+        
+        if (live) {
+          notch.innerHTML = '<span style="color:#10b981;">🟢</span> <span>Live</span> <span style="font-size:9px;opacity:0.75;">⇄</span>';
+          notch.style.cssText = [
+            'position: absolute !important',
+            'top: -11px !important',
+            'right: 14px !important',
+            'z-index: 60 !important',
+            'background: #064e3b !important',
+            'border: 1.5px solid #10b981 !important',
+            'color: #34d399 !important',
+            'font-family: ui-sans-serif, system-ui, -apple-system, sans-serif !important',
+            'font-size: 10px !important',
+            'font-weight: 800 !important',
+            'padding: 1.5px 8px !important',
+            'border-radius: 9999px !important',
+            'box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 6px rgba(16, 185, 129, 0.4) !important',
+            'cursor: pointer !important',
+            'display: flex !important',
+            'align-items: center !important',
+            'gap: 4px !important',
+            'user-select: none !important',
+            'line-height: 1.3 !important'
+          ].join(';');
+        } else {
+          notch.innerHTML = '<span style="color:#ef4444;">🔴</span> <span>Hidden</span> <span style="font-size:9px;opacity:0.75;">⇄</span>';
+          notch.style.cssText = [
+            'position: absolute !important',
+            'top: -11px !important',
+            'right: 14px !important',
+            'z-index: 60 !important',
+            'background: #7f1d1d !important',
+            'border: 1.5px solid #ef4444 !important',
+            'color: #fca5a5 !important',
+            'font-family: ui-sans-serif, system-ui, -apple-system, sans-serif !important',
+            'font-size: 10px !important',
+            'font-weight: 800 !important',
+            'padding: 1.5px 8px !important',
+            'border-radius: 9999px !important',
+            'box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 6px rgba(239, 68, 68, 0.4) !important',
+            'cursor: pointer !important',
+            'display: flex !important',
+            'align-items: center !important',
+            'gap: 4px !important',
+            'user-select: none !important',
+            'line-height: 1.3 !important'
+          ].join(';');
+        }
+
+        // Tap-to-Toggle Handler (Direct In-Situ Switch)
+        notch.onclick = function (e) {
+          e.stopPropagation();
+          e.preventDefault();
+          var targetUrn = this.getAttribute('data-target-urn');
+          toggleVisibility(targetUrn);
+        };
+
+        el.appendChild(notch);
       } else {
+        // Public Mode: Strip inspection outlines and notches
         el.style.removeProperty('outline');
         el.style.removeProperty('outline-offset');
         el.style.opacity = '1';
+        el.style.display = live ? '' : 'none';
       }
     });
-
-    // 4. Remove dangling badges outside subcat cards
-    var danglingBadges = document.querySelectorAll('.sivme-subcat-card + .sivme-inline-badge, #sub-c16 > .sivme-inline-badge');
-    danglingBadges.forEach(function (b) { b.remove(); });
   }
 
   // Auto-trigger adapters and inspection when catalog opens
