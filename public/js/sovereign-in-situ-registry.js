@@ -112,7 +112,7 @@
         window.dispatchEvent(event);
       }
 
-      // Apply In-Situ visual inspection outline & notches
+      // Re-apply In-Situ visual inspection outline & anti-overlap notches
       applyInSituVisualInspection();
       return true;
     } catch (err) {
@@ -288,58 +288,8 @@
    * Dock Floating Badges Cleanly Inside Cards (Categories 01 to 50)
    */
   function renderBadge(parentEl, urn, label, isAuth) {
-    if (!parentEl) return;
-    if (parentEl.classList.contains('sivme-subcat-card')) return;
-
-    var existing = parentEl.querySelector(':scope > .sivme-inline-badge');
-    if (existing) existing.remove();
-
-    var isLive = isVisible(urn);
-    var badge = document.createElement('span');
-    badge.className = 'sivme-inline-badge';
-    badge.setAttribute('data-urn', urn);
-
-    if (isLive) {
-      badge.textContent = '👁Live';
-      badge.style.cssText = [
-        'position: absolute !important',
-        'top: 8px !important',
-        'right: 76px !important',
-        'font-size: 9.5px !important',
-        'font-weight: 700 !important',
-        'padding: 2px 6px !important',
-        'border-radius: 6px !important',
-        'background: rgba(6, 78, 59, 0.85) !important',
-        'color: #34d399 !important',
-        'border: 1px solid rgba(16, 185, 129, 0.45) !important',
-        'line-height: 1 !important',
-        'z-index: 10 !important',
-        'pointer-events: none !important'
-      ].join(';');
-    } else {
-      badge.textContent = '🚫Hidden';
-      badge.style.cssText = [
-        'position: absolute !important',
-        'top: 8px !important',
-        'right: 76px !important',
-        'font-size: 9.5px !important',
-        'font-weight: 700 !important',
-        'padding: 2px 6px !important',
-        'border-radius: 6px !important',
-        'background: rgba(127, 29, 29, 0.85) !important',
-        'color: #fca5a5 !important',
-        'border: 1px solid rgba(239, 68, 68, 0.45) !important',
-        'line-height: 1 !important',
-        'z-index: 10 !important',
-        'pointer-events: none !important'
-      ].join(';');
-    }
-
-    if (window.getComputedStyle(parentEl).position === 'static') {
-      parentEl.style.position = 'relative';
-    }
-
-    parentEl.appendChild(badge);
+    // Purged to eliminate text overlap on long category titles
+    return;
   }
 
   /**
@@ -348,7 +298,6 @@
   function auditElement(el, urn, label, isAuth) {
     if (!el || !urn) return;
     elementRegistry[urn] = { el: el, label: label, isAuth: isAuth };
-    renderBadge(el, urn, label, isAuth);
   }
 
   /**
@@ -370,7 +319,7 @@
   }
 
   // ==============================================================================
-  // INTERACTIVE UPPER-RIGHT NOTCH TOGGLE & DASHED BOUNDARIES ENGINE
+  // ANTI-OVERLAP SPACING & INTERACTIVE UPPER-RIGHT NOTCH TOGGLE ENGINE
   // ==============================================================================
 
   function getUrnFromElement(el) {
@@ -387,18 +336,56 @@
     return null;
   }
 
+  // Inject Global Style Rules for Anti-Overlap Spacing & Scroll Clearance
+  function injectSpacingStyles() {
+    var styleId = 'sivme-anti-overlap-spacing';
+    var styleEl = document.getElementById(styleId);
+    if (!styleEl) {
+      styleEl = document.createElement('style');
+      styleEl.id = styleId;
+      document.head.appendChild(styleEl);
+    }
+    styleEl.innerHTML = [
+      '/* 1. Permanent purge of static overlapping badges */',
+      '.sivme-inline-badge { display: none !important; visibility: hidden !important; }',
+      '/* 2. Anti-overlap 22px vertical gap between main cards */',
+      '#tier1-list > div, #tier2-list > div, [data-cat-id] {',
+      '  margin-top: 10px !important;',
+      '  margin-bottom: 22px !important;',
+      '  position: relative !important;',
+      '}',
+      '/* 3. Anti-overlap 18px vertical gap between sub-cards */',
+      '.sivme-subcat-card {',
+      '  margin-top: 10px !important;',
+      '  margin-bottom: 18px !important;',
+      '  position: relative !important;',
+      '}',
+      '/* 4. Scroll clearance so bottom floating dock never covers items */',
+      '#tier1-list, #tier2-list, .rm-catalog-modal-content {',
+      '  padding-bottom: 96px !important;',
+      '}',
+      '/* 5. Safe right-margin on title text container to avoid button squeeze */',
+      '[data-cat-id] .flex-col, .sivme-subcat-card .flex-col {',
+      '  padding-right: 8px !important;',
+      '}'
+    ].join('\n');
+  }
+
   function applyInSituVisualInspection() {
     var active = isConsoleModeActive();
 
-    // 1. Hide legacy redundant HUD if present
+    // 1. Inject anti-overlap layout rules
+    injectSpacingStyles();
+
+    // 2. Hide redundant legacy HUD
     var legacyHud = document.getElementById('sivme-hud') || document.querySelector('.sivme-legacy-hud');
     if (legacyHud) legacyHud.style.display = 'none';
 
-    // 2. Clean any orphan or dangling badges outside subcat cards
-    var danglingBadges = document.querySelectorAll('.sivme-subcat-card + .sivme-inline-badge, #sub-c16 > .sivme-inline-badge');
-    danglingBadges.forEach(function (b) { b.remove(); });
+    // 3. Purge all overlapping inline text badges
+    var oldBadges = document.querySelectorAll('.sivme-inline-badge');
+    oldBadges.forEach(function (b) { b.remove(); });
 
-    // 3. Create or Update Top-Level Floating Control Dock
+    // 4. Create or Update Top-Level Floating Control Dock
     var dock = document.getElementById('sivme-floating-console-dock');
     if (!dock) {
       dock = document.createElement('div');
@@ -457,7 +444,7 @@
       };
     }
 
-    // 4. Scan and Inject Upper-Right Interactive Notch + Green/Red Dashed Outline
+    // 5. Scan Elements & Inject Upper-Right Interactive Notch with Safe Clearance
     var targets = document.querySelectorAll('[data-cat-id], .sivme-subcat-card');
     targets.forEach(function (el) {
       var urn = getUrnFromElement(el);
@@ -474,7 +461,7 @@
           el.style.position = 'relative';
         }
 
-        // Apply Green or Red Dashed Ghera using setProperty
+        // Apply Green or Red Dashed Ghera
         if (live) {
           el.style.setProperty('outline', '2px dashed #10b981', 'important');
           el.style.setProperty('outline-offset', '2px', 'important');
@@ -485,7 +472,7 @@
           el.style.opacity = '0.55'; // Ghost mode for hidden element
         }
 
-        // Create Upper-Right Interactive Notch
+        // Create Upper-Right Interactive Notch (Cleanly positioned in top gap)
         var notch = document.createElement('div');
         notch.className = 'sivme-notch-pill';
         notch.setAttribute('data-target-urn', urn);
@@ -557,11 +544,9 @@
     });
   }
 
-  // Auto-trigger adapters and inspection when catalog opens
+  // Auto-trigger on DOM load and catalog interactions
   if (typeof document !== 'undefined') {
-    document.addEventListener('DOMContentLoaded', function () {
-      applyInSituVisualInspection();
-    });
+    document.addEventListener('DOMContentLoaded', applyInSituVisualInspection);
     document.addEventListener('click', function (e) {
       if (e.target && e.target.closest && e.target.closest('#cat-menu-btn, [onclick*="category"], [data-cat-id]')) {
         setTimeout(triggerAllAdapters, 50);
