@@ -2,7 +2,7 @@
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
  * MODULE        : Universal Visibility Registry & Cascading Inheritance Engine
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
- * GOVERNANCE    : GATE-23.4 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
+ * GOVERNANCE    : GATE-23.5 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-registry.js
  * DUAL-FOLDER REFERENCES:
  *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
@@ -19,6 +19,7 @@
     var lib = factory();
     root.RM_SovereignRegistry = lib;
     root.RiseMitraSIVME = lib;
+    root.RM_SIVME = lib; // Phase 2 Global Alias
   }
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
@@ -51,6 +52,9 @@
       totalHidden: 1
     }
   };
+
+  var adapters = {};
+  var elementRegistry = {};
 
   /**
    * Safe localStorage Reader
@@ -274,6 +278,104 @@
     return true;
   }
 
+  // ==============================================================================
+  // PHASE 2: CANONICAL BADGE DOCKING & ADAPTER ORCHESTRATION ENGINE
+  // ==============================================================================
+
+  /**
+   * Dock Floating Badges Cleanly Inside Cards (Categories 01 to 50)
+   */
+  function renderBadge(parentEl, urn, label, isAuth) {
+    if (!parentEl) return;
+
+    var existing = parentEl.querySelector('.sivme-inline-badge');
+    if (existing) existing.remove();
+
+    var isLive = isVisible(urn);
+    var badge = document.createElement('span');
+    badge.className = 'sivme-inline-badge';
+    badge.setAttribute('data-urn', urn);
+
+    if (isLive) {
+      badge.textContent = '👁️Live';
+      badge.style.cssText = [
+        'position: absolute !important',
+        'top: 8px !important',
+        'right: 76px !important',
+        'font-size: 9.5px !important',
+        'font-weight: 700 !important',
+        'padding: 2px 6px !important',
+        'border-radius: 6px !important',
+        'background: rgba(6, 78, 59, 0.85) !important',
+        'color: #34d399 !important',
+        'border: 1px solid rgba(16, 185, 129, 0.45) !important',
+        'line-height: 1 !important',
+        'z-index: 10 !important',
+        'pointer-events: none !important'
+      ].join(';');
+    } else {
+      badge.textContent = '🚫Hidden';
+      badge.style.cssText = [
+        'position: absolute !important',
+        'top: 8px !important',
+        'right: 76px !important',
+        'font-size: 9.5px !important',
+        'font-weight: 700 !important',
+        'padding: 2px 6px !important',
+        'border-radius: 6px !important',
+        'background: rgba(127, 29, 29, 0.85) !important',
+        'color: #fca5a5 !important',
+        'border: 1px solid rgba(239, 68, 68, 0.45) !important',
+        'line-height: 1 !important',
+        'z-index: 10 !important',
+        'pointer-events: none !important'
+      ].join(';');
+    }
+
+    if (window.getComputedStyle(parentEl).position === 'static') {
+      parentEl.style.position = 'relative';
+    }
+
+    parentEl.appendChild(badge);
+  }
+
+  /**
+   * Audit Element Interface
+   */
+  function auditElement(el, urn, label, isAuth) {
+    if (!el || !urn) return;
+    elementRegistry[urn] = { el: el, label: label, isAuth: isAuth };
+    renderBadge(el, urn, label, isAuth);
+  }
+
+  /**
+   * Adapter Registration and Dispatch (Transforms skinny rows to 108px broad cards)
+   */
+  function registerAdapter(name, initFn) {
+    adapters[name] = initFn;
+    if (typeof initFn === 'function') {
+      try { initFn(); } catch (err) { console.error('[RM-SIVME] Adapter Error (' + name + '):', err); }
+    }
+  }
+
+  function triggerAllAdapters() {
+    Object.keys(adapters).forEach(function (name) {
+      if (typeof adapters[name] === 'function') {
+        try { adapters[name](); } catch (e) {}
+      }
+    });
+  }
+
+  // Auto-trigger adapters when Universal Catalog opens
+  if (typeof document !== 'undefined') {
+    document.addEventListener('click', function (e) {
+      if (e.target && e.target.closest && e.target.closest('#cat-menu-btn, [onclick*="category"], [data-cat-id]')) {
+        setTimeout(triggerAllAdapters, 50);
+        setTimeout(triggerAllAdapters, 200);
+      }
+    }, true);
+  }
+
   return {
     version: REGISTRY_VERSION,
     REGISTRY_STORAGE_KEY: REGISTRY_STORAGE_KEY,
@@ -281,10 +383,18 @@
     loadRegistry: loadRegistry,
     saveRegistry: saveRegistry,
     isVisible: isVisible,
+    getUrnVisibility: isVisible,
     toggleVisibility: toggleVisibility,
+    setUrnVisibility: toggleVisibility,
     isConsoleModeActive: isConsoleModeActive,
+    isConsoleAuthorized: isConsoleModeActive,
     setConsoleMode: setConsoleMode,
     resetAllToPublicLive: resetAllToPublicLive,
-    getParentURNs: getParentURNs
+    getParentURNs: getParentURNs,
+    // Phase 2 Additions:
+    renderBadge: renderBadge,
+    auditElement: auditElement,
+    registerAdapter: registerAdapter,
+    triggerAllAdapters: triggerAllAdapters
   };
 });
