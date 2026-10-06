@@ -1,8 +1,8 @@
 /**
  * RISE MITRA — SIVME MICRO-MODULAR ADAPTER
- * MODULE        : Customer Pinned Shortcuts Engine (2-Column Compact Grid)
+ * MODULE        : Customer Pinned Shortcuts Engine (Sub-Categories Exclusive)
  * FILE          : user-pinned-shortcuts.js
- * VERSION       : v2.3 - 2-Column Horizontal Cards & Strict Header Hierarchy
+ * VERSION       : v2.4 - Strict Header-Below-Divider Hierarchy & 2-Col Grid
  * GOVERNANCE    : GATE-23.5 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
  * DUAL-FOLDER REFS:
@@ -54,7 +54,7 @@
 
   // 2. AUDIT PIN BUTTONS (STRICTLY SUB-CATEGORIES ONLY)
   function auditCatalogPinButtons() {
-    // Strip accidental pins from parent containers
+    // Strip accidental pins from parent 50 category containers
     document.querySelectorAll('#categoryModal [data-cat-id] > .sivme-pin-action-btn, #categoryModal [data-cat-id] > div > .sivme-pin-action-btn').forEach(function (btn) {
       btn.remove();
     });
@@ -148,7 +148,51 @@
     });
   }
 
-  // 3. RENDER 2-COLUMN COMPACT SHORTCUTS & PROPER HIERARCHY
+  // 3. ROBUST FINDER FOR "9 CORE VERTICALS" HEADER ROW
+  function get9CoreVerticalsHeader() {
+    // A. Check sibling above the 3x3 grid container
+    var firstVert = document.querySelector('.sivme-vertical-card, [data-vertical-id], [onclick*="v1"]');
+    var grid = firstVert ? (firstVert.closest('.grid') || firstVert.parentElement) : document.querySelector('.grid');
+
+    if (grid && grid.parentElement) {
+      var prev = grid.previousElementSibling;
+      while (prev) {
+        if (prev.id !== 'rmUserPinnedSection') {
+          var pt = (prev.textContent || '').toUpperCase();
+          if (pt.indexOf('VERTICAL') !== -1 || pt.indexOf('मुफ़्त') !== -1 || pt.indexOf('जुड़ना') !== -1) {
+            return prev;
+          }
+        }
+        prev = prev.previousElementSibling;
+      }
+    }
+
+    // B. Fallback: Search all flex containers
+    var allNodes = document.querySelectorAll('div, h2, h3, h4, span, p');
+    for (var i = 0; i < allNodes.length; i++) {
+      var el = allNodes[i];
+      if (el.id === 'rmUserPinnedSection' || el.closest('#rmUserPinnedSection')) continue;
+      var t = (el.textContent || '').toUpperCase();
+      if (t.indexOf('CORE VERTICAL') !== -1 || (t.indexOf('VERTICAL') !== -1 && t.indexOf('9') !== -1)) {
+        var curr = el;
+        while (curr.parentElement && curr.parentElement !== document.body) {
+          var p = curr.parentElement;
+          if (curr.classList.contains('flex') && (curr.textContent.indexOf('मुफ़्त') !== -1 || curr.textContent.indexOf('जुड़ना') !== -1)) {
+            return curr;
+          }
+          if (p.querySelector('.grid') || (curr.nextElementSibling && curr.nextElementSibling.classList.contains('grid'))) {
+            return curr;
+          }
+          curr = p;
+        }
+        return el.closest('.flex') || el;
+      }
+    }
+
+    return grid || document.querySelector('.grid');
+  }
+
+  // 4. RENDER PINNED SECTION & NEON DIVIDER (STRICTLY ABOVE 9 CORE VERTICALS HEADER)
   function renderHomePinnedSection() {
     var pinnedList = getPinnedList();
     var existingSec = document.getElementById('rmUserPinnedSection');
@@ -158,43 +202,18 @@
       return;
     }
 
-    // Locate the "9 CORE VERTICALS" header container precisely
-    var headerRow = null;
-    var allElements = document.querySelectorAll('div, h2, h3, p, span');
-    for (var i = 0; i < allElements.length; i++) {
-      var txt = (allElements[i].textContent || '').trim();
-      if (txt.indexOf('9 CORE VERTICALS') !== -1 && allElements[i].children.length < 5) {
-        var curr = allElements[i];
-        while (curr.parentElement && curr.parentElement !== document.body) {
-          if (curr.parentElement.children.length > 1 && curr.textContent.indexOf('जुड़ना मुफ़्त') !== -1) {
-            headerRow = curr;
-            break;
-          }
-          curr = curr.parentElement;
-        }
-        if (headerRow) break;
-        headerRow = allElements[i].closest('.flex') || allElements[i];
-        break;
-      }
-    }
-
-    var targetMount = headerRow;
-    if (!targetMount) {
-      var verticals = document.querySelectorAll('.sivme-vertical-card, [data-vertical-id]');
-      if (verticals.length > 0) {
-        targetMount = verticals[0].parentElement;
-      } else {
-        targetMount = document.querySelector('.grid');
-      }
-    }
-
-    if (!targetMount || !targetMount.parentElement) return;
+    var targetHeader = get9CoreVerticalsHeader();
+    if (!targetHeader || !targetHeader.parentElement) return;
 
     if (!existingSec) {
       existingSec = document.createElement('div');
       existingSec.id = 'rmUserPinnedSection';
-      existingSec.style.cssText = 'width: 100%; margin-top: 14px; margin-bottom: 6px;';
-      targetMount.parentElement.insertBefore(existingSec, targetMount);
+      existingSec.style.cssText = 'width: 100%; margin-top: 14px; margin-bottom: 4px;';
+    }
+
+    // Strictly enforce DOM position: existingSec MUST sit right before the 9 Core Verticals header
+    if (existingSec.nextElementSibling !== targetHeader) {
+      targetHeader.parentElement.insertBefore(existingSec, targetHeader);
     }
 
     // Build 2-Column Horizontal Cards
@@ -209,34 +228,38 @@
           border: 1px solid rgba(56,189,248,0.35);
           border-left: 3px solid #38bdf8;
           border-radius: 12px;
-          padding: 8px 10px;
-          min-height: 56px;
-          box-shadow: 0 4px 10px rgba(0,0,0,0.45);
+          padding: 10px 12px;
+          min-height: 58px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.5);
           cursor: pointer;
           box-sizing: border-box;
         ">
           <div style="display:flex;align-items:center;justify-content:space-between;width:100%;">
             <span style="font-size:16px;">${item.icon || '⚡'}</span>
-            <button class="rm-unpin-btn" data-unpin-id="${item.id}" style="
+            <button class="rm-unpin-btn" data-unpin-id="${item.id}" title="हटाएं" style="
               background: rgba(239,68,68,0.22);
               border: 1px solid rgba(239,68,68,0.45);
               color: #fca5a5;
-              border-radius: 9999px;
-              width: 18px;
-              height: 18px;
-              font-size: 9px;
+              border-radius: 50%;
+              width: 20px;
+              height: 20px;
+              min-width: 20px;
+              min-height: 20px;
+              font-size: 10px;
               cursor: pointer;
               display: flex;
               align-items: center;
               justify-content: center;
               padding: 0;
+              line-height: 1;
+              flex-shrink: 0;
             ">✕</button>
           </div>
-          <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:6px;gap:4px;">
-            <span style="font-size:11px;font-weight:800;color:#f1f5f9;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px;gap:4px;">
+            <span style="font-size:12px;font-weight:800;color:#f1f5f9;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
               ${item.label || 'सेवा'}
             </span>
-            <span style="font-size:11px;color:#38bdf8;font-weight:700;flex-shrink:0;">›</span>
+            <span style="font-size:12px;color:#38bdf8;font-weight:700;flex-shrink:0;">›</span>
           </div>
         </div>
       `;
@@ -253,7 +276,7 @@
       <div class="rm-pinned-divider"></div>
     `;
 
-    // Unpin Handler
+    // Unpin Action
     existingSec.querySelectorAll('.rm-unpin-btn').forEach(function (btn) {
       btn.addEventListener('click', function (e) {
         e.stopPropagation();
@@ -282,13 +305,13 @@
     });
   }
 
-  // 4. MAIN AUDIT WRAPPER
+  // 5. AUDIT DISPATCHER
   function auditPinnedShortcuts() {
     auditCatalogPinButtons();
     renderHomePinnedSection();
   }
 
-  // 5. REGISTER MICRO-ADAPTER
+  // 6. REGISTER MICRO-ADAPTER
   function register() {
     if (window.RM_SIVME && typeof window.RM_SIVME.registerAdapter === 'function') {
       window.RM_SIVME.registerAdapter('user-pinned-shortcuts', auditPinnedShortcuts);
