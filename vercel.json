@@ -44,6 +44,14 @@
   ],
   "rewrites": [
     {
+      "source": "/",
+      "destination": "/public/index.html"
+    },
+    {
+      "source": "/index.html",
+      "destination": "/public/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/public/$1"
     }
