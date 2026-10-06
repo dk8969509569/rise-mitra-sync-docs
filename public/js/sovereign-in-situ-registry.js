@@ -289,8 +289,9 @@
    */
   function renderBadge(parentEl, urn, label, isAuth) {
     if (!parentEl) return;
+    if (parentEl.classList.contains('sivme-subcat-card')) return;
 
-    var existing = parentEl.querySelector('.sivme-inline-badge');
+    var existing = parentEl.querySelector(':scope > .sivme-inline-badge');
     if (existing) existing.remove();
 
     var isLive = isVisible(urn);
@@ -299,7 +300,7 @@
     badge.setAttribute('data-urn', urn);
 
     if (isLive) {
-      badge.textContent = '👁️Live';
+      badge.textContent = '👁Live';
       badge.style.cssText = [
         'position: absolute !important',
         'top: 8px !important',
@@ -369,13 +370,17 @@
   }
 
   // ==============================================================================
-  // IN-SITU DASHED BORDER INJECTION & FLOATING DOCK ENGINE
+  // CANONICAL IN-SITU DASHED BORDER INJECTION & UNIFIED DOCK ENGINE
   // ==============================================================================
 
   function applyInSituVisualInspection() {
     var active = isConsoleModeActive();
 
-    // 1. Create or Update Top-Level Floating Control Dock
+    // 1. Hide any redundant legacy HUD bar
+    var legacyHud = document.getElementById('sivme-hud') || document.querySelector('.sivme-legacy-hud');
+    if (legacyHud) legacyHud.style.display = 'none';
+
+    // 2. Create or Update Top-Level Floating Control Dock
     var dock = document.getElementById('sivme-floating-console-dock');
     if (!dock) {
       dock = document.createElement('div');
@@ -430,28 +435,32 @@
       };
     }
 
-    // 2. Scan and Inject Green/Red Dashed Borders on Every Tracked Surface Element
-    var targets = document.querySelectorAll('[data-cat-id], .sivme-subcat-card, [onclick*="togglePinService"], [onclick*="handleLaunchVideo"], [onclick*="handleLaunchCategory"]');
-
+    // 3. Scan and Inject Green/Red Dashed Boundaries via setProperty
+    var targets = document.querySelectorAll('[data-cat-id], .sivme-subcat-card');
     targets.forEach(function (el) {
-      var urn = el.getAttribute('data-sivme-urn') || el.getAttribute('data-cat-id') || el.className;
+      var urn = el.getAttribute('data-sivme-urn') || el.getAttribute('data-cat-id');
       var live = isVisible(urn);
 
       if (active) {
-        el.style.position = 'relative';
         if (live) {
-          el.style.outline = '2px dashed #10b981 !important';
-          el.style.outlineOffset = '2px !important';
+          el.style.setProperty('outline', '2px dashed #10b981', 'important');
+          el.style.setProperty('outline-offset', '2px', 'important');
+          el.style.opacity = '1';
         } else {
-          el.style.outline = '2px dashed #ef4444 !important';
-          el.style.outlineOffset = '2px !important';
+          el.style.setProperty('outline', '2px dashed #ef4444', 'important');
+          el.style.setProperty('outline-offset', '2px', 'important');
           el.style.opacity = '0.65';
         }
       } else {
-        el.style.outline = 'none';
+        el.style.removeProperty('outline');
+        el.style.removeProperty('outline-offset');
         el.style.opacity = '1';
       }
     });
+
+    // 4. Remove dangling badges outside subcat cards
+    var danglingBadges = document.querySelectorAll('.sivme-subcat-card + .sivme-inline-badge, #sub-c16 > .sivme-inline-badge');
+    danglingBadges.forEach(function (b) { b.remove(); });
   }
 
   // Auto-trigger adapters and inspection when catalog opens
