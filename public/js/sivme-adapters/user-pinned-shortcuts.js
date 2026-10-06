@@ -2,7 +2,7 @@
  * RISE MITRA — SIVME MICRO-MODULAR ADAPTER
  * MODULE        : Customer Pinned Shortcuts Engine (Sub-Categories Exclusive)
  * FILE          : user-pinned-shortcuts.js
- * VERSION       : v2.4 - Strict Header-Below-Divider Hierarchy & 2-Col Grid
+ * VERSION       : v2.7 - Strict Scope Guard (No Duplicate Pin Injection in Cat-16)
  * GOVERNANCE    : GATE-23.5 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
  * DUAL-FOLDER REFS:
@@ -30,7 +30,7 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
     } catch (_) {}
     renderHomePinnedSection();
-    auditCatalogPinButtons();
+    window.dispatchEvent(new CustomEvent('rm_pinned_shortcuts_changed'));
   }
 
   function isItemPinned(id) {
@@ -52,105 +52,22 @@
     setPinnedList(list);
   }
 
-  // 2. AUDIT PIN BUTTONS (STRICTLY SUB-CATEGORIES ONLY)
+  // 2. AUDIT PIN BUTTONS (STRICTLY SUB-CATEGORIES ONLY + NO DUPLICATE IN CAT-16)
   function auditCatalogPinButtons() {
-    // Strip accidental pins from parent 50 category containers
+    // 50 मुख्य कैटेगरी कंटेनरों से अतिरिक्त पिन हटाएं
     document.querySelectorAll('#categoryModal [data-cat-id] > .sivme-pin-action-btn, #categoryModal [data-cat-id] > div > .sivme-pin-action-btn').forEach(function (btn) {
       btn.remove();
     });
 
-    var subCards = document.querySelectorAll(
-      '#sub-c16 > div, ' +
-      '[data-subcat-id], ' +
-      '.sivme-subcat-card'
-    );
-
-    subCards.forEach(function (card) {
-      var cardId = card.getAttribute('data-subcat-id') || card.id || '';
-      
-      var clone = card.cloneNode(true);
-      var trash = clone.querySelectorAll('.sivme-pin-action-btn, button, a, .sivme-inline-badge, svg');
-      trash.forEach(function (t) { t.remove(); });
-      var rawText = (clone.textContent || '').trim();
-
-      var icon = '⚡';
-      if (!cardId) {
-        if (rawText.indexOf('मिस्त्री') !== -1) {
-          cardId = 'sub-16-1';
-          icon = '🛠️';
-          rawText = 'मिस्त्री व मरम्मत';
-        } else if (rawText.indexOf('किराया बहीखाता') !== -1) {
-          cardId = 'sub-16-2';
-          icon = '📋';
-          rawText = 'किराया बहीखाता';
-        } else if (rawText.indexOf('कमरा व फ्लैट') !== -1) {
-          cardId = 'sub-16-3';
-          icon = '🏠';
-          rawText = 'कमरा व फ्लैट खोज';
-        } else {
-          return;
-        }
-      }
-
-      var cleanLabel = rawText.replace(/खोलें.*$/, '').replace(/जल्द उपलब्ध.*$/, '').trim();
-      var isPinned = isItemPinned(cardId);
-      var pinBtn = card.querySelector('.sivme-pin-action-btn');
-
-      if (!pinBtn) {
-        pinBtn = document.createElement('button');
-        pinBtn.className = 'sivme-pin-action-btn';
-        pinBtn.type = 'button';
-        pinBtn.setAttribute('data-target-id', cardId);
-        pinBtn.style.cssText = `
-          display: inline-flex;
-          align-items: center;
-          gap: 4px;
-          background: rgba(15, 23, 42, 0.85);
-          border: 1px solid rgba(56, 189, 248, 0.4);
-          color: #94a3b8;
-          font-size: 10px;
-          font-weight: 700;
-          padding: 3px 8px;
-          border-radius: 9999px;
-          margin-right: 8px;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          flex-shrink: 0;
-          z-index: 20;
-        `;
-
-        var actionSlot = card.querySelector('button, a, span.text-cyan-400, span.text-emerald-400, span[class*="text-slate"]');
-        if (actionSlot && actionSlot.parentNode) {
-          actionSlot.parentNode.insertBefore(pinBtn, actionSlot);
-        } else {
-          card.appendChild(pinBtn);
-        }
-
-        pinBtn.addEventListener('click', function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
-          togglePin(cardId, cleanLabel, icon);
-        }, true);
-      }
-
-      if (isPinned) {
-        pinBtn.innerHTML = '<span>📌</span><span style="color:#38bdf8;">पिन है</span>';
-        pinBtn.style.borderColor = '#0284c7';
-        pinBtn.style.background = 'rgba(3, 105, 161, 0.3)';
-        pinBtn.style.boxShadow = '0 0 8px rgba(56, 189, 248, 0.4)';
-      } else {
-        pinBtn.innerHTML = '<span style="opacity:0.6;">📌</span><span>पिन करें</span>';
-        pinBtn.style.borderColor = 'rgba(255, 255, 255, 0.15)';
-        pinBtn.style.background = 'rgba(15, 23, 42, 0.6)';
-        pinBtn.style.boxShadow = 'none';
-      }
+    // Category 16 के सब-कार्ड्स में बाहरी डुप्लीकेट पिन इंजेक्ट होने से रोकें
+    document.querySelectorAll('#sub-c16 .sivme-pin-action-btn').forEach(function (btn) {
+      btn.remove();
     });
   }
 
   // 3. ROBUST FINDER FOR "9 CORE VERTICALS" HEADER ROW
   function get9CoreVerticalsHeader() {
-    // A. Check sibling above the 3x3 grid container
+    // Sibling above the 3x3 grid container
     var firstVert = document.querySelector('.sivme-vertical-card, [data-vertical-id], [onclick*="v1"]');
     var grid = firstVert ? (firstVert.closest('.grid') || firstVert.parentElement) : document.querySelector('.grid');
 
@@ -167,7 +84,7 @@
       }
     }
 
-    // B. Fallback: Search all flex containers
+    // Fallback: Search all text/flex containers
     var allNodes = document.querySelectorAll('div, h2, h3, h4, span, p');
     for (var i = 0; i < allNodes.length; i++) {
       var el = allNodes[i];
@@ -320,5 +237,6 @@
     }
   }
 
+  window.addEventListener('rm_pinned_shortcuts_changed', renderHomePinnedSection);
   register();
 })();
