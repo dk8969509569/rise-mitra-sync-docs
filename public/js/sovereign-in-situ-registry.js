@@ -188,12 +188,10 @@
     var state = loadRegistry();
     var reg = state.registry || {};
 
-    // 1. Direct Self Check
     if (reg[urn] && reg[urn].hidden === true) {
       return false;
     }
 
-    // 2. Cascading Parent Check
     var parents = getParentURNs(urn);
     for (var i = 0; i < parents.length; i++) {
       var p = parents[i];
@@ -284,25 +282,16 @@
     return true;
   }
 
-  /**
-   * Dock Floating Badges Cleanly Inside Cards (Categories 01 to 50)
-   */
   function renderBadge(parentEl, urn, label, isAuth) {
     // Purged to eliminate text overlap on long category titles
     return;
   }
 
-  /**
-   * Audit Element Interface
-   */
   function auditElement(el, urn, label, isAuth) {
     if (!el || !urn) return;
     elementRegistry[urn] = { el: el, label: label, isAuth: isAuth };
   }
 
-  /**
-   * Adapter Registration and Dispatch
-   */
   function registerAdapter(name, initFn) {
     adapters[name] = initFn;
     if (typeof initFn === 'function') {
@@ -319,7 +308,7 @@
   }
 
   // ==============================================================================
-  // ANTI-OVERLAP SPACING & INTERACTIVE UPPER-RIGHT NOTCH TOGGLE ENGINE
+  // ANTI-CLIPPING SPACING & UNCLIPPED UPPER-RIGHT NOTCH TOGGLE ENGINE
   // ==============================================================================
 
   function getUrnFromElement(el) {
@@ -336,7 +325,7 @@
     return null;
   }
 
-  // Inject Global Style Rules for Anti-Overlap Spacing & Scroll Clearance
+  // Inject Global Style Rules: FORCE OVERFLOW VISIBLE (No Clipping)
   function injectSpacingStyles() {
     var styleId = 'sivme-anti-overlap-spacing';
     var styleEl = document.getElementById(styleId);
@@ -348,25 +337,26 @@
     styleEl.innerHTML = [
       '/* 1. Permanent purge of static overlapping badges */',
       '.sivme-inline-badge { display: none !important; visibility: hidden !important; }',
-      '/* 2. Anti-overlap 22px vertical gap between main cards */',
-      '#tier1-list > div, #tier2-list > div, [data-cat-id] {',
-      '  margin-top: 10px !important;',
+      '/* 2. CRITICAL: Force overflow visible so upper-right notch is NEVER clipped */',
+      '#tier1-list > div, #tier2-list > div, [data-cat-id], .sivme-subcat-card {',
+      '  overflow: visible !important;',
+      '  margin-top: 14px !important;',
       '  margin-bottom: 22px !important;',
       '  position: relative !important;',
       '}',
-      '/* 3. Anti-overlap 18px vertical gap between sub-cards */',
-      '.sivme-subcat-card {',
-      '  margin-top: 10px !important;',
-      '  margin-bottom: 18px !important;',
-      '  position: relative !important;',
-      '}',
-      '/* 4. Scroll clearance so bottom floating dock never covers items */',
-      '#tier1-list, #tier2-list, .rm-catalog-modal-content {',
+      '/* 3. Padding for list containers so first card has room for top notch */',
+      '#tier1-list, #tier2-list {',
+      '  padding-top: 14px !important;',
       '  padding-bottom: 96px !important;',
+      '  overflow: visible !important;',
       '}',
-      '/* 5. Safe right-margin on title text container to avoid button squeeze */',
+      '/* 4. Safe right-margin on title text container to avoid button squeeze */',
       '[data-cat-id] .flex-col, .sivme-subcat-card .flex-col {',
       '  padding-right: 8px !important;',
+      '}',
+      '/* 5. Ensure notch pill always renders above everything */',
+      '.sivme-notch-pill {',
+      '  z-index: 80 !important;',
       '}'
     ].join('\n');
   }
@@ -374,7 +364,7 @@
   function applyInSituVisualInspection() {
     var active = isConsoleModeActive();
 
-    // 1. Inject anti-overlap layout rules
+    // 1. Inject anti-clipping CSS rules
     injectSpacingStyles();
 
     // 2. Hide redundant legacy HUD
@@ -444,7 +434,7 @@
       };
     }
 
-    // 5. Scan Elements & Inject Upper-Right Interactive Notch with Safe Clearance
+    // 5. Scan Elements & Inject Upper-Right Interactive Notch (UNCLIPPED)
     var targets = document.querySelectorAll('[data-cat-id], .sivme-subcat-card');
     targets.forEach(function (el) {
       var urn = getUrnFromElement(el);
@@ -457,6 +447,8 @@
       if (oldNotch) oldNotch.remove();
 
       if (active) {
+        // Enforce visible overflow so notch outside the top edge is NEVER sliced
+        el.style.setProperty('overflow', 'visible', 'important');
         if (window.getComputedStyle(el).position === 'static') {
           el.style.position = 'relative';
         }
@@ -472,56 +464,58 @@
           el.style.opacity = '0.55'; // Ghost mode for hidden element
         }
 
-        // Create Upper-Right Interactive Notch (Cleanly positioned in top gap)
+        // Create Upper-Right Interactive Notch (Positioned cleanly on dashed boundary)
         var notch = document.createElement('div');
         notch.className = 'sivme-notch-pill';
         notch.setAttribute('data-target-urn', urn);
         
         if (live) {
-          notch.innerHTML = '<span style="color:#10b981;">🟢</span> <span>Live</span> <span style="font-size:9px;opacity:0.75;">⇄</span>';
+          notch.innerHTML = '<span style="color:#10b981;font-size:10px;line-height:1;">🟢</span> <span style="line-height:1;">Live</span> <span style="font-size:9px;opacity:0.8;line-height:1;">⇄</span>';
           notch.style.cssText = [
             'position: absolute !important',
-            'top: -11px !important',
+            'top: -10px !important',
             'right: 14px !important',
-            'z-index: 60 !important',
+            'z-index: 80 !important',
             'background: #064e3b !important',
             'border: 1.5px solid #10b981 !important',
             'color: #34d399 !important',
             'font-family: ui-sans-serif, system-ui, -apple-system, sans-serif !important',
             'font-size: 10px !important',
             'font-weight: 800 !important',
-            'padding: 1.5px 8px !important',
+            'padding: 2px 8px !important',
             'border-radius: 9999px !important',
-            'box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 6px rgba(16, 185, 129, 0.4) !important',
+            'box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7), 0 0 6px rgba(16, 185, 129, 0.4) !important',
             'cursor: pointer !important',
-            'display: flex !important',
+            'display: inline-flex !important',
             'align-items: center !important',
             'gap: 4px !important',
             'user-select: none !important',
-            'line-height: 1.3 !important'
+            'line-height: 1 !important',
+            'white-space: nowrap !important'
           ].join(';');
         } else {
-          notch.innerHTML = '<span style="color:#ef4444;">🔴</span> <span>Hidden</span> <span style="font-size:9px;opacity:0.75;">⇄</span>';
+          notch.innerHTML = '<span style="color:#ef4444;font-size:10px;line-height:1;">🔴</span> <span style="line-height:1;">Hidden</span> <span style="font-size:9px;opacity:0.8;line-height:1;">⇄</span>';
           notch.style.cssText = [
             'position: absolute !important',
-            'top: -11px !important',
+            'top: -10px !important',
             'right: 14px !important',
-            'z-index: 60 !important',
+            'z-index: 80 !important',
             'background: #7f1d1d !important',
             'border: 1.5px solid #ef4444 !important',
             'color: #fca5a5 !important',
             'font-family: ui-sans-serif, system-ui, -apple-system, sans-serif !important',
             'font-size: 10px !important',
             'font-weight: 800 !important',
-            'padding: 1.5px 8px !important',
+            'padding: 2px 8px !important',
             'border-radius: 9999px !important',
-            'box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 6px rgba(239, 68, 68, 0.4) !important',
+            'box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7), 0 0 6px rgba(239, 68, 68, 0.4) !important',
             'cursor: pointer !important',
-            'display: flex !important',
+            'display: inline-flex !important',
             'align-items: center !important',
             'gap: 4px !important',
             'user-select: none !important',
-            'line-height: 1.3 !important'
+            'line-height: 1 !important',
+            'white-space: nowrap !important'
           ].join(';');
         }
 
@@ -538,6 +532,7 @@
         // Public Mode: Strip inspection outlines and notches
         el.style.removeProperty('outline');
         el.style.removeProperty('outline-offset');
+        el.style.removeProperty('overflow');
         el.style.opacity = '1';
         el.style.display = live ? '' : 'none';
       }
