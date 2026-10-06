@@ -1,113 +1,172 @@
 /**
  * RISE MITRA — MODULAR CATALOG RUNTIME & DATA REGISTRY ENGINE
- * SPECIFICATION : 14_04__EXT_004_MODULAR_ARCHITECTURE_MOBILE_SAFETY_RECOVERY_SPEC
- * GOVERNANCE    : GATE-16.7 | DEC-RM-SOV-ARCH-20260930-MODULAR-ZEL-001
+ * SPECIFICATION : FOLDER A (SSOT: 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) | 14_04__EXT_004
+ * GOVERNANCE    : PLAY STORE CANONICAL BILINGUAL STANDARD | GATE-16.7 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/categories-data.js
  */
 
-
 // ==============================================================================
-// SECTION 1: CANONICAL 50-CATEGORY DATA REGISTRY (SSOT)
+// SECTION 1: CANONICAL 50-CATEGORY DATA REGISTRY (PLAY STORE SSOT)
 // ==============================================================================
 
 const RM_SERVICES_DATA = [
-  { id: 'c01', num: '01', name: 'डिज़ाइन व कला (Art & Design)', icon: '🎨' },
-  { id: 'c02', num: '02', name: 'वाहन सेवा (Auto & Vehicles)', icon: '🚗' },
-  { id: 'c03', num: '03', name: 'ब्यूटी व सैलून (Beauty & Salon)', icon: '✂️' },
-  { id: 'c04', num: '04', name: 'किताबें व संदर्भ (Books)', icon: '📚' },
-  { id: 'c05', num: '05', name: 'सॉवरेन बहीखाता (Business Khata)', icon: '💼', action: 'launch' },
-  { id: 'c06', num: '06', name: 'कहानियाँ व कॉमिक्स (Comics)', icon: '📖' },
-  { id: 'c07', num: '07', name: 'संपर्क व संवाद (Communication)', icon: '💬' },
-  { id: 'c08', num: '08', name: 'रिश्ते व संबंध (Relations)', icon: '🤝' },
-  { id: 'c09', num: '09', name: 'हुनर सीखें (Education)', icon: '🎓' },
-  { id: 'c10', num: '10', name: 'मनोरंजन (Entertainment)', icon: '🎭' },
-  { id: 'c11', num: '11', name: 'कार्यक्रम व पास (Events)', icon: '🎟️' },
-  { id: 'c12', num: '12', name: 'परिवार व केयर (Family & Care)', icon: '👨‍👩‍👧' },
-  { id: 'c13', num: '13', name: 'RM CASH लेज़र (Finance)', icon: '💰' },
-  { id: 'c14', num: '14', name: 'ढाबा व भोजन (Food & Drink)', icon: '🍲' },
-  { id: 'c15', num: '15', name: 'स्वस्थ मन व योग (Health & Fitness)', icon: '🧘' },
-  { id: 'c16', num: '16', name: 'घर व मकान (House & Home)', icon: '🏠', hasChildren: true },
-  { id: 'c17', num: '17', name: 'पुस्तकालय (Libraries)', icon: '🏛️' },
-  { id: 'c18', num: '18', name: 'स्वावलंबन (Lifestyle)', icon: '🌱' },
-  { id: 'c19', num: '19', name: 'मार्गदर्शन (Maps & Navigation)', icon: '🗺️' },
-  { id: 'c20', num: '20', name: 'दवाई व क्लिनिक (Medical)', icon: '💊' },
-  { id: 'c21', num: '21', name: 'संगीत (Music & Audio)', icon: '🎵' },
-  { id: 'c22', num: '22', name: 'समाचार (News & Magazines)', icon: '📰' },
-  { id: 'c23', num: '23', name: 'शिशु पोषण (Parenting)', icon: '🍼' },
-  { id: 'c24', num: '24', name: 'थीम्स (Personalization)', icon: '✨' },
-  { id: 'c25', num: '25', name: 'स्कैनर (Photography)', icon: '📷' },
-  { id: 'c26', num: '26', name: 'बिलिंग (Productivity)', icon: '🧾' },
-  { id: 'c27', num: '27', name: '0% किराना स्टोर (Shopping)', icon: '🛒' },
-  { id: 'c28', num: '28', name: 'चौपाल व संवाद (Social)', icon: '🗣️' },
-  { id: 'c29', num: '29', name: 'खेलकूद (Sports Community)', icon: '⚽' },
-  { id: 'c30', num: '30', name: 'कैलकुलेटर (Tools)', icon: '🧮' },
-  { id: 'c31', num: '31', name: 'यात्रा (Travel & Local)', icon: '🧭' },
-  { id: 'c32', num: '32', name: 'वीडियो प्लेयर व संपादन (Video)', icon: '🎬' },
-  { id: 'c33', num: '33', name: 'मौसम पूर्वानुमान (Weather)', icon: '🌤️' }
+  { id: 'c01', num: '01', enName: 'Art & Design', hiName: 'डिज़ाइन व कला', name: 'Art & Design (डिज़ाइन व कला)', icon: '🎨' },
+  { id: 'c02', num: '02', enName: 'Auto & Vehicles', hiName: 'वाहन सेवा', name: 'Auto & Vehicles (वाहन सेवा)', icon: '🚗' },
+  { id: 'c03', num: '03', enName: 'Beauty & Salon', hiName: 'ब्यूटी व सैलून', name: 'Beauty & Salon (ब्यूटी व सैलून)', icon: '✂️' },
+  { id: 'c04', num: '04', enName: 'Books & Reference', hiName: 'किताबें व संदर्भ', name: 'Books & Reference (किताबें व संदर्भ)', icon: '📚' },
+  { id: 'c05', num: '05', enName: 'Business & Khata', hiName: 'सॉवरेन बहीखाता (Business Khata)', name: 'Business & Khata (सॉवरेन बहीखाता)', icon: '💼', action: 'launch' },
+  { id: 'c06', num: '06', enName: 'Comics', hiName: 'कहानियाँ व कॉमिक्स', name: 'Comics (कहानियाँ व कॉमिक्स)', icon: '📖' },
+  { id: 'c07', num: '07', enName: 'Communication', hiName: 'संपर्क व संवाद', name: 'Communication (संपर्क व संवाद)', icon: '💬' },
+  { id: 'c08', num: '08', enName: 'Dating & Relations', hiName: 'रिश्ते व संबंध', name: 'Dating & Relations (रिश्ते व संबंध)', icon: '🤝' },
+  { id: 'c09', num: '09', enName: 'Education & Skills', hiName: 'हुनर सीखें (Education)', name: 'Education & Skills (हुनर सीखें)', icon: '🎓' },
+  { id: 'c10', num: '10', enName: 'Entertainment', hiName: 'मनोरंजन व कला', name: 'Entertainment (मनोरंजन)', icon: '🎭' },
+  { id: 'c11', num: '11', enName: 'Events & Passes', hiName: 'कार्यक्रम व पास', name: 'Events & Passes (कार्यक्रम व पास)', icon: '🎟️' },
+  { id: 'c12', num: '12', enName: 'Family & Care', hiName: 'परिवार व केयर', name: 'Family & Care (परिवार व केयर)', icon: '👨‍👩‍👧' },
+  { id: 'c13', num: '13', enName: 'Finance & Ledger', hiName: 'RM CASH लेज़र (Finance)', name: 'Finance & Ledger (RM CASH लेज़र)', icon: '💰' },
+  { id: 'c14', num: '14', enName: 'Food & Drink', hiName: 'ढाबा व भोजन', name: 'Food & Drink (ढाबा व भोजन)', icon: '🍲' },
+  { id: 'c15', num: '15', enName: 'Health & Fitness', hiName: 'स्वस्थ मन व योग', name: 'Health & Fitness (स्वस्थ मन व योग)', icon: '🧘' },
+  { id: 'c16', num: '16', enName: 'House & Home', hiName: 'घर व मकान', name: 'House & Home (घर व मकान)', icon: '🏠', hasChildren: true },
+  { id: 'c17', num: '17', enName: 'Libraries & Demo', hiName: 'पुस्तकालय (Libraries)', name: 'Libraries & Demo (पुस्तकालय)', icon: '🏛️' },
+  { id: 'c18', num: '18', enName: 'Lifestyle', hiName: 'स्वावलंबन (Lifestyle)', name: 'Lifestyle (स्वावलंबन)', icon: '🌱' },
+  { id: 'c19', num: '19', enName: 'Maps & Navigation', hiName: 'मार्गदर्शन (Maps)', name: 'Maps & Navigation (मार्गदर्शन)', icon: '🗺️' },
+  { id: 'c20', num: '20', enName: 'Medical & Clinic', hiName: 'दवाई व क्लिनिक (Medical)', name: 'Medical & Clinic (दवाई व क्लिनिक)', icon: '💊' },
+  { id: 'c21', num: '21', enName: 'Music & Audio', hiName: 'संगीत (Music & Audio)', name: 'Music & Audio (संगीत)', icon: '🎵' },
+  { id: 'c22', num: '22', enName: 'News & Magazines', hiName: 'समाचार व पत्रिकाएं', name: 'News & Magazines (समाचार)', icon: '📰' },
+  { id: 'c23', num: '23', enName: 'Parenting', hiName: 'शिशु पोषण व परवरिश', name: 'Parenting (शिशु पोषण)', icon: '🍼' },
+  { id: 'c24', num: '24', enName: 'Personalization', hiName: 'थीम्स व सेटिंग्स', name: 'Personalization (थीम्स)', icon: '✨' },
+  { id: 'c25', num: '25', enName: 'Photography', hiName: 'स्कैनर व फोटो', name: 'Photography (स्कैनर)', icon: '📷' },
+  { id: 'c26', num: '26', enName: 'Productivity & Billing', hiName: 'बिलिंग व उत्पादकता', name: 'Productivity (बिलिंग)', icon: '🧾' },
+  { id: 'c27', num: '27', enName: 'Shopping & Kirana', hiName: '0% किराना स्टोर', name: 'Shopping & Kirana (0% किराना)', icon: '🛒' },
+  { id: 'c28', num: '28', enName: 'Social Networking', hiName: 'चौपाल व संवाद (Social)', name: 'Social Networking (चौपाल व संवाद)', icon: '🗣️' },
+  { id: 'c29', num: '29', enName: 'Sports Community', hiName: 'खेलकूद व व्यायाम', name: 'Sports Community (खेलकूद)', icon: '⚽' },
+  { id: 'c30', num: '30', enName: 'Tools & Utilities', hiName: 'कैलकुलेटर व टूल्स', name: 'Tools & Utilities (कैलकुलेटर)', icon: '🧮' },
+  { id: 'c31', num: '31', enName: 'Travel & Local', hiName: 'यात्रा व स्थानीय सेवाएं', name: 'Travel & Local (यात्रा)', icon: '🧭' },
+  { id: 'c32', num: '32', enName: 'Video Players & Editors', hiName: 'वीडियो प्लेयर व संपादन', name: 'Video Players & Editors (वीडियो)', icon: '🎬' },
+  { id: 'c33', num: '33', enName: 'Weather', hiName: 'मौसम पूर्वानुमान', name: 'Weather (मौसम पूर्वानुमान)', icon: '🌤️' }
 ];
 
 const RM_GAMES_DATA = [
-  { id: 'g34', num: '34', name: 'ऐक्शन तीरंदाजी (Action)', icon: '🏹' },
-  { id: 'g35', num: '35', name: 'रोमांचक यात्रा (Adventure)', icon: '🏔️' },
-  { id: 'g36', num: '36', name: 'गेंद टप्पा (Arcade)', icon: '🕹️' },
-  { id: 'g37', num: '37', name: 'देसी लूडो व कैरम (Board)', icon: '🎲' },
-  { id: 'g38', num: '38', name: 'ताश सॉलिटेयर (Card)', icon: '🃏' },
-  { id: 'g39', num: '39', name: 'लकी चक्र (Casino Points)', icon: '🎡' },
-  { id: 'g40', num: '40', name: 'रंगोली क्राफ्ट (Casual)', icon: '🎨' },
-  { id: 'g41', num: '41', name: 'भारत क्विज़ (Educational)', icon: '🇮🇳' },
-  { id: 'g42', num: '42', name: 'तबला व ढोलक ताल (Music)', icon: '🥁' },
-  { id: 'g43', num: '43', name: 'दिमागी पहेलियाँ (Puzzle)', icon: '🧩' },
-  { id: 'g44', num: '44', name: 'बैलगाड़ी रेस (Racing)', icon: '🏁' },
-  { id: 'g45', num: '45', name: 'गाँव का प्रधान (Role Playing)', icon: '👑' },
-  { id: 'g46', num: '46', name: 'खेत सिमुलेटर (Simulation)', icon: '🌾' },
-  { id: 'g47', num: '47', name: 'गली क्रिकेट (Sports)', icon: '🏏' },
-  { id: 'g48', num: '48', name: 'चाणक्य नीति (Strategy)', icon: '♟️' },
-  { id: 'g49', num: '49', name: 'देसी ट्रिविया व तथ्य (Trivia)', icon: '💡' },
-  { id: 'g50', num: '50', name: 'शब्द पहेली व कोश (Word)', icon: '📝' }
+  { id: 'g34', num: '34', enName: 'Action', hiName: 'ऐक्शन तीरंदाजी', name: 'Action (ऐक्शन तीरंदाजी)', icon: '🏹' },
+  { id: 'g35', num: '35', enName: 'Adventure', hiName: 'रोमांचक यात्रा', name: 'Adventure (रोमांचक यात्रा)', icon: '🏔️' },
+  { id: 'g36', num: '36', enName: 'Arcade', hiName: 'गेंद टप्पा आर्केड', name: 'Arcade (गेंद टप्पा)', icon: '🕹️' },
+  { id: 'g37', num: '37', enName: 'Board', hiName: 'देसी लूडो व कैरम', name: 'Board (देसी लूडो व कैरम)', icon: '🎲' },
+  { id: 'g38', num: '38', enName: 'Card', hiName: 'ताश सॉलिटेयर', name: 'Card (ताश सॉलिटेयर)', icon: '🃏' },
+  { id: 'g39', num: '39', enName: 'Casino', hiName: 'लकी चक्र (Casino Points)', name: 'Casino (लकी चक्र)', icon: '🎡' },
+  { id: 'g40', num: '40', enName: 'Casual', hiName: 'रंगोली क्राफ्ट', name: 'Casual (रंगोली क्राफ्ट)', icon: '🎨' },
+  { id: 'g41', num: '41', enName: 'Educational', hiName: 'भारत क्विज़', name: 'Educational (भारत क्विज़)', icon: '🇮🇳' },
+  { id: 'g42', num: '42', enName: 'Music', hiName: 'तबला व ढोलक ताल', name: 'Music (तबला व ढोलक ताल)', icon: '🥁' },
+  { id: 'g43', num: '43', enName: 'Puzzle', hiName: 'दिमागी पहेलियाँ', name: 'Puzzle (दिमागी पहेलियाँ)', icon: '🧩' },
+  { id: 'g44', num: '44', enName: 'Racing', hiName: 'बैलगाड़ी रेस', name: 'Racing (बैलगाड़ी रेस)', icon: '🏁' },
+  { id: 'g45', num: '45', enName: 'Role Playing', hiName: 'गाँव का प्रधान', name: 'Role Playing (गाँव का प्रधान)', icon: '👑' },
+  { id: 'g46', num: '46', enName: 'Simulation', hiName: 'खेत सिमुलेटर', name: 'Simulation (खेत सिमुलेटर)', icon: '🌾' },
+  { id: 'g47', num: '47', enName: 'Sports', hiName: 'गली क्रिकेट', name: 'Sports (गली क्रिकेट)', icon: '🏏' },
+  { id: 'g48', num: '48', enName: 'Strategy', hiName: 'चाणक्य नीति', name: 'Strategy (चाणक्य नीति)', icon: '♟️' },
+  { id: 'g49', num: '49', enName: 'Trivia', hiName: 'देसी ट्रिविया व तथ्य', name: 'Trivia (देसी ट्रिविया)', icon: '💡' },
+  { id: 'g50', num: '50', enName: 'Word', hiName: 'शब्द पहेली व कोश', name: 'Word (शब्द पहेली)', icon: '📝' }
 ];
 
-  const C16_CHILDREN = [
-    { id: '16-1', name: 'मिस्त्री व गृह मरम्मत', icon: '🛠️', badge: 'जल्द उपलब्ध', state: 'upcoming' },
-    { id: '16-2', name: 'किराया बहीखाता (Rental Ledger)', icon: '📋', badge: 'खोलें', state: 'active', action: 'launch' },
-    { id: '16-3', name: 'कमरा व फ्लैट खोज (Rental Search)', icon: '🏠', badge: 'खोलें', state: 'active', action: 'launch' }
-  ];
+const C16_CHILDREN = [
+  { id: '16-1', enName: 'Mistry & Home Repair', hiName: 'मिस्त्री व गृह मरम्मत', name: 'मिस्त्री व गृह मरम्मत', icon: '🛠️', badge: 'जल्द उपलब्ध', state: 'upcoming', action: 'upcoming' },
+  { id: '16-2', enName: 'Rental Ledger', hiName: 'किराया बहीखाता (Rental Ledger)', name: 'किराया बहीखाता (Rental Ledger)', icon: '📋', badge: 'खोलें ›', state: 'active', action: 'launch' },
+  { id: '16-3', enName: 'Room & Flat Search', hiName: 'कमरा व फ्लैट खोज (Rental Search)', name: 'कमरा व फ्लैट खोज (Rental Search)', icon: '🏠', badge: 'खोलें ›', state: 'active', action: 'launch' }
+];
 
+// Helper: LocalStorage Pin Manager
+function getPinnedList() {
+  try {
+    const raw = localStorage.getItem('rm_user_pinned_shortcuts_v1');
+    return raw ? JSON.parse(raw) : [];
+  } catch (_) {
+    return [];
+  }
+}
 
+function isItemPinned(code) {
+  const list = getPinnedList();
+  return list.some(item => item.code === code || item.id === code);
+}
 
+window.togglePinService = function (code, icon, enTitle, hiTitle, event) {
+  if (event) event.stopPropagation();
+  try {
+    let list = getPinnedList();
+    const idx = list.findIndex(item => item.code === code || item.id === code);
+    if (idx !== -1) {
+      list.splice(idx, 1);
+    } else {
+      list.push({ code: code, id: code, icon: icon, enTitle: enTitle, hiTitle: hiTitle, pinnedAt: Date.now() });
+    }
+    localStorage.setItem('rm_user_pinned_shortcuts_v1', JSON.stringify(list));
+    if (window.RM_UserPinnedShortcuts && typeof window.RM_UserPinnedShortcuts.render === 'function') {
+      window.RM_UserPinnedShortcuts.render();
+    }
+    renderCatalogItems();
+  } catch (e) {
+    console.error('Pin toggle failed:', e);
+  }
+};
 
 // ==============================================================================
-// SECTION 2: DOM CARD RENDER ENGINE (2.5D ELEVATION & CONTRAST)
+// SECTION 2: DOM CARD RENDER ENGINE (BILINGUAL 2-TIER & 108PX SUB-CARDS)
 // ==============================================================================
 
 function renderCatalogItems() {
   const t1 = document.getElementById('tier1-list');
   const t2 = document.getElementById('tier2-list');
 
-  if (t1 && (!t1.dataset.rendered || t1.innerHTML.includes('कैटलॉग लोड'))) {
+  if (t1) {
     t1.innerHTML = RM_SERVICES_DATA.map(item => `
-      <div data-cat-id="${item.id}" class="rounded-xl bg-slate-900/90 border border-slate-800 transition-all overflow-hidden mb-2 shadow-md">
-        <div onclick="handleCategoryClick('${item.id}', this)" class="flex items-center justify-between p-3 cursor-pointer hover:border-emerald-500/50 active:scale-[0.98] transition-transform">
-          <div class="flex items-center space-x-2.5">
-            <span class="text-[10px] font-mono font-bold bg-amber-950/60 text-amber-400 border border-amber-800/40 px-1.5 py-0.5 rounded">${item.num}.</span>
-            <span class="text-lg">${item.icon}</span>
-            <span class="text-xs font-bold text-slate-200">${item.name}</span>
+      <div data-cat-id="${item.id}" class="w-full rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 transition-all overflow-hidden mb-2 shadow-md relative">
+        <div onclick="handleCategoryClick('${item.id}', this)" class="flex items-center justify-between p-3 cursor-pointer active:scale-[0.99] transition-transform min-h-[64px]">
+          <div class="flex items-center space-x-3 min-w-0 pr-2">
+            <span class="text-[10px] font-mono font-bold bg-amber-950/70 text-amber-400 border border-amber-800/50 px-2 py-0.5 rounded shrink-0">${item.num}.</span>
+            <span class="text-xl shrink-0">${item.icon}</span>
+            <div class="flex flex-col min-w-0 text-left">
+              <span class="text-sm font-bold text-slate-100 tracking-wide truncate leading-tight">${item.enName}</span>
+              <span class="text-[11.5px] font-medium text-slate-400 truncate leading-tight mt-0.5">${item.hiName}</span>
+            </div>
           </div>
-          <div class="flex items-center space-x-1.5">
-            ${item.hasChildren ? '<span class="text-[10px] text-emerald-400 font-bold bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800/40">3 सेवाएं</span>' : ''}
-            <span class="text-xs text-slate-400 font-bold">${item.hasChildren ? '▼' : 'खोलें ›'}</span>
+          <div class="flex items-center space-x-2 shrink-0">
+            ${item.hasChildren ? '<span class="text-[10px] text-emerald-400 font-bold bg-emerald-950/80 px-2.5 py-1 rounded-full border border-emerald-800/50 whitespace-nowrap">3 सेवाएं</span>' : ''}
+            <button type="button" class="shrink-0 bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700/80 px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap min-w-[68px] text-center ml-1 cursor-pointer shadow-sm flex items-center justify-center">
+              ${item.hasChildren ? '<span class="acc-arrow font-mono text-xs">▼</span>' : 'खोलें ›'}
+            </button>
           </div>
         </div>
         ${item.id === 'c16' ? `
-          <div id="sub-c16" class="rm-subcategory-list p-2 pt-0 space-y-1.5 border-t border-slate-800/60 bg-slate-950/60 block">
-            ${C16_CHILDREN.map(ch => `
-              <div onclick="handleLaunchCategory('c16', '${ch.id}')" class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-emerald-500/60 cursor-pointer active:scale-[0.98] transition-transform">
-                <div class="flex items-center space-x-2">
-                  <span>${ch.icon}</span>
-                  <span class="text-xs text-slate-300 font-medium">${ch.name}</span>
+          <div id="sub-c16" class="p-2.5 pt-0 space-y-2.5 bg-slate-950/50 block">
+            ${C16_CHILDREN.map(ch => {
+              const isPinned = isItemPinned(ch.id);
+              const pinBtn = isPinned 
+                ? `<button type="button" onclick="togglePinService('${ch.id}', '${ch.icon}', '${ch.enName}', '${ch.hiName}', event)" class="bg-cyan-950/90 border border-cyan-500/60 text-cyan-300 px-3 py-1 rounded-full text-[11px] font-bold flex items-center space-x-1 cursor-pointer"><span>📌</span><span>पिन है</span></button>`
+                : `<button type="button" onclick="togglePinService('${ch.id}', '${ch.icon}', '${ch.enName}', '${ch.hiName}', event)" class="bg-slate-800/90 border border-slate-700 text-slate-300 hover:text-white px-3 py-1 rounded-full text-[11px] font-medium flex items-center space-x-1 cursor-pointer"><span>📌</span><span>पिन करें</span></button>`;
+              
+              const actBtn = ch.action === 'launch'
+                ? `<button type="button" onclick="handleLaunchCategory('c16', '${ch.id}')" class="bg-emerald-950/90 border border-emerald-600/60 text-emerald-300 hover:bg-emerald-900/90 px-3.5 py-1 rounded-full text-[11px] font-bold whitespace-nowrap cursor-pointer">खोलें ›</button>`
+                : `<span class="bg-slate-800/80 border border-slate-700/60 text-slate-400 px-3 py-1 rounded-full text-[11px] font-medium whitespace-nowrap">जल्द उपलब्ध</span>`;
+
+              return `
+                <div class="sivme-subcat-card w-full bg-[#0d1424] border border-slate-800/90 rounded-xl overflow-hidden shadow-md flex flex-col justify-between" style="min-height: 104px;">
+                  <!-- 75% Top Info Area -->
+                  <div class="p-3 pb-2 flex items-center justify-between relative">
+                    <div class="flex items-center space-x-3 min-w-0 pr-2">
+                      <span class="text-[10px] font-mono font-bold text-cyan-300 bg-cyan-950/80 border border-cyan-800/60 px-2 py-0.5 rounded-md shrink-0">[${ch.id}]</span>
+                      <span class="text-xl shrink-0">${ch.icon}</span>
+                      <div class="flex flex-col min-w-0 text-left">
+                        <span class="text-[13.5px] font-bold text-slate-100 tracking-wide truncate leading-tight">${ch.enName}</span>
+                        <span class="text-[11px] font-medium text-slate-400 truncate leading-tight mt-0.5">${ch.hiName}</span>
+                      </div>
+                    </div>
+                    <span class="sivme-inline-badge shrink-0 text-[9.5px] font-bold px-2 py-0.5 rounded bg-emerald-950/90 text-emerald-300 border border-emerald-700/60 leading-none">👁️Live</span>
+                  </div>
+                  <!-- 25% Bottom Action Strip -->
+                  <div class="px-3 py-2 bg-slate-950/70 border-t border-slate-800/60 flex items-center justify-between">
+                    ${pinBtn}
+                    ${actBtn}
+                  </div>
                 </div>
-                <span class="text-[10px] font-bold px-2 py-0.5 rounded ${ch.action === 'launch' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-slate-800 text-slate-400'}">${ch.badge}</span>
-              </div>
-            `).join('')}
+              `;
+            }).join('')}
           </div>
         ` : ''}
       </div>
@@ -115,15 +174,18 @@ function renderCatalogItems() {
     t1.dataset.rendered = 'true';
   }
 
-  if (t2 && (!t2.dataset.rendered || t2.innerHTML.includes('गेम्स लोड'))) {
+  if (t2) {
     t2.innerHTML = RM_GAMES_DATA.map(item => `
-      <div data-cat-id="${item.id}" class="flex items-center justify-between p-3 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 active:scale-[0.98] transition-transform cursor-pointer mb-2 shadow-md" onclick="alert('${item.name} गेम जल्द शुरू होगा')">
-        <div class="flex items-center space-x-2.5">
-          <span class="text-[10px] font-mono font-bold bg-cyan-950/60 text-cyan-400 border border-cyan-800/40 px-1.5 py-0.5 rounded">${item.num}.</span>
-          <span class="text-lg">${item.icon}</span>
-          <span class="text-xs font-bold text-slate-200">${item.name}</span>
+      <div data-cat-id="${item.id}" class="w-full rounded-xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 active:scale-[0.99] transition-transform cursor-pointer mb-2 shadow-md flex items-center justify-between p-3 min-h-[64px]" onclick="alert('${item.enName} (${item.hiName}) गेम जल्द शुरू होगा')">
+        <div class="flex items-center space-x-3 min-w-0 pr-2">
+          <span class="text-[10px] font-mono font-bold bg-cyan-950/70 text-cyan-400 border border-cyan-800/50 px-2 py-0.5 rounded shrink-0">${item.num}.</span>
+          <span class="text-xl shrink-0">${item.icon}</span>
+          <div class="flex flex-col min-w-0 text-left">
+            <span class="text-sm font-bold text-slate-100 tracking-wide truncate leading-tight">${item.enName}</span>
+            <span class="text-[11.5px] font-medium text-slate-400 truncate leading-tight mt-0.5">${item.hiName}</span>
+          </div>
         </div>
-        <span class="text-xs text-cyan-400 font-semibold px-2 py-1 bg-cyan-950/60 rounded-lg border border-cyan-800/40">खेलें ›</span>
+        <span class="shrink-0 text-xs text-cyan-400 font-bold px-3.5 py-1.5 bg-cyan-950/70 rounded-full border border-cyan-800/50 whitespace-nowrap">खेलें ›</span>
       </div>
     `).join('');
     t2.dataset.rendered = 'true';
@@ -131,7 +193,6 @@ function renderCatalogItems() {
 
   syncCategoryVisibilityFromOwner();
 }
-
 
 // ==============================================================================
 // SECTION 3: OWNER CONSOLE VISIBILITY SYNC (SURFACE PARITY)
@@ -191,7 +252,6 @@ function syncCategoryVisibilityFromOwner() {
   }
 }
 
-
 // ==============================================================================
 // SECTION 4: NAVIGATION, MODULE MOUNTING & CONTAINER RECOVERY
 // ==============================================================================
@@ -199,9 +259,11 @@ function syncCategoryVisibilityFromOwner() {
 function handleCategoryClick(catId, el) {
   if (catId === 'c16') {
     const sub = document.getElementById('sub-c16');
+    const arrow = el ? el.querySelector('.acc-arrow') : null;
     if (sub) {
-      const isHidden = sub.style.display === 'none';
+      const isHidden = sub.style.display === 'none' || sub.classList.contains('hidden');
       sub.style.display = isHidden ? 'block' : 'none';
+      if (arrow) arrow.textContent = isHidden ? '▲' : '▼';
     }
   } else if (catId === 'c05') {
     handleLaunchCategory('c05', '05-1');
@@ -217,7 +279,7 @@ function handleLaunchCategory(catId, subId) {
 
   if (catId === 'c16' && (subId === '16-2' || !subId)) {
     if (typeof openFullscreenModule === 'function') {
-      openFullscreenModule('🏠 16-2. किराया बहीखाता (Rental Ledger)');
+      openFullscreenModule('🏠 16-2. Rental Ledger (किराया बहीखाता)');
     }
 
     if (window.RM_Cat16_Sub2_RentalLedger && typeof window.RM_Cat16_Sub2_RentalLedger.mount === 'function') {
@@ -244,7 +306,7 @@ function handleLaunchCategory(catId, subId) {
     }
   } else if (catId === 'c16' && subId === '16-3') {
     if (typeof openFullscreenModule === 'function') {
-      openFullscreenModule('🏠 16-3. कमरा व फ्लैट खोज (Rental Search)');
+      openFullscreenModule('🏠 16-3. Room & Flat Search (कमरा व फ्लैट खोज)');
     }
 
     if (window.RM_Cat16_Sub3_RentalSearch && typeof window.RM_Cat16_Sub3_RentalSearch.mount === 'function') {
