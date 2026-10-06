@@ -1,8 +1,12 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
  * MODULE        : Dedicated SIVME Stylesheet (Fullscreen Modals, Badges, Dock & Cards)
+ * VERSION       : v2.5 - 100% ZEL Preserved + Header Collision Fix + Pinned Ready
  * GOVERNANCE    : GATE-23.5 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
+ * DUAL-FOLDER REFS:
+ *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
+ *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
  */
 
 /* Hidden Utility States */
@@ -13,7 +17,7 @@
 }
 
 /* =========================================================
-   FULLSCREEN NATIVE MODALS (Eliminates Bottom Void & Truncation)
+   1. FULLSCREEN NATIVE MODALS (Eliminates Bottom Void & Truncation)
    ========================================================= */
 #categoryModal:not(.hidden):not([style*="display: none"]):not([style*="display:none"]),
 #rentalLedgerModal:not(.hidden):not([style*="display: none"]):not([style*="display:none"]),
@@ -91,12 +95,15 @@
   padding-top: 22px !important;
 }
 
-/* Master Category Cards Layout */
+/* =========================================================
+   2. MASTER CATEGORY CARDS LAYOUT & SPACING
+   ========================================================= */
 #categoryModal [data-cat-id],
 #categoryModal .sivme-catalog-card {
   overflow: visible !important;
   position: relative !important;
-  margin-bottom: 24px !important;
+  margin-top: 6px !important;
+  margin-bottom: 20px !important;
 }
 
 #categoryModal [data-cat-id="c16"] {
@@ -160,6 +167,27 @@
   gap: 3px !important;
 }
 
+/* =========================================================
+   3. SECTION ACCORDION HEADERS (GAP COLLISION FIX)
+   ========================================================= */
+.sivme-catalog-section-header,
+#categoryModal div[onclick*="toggle"],
+#categoryModal button[onclick*="toggle"],
+#categoryModal [onclick*="toggleSection"],
+#categoryModal [id*="header-section"],
+#categoryModal .cursor-pointer[class*="border-cyan"],
+#categoryModal .cursor-pointer[class*="border-emerald"],
+#categoryModal .cursor-pointer[class*="bg-slate"] {
+  margin-top: 28px !important;
+  margin-bottom: 18px !important;
+  position: relative !important;
+  z-index: 10 !important;
+  clear: both !important;
+}
+
+/* =========================================================
+   4. SIVME BADGES & GHOST STATES
+   ========================================================= */
 .sivme-badge-anchor {
   position: relative !important;
   isolation: isolate !important;
@@ -202,6 +230,19 @@
   pointer-events: auto !important;
 }
 
+.sivme-badge-live {
+  background: #064e3b !important;
+  color: #6ee7b7 !important;
+  border: 1.5px solid #10b981 !important;
+}
+
+.sivme-badge-dormant {
+  background: #7f1d1d !important;
+  color: #fca5a5 !important;
+  border: 1.5px solid #ef4444 !important;
+}
+
+/* Specific Atomic Element Positioning */
 .sivme-search-container {
   position: relative !important;
   overflow: visible !important;
@@ -247,18 +288,7 @@
   padding: 2px 7px !important;
 }
 
-.sivme-badge-live {
-  background: #064e3b !important;
-  color: #6ee7b7 !important;
-  border: 1.5px solid #10b981 !important;
-}
-
-.sivme-badge-dormant {
-  background: #7f1d1d !important;
-  color: #fca5a5 !important;
-  border: 1.5px solid #ef4444 !important;
-}
-
+/* Category 16 Sub-Cards */
 #sub-c16 > div {
   min-height: 60px !important;
   padding: 18px 14px 12px 14px !important;
@@ -273,13 +303,9 @@
   cursor: pointer !important;
 }
 
-.sivme-catalog-section-header {
-  margin-top: 30px !important;
-  margin-bottom: 24px !important;
-  position: relative !important;
-  z-index: 10 !important;
-}
-
+/* =========================================================
+   5. FLOATING HUD DOCK
+   ========================================================= */
 #sivmeFloatingDock {
   position: fixed;
   bottom: 18px;
@@ -297,4 +323,26 @@
   box-shadow: 0 10px 30px rgba(0,0,0,0.9);
   font-family: ui-monospace, monospace;
   max-width: 96vw;
+}
+
+/* =========================================================
+   6. USER PINNED SHORTCUTS & NEON DIVIDER (Ready for Step 2)
+   ========================================================= */
+.rm-pinned-divider {
+  height: 1.5px !important;
+  background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.7), transparent) !important;
+  margin: 20px 0 16px 0 !important;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.4) !important;
+}
+
+.rm-pinned-header {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  color: #38bdf8 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  margin-bottom: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
 }
