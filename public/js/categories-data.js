@@ -1,7 +1,7 @@
 /**
  * RISE MITRA — MODULAR CATALOG RUNTIME & DATA REGISTRY ENGINE
  * SPECIFICATION : FOLDER A (SSOT: 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) | 14_04__EXT_004
- * GOVERNANCE    : PLAY STORE CANONICAL BILINGUAL STANDARD | GATE-16.7 | ZERO-ELEMENT-LOSS (ZEL)
+ * GOVERNANCE    : 75:25 RATIO | FULL-WIDTH BILINGUAL (NO TRUNCATION) | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/categories-data.js
  */
 
@@ -28,7 +28,7 @@ const RM_SERVICES_DATA = [
   { id: 'c16', num: '16', enName: 'House & Home', hiName: 'घर व मकान', name: 'House & Home (घर व मकान)', icon: '🏠', hasChildren: true },
   { id: 'c17', num: '17', enName: 'Libraries & Demo', hiName: 'पुस्तकालय (Libraries)', name: 'Libraries & Demo (पुस्तकालय)', icon: '🏛️' },
   { id: 'c18', num: '18', enName: 'Lifestyle', hiName: 'स्वावलंबन (Lifestyle)', name: 'Lifestyle (स्वावलंबन)', icon: '🌱' },
-  { id: 'c19', num: '19', enName: 'Maps & Navigation', hiName: 'मार्गदर्शन (Maps)', name: 'Maps & Navigation (मार्गदर्शन)', icon: '🗺️' },
+  { id: 'c19', num: '19', enName: 'Maps & Navigation', hiName: 'मार्गदर्शन (Maps & Navigation)', name: 'Maps & Navigation (मार्गदर्शन)', icon: '🗺️' },
   { id: 'c20', num: '20', enName: 'Medical & Clinic', hiName: 'दवाई व क्लिनिक (Medical)', name: 'Medical & Clinic (दवाई व क्लिनिक)', icon: '💊' },
   { id: 'c21', num: '21', enName: 'Music & Audio', hiName: 'संगीत (Music & Audio)', name: 'Music & Audio (संगीत)', icon: '🎵' },
   { id: 'c22', num: '22', enName: 'News & Magazines', hiName: 'समाचार व पत्रिकाएं', name: 'News & Magazines (समाचार)', icon: '📰' },
@@ -66,9 +66,9 @@ const RM_GAMES_DATA = [
 ];
 
 const C16_CHILDREN = [
-  { id: '16-1', enName: 'Mistry & Home Repair', hiName: 'मिस्त्री व गृह मरम्मत', name: 'मिस्त्री व गृह मरम्मत', icon: '🛠️', badge: 'जल्द उपलब्ध', state: 'upcoming', action: 'upcoming' },
-  { id: '16-2', enName: 'Rental Ledger', hiName: 'किराया बहीखाता (Rental Ledger)', name: 'किराया बहीखाता (Rental Ledger)', icon: '📋', badge: 'खोलें ›', state: 'active', action: 'launch' },
-  { id: '16-3', enName: 'Room & Flat Search', hiName: 'कमरा व फ्लैट खोज (Rental Search)', name: 'कमरा व फ्लैट खोज (Rental Search)', icon: '🏠', badge: 'खोलें ›', state: 'active', action: 'launch' }
+  { id: '16-1', enName: 'Mistry & Home Repair', hiName: 'मिस्त्री व गृह मरम्मत', icon: '🛠️', badge: 'जल्द उपलब्ध', state: 'upcoming', action: 'upcoming' },
+  { id: '16-2', enName: 'Rental Ledger', hiName: 'किराया बहीखाता (Rental Ledger)', icon: '📋', badge: 'खोलें ›', state: 'active', action: 'launch' },
+  { id: '16-3', enName: 'Room & Flat Search', hiName: 'कमरा व फ्लैट खोज (Rental Search)', icon: '🏠', badge: 'खोलें ›', state: 'active', action: 'launch' }
 ];
 
 // Helper: LocalStorage Pin Manager
@@ -107,7 +107,7 @@ window.togglePinService = function (code, icon, enTitle, hiTitle, event) {
 };
 
 // ==============================================================================
-// SECTION 2: DOM CARD RENDER ENGINE (BILINGUAL 2-TIER & 108PX SUB-CARDS)
+// SECTION 2: DOM CARD RENDER ENGINE (75:25 RATIO & FULL-WIDTH TYPOGRAPHY)
 // ==============================================================================
 
 function renderCatalogItems() {
@@ -118,49 +118,55 @@ function renderCatalogItems() {
     t1.innerHTML = RM_SERVICES_DATA.map(item => `
       <div data-cat-id="${item.id}" class="w-full rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 transition-all overflow-hidden mb-2 shadow-md relative">
         <div onclick="handleCategoryClick('${item.id}', this)" class="flex items-center justify-between p-3 cursor-pointer active:scale-[0.99] transition-transform min-h-[64px]">
-          <div class="flex items-center space-x-3 min-w-0 pr-2">
-            <span class="text-[10px] font-mono font-bold bg-amber-950/70 text-amber-400 border border-amber-800/50 px-2 py-0.5 rounded shrink-0">${item.num}.</span>
-            <span class="text-xl shrink-0">${item.icon}</span>
-            <div class="flex flex-col min-w-0 text-left">
-              <span class="text-sm font-bold text-slate-100 tracking-wide truncate leading-tight">${item.enName}</span>
-              <span class="text-[11.5px] font-medium text-slate-400 truncate leading-tight mt-0.5">${item.hiName}</span>
+          <div class="flex items-center space-x-2.5 min-w-0 flex-1 pr-2">
+            <span class="text-[10px] font-mono font-bold bg-amber-950/70 text-amber-400 border border-amber-800/50 px-1.5 py-0.5 rounded shrink-0">${item.num}.</span>
+            <span class="text-xl shrink-0 leading-none">${item.icon}</span>
+            <div class="flex flex-col min-w-0 text-left flex-1">
+              <span class="text-[13.5px] font-bold text-slate-100 tracking-wide leading-tight break-normal">${item.enName}</span>
+              <span class="text-[11.5px] font-medium text-slate-400 leading-tight mt-0.5 break-normal">${item.hiName}</span>
             </div>
           </div>
-          <div class="flex items-center space-x-2 shrink-0">
-            ${item.hasChildren ? '<span class="text-[10px] text-emerald-400 font-bold bg-emerald-950/80 px-2.5 py-1 rounded-full border border-emerald-800/50 whitespace-nowrap">3 सेवाएं</span>' : ''}
-            <button type="button" class="shrink-0 bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700/80 px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap min-w-[68px] text-center ml-1 cursor-pointer shadow-sm flex items-center justify-center">
-              ${item.hasChildren ? '<span class="acc-arrow font-mono text-xs">▼</span>' : 'खोलें ›'}
-            </button>
+          <div class="flex items-center space-x-1.5 shrink-0">
+            ${item.hasChildren ? `
+              <span class="text-[10px] text-emerald-400 font-bold bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-800/50 whitespace-nowrap">3 सेवाएं</span>
+              <span class="acc-arrow text-slate-300 text-xs font-mono font-bold bg-slate-800/90 border border-slate-700/80 w-6 h-6 rounded-full flex items-center justify-center">▼</span>
+            ` : `
+              <button type="button" class="bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700/80 px-3 py-1 rounded-full text-[11px] font-bold whitespace-nowrap cursor-pointer shadow-sm">
+                खोलें ›
+              </button>
+            `}
           </div>
         </div>
         ${item.id === 'c16' ? `
-          <div id="sub-c16" class="p-2.5 pt-0 space-y-2.5 bg-slate-950/50 block">
+          <div id="sub-c16" class="p-2 pt-0 space-y-2.5 bg-slate-950/50 block">
             ${C16_CHILDREN.map(ch => {
               const isPinned = isItemPinned(ch.id);
               const pinBtn = isPinned 
-                ? `<button type="button" onclick="togglePinService('${ch.id}', '${ch.icon}', '${ch.enName}', '${ch.hiName}', event)" class="bg-cyan-950/90 border border-cyan-500/60 text-cyan-300 px-3 py-1 rounded-full text-[11px] font-bold flex items-center space-x-1 cursor-pointer"><span>📌</span><span>पिन है</span></button>`
-                : `<button type="button" onclick="togglePinService('${ch.id}', '${ch.icon}', '${ch.enName}', '${ch.hiName}', event)" class="bg-slate-800/90 border border-slate-700 text-slate-300 hover:text-white px-3 py-1 rounded-full text-[11px] font-medium flex items-center space-x-1 cursor-pointer"><span>📌</span><span>पिन करें</span></button>`;
+                ? `<button type="button" onclick="togglePinService('${ch.id}', '${ch.icon}', '${ch.enName}', '${ch.hiName}', event)" class="bg-cyan-950/90 border border-cyan-500/60 text-cyan-300 px-2.5 py-0.5 rounded-full text-[10px] font-bold flex items-center space-x-1 cursor-pointer"><span>📌</span><span>पिन है</span></button>`
+                : `<button type="button" onclick="togglePinService('${ch.id}', '${ch.icon}', '${ch.enName}', '${ch.hiName}', event)" class="bg-slate-800/90 border border-slate-700 text-slate-300 hover:text-white px-2.5 py-0.5 rounded-full text-[10px] font-medium flex items-center space-x-1 cursor-pointer"><span>📌</span><span>पिन करें</span></button>`;
               
               const actBtn = ch.action === 'launch'
-                ? `<button type="button" onclick="handleLaunchCategory('c16', '${ch.id}')" class="bg-emerald-950/90 border border-emerald-600/60 text-emerald-300 hover:bg-emerald-900/90 px-3.5 py-1 rounded-full text-[11px] font-bold whitespace-nowrap cursor-pointer">खोलें ›</button>`
-                : `<span class="bg-slate-800/80 border border-slate-700/60 text-slate-400 px-3 py-1 rounded-full text-[11px] font-medium whitespace-nowrap">जल्द उपलब्ध</span>`;
+                ? `<button type="button" onclick="handleLaunchCategory('c16', '${ch.id}')" class="bg-emerald-950/90 border border-emerald-600/60 text-emerald-300 hover:bg-emerald-900/90 px-3 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap cursor-pointer">खोलें ›</button>`
+                : `<span class="bg-slate-800/80 border border-slate-700/60 text-slate-400 px-2.5 py-0.5 rounded-full text-[10px] font-medium whitespace-nowrap">जल्द उपलब्ध</span>`;
 
               return `
-                <div class="sivme-subcat-card w-full bg-[#0d1424] border border-slate-800/90 rounded-xl overflow-hidden shadow-md flex flex-col justify-between" style="min-height: 104px;">
-                  <!-- 75% Top Info Area -->
-                  <div class="p-3 pb-2 flex items-center justify-between relative">
-                    <div class="flex items-center space-x-3 min-w-0 pr-2">
-                      <span class="text-[10px] font-mono font-bold text-cyan-300 bg-cyan-950/80 border border-cyan-800/60 px-2 py-0.5 rounded-md shrink-0">[${ch.id}]</span>
-                      <span class="text-xl shrink-0">${ch.icon}</span>
-                      <div class="flex flex-col min-w-0 text-left">
-                        <span class="text-[13.5px] font-bold text-slate-100 tracking-wide truncate leading-tight">${ch.enName}</span>
-                        <span class="text-[11px] font-medium text-slate-400 truncate leading-tight mt-0.5">${ch.hiName}</span>
+                <div class="sivme-subcat-card w-full bg-[#0d1424] border border-slate-800/90 rounded-xl overflow-hidden shadow-md flex flex-col justify-between" style="min-height: 110px;">
+                  <!-- 75% BILINGUAL CONTENT ZONE (Full Width Typography) -->
+                  <div class="p-3 pb-2 flex-1 flex flex-col justify-between relative bg-gradient-to-b from-[#111a30]/80 to-[#0d1424]">
+                    <div class="flex items-center justify-between mb-1">
+                      <div class="flex items-center space-x-2">
+                        <span class="text-[10px] font-mono font-bold text-cyan-300 bg-cyan-950/90 border border-cyan-800/70 px-2 py-0.5 rounded leading-none">[${ch.id}]</span>
+                        <span class="text-lg leading-none">${ch.icon}</span>
                       </div>
+                      <span class="sivme-inline-badge text-[9px] font-bold px-2 py-0.5 rounded bg-emerald-950/90 text-emerald-300 border border-emerald-700/60 leading-none">👁️Live</span>
                     </div>
-                    <span class="sivme-inline-badge shrink-0 text-[9.5px] font-bold px-2 py-0.5 rounded bg-emerald-950/90 text-emerald-300 border border-emerald-700/60 leading-none">👁️Live</span>
+                    <div class="flex flex-col text-left w-full mt-0.5">
+                      <span class="text-[13.5px] font-bold text-slate-100 tracking-wide leading-tight break-normal">${ch.enName}</span>
+                      <span class="text-[11.5px] font-medium text-slate-400 leading-tight mt-0.5 break-normal">${ch.hiName}</span>
+                    </div>
                   </div>
-                  <!-- 25% Bottom Action Strip -->
-                  <div class="px-3 py-2 bg-slate-950/70 border-t border-slate-800/60 flex items-center justify-between">
+                  <!-- 25% ACTION STRIP ZONE (Slim 28px Strip) -->
+                  <div class="px-3 py-1.5 bg-slate-950/90 border-t border-slate-800/70 flex items-center justify-between min-h-[28px]">
                     ${pinBtn}
                     ${actBtn}
                   </div>
@@ -177,15 +183,15 @@ function renderCatalogItems() {
   if (t2) {
     t2.innerHTML = RM_GAMES_DATA.map(item => `
       <div data-cat-id="${item.id}" class="w-full rounded-xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 active:scale-[0.99] transition-transform cursor-pointer mb-2 shadow-md flex items-center justify-between p-3 min-h-[64px]" onclick="alert('${item.enName} (${item.hiName}) गेम जल्द शुरू होगा')">
-        <div class="flex items-center space-x-3 min-w-0 pr-2">
-          <span class="text-[10px] font-mono font-bold bg-cyan-950/70 text-cyan-400 border border-cyan-800/50 px-2 py-0.5 rounded shrink-0">${item.num}.</span>
-          <span class="text-xl shrink-0">${item.icon}</span>
-          <div class="flex flex-col min-w-0 text-left">
-            <span class="text-sm font-bold text-slate-100 tracking-wide truncate leading-tight">${item.enName}</span>
-            <span class="text-[11.5px] font-medium text-slate-400 truncate leading-tight mt-0.5">${item.hiName}</span>
+        <div class="flex items-center space-x-2.5 min-w-0 flex-1 pr-2">
+          <span class="text-[10px] font-mono font-bold bg-cyan-950/70 text-cyan-400 border border-cyan-800/50 px-1.5 py-0.5 rounded shrink-0">${item.num}.</span>
+          <span class="text-xl shrink-0 leading-none">${item.icon}</span>
+          <div class="flex flex-col min-w-0 text-left flex-1">
+            <span class="text-[13.5px] font-bold text-slate-100 tracking-wide leading-tight break-normal">${item.enName}</span>
+            <span class="text-[11.5px] font-medium text-slate-400 leading-tight mt-0.5 break-normal">${item.hiName}</span>
           </div>
         </div>
-        <span class="shrink-0 text-xs text-cyan-400 font-bold px-3.5 py-1.5 bg-cyan-950/70 rounded-full border border-cyan-800/50 whitespace-nowrap">खेलें ›</span>
+        <span class="shrink-0 text-xs text-cyan-400 font-bold px-3 py-1 bg-cyan-950/70 rounded-full border border-cyan-800/50 whitespace-nowrap">खेलें ›</span>
       </div>
     `).join('');
     t2.dataset.rendered = 'true';
