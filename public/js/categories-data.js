@@ -1,77 +1,430 @@
 /**
- * RISE MITRA — MODULAR CATALOG RUNTIME & DATA REGISTRY ENGINE
- * SPECIFICATION : FOLDER A (SSOT: 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) | 14_04__EXT_004
- * GOVERNANCE    : 75:25 RATIO | 3-PILL ACTION STRIP (PIN + VIDEO + OPEN) | ZERO-ELEMENT-LOSS (ZEL)
+ * RISE MITRA — UNIVERSAL 50-CATEGORY & 150 SUB-SERVICES RUNTIME ENGINE
+ * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
+ * GOVERNANCE    : GATE-23.5 | 75:25 RATIO | 3-PILL ACTION STRIP | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/categories-data.js
+ * DUAL-FOLDER REFERENCES:
+ *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
+ *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
  */
 
 // ==============================================================================
-// SECTION 1: CANONICAL 50-CATEGORY DATA REGISTRY (PLAY STORE SSOT)
+// SECTION 1: 50 CANONICAL CATEGORIES WITH 150 AI-PROOF SUB-SERVICES REGISTRY
 // ==============================================================================
 
 const RM_SERVICES_DATA = [
-  { id: 'c01', num: '01', enName: 'Art & Design', hiName: 'डिज़ाइन व कला', name: 'Art & Design (डिज़ाइन व कला)', icon: '🎨' },
-  { id: 'c02', num: '02', enName: 'Auto & Vehicles', hiName: 'वाहन सेवा', name: 'Auto & Vehicles (वाहन सेवा)', icon: '🚗' },
-  { id: 'c03', num: '03', enName: 'Beauty & Salon', hiName: 'ब्यूटी व सैलून', name: 'Beauty & Salon (ब्यूटी व सैलून)', icon: '✂️' },
-  { id: 'c04', num: '04', enName: 'Books & Reference', hiName: 'किताबें व संदर्भ', name: 'Books & Reference (किताबें व संदर्भ)', icon: '📚' },
-  { id: 'c05', num: '05', enName: 'Business & Khata', hiName: 'सॉवरेन बहीखाता (Business Khata)', name: 'Business & Khata (सॉवरेन बहीखाता)', icon: '💼', action: 'launch' },
-  { id: 'c06', num: '06', enName: 'Comics', hiName: 'कहानियाँ व कॉमिक्स', name: 'Comics (कहानियाँ व कॉमिक्स)', icon: '📖' },
-  { id: 'c07', num: '07', enName: 'Communication', hiName: 'संपर्क व संवाद', name: 'Communication (संपर्क व संवाद)', icon: '💬' },
-  { id: 'c08', num: '08', enName: 'Dating & Relations', hiName: 'रिश्ते व संबंध', name: 'Dating & Relations (रिश्ते व संबंध)', icon: '🤝' },
-  { id: 'c09', num: '09', enName: 'Education & Skills', hiName: 'हुनर सीखें (Education)', name: 'Education & Skills (हुनर सीखें)', icon: '🎓' },
-  { id: 'c10', num: '10', enName: 'Entertainment', hiName: 'मनोरंजन व कला', name: 'Entertainment (मनोरंजन)', icon: '🎭' },
-  { id: 'c11', num: '11', enName: 'Events & Passes', hiName: 'कार्यक्रम व पास', name: 'Events & Passes (कार्यक्रम व पास)', icon: '🎟️' },
-  { id: 'c12', num: '12', enName: 'Family & Care', hiName: 'परिवार व केयर', name: 'Family & Care (परिवार व केयर)', icon: '👨‍👩‍👧' },
-  { id: 'c13', num: '13', enName: 'Finance & Ledger', hiName: 'RM CASH लेज़र (Finance)', name: 'Finance & Ledger (RM CASH लेज़र)', icon: '💰' },
-  { id: 'c14', num: '14', enName: 'Food & Drink', hiName: 'ढाबा व भोजन', name: 'Food & Drink (ढाबा व भोजन)', icon: '🍲' },
-  { id: 'c15', num: '15', enName: 'Health & Fitness', hiName: 'स्वस्थ मन व योग', name: 'Health & Fitness (स्वस्थ मन व योग)', icon: '🧘' },
-  { id: 'c16', num: '16', enName: 'House & Home', hiName: 'घर व मकान', name: 'House & Home (घर व मकान)', icon: '🏠', hasChildren: true },
-  { id: 'c17', num: '17', enName: 'Libraries & Demo', hiName: 'पुस्तकालय (Libraries)', name: 'Libraries & Demo (पुस्तकालय)', icon: '🏛️' },
-  { id: 'c18', num: '18', enName: 'Lifestyle', hiName: 'स्वावलंबन (Lifestyle)', name: 'Lifestyle (स्वावलंबन)', icon: '🌱' },
-  { id: 'c19', num: '19', enName: 'Maps & Navigation', hiName: 'मार्गदर्शन (Maps & Navigation)', name: 'Maps & Navigation (मार्गदर्शन)', icon: '🗺️' },
-  { id: 'c20', num: '20', enName: 'Medical & Clinic', hiName: 'दवाई व क्लिनिक (Medical)', name: 'Medical & Clinic (दवाई व क्लिनिक)', icon: '💊' },
-  { id: 'c21', num: '21', enName: 'Music & Audio', hiName: 'संगीत (Music & Audio)', name: 'Music & Audio (संगीत)', icon: '🎵' },
-  { id: 'c22', num: '22', enName: 'News & Magazines', hiName: 'समाचार व पत्रिकाएं', name: 'News & Magazines (समाचार)', icon: '📰' },
-  { id: 'c23', num: '23', enName: 'Parenting', hiName: 'शिशु पोषण व परवरिश', name: 'Parenting (शिशु पोषण)', icon: '🍼' },
-  { id: 'c24', num: '24', enName: 'Personalization', hiName: 'थीम्स व सेटिंग्स', name: 'Personalization (थीम्स)', icon: '✨' },
-  { id: 'c25', num: '25', enName: 'Photography', hiName: 'स्कैनर व फोटो', name: 'Photography (स्कैनर)', icon: '📷' },
-  { id: 'c26', num: '26', enName: 'Productivity & Billing', hiName: 'बिलिंग व उत्पादकता', name: 'Productivity (बिलिंग)', icon: '🧾' },
-  { id: 'c27', num: '27', enName: 'Shopping & Kirana', hiName: '0% किराना स्टोर', name: 'Shopping & Kirana (0% किराना)', icon: '🛒' },
-  { id: 'c28', num: '28', enName: 'Social Networking', hiName: 'चौपाल व संवाद (Social)', name: 'Social Networking (चौपाल व संवाद)', icon: '🗣️' },
-  { id: 'c29', num: '29', enName: 'Sports Community', hiName: 'खेलकूद व व्यायाम', name: 'Sports Community (खेलकूद)', icon: '⚽' },
-  { id: 'c30', num: '30', enName: 'Tools & Utilities', hiName: 'कैलकुलेटर व टूल्स', name: 'Tools & Utilities (कैलकुलेटर)', icon: '🧮' },
-  { id: 'c31', num: '31', enName: 'Travel & Local', hiName: 'यात्रा व स्थानीय सेवाएं', name: 'Travel & Local (यात्रा)', icon: '🧭' },
-  { id: 'c32', num: '32', enName: 'Video Players & Editors', hiName: 'वीडियो प्लेयर व संपादन', name: 'Video Players & Editors (वीडियो)', icon: '🎬' },
-  { id: 'c33', num: '33', enName: 'Weather', hiName: 'मौसम पूर्वानुमान', name: 'Weather (मौसम पूर्वानुमान)', icon: '🌤️️' }
+  {
+    id: 'c01', num: '01', enName: 'Art & Design', hiName: 'डिज़ाइन व कला', icon: '🎨', hasChildren: true,
+    children: [
+      { id: '01-1', enName: 'Flex & Banner Printing', hiName: 'फ्लेक्स व होर्डिंग प्रिंट', icon: '🪧', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '01-2', enName: 'Signboard & Wall Painter', hiName: 'दुकान बोर्ड व पेंटर', icon: '🖌️', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '01-3', enName: 'Wedding Card Print', hiName: 'शादी कार्ड व निमंत्रण छपाई', icon: '💌', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c02', num: '02', enName: 'Auto & Vehicles', hiName: 'वाहन सेवा', icon: '🚗', hasChildren: true,
+    children: [
+      { id: '02-1', enName: 'Local Garage & Puncture', hiName: 'गैराज व पंक्चर सर्विस', icon: '🔧', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '02-2', enName: 'Used Vehicle Inspection', hiName: 'पुरानी गाड़ी जाँच व सौदा', icon: '🔍', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '02-3', enName: 'Challan & FASTag Pay', hiName: 'चालान व फ़ास्टैग सेवा', icon: '💳', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c03', num: '03', enName: 'Beauty & Salon', hiName: 'ब्यूटी व सैलून', icon: '✂️', hasChildren: true,
+    children: [
+      { id: '03-1', enName: 'Home Barber & Haircut', hiName: 'घर पर बाल कटाई व शेव', icon: '💈', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '03-2', enName: 'Bridal Makeup & Mehendi', hiName: 'दुल्हन शृंगार व मेहंदी', icon: '💅', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '03-3', enName: 'Beauty Parlour Ledger', hiName: 'पार्लर हिसाब बहीखाता', icon: '📒', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c04', num: '04', enName: 'Books & Reference', hiName: 'किताबें व संदर्भ', icon: '📚', hasChildren: true,
+    children: [
+      { id: '04-1', enName: 'Exam Notes & Pustak', hiName: 'प्रतियोगी परीक्षा नोट्स', icon: '📝', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '04-2', enName: 'Regional Audio Katha', hiName: 'देसी लोक कथाएं व ऑडियो', icon: '🎧', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '04-3', enName: 'Gram Panchayat Rules', hiName: 'ग्राम पंचायत नियमावली', icon: '📜', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c05', num: '05', enName: 'Business & Khata', hiName: 'सॉवरेन बहीखाता (Business Khata)', icon: '💼', hasChildren: true, action: 'launch',
+    children: [
+      { id: '05-1', enName: 'Sovereign Ledger', hiName: 'सॉवरेन व्यापार बहीखाता', icon: '📑', badge: 'खोलें ›', state: 'active', action: 'launch' },
+      { id: '05-2', enName: 'GST Bill & Invoice Maker', hiName: 'पक्का बिल व रसीद मेकर', icon: '🧾', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '05-3', enName: 'Counter Stock Manager', hiName: 'दुकान स्टॉक व इन्वेंटरी', icon: '📦', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c06', num: '06', enName: 'Comics', hiName: 'कहानियाँ व कॉमिक्स', icon: '📖', hasChildren: true,
+    children: [
+      { id: '06-1', enName: 'Desi Chitra-Katha Reader', hiName: 'देसी चित्रकथा कॉमिक्स', icon: '🎨', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '06-2', enName: 'Veer Gatha & History', hiName: 'वीर गाथा व ऐतिहासिक कथाएं', icon: '🛡️', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '06-3', enName: 'Bal Sahitya & Niti Tales', hiName: 'बाल साहित्य व नीति कथाएं', icon: '👶', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c07', num: '07', enName: 'Communication', hiName: 'संपर्क व संवाद', icon: '💬', hasChildren: true,
+    children: [
+      { id: '07-1', enName: 'Dukan Broadcast SMS', hiName: 'दुकानदार ब्रॉडकास्ट व ऑफर', icon: '📢', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '07-2', enName: 'Local Vyapar Diary', hiName: 'कस्बा व्यापार संपर्क डायरी', icon: '📔', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '07-3', enName: 'Customer Support Help', hiName: 'ग्राहक सहायता हेल्पलाइन', icon: '📞', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c08', num: '08', enName: 'Dating & Relations', hiName: 'रिश्ते व संबंध', icon: '🤝', hasChildren: true,
+    children: [
+      { id: '08-1', enName: 'Samaj Matrimonial', hiName: 'सामाजिक वैवाहिक मंच', icon: '💍', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '08-2', enName: 'Parichay Sabha Record', hiName: 'पारिवारिक परिचय सभा', icon: '👥', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '08-3', enName: 'Rishtey-Nate Directory', hiName: 'सगा-संबंधी व नातेदारी कोश', icon: '🏡', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c09', num: '09', enName: 'Education & Skills', hiName: 'हुनर सीखें (Education)', icon: '🎓', hasChildren: true,
+    children: [
+      { id: '09-1', enName: 'Hunar Kaushal Training', hiName: 'हाथ का हुनर (वेल्डर/इलेक्ट्रीशियन)', icon: '🔨', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '09-2', enName: 'Sarkari Exam Physical', hiName: 'दौड़ व पुलिस फिजिकल तैयारी', icon: '🏃', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '09-3', enName: 'Typing & Tally Class', hiName: 'कंप्यूटर टाइपिंग व टैली', icon: '💻', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c10', num: '10', enName: 'Entertainment', hiName: 'मनोरंजन व कला', icon: '🎭', hasChildren: true,
+    children: [
+      { id: '10-1', enName: 'Local Nautanki & Natak', hiName: 'नौटंकी, रामलीला व नाटक', icon: '🎪', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '10-2', enName: 'Kavi Sammelan & Ragini', hiName: 'रागिनी व कवि सम्मेलन', icon: '🎤', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '10-3', enName: 'Regional Cinema Guide', hiName: 'सिनेमा व सांस्कृतिक शो', icon: '🎟️', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c11', num: '11', enName: 'Events & Passes', hiName: 'कार्यक्रम व पास', icon: '🎟️', hasChildren: true,
+    children: [
+      { id: '11-1', enName: 'Tirth Mela Entry Pass', hiName: 'मेला व हाट प्रवेश पास', icon: '🚩', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '11-2', enName: 'Katha & Bhagwat Pass', hiName: 'कथा व भागवत सेवा पास', icon: '🪔', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '11-3', enName: 'Dangal & Match Ticket', hiName: 'दंगल व खेल टूर्नामेंट पास', icon: '🤼', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c12', num: '12', enName: 'Family & Care', hiName: 'परिवार व केयर', icon: '👨‍👩‍👧', hasChildren: true,
+    children: [
+      { id: '12-1', enName: 'Senior Citizen Nurse', hiName: 'बुजुर्ग सेवा व घरेलू नर्स', icon: '👵', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '12-2', enName: 'Village Emergency SOS', hiName: 'आपातकालीन ग्राम सुरक्षा', icon: '🚨', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '12-3', enName: 'Family Asset Vault', hiName: 'पारिवारिक संपत्ति व वसीयत', icon: '🔐', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c13', num: '13', enName: 'Finance & Ledger', hiName: 'RM CASH लेज़र (Finance)', icon: '💰', hasChildren: true,
+    children: [
+      { id: '13-1', enName: 'RM Cash Voucher Vault', hiName: 'सॉवरेन वाउचर व लेज़र', icon: '🪙', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '13-2', enName: 'SHG Mahila Bachat', hiName: 'महिला स्वयं सहायता समूह', icon: '👭', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '13-3', enName: 'Byaj & Udhar Calculator', hiName: 'देसी ब्याज व उधारी हिसाब', icon: '🧮', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c14', num: '14', enName: 'Food & Drink', hiName: 'ढाबा व भोजन', icon: '🍲', hasChildren: true,
+    children: [
+      { id: '14-1', enName: 'Daily Dhaba Tiffin', hiName: 'ढाबा व मासिक टिफ़िन सेवा', icon: '🍱', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '14-2', enName: 'Halwai & Catering Order', hiName: 'हलवाई व कैटरिंग आर्डर', icon: '👨‍🍳', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '14-3', enName: 'Fresh Dairy & Paneer', hiName: 'शुद्ध दूध, घी व ताज़ा पनीर', icon: '🥛', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c15', num: '15', enName: 'Health & Fitness', hiName: 'स्वस्थ मन व योग', icon: '🧘', hasChildren: true,
+    children: [
+      { id: '15-1', enName: 'Desi Akhada & Gym', hiName: 'देसी अखाड़ा व व्यायामशाला', icon: '🏋️', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '15-2', enName: 'Ayurvedic Nadi Vaidya', hiName: 'आयुर्वेदिक नाड़ी वैद्य परामर्श', icon: '🌿', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '15-3', enName: 'Step & Health Ledger', hiName: 'दैनिक कदम व स्वास्थ्य बही', icon: '👟', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c16', num: '16', enName: 'House & Home', hiName: 'घर व मकान', icon: '🏠', hasChildren: true,
+    children: [
+      { id: '16-1', enName: 'Mistry & Home Repair', hiName: 'मिस्त्री व गृह मरम्मत', icon: '🛠️', badge: 'जल्द उपलब्ध', state: 'upcoming', action: 'upcoming' },
+      { id: '16-2', enName: 'Rental Ledger', hiName: 'किराया बहीखाता', icon: '📋', badge: 'खोलें ›', state: 'active', action: 'launch' },
+      { id: '16-3', enName: 'Room & Flat Search', hiName: 'कमरा व फ्लैट खोज', icon: '🏠', badge: 'खोलें ›', state: 'active', action: 'launch' }
+    ]
+  },
+  {
+    id: 'c17', num: '17', enName: 'Libraries & Demo', hiName: 'पुस्तकालय (Libraries)', icon: '🏛️', hasChildren: true,
+    children: [
+      { id: '17-1', enName: 'Study Center Desk Booking', hiName: 'लाइब्रेरी सीट व स्टडी डेस्क', icon: '🪑', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '17-2', enName: 'Legal Affidavit Drafts', hiName: 'शपथ पत्र व कानूनी दस्तावेज़', icon: '📑', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '17-3', enName: 'Sarkari Form Guide', hiName: 'सरकारी योजना व फ़ॉर्म सहायता', icon: '📋', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c18', num: '18', enName: 'Lifestyle', hiName: 'स्वावलंबन (Lifestyle)', icon: '🌱', hasChildren: true,
+    children: [
+      { id: '18-1', enName: 'Pandit & Hawan Booking', hiName: 'पंडित जी व हवन पूजा बुकिंग', icon: '🪔', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '18-2', enName: 'Vastu Site Inspection', hiName: 'घर व दुकान वास्तु निरीक्षण', icon: '🧭', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '18-3', enName: 'Kutir Udyog Diary', hiName: 'स्वावलंबन कुटीर उद्योग डायरी', icon: '🧵', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c19', num: '19', enName: 'Maps & Navigation', hiName: 'मार्गदर्शन (Maps & Navigation)', icon: '🗺️', hasChildren: true,
+    children: [
+      { id: '19-1', enName: 'Gali Mohalla Landmark', hiName: 'गली-मोहल्ला लैंडमार्क नक्शा', icon: '📍', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '19-2', enName: 'Mandi & Haat Navigator', hiName: 'साप्ताहिक हाट व मंडी मार्ग', icon: '🛒', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '19-3', enName: 'Nearest Mistry Spot', hiName: 'नज़दीकी मिस्त्री व सेवा स्पॉट', icon: '🧭', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c20', num: '20', enName: 'Medical & Clinic', hiName: 'दवाई व क्लिनिक (Medical)', icon: '💊', hasChildren: true,
+    children: [
+      { id: '20-1', enName: 'Doctor Token Booking', hiName: 'क्लिनिक डॉक्टर पर्चा टोकन', icon: '🩺', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '20-2', enName: 'Blood & Lab Sample Pickup', hiName: 'घर से खून जाँच व रिपोर्ट', icon: '🧪', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '20-3', enName: 'Local Medical Stock', hiName: 'नज़दीकी मेडिकल स्टोर स्टॉक', icon: '💉', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c21', num: '21', enName: 'Music & Audio', hiName: 'संगीत (Music & Audio)', icon: '🎵', hasChildren: true,
+    children: [
+      { id: '21-1', enName: 'Bhajan Mandali Booking', hiName: 'भजन मंडली व जागरण दल', icon: '🥁', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '21-2', enName: 'DJ & Sound System Hire', hiName: 'डीजे व लाउडस्पीकर बुकिंग', icon: '🔊', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '21-3', enName: 'Regional Audio Pods', hiName: 'देसी रागिनी व लोकगीत संग्रह', icon: '📻', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c22', num: '22', enName: 'News & Magazines', hiName: 'समाचार व पत्रिकाएं', icon: '📰', hasChildren: true,
+    children: [
+      { id: '22-1', enName: 'Kasba Ward Samachar', hiName: 'कस्बा व वार्ड लोकल समाचार', icon: '📢', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '22-2', enName: 'Mandi Bhaav & Khet Alert', hiName: 'दैनिक मंडी भाव व फसल रेट', icon: '🌾', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '22-3', enName: 'Local Rojgar Bulletin', hiName: 'स्थानीय रोज़गार व काम सूचना', icon: '💼', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c23', num: '23', enName: 'Parenting', hiName: 'शिशु पोषण व परवरिश', icon: '🍼', hasChildren: true,
+    children: [
+      { id: '23-1', enName: 'Shishu Teeka Alert', hiName: 'टीकाकरण तारीख व अलर्ट', icon: '💉', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '23-2', enName: 'Dai Maa & Malish Wali', hiName: 'अनुभवी दाई माँ व तेल मालिश', icon: '🤱', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '23-3', enName: 'Paushtik Desi Aahar', hiName: 'शिशु व धात्री माता आहार', icon: '🥣', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c24', num: '24', enName: 'Personalization', hiName: 'थीम्स व सेटिंग्स', icon: '✨', hasChildren: true,
+    children: [
+      { id: '24-1', enName: 'Festive Poster Creator', hiName: 'त्योहार पोस्टर व नाम छपाई', icon: '🖼️', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '24-2', enName: 'Dukan Display Board', hiName: 'दुकान स्क्रीन व ऑफर थीम्स', icon: '📱', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '24-3', enName: 'Desi Ringtones & Banners', hiName: 'भजन रिंगटोन व स्टेटस बैनर', icon: '🔔', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c25', num: '25', enName: 'Photography', hiName: 'स्कैनर व फोटो', icon: '📷', hasChildren: true,
+    children: [
+      { id: '25-1', enName: 'Passport Photo & DocScan', hiName: 'पासपोर्ट फोटो व कागज़ स्कैन', icon: '🖨️', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '25-2', enName: 'Shaadi Cameraman & Drone', hiName: 'शादी फ़ोटोग्राफ़र व ड्रोन', icon: '📹', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '25-3', enName: 'Plot HD Document Scan', hiName: 'ज़मीन खसरा नक्शा स्कैन', icon: '📐', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c26', num: '26', enName: 'Productivity & Billing', hiName: 'बिलिंग व उत्पादकता', icon: '🧾', hasChildren: true,
+    children: [
+      { id: '26-1', enName: 'Kacha-Pakka Bill Maker', hiName: 'दुकान कच्चा-पक्का बिल मेकर', icon: '🖨️', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '26-2', enName: 'PDF Roznamcha Export', hiName: 'दैनिक रोजनामचा व PDF खाता', icon: '📄', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '26-3', enName: 'Daily Expense Vault', hiName: 'घरेलू व व्यापारिक खर्च डायरी', icon: '🗄️', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c27', num: '27', enName: 'Shopping & Kirana', hiName: '0% किराना स्टोर', icon: '🛒', hasChildren: true,
+    children: [
+      { id: '27-1', enName: '0% Commission Kirana', hiName: 'मोहल्ला किराना स्टोर डिलीवरी', icon: '🛍️', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '27-2', enName: 'Khet Se Sidha Anaaj', hiName: 'खेत से सीधा गेहूँ, दाल व तेल', icon: '🌾', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '27-3', enName: 'Wholesale Bulk Bazaar', hiName: 'थोक मंडी भाव व थोक खरीद', icon: '🏬', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c28', num: '28', enName: 'Social Networking', hiName: 'चौपाल व संवाद (Social)', icon: '🗣️', hasChildren: true,
+    children: [
+      { id: '28-1', enName: 'Kasba Chaupal Forum', hiName: 'गाँव चौपाल व पंचायत संवाद', icon: '🌳', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '28-2', enName: 'Yuva Hunar Manch', hiName: 'युवा कारीगर हुनर प्रदर्शन', icon: '🤝', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '28-3', enName: 'Verified Business Network', hiName: 'सत्यापित स्थानीय व्यापारी संघ', icon: '🏛️', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c29', num: '29', enName: 'Sports Community', hiName: 'खेलकूद व व्यायाम', icon: '⚽', hasChildren: true,
+    children: [
+      { id: '29-1', enName: 'Gali Cricket Scorer', hiName: 'क्रिकेट लाइव स्कोरर व मैच', icon: '🏏', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '29-2', enName: 'Turf & Ground Booking', hiName: 'खेल मैदान व पिच बुकिंग', icon: '🏟️', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '29-3', enName: 'Kasba Tournament Hub', hiName: 'प्रतियोगिता व शील्ड आयोजन', icon: '🏆', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c30', num: '30', enName: 'Tools & Utilities', hiName: 'कैलकुलेटर व टूल्स', icon: '🧮', hasChildren: true,
+    children: [
+      { id: '30-1', enName: 'Zameen Naap & Bigha', hiName: 'ज़मीन नाप, बीघा व कट्ठा नाप', icon: '📐', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '30-2', enName: 'Gramin Byaj & EMI', hiName: 'ग्रामीण ब्याज व क़िस्त कैलकुलेटर', icon: '🪙', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '30-3', enName: 'Unit & Anaaj Converter', hiName: 'मन, क्विंटल व सेर कनवर्टर', icon: '⚖️', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c31', num: '31', enName: 'Travel & Local', hiName: 'यात्रा व स्थानीय सेवाएं', icon: '🧭', hasChildren: true,
+    children: [
+      { id: '31-1', enName: 'Bus & Stand Timetable', hiName: 'रोडवेज बस व ऑटो समय सारणी', icon: '🚌', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '31-2', enName: 'Taxi & Driver Contact', hiName: 'स्थानीय टैक्सी व ड्राइवर बुकिंग', icon: '🚖', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '31-3', enName: 'Tirth Yatra & Dharmshala', hiName: 'तीर्थ यात्रा व धर्मशाला बुकिंग', icon: '🛕', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c32', num: '32', enName: 'Video Players & Editors', hiName: 'वीडियो प्लेयर व संपादन', icon: '🎬', hasChildren: true,
+    children: [
+      { id: '32-1', enName: 'Vyapar 30-Sec Ad Player', hiName: 'दुकान 30-सेकंड वीडियो शोकेस', icon: '📺', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '32-2', enName: 'Service Tutorial Library', hiName: 'कारीगर काम गाइड लाइब्रेरी', icon: '📽️', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '32-3', enName: 'Regional Creator Clips', hiName: 'कस्बा समाचार व रील प्लेयर', icon: '🎞️', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'c33', num: '33', enName: 'Weather', hiName: 'मौसम पूर्वानुमान', icon: '🌤️', hasChildren: true,
+    children: [
+      { id: '33-1', enName: 'Fasal Barish Alert', hiName: 'फसल कटाई बारिश चेतावनी', icon: '🌧️', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '33-2', enName: 'Mandi Tirpal Suraksha', hiName: 'मंडी खुले अनाज सुरक्षा अलर्ट', icon: '⛺', badge: 'खोलें ›', state: 'active', action: 'alert' },
+      { id: '33-3', enName: 'Sinchai Salah Guide', hiName: 'तापमान व सिंचाई सलाह', icon: '💧', badge: 'खोलें ›', state: 'active', action: 'alert' }
+    ]
+  }
 ];
 
 const RM_GAMES_DATA = [
-  { id: 'g34', num: '34', enName: 'Action', hiName: 'ऐक्शन तीरंदाजी', name: 'Action (ऐक्शन तीरंदाजी)', icon: '🏹' },
-  { id: 'g35', num: '35', enName: 'Adventure', hiName: 'रोमांचक यात्रा', name: 'Adventure (रोमांचक यात्रा)', icon: '🏔️' },
-  { id: 'g36', num: '36', enName: 'Arcade', hiName: 'गेंद टप्पा आर्केड', name: 'Arcade (गेंद टप्पा)', icon: '🕹️' },
-  { id: 'g37', num: '37', enName: 'Board', hiName: 'देसी लूडो व कैरम', name: 'Board (देसी लूडो व कैरम)', icon: '🎲' },
-  { id: 'g38', num: '38', enName: 'Card', hiName: 'ताश सॉलिटेयर', name: 'Card (ताश सॉलिटेयर)', icon: '🃏' },
-  { id: 'g39', num: '39', enName: 'Casino', hiName: 'लकी चक्र (Casino Points)', name: 'Casino (लकी चक्र)', icon: '🎡' },
-  { id: 'g40', num: '40', enName: 'Casual', hiName: 'रंगोली क्राफ्ट', name: 'Casual (रंगोली क्राफ्ट)', icon: '🎨' },
-  { id: 'g41', num: '41', enName: 'Educational', hiName: 'भारत क्विज़', name: 'Educational (भारत क्विज़)', icon: '🇮🇳' },
-  { id: 'g42', num: '42', enName: 'Music', hiName: 'तबला व ढोलक ताल', name: 'Music (तबला व ढोलक ताल)', icon: '🥁' },
-  { id: 'g43', num: '43', enName: 'Puzzle', hiName: 'दिमागी पहेलियाँ', name: 'Puzzle (दिमागी पहेलियाँ)', icon: '🧩' },
-  { id: 'g44', num: '44', enName: 'Racing', hiName: 'बैलगाड़ी रेस', name: 'Racing (बैलगाड़ी रेस)', icon: '🏁' },
-  { id: 'g45', num: '45', enName: 'Role Playing', hiName: 'गाँव का प्रधान', name: 'Role Playing (गाँव का प्रधान)', icon: '👑' },
-  { id: 'g46', num: '46', enName: 'Simulation', hiName: 'खेत सिमुलेटर', name: 'Simulation (खेत सिमुलेटर)', icon: '🌾' },
-  { id: 'g47', num: '47', enName: 'Sports', hiName: 'गली क्रिकेट', name: 'Sports (गली क्रिकेट)', icon: '🏏' },
-  { id: 'g48', num: '48', enName: 'Strategy', hiName: 'चाणक्य नीति', name: 'Strategy (चाणक्य नीति)', icon: '♟️' },
-  { id: 'g49', num: '49', enName: 'Trivia', hiName: 'देसी ट्रिविया व तथ्य', name: 'Trivia (देसी ट्रिविया)', icon: '💡' },
-  { id: 'g50', num: '50', enName: 'Word', hiName: 'शब्द पहेली व कोश', name: 'Word (शब्द पहेली)', icon: '📝' }
+  {
+    id: 'g34', num: '34', enName: 'Action', hiName: 'ऐक्शन तीरंदाजी', icon: '🏹', hasChildren: true,
+    children: [
+      { id: '34-1', enName: 'Teerandazi Tournament', hiName: 'धनुर्विद्या तीरंदाजी मैच', icon: '🎯', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '34-2', enName: 'Gada Yuddh Akhada', hiName: 'गदा युद्ध व अखाड़ा मुकाबला', icon: '⚔️', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '34-3', enName: 'Qila Rakshak Defense', hiName: 'किला रक्षक ऐक्शन डिफेंस', icon: '🏰', badge: 'खेलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'g35', num: '35', enName: 'Adventure', hiName: 'रोमांचक यात्रा', icon: '🏔️', hasChildren: true,
+    children: [
+      { id: '35-1', enName: 'Bharat Yatra Khoj', hiName: 'भारत दर्शन रोमांचक यात्रा', icon: '🗺️', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '35-2', enName: 'Van Rakshak Mission', hiName: 'वन्य जीवन व जंगल खोज', icon: '🌲', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '35-3', enName: 'Samudra Manthan Quest', hiName: 'समुद्र मंथन पौराणिक क्वेस्ट', icon: '🌊', badge: 'खेलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'g36', num: '36', enName: 'Arcade', hiName: 'गेंद टप्पा आर्केड', icon: '🕹️', hasChildren: true,
+    children: [
+      { id: '36-1', enName: 'Gend Tappa Fast Run', hiName: 'गेंद टप्पा स्पीड रन', icon: '⚽', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '36-2', enName: 'Gulel Nishana Shoot', hiName: 'देसी गुलेल सटीक निशाना', icon: '🎯', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '36-3', enName: 'Patang Udav Competition', hiName: 'आसमानी पतंग पेंच मुकाबला', icon: '🪁', badge: 'खेलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'g37', num: '37', enName: 'Board', hiName: 'देसी लूडो व कैरम', icon: '🎲', hasChildren: true,
+    children: [
+      { id: '37-1', enName: 'Desi Ludo Classic', hiName: 'देसी 4-खिलाड़ी लूडो क्लब', icon: '🎲', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '37-2', enName: 'Desi Carrom Striker', hiName: 'कैरम बोर्ड व क्वीन स्ट्राइकर', icon: '⚪', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '37-3', enName: 'Chaturang Indian Chess', hiName: 'चतुरंग पारंपारिक शतरंज', icon: '♟️', badge: 'खेलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'g38', num: '38', enName: 'Card', hiName: 'ताश सॉलिटेयर', icon: '🃏', hasChildren: true,
+    children: [
+      { id: '38-1', enName: 'Tash Solitaire Offline', hiName: 'देसी ताश सॉलिटेयर', icon: '♠️', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '38-2', enName: 'Desi 28-Card Game', hiName: '28 पत्ती देसी मुकाबला', icon: '♥️', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '38-3', enName: 'Parivarik Tash Club', hiName: 'पारिवारिक ताश क्लब (पॉइंट्स)', icon: '♣️', badge: 'खेलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'g39', num: '39', enName: 'Casino', hiName: 'लकी चक्र (Casino Points)', icon: '🎡', hasChildren: true,
+    children: [
+      { id: '39-1', enName: 'Lucky Chakra Wheel', hiName: 'दैनिक लकी चक्र स्पिनर', icon: '🎡', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '39-2', enName: 'Dukan Reward Spinner', hiName: 'दुकानदार रिवॉर्ड पासा', icon: '🎁', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '39-3', enName: 'Jackpot Token Roll', hiName: 'गोल्डन टोकन जैकपॉट', icon: '💰', badge: 'खेलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'g40', num: '40', enName: 'Casual', hiName: 'रंगोली क्राफ्ट', icon: '🎨', hasChildren: true,
+    children: [
+      { id: '40-1', enName: 'Rangoli Craft Match', hiName: 'देसी रंगोली डिज़ाइन मैच', icon: '🏵️', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '40-2', enName: 'Mitti Ke Bartan Sculpt', hiName: 'मिट्टी के बर्तन चाक मेकर', icon: '🏺', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '40-3', enName: 'Bagicha Fruit Connect', hiName: 'बगीचा ताज़ा फल तोड़ो', icon: '🍎', badge: 'खेलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'g41', num: '41', enName: 'Educational', hiName: 'भारत क्विज़', icon: '🇮🇳', hasChildren: true,
+    children: [
+      { id: '41-1', enName: 'Bharat GK & History', hiName: 'भारत सामान्य ज्ञान चुनौती', icon: '📜', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '41-2', enName: 'Ganit Desi Paheli', hiName: 'गणित पहेलियाँ व दिमागी जोड़', icon: '🔢', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '41-3', enName: 'Sarkari Niyam Gyan', hiName: 'संविधान व नागरिक नियम ज्ञान', icon: '⚖️', badge: 'खेलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'g42', num: '42', enName: 'Music', hiName: 'तबला व ढोलक ताल', icon: '🥁', hasChildren: true,
+    children: [
+      { id: '42-1', enName: 'Dholak & Tabla Beat', hiName: 'ढोलक व तबला थाप मैच', icon: '🥁', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '42-2', enName: 'Bansuri Dhun Harmony', hiName: 'बांसुरी सुर मेलोडी ताल', icon: '🪈', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '42-3', enName: 'Sitar Melody Challenge', hiName: 'सितार व हारमोनियम स्वर', icon: '🪕', badge: 'खेलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'g43', num: '43', enName: 'Puzzle', hiName: 'दिमागी पहेलियाँ', icon: '🧩', hasChildren: true,
+    children: [
+      { id: '43-1', enName: 'Bujho To Jane Paheli', hiName: 'देसी बूझो तो जाने पहेली', icon: '💡', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '43-2', enName: 'Lakdi Block Puzzle', hiName: 'लकड़ी ब्लॉक मैचिंग बोर्ड', icon: '🪵', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '43-3', enName: 'Kasba Bhool-Bhulaiya', hiName: 'भूल-भुलैया रास्ता खोज', icon: '🌀', badge: 'खेलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'g44', num: '44', enName: 'Racing', hiName: 'बैलगाड़ी रेस', icon: '🏁', hasChildren: true,
+    children: [
+      { id: '44-1', enName: 'Bailgadi Desi Race', hiName: 'देसी बैलगाड़ी रेस ट्रैक', icon: '🐂', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '44-2', enName: 'Tractor Pull Challenge', hiName: 'खेत ट्रैक्टर टोचन मुकाबला', icon: '🚜', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '44-3', enName: 'Highway Auto Run', hiName: 'हाईवे ऑटो रिक्शा रेस', icon: '🛺', badge: 'खेलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'g45', num: '45', enName: 'Role Playing', hiName: 'गाँव का प्रधान', icon: '👑', hasChildren: true,
+    children: [
+      { id: '45-1', enName: 'Gaon Ka Pradhan RPG', hiName: 'गाँव का प्रधान (विकास व फैसले)', icon: '👑', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '45-2', enName: 'Raja Aur Senapati', hiName: 'राजा और सेनापति युद्धनीति', icon: '⚔️', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '45-3', enName: 'Vanvasi Yoddha Safar', hiName: 'वनवासी योद्धा सफरनामा', icon: '🏹', badge: 'खेलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'g46', num: '46', enName: 'Simulation', hiName: 'खेत सिमुलेटर', icon: '🌾', hasChildren: true,
+    children: [
+      { id: '46-1', enName: 'Desi Khet & Krishi Sim', hiName: 'खेत बुवाई व सिंचाई सिमुलेटर', icon: '🌾', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '46-2', enName: 'Dairy Farm & Pashudhan', hiName: 'डेयरी व पशुपालन सिमुलेटर', icon: '🐄', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '46-3', enName: 'Kirana Dukan Manager', hiName: 'किराना दुकान गल्ला सिमुलेटर', icon: '🏪', badge: 'खेलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'g47', num: '47', enName: 'Sports', hiName: 'गली क्रिकेट', icon: '🏏', hasChildren: true,
+    children: [
+      { id: '47-1', enName: 'Gali Cricket Master', hiName: 'गली क्रिकेट 1-टैप शॉट', icon: '🏏', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '47-2', enName: 'Pro Kabaddi Clash', hiName: 'देसी कबड्डी रेड मुकाबला', icon: '🤼', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '47-3', enName: 'Football Penalty Cup', hiName: 'पेनल्टी शूटआउट देसी कप', icon: '⚽', badge: 'खेलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'g48', num: '48', enName: 'Strategy', hiName: 'चाणक्य नीति', icon: '♟️', hasChildren: true,
+    children: [
+      { id: '48-1', enName: 'Chanakya Niti Vistaar', hiName: 'चाणक्य नीति (राज्य विस्तार)', icon: '📜', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '48-2', enName: 'Durg Raksha Fort War', hiName: 'दुर्ग रक्षा व सामरिक व्यूह', icon: '🏰', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '48-3', enName: 'Vyapari Mahasangh War', hiName: 'व्यापारी महासंघ बाजार वर्चस्व', icon: '🪙', badge: 'खेलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'g49', num: '49', enName: 'Trivia', hiName: 'देसी ट्रिविया व तथ्य', icon: '💡', hasChildren: true,
+    children: [
+      { id: '49-1', enName: 'Desi Facts & Trivia', hiName: 'देसी रोचक तथ्य व पहेली', icon: '💡', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '49-2', enName: 'Ramayana Mahabharata', hiName: 'रामायण व महाभारत प्रश्नोत्तरी', icon: '🏹', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '49-3', enName: 'Indian Railways Quiz', hiName: 'भारतीय रेल व स्टेशन ट्रिविया', icon: '🚆', badge: 'खेलें ›', state: 'active', action: 'alert' }
+    ]
+  },
+  {
+    id: 'g50', num: '50', enName: 'Word', hiName: 'शब्द पहेली व कोश', icon: '📝', hasChildren: true,
+    children: [
+      { id: '50-1', enName: 'Hindi Shabd Paheli', hiName: 'हिंदी शब्द क्रॉसवर्ड पहेली', icon: '📝', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '50-2', enName: 'Akshar Jodo Desi Kosh', hiName: 'अक्षर जोड़ो देसी शब्दकोश', icon: '🔡', badge: 'खेलें ›', state: 'active', action: 'alert' },
+      { id: '50-3', enName: 'Matra & Vyakaran Master', hiName: 'मात्रा व व्याकरण ज्ञान', icon: '📖', badge: 'खेलें ›', state: 'active', action: 'alert' }
+    ]
+  }
 ];
 
-const C16_CHILDREN = [
-  { id: '16-1', enName: 'Mistry & Home Repair', hiName: 'मिस्त्री व गृह मरम्मत', icon: '🛠️', badge: 'जल्द उपलब्ध', state: 'upcoming', action: 'upcoming', videoUrl: null },
-  { id: '16-2', enName: 'Rental Ledger', hiName: 'किराया बहीखाता', icon: '📋', badge: 'खोलें ›', state: 'active', action: 'launch', videoUrl: 'rental-ledger-intro' },
-  { id: '16-3', enName: 'Room & Flat Search', hiName: 'कमरा व फ्लैट खोज', icon: '🏠', badge: 'खोलें ›', state: 'active', action: 'launch', videoUrl: 'rental-search-intro' }
-];
+// Compatibility Baseline for Category 16
+const C16_CHILDREN = RM_SERVICES_DATA.find(s => s.id === 'c16').children;
 
-// Helper: LocalStorage Pin Manager
+// ==============================================================================
+// SECTION 2: HELPER FUNCTIONS (PIN MANAGER & VIDEO MODAL)
+// ==============================================================================
+
 function getPinnedList() {
   try {
     const raw = localStorage.getItem('rm_user_pinned_shortcuts_v1');
@@ -112,16 +465,57 @@ window.handleLaunchVideo = function (subId, title, event) {
 };
 
 // ==============================================================================
-// SECTION 2: DOM CARD RENDER ENGINE (75:25 RATIO & 3-PILL ACTION STRIP)
+// SECTION 3: UNIVERSAL ACCORDION DOM RENDER ENGINE (ALL 50 DROP-DOWNS)
 // ==============================================================================
+
+function renderSubCards(catNum, childrenList) {
+  if (!childrenList || !childrenList.length) return '';
+  return childrenList.map(ch => {
+    const isPinned = isItemPinned(ch.id);
+    const pinBtn = isPinned 
+      ? `<button type="button" onclick="togglePinService('${ch.id}', '${ch.icon}', '${ch.enName}', '${ch.hiName}', event)" class="flex-1 bg-cyan-950/90 border border-cyan-500/60 text-cyan-300 px-2 py-1 rounded-lg text-[10px] font-bold flex items-center justify-center space-x-1 cursor-pointer"><span>📌</span><span>पिन है</span></button>`
+      : `<button type="button" onclick="togglePinService('${ch.id}', '${ch.icon}', '${ch.enName}', '${ch.hiName}', event)" class="flex-1 bg-slate-800/90 border border-slate-700 text-slate-300 hover:text-white px-2 py-1 rounded-lg text-[10px] font-medium flex items-center justify-center space-x-1 cursor-pointer"><span>📌</span><span>पिन करें</span></button>`;
+    
+    const videoBtn = `<button type="button" onclick="handleLaunchVideo('${ch.id}', '${ch.enName}', event)" class="flex-1 bg-indigo-950/90 hover:bg-indigo-900 border border-indigo-700/60 text-indigo-300 px-2 py-1 rounded-lg text-[10px] font-bold flex items-center justify-center space-x-1 cursor-pointer"><span>▶</span><span>वीडियो</span></button>`;
+
+    const actBtn = ch.action === 'launch'
+      ? `<button type="button" onclick="handleLaunchCategory('c${catNum}', '${ch.id}')" class="flex-1 bg-emerald-950/90 border border-emerald-600/60 text-emerald-300 hover:bg-emerald-900/90 px-2 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap text-center cursor-pointer">${ch.badge || 'खोलें ›'}</button>`
+      : ch.action === 'upcoming'
+        ? `<span class="flex-1 bg-slate-800/80 border border-slate-700/60 text-slate-400 px-2 py-1 rounded-lg text-[10px] font-medium whitespace-nowrap text-center">जल्द उपलब्ध</span>`
+        : `<button type="button" onclick="alert('${ch.enName} (${ch.hiName}) सेवा जल्द शुरू होगी')" class="flex-1 bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-slate-200 px-2 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap text-center cursor-pointer">${ch.badge || 'खोलें ›'}</button>`;
+
+    return `
+      <div data-sivme-urn="rm:cat:${catNum}:sub:${ch.id}" class="sivme-subcat-card w-full bg-[#0d1424] border border-slate-800/90 rounded-xl overflow-hidden shadow-md flex flex-col justify-between" style="min-height: 114px;">
+        <!-- 75% BILINGUAL CONTENT ZONE -->
+        <div class="p-3 pb-2 flex-1 flex flex-col justify-between relative bg-gradient-to-b from-[#111a30]/80 to-[#0d1424]">
+          <div class="flex items-center space-x-2 mb-1">
+            <span class="text-[10px] font-mono font-bold text-cyan-300 bg-cyan-950/90 border border-cyan-800/70 px-2 py-0.5 rounded leading-none">[${ch.id}]</span>
+            <span class="text-lg leading-none">${ch.icon}</span>
+          </div>
+          <div class="flex flex-col text-left w-full mt-0.5">
+            <span class="text-[13.5px] font-bold text-slate-100 tracking-wide leading-tight break-normal">${ch.enName}</span>
+            <span class="text-[11.5px] font-medium text-slate-400 leading-tight mt-0.5 break-normal">(${ch.hiName})</span>
+          </div>
+        </div>
+        <!-- 25% ACTION STRIP ZONE (Symmetrical 3-Pill Grid: 32% - 32% - 32%) -->
+        <div class="px-2.5 py-1.5 bg-slate-950/90 border-t border-slate-800/70 flex items-center justify-between space-x-2 min-h-[30px]">
+          ${pinBtn}
+          ${videoBtn}
+          ${actBtn}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
 
 function renderCatalogItems() {
   const t1 = document.getElementById('tier1-list');
   const t2 = document.getElementById('tier2-list');
 
+  // Render 33 Services
   if (t1) {
     t1.innerHTML = RM_SERVICES_DATA.map(item => `
-      <div data-cat-id="${item.id}" class="w-full rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 transition-all overflow-hidden mb-2 shadow-md relative">
+      <div data-cat-id="${item.id}" data-sivme-urn="rm:cat:${item.num}" class="w-full rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 transition-all overflow-hidden mb-2 shadow-md relative">
         <div onclick="handleCategoryClick('${item.id}', this)" class="flex items-center justify-between p-3 cursor-pointer active:scale-[0.99] transition-transform min-h-[64px]">
           <div class="flex items-center space-x-2.5 min-w-0 flex-1 pr-2">
             <span class="text-[10px] font-mono font-bold bg-amber-950/70 text-amber-400 border border-amber-800/50 px-1.5 py-0.5 rounded shrink-0">${item.num}.</span>
@@ -132,84 +526,61 @@ function renderCatalogItems() {
             </div>
           </div>
           <div class="flex items-center space-x-1.5 shrink-0">
-            ${item.hasChildren ? `
-              <span class="text-[10px] text-emerald-400 font-bold bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-800/50 whitespace-nowrap">3 सेवाएं</span>
-              <span class="acc-arrow text-slate-300 text-xs font-mono font-bold bg-slate-800/90 border border-slate-700/80 w-6 h-6 rounded-full flex items-center justify-center">▼</span>
-            ` : `
-              <button type="button" class="bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700/80 px-3 py-1 rounded-full text-[11px] font-bold whitespace-nowrap cursor-pointer shadow-sm">
-                खोलें ›
-              </button>
-            `}
+            <span class="text-[10px] text-emerald-400 font-bold bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-800/50 whitespace-nowrap">3 सेवाएं</span>
+            <span class="acc-arrow text-slate-300 text-xs font-mono font-bold bg-slate-800/90 border border-slate-700/80 w-6 h-6 rounded-full flex items-center justify-center">▼</span>
           </div>
         </div>
-        ${item.id === 'c16' ? `
-          <div id="sub-c16" class="p-2 pt-0 space-y-2.5 bg-slate-950/50 block">
-            ${C16_CHILDREN.map(ch => {
-              const isPinned = isItemPinned(ch.id);
-              const pinBtn = isPinned 
-                ? `<button type="button" onclick="togglePinService('${ch.id}', '${ch.icon}', '${ch.enName}', '${ch.hiName}', event)" class="flex-1 bg-cyan-950/90 border border-cyan-500/60 text-cyan-300 px-2 py-1 rounded-lg text-[10px] font-bold flex items-center justify-center space-x-1 cursor-pointer"><span>📌</span><span>पिन है</span></button>`
-                : `<button type="button" onclick="togglePinService('${ch.id}', '${ch.icon}', '${ch.enName}', '${ch.hiName}', event)" class="flex-1 bg-slate-800/90 border border-slate-700 text-slate-300 hover:text-white px-2 py-1 rounded-lg text-[10px] font-medium flex items-center justify-center space-x-1 cursor-pointer"><span>📌</span><span>पिन करें</span></button>`;
-              
-              const videoBtn = `<button type="button" onclick="handleLaunchVideo('${ch.id}', '${ch.enName}', event)" class="flex-1 bg-indigo-950/90 hover:bg-indigo-900 border border-indigo-700/60 text-indigo-300 px-2 py-1 rounded-lg text-[10px] font-bold flex items-center justify-center space-x-1 cursor-pointer"><span>▶</span><span>वीडियो</span></button>`;
-
-              const actBtn = ch.action === 'launch'
-                ? `<button type="button" onclick="handleLaunchCategory('c16', '${ch.id}')" class="flex-1 bg-emerald-950/90 border border-emerald-600/60 text-emerald-300 hover:bg-emerald-900/90 px-2 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap text-center cursor-pointer">खोलें ›</button>`
-                : `<span class="flex-1 bg-slate-800/80 border border-slate-700/60 text-slate-400 px-2 py-1 rounded-lg text-[10px] font-medium whitespace-nowrap text-center">जल्द उपलब्ध</span>`;
-
-              return `
-                <div class="sivme-subcat-card w-full bg-[#0d1424] border border-slate-800/90 rounded-xl overflow-hidden shadow-md flex flex-col justify-between" style="min-height: 114px;">
-                  <!-- 75% BILINGUAL CONTENT ZONE (Full Width Typography) -->
-                  <div class="p-3 pb-2 flex-1 flex flex-col justify-between relative bg-gradient-to-b from-[#111a30]/80 to-[#0d1424]">
-                    <div class="flex items-center justify-between mb-1">
-                      <div class="flex items-center space-x-2">
-                        <span class="text-[10px] font-mono font-bold text-cyan-300 bg-cyan-950/90 border border-cyan-800/70 px-2 py-0.5 rounded leading-none">[${ch.id}]</span>
-                        <span class="text-lg leading-none">${ch.icon}</span>
-                      </div>
-                      <span class="sivme-inline-badge text-[9px] font-bold px-2 py-0.5 rounded bg-emerald-950/90 text-emerald-300 border border-emerald-700/60 leading-none">👁️Live</span>
-                    </div>
-                    <div class="flex flex-col text-left w-full mt-0.5">
-                      <span class="text-[13.5px] font-bold text-slate-100 tracking-wide leading-tight break-normal">${ch.enName}</span>
-                      <span class="text-[11.5px] font-medium text-slate-400 leading-tight mt-0.5 break-normal">(${ch.hiName})</span>
-                    </div>
-                  </div>
-                  <!-- 25% ACTION STRIP ZONE (Symmetrical 3-Pill Grid: 32% - 32% - 32%) -->
-                  <div class="px-2.5 py-1.5 bg-slate-950/90 border-t border-slate-800/70 flex items-center justify-between space-x-2 min-h-[30px]">
-                    ${pinBtn}
-                    ${videoBtn}
-                    ${actBtn}
-                  </div>
-                </div>
-              `;
-            }).join('')}
-          </div>
-        ` : ''}
+        <div id="sub-${item.id}" class="p-2 pt-0 space-y-2.5 bg-slate-950/50 hidden">
+          ${renderSubCards(item.num, item.children)}
+        </div>
       </div>
     `).join('');
     t1.dataset.rendered = 'true';
   }
 
+  // Render 17 Games
   if (t2) {
     t2.innerHTML = RM_GAMES_DATA.map(item => `
-      <div data-cat-id="${item.id}" class="w-full rounded-xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 active:scale-[0.99] transition-transform cursor-pointer mb-2 shadow-md flex items-center justify-between p-3 min-h-[64px]" onclick="alert('${item.enName} (${item.hiName}) गेम जल्द शुरू होगा')">
-        <div class="flex items-center space-x-2.5 min-w-0 flex-1 pr-2">
-          <span class="text-[10px] font-mono font-bold bg-cyan-950/70 text-cyan-400 border border-cyan-800/50 px-1.5 py-0.5 rounded shrink-0">${item.num}.</span>
-          <span class="text-xl shrink-0 leading-none">${item.icon}</span>
-          <div class="flex flex-col min-w-0 text-left flex-1">
-            <span class="text-[13.5px] font-bold text-slate-100 tracking-wide leading-tight break-normal">${item.enName}</span>
-            <span class="text-[11.5px] font-medium text-slate-400 leading-tight mt-0.5 break-normal">(${item.hiName})</span>
+      <div data-cat-id="${item.id}" data-sivme-urn="rm:cat:${item.num}" class="w-full rounded-xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 transition-all overflow-hidden mb-2 shadow-md relative">
+        <div onclick="handleCategoryClick('${item.id}', this)" class="flex items-center justify-between p-3 cursor-pointer active:scale-[0.99] transition-transform min-h-[64px]">
+          <div class="flex items-center space-x-2.5 min-w-0 flex-1 pr-2">
+            <span class="text-[10px] font-mono font-bold bg-cyan-950/70 text-cyan-400 border border-cyan-800/50 px-1.5 py-0.5 rounded shrink-0">${item.num}.</span>
+            <span class="text-xl shrink-0 leading-none">${item.icon}</span>
+            <div class="flex flex-col min-w-0 text-left flex-1">
+              <span class="text-[13.5px] font-bold text-slate-100 tracking-wide leading-tight break-normal">${item.enName}</span>
+              <span class="text-[11.5px] font-medium text-slate-400 leading-tight mt-0.5 break-normal">(${item.hiName})</span>
+            </div>
+          </div>
+          <div class="flex items-center space-x-1.5 shrink-0">
+            <span class="text-[10px] text-cyan-400 font-bold bg-cyan-950/80 px-2 py-0.5 rounded-full border border-cyan-800/50 whitespace-nowrap">3 गेम्स</span>
+            <span class="acc-arrow text-slate-300 text-xs font-mono font-bold bg-slate-800/90 border border-slate-700/80 w-6 h-6 rounded-full flex items-center justify-center">▼</span>
           </div>
         </div>
-        <span class="shrink-0 text-xs text-cyan-400 font-bold px-3 py-1 bg-cyan-950/70 rounded-full border border-cyan-800/50 whitespace-nowrap">खेलें ›</span>
+        <div id="sub-${item.id}" class="p-2 pt-0 space-y-2.5 bg-slate-950/50 hidden">
+          ${renderSubCards(item.num, item.children)}
+        </div>
       </div>
     `).join('');
     t2.dataset.rendered = 'true';
+  }
+
+  // Ensure Category 16 sub-accordion is opened by default for seamless audit
+  const sub16 = document.getElementById('sub-c16');
+  if (sub16) {
+    sub16.classList.remove('hidden');
+    sub16.style.display = 'block';
+    const c16Parent = document.querySelector('[data-cat-id="c16"]');
+    if (c16Parent) {
+      const arr = c16Parent.querySelector('.acc-arrow');
+      if (arr) arr.textContent = '▲';
+    }
   }
 
   syncCategoryVisibilityFromOwner();
 }
 
 // ==============================================================================
-// SECTION 3: OWNER CONSOLE VISIBILITY SYNC (SURFACE PARITY)
+// SECTION 4: OWNER CONSOLE VISIBILITY SYNC
 // ==============================================================================
 
 function syncCategoryVisibilityFromOwner() {
@@ -252,7 +623,7 @@ function syncCategoryVisibilityFromOwner() {
       if (!catId) return;
       const num = catId.replace('g', '');
       const isLive = activeIds.has(catId) || activeIds.has(num);
-      itemEl.style.display = isLive ? 'flex' : 'none';
+      itemEl.style.display = isLive ? 'block' : 'none';
       if (isLive) liveT2++;
     });
 
@@ -267,22 +638,27 @@ function syncCategoryVisibilityFromOwner() {
 }
 
 // ==============================================================================
-// SECTION 4: NAVIGATION, MODULE MOUNTING & CONTAINER RECOVERY
+// SECTION 5: ACCORDION TOGGLE & CATEGORY LAUNCH ENGINE
 // ==============================================================================
 
 function handleCategoryClick(catId, el) {
-  if (catId === 'c16') {
-    const sub = document.getElementById('sub-c16');
-    const arrow = el ? el.querySelector('.acc-arrow') : null;
-    if (sub) {
-      const isHidden = sub.style.display === 'none' || sub.classList.contains('hidden');
-      sub.style.display = isHidden ? 'block' : 'none';
-      if (arrow) arrow.textContent = isHidden ? '▲' : '▼';
+  const sub = document.getElementById('sub-' + catId);
+  const arrow = el ? el.querySelector('.acc-arrow') : null;
+  if (sub) {
+    const isHidden = sub.style.display === 'none' || sub.classList.contains('hidden');
+    if (isHidden) {
+      sub.classList.remove('hidden');
+      sub.style.display = 'block';
+      if (arrow) arrow.textContent = '▲';
+    } else {
+      sub.style.display = 'none';
+      sub.classList.add('hidden');
+      if (arrow) arrow.textContent = '▼';
     }
-  } else if (catId === 'c05') {
-    handleLaunchCategory('c05', '05-1');
-  } else {
-    alert(catId + ' सेवा का विस्तार जल्द उपलब्ध होगा।');
+    // Re-trigger SIVME visual inspection boundaries on expand
+    if (window.RM_SIVME && typeof window.RM_SIVME.applyInSituVisualInspection === 'function') {
+      setTimeout(window.RM_SIVME.applyInSituVisualInspection, 60);
+    }
   }
 }
 
@@ -345,15 +721,15 @@ function handleLaunchCategory(catId, subId) {
 
       document.body.appendChild(script);
     }
-  } else if (catId === 'c05') {
-    alert('सॉवरेन बहीखाता (Business Khata) लोड हो रहा है...');
+  } else if (catId === 'c05' && (subId === '05-1' || !subId)) {
+    alert('💼 [05-1] सॉवरेन बहीखाता (Business Khata) लोड हो रहा है...');
   } else {
-    alert('यह सेवा जल्द ही एक्टिवेट होगी।');
+    alert(catId + ' [' + (subId || '') + '] सेवा का विस्तार जल्द उपलब्ध होगा।');
   }
 }
 
 // ==============================================================================
-// SECTION 5: AUTO-BOOTSTRAP & PUBLIC API EXPORTS
+// SECTION 6: AUTO-BOOTSTRAP & PUBLIC API EXPORTS
 // ==============================================================================
 
 window.RM_CatalogRenderer = {
