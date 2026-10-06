@@ -2,7 +2,7 @@
  * RISE MITRA — SIVME CATEGORY 16 MASTER ADAPTER
  * MODULE        : Category 16 (House & Home) Unified Master Adapter
  * FILE          : cat-16.js
- * VERSION       : v3.0 - 100% ZEL Certified (Parent Accordion + Two-Tier Bilingual 01-N Sub-Cards)
+ * VERSION       : v3.5 - 100% ZEL Certified (Absolute Ghost Purge + Two-Tier 75:25 + Pill Buttons)
  * GOVERNANCE    : GATE-23.5 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
  * DUAL-FOLDER REFS:
@@ -15,8 +15,9 @@
 
   var PARENT_URN = 'rm:cat:16';
   var SUB_URNS = ['rm:cat:16:sub:16-1', 'rm:cat:16:sub:16-2', 'rm:cat:16:sub:16-3'];
+  var PIN_STORAGE_KEY = 'rm_user_pinned_shortcuts_v1';
 
-  // Master SSOT for Sub-Categories (01-N Numbering + Bilingual Metadata)
+  // 1. MASTER SUB-CATEGORIES REGISTRY (SSOT)
   var SUB_CATEGORIES = [
     {
       id: 'sub-16-1',
@@ -26,8 +27,7 @@
       en: 'Mistry & Home Repair',
       hi: 'मिस्त्री व गृह मरम्मत',
       actionType: 'badge',
-      actionText: 'जल्द उपलब्ध',
-      actionClass: 'text-slate-400 bg-slate-800/80 border border-slate-700'
+      actionText: 'जल्द उपलब्ध'
     },
     {
       id: 'sub-16-2',
@@ -37,8 +37,7 @@
       en: 'Rental Ledger',
       hi: 'किराया बहीखाता',
       actionType: 'button',
-      actionText: 'खोलें ›',
-      actionClass: 'text-emerald-400 bg-emerald-950/60 border border-emerald-600/50 hover:bg-emerald-900/60'
+      actionText: 'खोलें ›'
     },
     {
       id: 'sub-16-3',
@@ -48,8 +47,7 @@
       en: 'Room & Flat Search',
       hi: 'कमरा व फ्लैट खोज',
       actionType: 'button',
-      actionText: 'खोलें ›',
-      actionClass: 'text-emerald-400 bg-emerald-950/60 border border-emerald-600/50 hover:bg-emerald-900/60'
+      actionText: 'खोलें ›'
     }
   ];
 
@@ -57,8 +55,41 @@
     return window.RM_SIVME || null;
   }
 
+  // 2. PINNED LOCAL STORAGE HELPERS
+  function getPinnedList() {
+    try {
+      var raw = localStorage.getItem(PIN_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function isPinned(id) {
+    return getPinnedList().some(function (item) { return item.id === id; });
+  }
+
+  function togglePinState(id, label, icon) {
+    var list = getPinnedList();
+    var idx = -1;
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].id === id) { idx = i; break; }
+    }
+    if (idx !== -1) {
+      list.splice(idx, 1);
+    } else {
+      list.push({ id: id, label: label, icon: icon, addedAt: Date.now() });
+    }
+    try {
+      localStorage.setItem(PIN_STORAGE_KEY, JSON.stringify(list));
+    } catch (_) {}
+
+    window.dispatchEvent(new CustomEvent('rm_pinned_shortcuts_changed'));
+    auditCat16SubCategories();
+  }
+
   // =========================================================
-  // 1. BI-DIRECTIONAL COMPUTED PARENT SYNC (100% ZEL Preserved)
+  // 3. BI-DIRECTIONAL COMPUTED PARENT SYNC (100% ZEL Preserved)
   // =========================================================
   function syncCategory16Parent() {
     var core = getCore();
@@ -71,12 +102,11 @@
         break;
       }
     }
-    // Update Master Registry SSOT
     core.setUrnVisibility(PARENT_URN, allLive, 'घर व मकान (House & Home)');
   }
 
   // =========================================================
-  // 2. AUTHORITATIVE 1-TAP ACCORDION CONTROLLER (100% ZEL Preserved)
+  // 4. AUTHORITATIVE 1-TAP ACCORDION CONTROLLER (100% ZEL Preserved)
   // =========================================================
   function auditCategory16Parent() {
     var core = getCore();
@@ -89,14 +119,13 @@
     if (c16Header && c16Header.getAttribute('data-sivme-c16-ctrl') !== 'true') {
       c16Header.setAttribute('data-sivme-c16-ctrl', 'true');
 
-      // Strip native conflicting inline click listeners
+      // Conflicting inline click listeners ko saaf karein
       if (c16Header.hasAttribute('onclick')) c16Header.removeAttribute('onclick');
       c16Header.querySelectorAll('[onclick]').forEach(function (el) {
         el.removeAttribute('onclick');
       });
 
       c16Header.addEventListener('click', function (e) {
-        // If badge itself is tapped, let badge listener handle cascade
         if (e.target.closest('.sivme-inline-badge')) return;
 
         if (e.cancelable) e.preventDefault();
@@ -128,7 +157,7 @@
   }
 
   // =========================================================
-  // 3. LANGUAGE RESOLVER (Default English-First + Settings Hook)
+  // 5. LANGUAGE RESOLVER (Default English-First + Settings Hook)
   // =========================================================
   function resolveTitles(item) {
     var pref = 'en_first';
@@ -137,19 +166,13 @@
     } catch (_) {}
 
     if (pref === 'hi_first') {
-      return {
-        primary: item.hi,
-        secondary: '(' + item.en + ')'
-      };
+      return { primary: item.hi, secondary: '(' + item.en + ')' };
     }
-    return {
-      primary: item.en,
-      secondary: '(' + item.hi + ')'
-    };
+    return { primary: item.en, secondary: '(' + item.hi + ')' };
   }
 
   // =========================================================
-  // 4. TWO-TIER SUB-CATEGORY CARDS & BILINGUAL DOM RENDERER
+  // 6. TWO-TIER 75:25 RENDERER WITH TOTAL GHOST CARD PURGE
   // =========================================================
   function auditCat16SubCategories() {
     var container = document.getElementById('sub-c16');
@@ -160,80 +183,95 @@
       ? core.isConsoleAuthorized()
       : false;
 
+    // Purge unwanted legacy static duplicates
+    var childList = Array.from(container.children);
+    var hasGhosts = childList.length !== 3 || childList.some(function (c) {
+      return c.id !== 'sub-16-1' && c.id !== 'sub-16-2' && c.id !== 'sub-16-3';
+    });
+
+    if (hasGhosts) {
+      container.innerHTML = '';
+    }
+
     SUB_CATEGORIES.forEach(function (item) {
       var card = document.getElementById(item.id);
       var titles = resolveTitles(item);
+      var pinned = isPinned(item.id);
 
-      // Render or Upgrade Card to Two-Tier Structure
-      if (!card || !card.querySelector('.sivme-subcat-top-row')) {
-        if (!card) {
-          card = document.createElement('div');
-          card.id = item.id;
-          container.appendChild(card);
-        }
+      var pinBtnHtml = pinned
+        ? '<button type="button" class="sivme-pill-pin is-pinned">📌 पिन है</button>'
+        : '<button type="button" class="sivme-pill-pin">📌 पिन करें</button>';
 
-        card.className = 'sivme-subcat-card';
+      var actBtnHtml = item.actionType === 'button'
+        ? '<button type="button" class="sivme-pill-act">' + item.actionText + '</button>'
+        : '<span class="sivme-pill-act is-badge">' + item.actionText + '</span>';
+
+      if (!card) {
+        card = document.createElement('div');
+        card.id = item.id;
         card.setAttribute('data-subcat-id', item.id);
-
-        var actionHtml = item.actionType === 'button'
-          ? `<button type="button" class="sivme-subcat-btn text-xs px-3 py-1 rounded-full font-bold transition cursor-pointer ${item.actionClass}">${item.actionText}</button>`
-          : `<span class="text-xs px-2.5 py-0.5 rounded-full font-medium ${item.actionClass}">${item.actionText}</span>`;
-
-        card.innerHTML = `
-          <div class="sivme-subcat-top-row">
-            <span class="sivme-subcat-seq">${item.seq}</span>
-            <span style="font-size: 18px; line-height: 1; flex-shrink: 0;">${item.icon}</span>
-            <div class="sivme-subcat-title-stack">
-              <span class="sivme-subcat-title-primary">${titles.primary}</span>
-              <span class="sivme-subcat-title-secondary">${titles.secondary}</span>
-            </div>
-          </div>
-          <div class="sivme-subcat-split"></div>
-          <div class="sivme-subcat-actions-row">
-            <div class="sivme-pin-slot" style="display:flex;align-items:center;"></div>
-            ${actionHtml}
-          </div>
-        `;
-
-        // Direct Action Binding
-        if (item.id === 'sub-16-2') {
-          var btn2 = card.querySelector('button');
-          if (btn2) {
-            btn2.addEventListener('click', function (e) {
-              e.stopPropagation();
-              var ledgerModal = document.getElementById('rentalLedgerModal');
-              if (ledgerModal) {
-                ledgerModal.classList.remove('hidden');
-                ledgerModal.style.removeProperty('display');
-              } else if (typeof window.openRentalLedger === 'function') {
-                window.openRentalLedger();
-              }
-            });
-          }
-        } else if (item.id === 'sub-16-3') {
-          var btn3 = card.querySelector('button');
-          if (btn3) {
-            btn3.addEventListener('click', function (e) {
-              e.stopPropagation();
-              var searchModal = document.getElementById('rentalSearchModal');
-              if (searchModal) {
-                searchModal.classList.remove('hidden');
-                searchModal.style.removeProperty('display');
-              } else if (typeof window.openRentalSearch === 'function') {
-                window.openRentalSearch();
-              }
-            });
-          }
-        }
-      } else {
-        // Sync Titles dynamically if language preference changes
-        var pEl = card.querySelector('.sivme-subcat-title-primary');
-        var sEl = card.querySelector('.sivme-subcat-title-secondary');
-        if (pEl && pEl.textContent !== titles.primary) pEl.textContent = titles.primary;
-        if (sEl && sEl.textContent !== titles.secondary) sEl.textContent = titles.secondary;
+        container.appendChild(card);
       }
 
-      // Delegate Sovereign In-Situ Audit & Badges
+      card.className = 'sivme-subcat-card';
+
+      // Top 75% Bilingual Stack + Bottom 25% Action Strip (Left: Pin, Right: Open)
+      card.innerHTML = 
+        '<div class="sivme-subcat-top-75">' +
+          '<span class="sivme-subcat-seq">' + item.seq + '</span>' +
+          '<span style="font-size: 16px; line-height: 1; flex-shrink: 0;">' + item.icon + '</span>' +
+          '<div class="sivme-subcat-title-stack">' +
+            '<span class="sivme-title-primary">' + titles.primary + '</span>' +
+            '<span class="sivme-title-secondary">' + titles.secondary + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="sivme-subcat-bottom-25">' +
+          pinBtnHtml +
+          actBtnHtml +
+        '</div>';
+
+      // Pin button binding
+      var pinBtn = card.querySelector('.sivme-pill-pin');
+      if (pinBtn) {
+        pinBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          togglePinState(item.id, titles.primary, item.icon);
+        });
+      }
+
+      // Action Modal triggers
+      if (item.id === 'sub-16-2') {
+        var actBtn2 = card.querySelector('.sivme-pill-act');
+        if (actBtn2 && actBtn2.tagName === 'BUTTON') {
+          actBtn2.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var modal = document.getElementById('rentalLedgerModal');
+            if (modal) {
+              modal.classList.remove('hidden');
+              modal.style.removeProperty('display');
+            } else if (typeof window.openRentalLedger === 'function') {
+              window.openRentalLedger();
+            }
+          });
+        }
+      } else if (item.id === 'sub-16-3') {
+        var actBtn3 = card.querySelector('.sivme-pill-act');
+        if (actBtn3 && actBtn3.tagName === 'BUTTON') {
+          actBtn3.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var modal3 = document.getElementById('rentalSearchModal');
+            if (modal3) {
+              modal3.classList.remove('hidden');
+              modal3.style.removeProperty('display');
+            } else if (typeof window.openRentalSearch === 'function') {
+              window.openRentalSearch();
+            }
+          });
+        }
+      }
+
+      // SIVME in-situ visibility audit
       if (core && typeof core.auditElement === 'function') {
         core.auditElement(card, item.urn, item.en + ' (' + item.hi + ')', isAuth);
       }
@@ -241,16 +279,13 @@
   }
 
   // =========================================================
-  // 5. MASTER EXECUTION DISPATCHER
+  // 7. MASTER EXECUTION & REGISTRATION
   // =========================================================
   function auditCategory16Complete() {
     auditCategory16Parent();
     auditCat16SubCategories();
   }
 
-  // =========================================================
-  // 6. REGISTER WITH MASTER SIVME ENGINE
-  // =========================================================
   function register() {
     var core = getCore();
     if (core && typeof core.registerAdapter === 'function') {
@@ -260,5 +295,6 @@
     }
   }
 
+  window.addEventListener('rm_pinned_shortcuts_changed', auditCat16SubCategories);
   register();
 })();
