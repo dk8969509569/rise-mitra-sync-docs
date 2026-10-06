@@ -1,8 +1,8 @@
 /**
  * RISE MITRA — SIVME MICRO-MODULAR ADAPTER
- * MODULE        : Customer Pinned Shortcuts & Home Neon Divider Engine
+ * MODULE        : Customer Pinned Shortcuts Engine (Sub-Categories Exclusive)
  * FILE          : user-pinned-shortcuts.js
- * SCOPE         : Pin/Unpin Catalog Items & Render Custom Strip above 9 Core Verticals
+ * VERSION       : v2.2 - Proper Header Hierarchy & Robust Label Extraction
  * GOVERNANCE    : GATE-23.5 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
  * DUAL-FOLDER REFS:
@@ -15,7 +15,7 @@
 
   var STORAGE_KEY = 'rm_user_pinned_shortcuts_v1';
 
-  // 1. PINNED STORAGE HELPER
+  // 1. PINNED STORAGE HELPERS
   function getPinnedList() {
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
@@ -47,38 +47,54 @@
     if (idx !== -1) {
       list.splice(idx, 1);
     } else {
-      list.push({ id: id, label: label, icon: icon || '📌', addedAt: Date.now() });
+      list.push({ id: id, label: label, icon: icon || '⚡', addedAt: Date.now() });
     }
     setPinnedList(list);
   }
 
-  // 2. INJECT PIN BUTTONS ON ALL CATALOG CARDS
+  // 2. AUDIT PIN BUTTONS (STRICTLY SUB-CATEGORIES ONLY)
   function auditCatalogPinButtons() {
-    var cards = document.querySelectorAll(
-      '#categoryModal [data-cat-id], ' +
-      '#sub-c16 > div'
+    // Remove accidental pins from 50 main category containers
+    document.querySelectorAll('#categoryModal [data-cat-id] > .sivme-pin-action-btn, #categoryModal [data-cat-id] > div > .sivme-pin-action-btn').forEach(function (btn) {
+      btn.remove();
+    });
+
+    // Target strictly sub-category elements
+    var subCards = document.querySelectorAll(
+      '#sub-c16 > div, ' +
+      '[data-subcat-id], ' +
+      '.sivme-subcat-card'
     );
 
-    cards.forEach(function (card) {
-      if (card.getAttribute('data-cat-id') === 'c16' && !card.closest('#sub-c16')) {
-        // Parent c16 accordion header
-        return;
-      }
+    subCards.forEach(function (card) {
+      var cardId = card.getAttribute('data-subcat-id') || card.id || '';
+      
+      // Clean clone to extract text accurately without button/pin markup
+      var clone = card.cloneNode(true);
+      var trash = clone.querySelectorAll('.sivme-pin-action-btn, button, a, .sivme-inline-badge, svg');
+      trash.forEach(function (t) { t.remove(); });
+      var rawText = (clone.textContent || '').trim();
 
-      var cardId = card.getAttribute('data-cat-id') || card.id || '';
-      var labelEl = card.querySelector('.text-xs.font-bold, .font-bold, span');
-      var label = labelEl ? (labelEl.textContent || '').trim() : 'सेवा';
-
-      // Clean label text
-      label = label.replace(/^[0-9]{1,2}\.\s*/, '').replace(/खोलें.*$/, '').trim();
-
+      var icon = '⚡';
       if (!cardId) {
-        if (label.indexOf('मिस्त्री') !== -1) cardId = 'sub-16-1';
-        else if (label.indexOf('किराया बहीखाता') !== -1) cardId = 'sub-16-2';
-        else if (label.indexOf('कमरा व फ्लैट') !== -1) cardId = 'sub-16-3';
-        else return;
+        if (rawText.indexOf('मिस्त्री') !== -1) {
+          cardId = 'sub-16-1';
+          icon = '🛠️';
+          rawText = 'मिस्त्री व गृह मरम्मत';
+        } else if (rawText.indexOf('किराया बहीखाता') !== -1) {
+          cardId = 'sub-16-2';
+          icon = '📋';
+          rawText = 'किराया बहीखाता (Rental Ledger)';
+        } else if (rawText.indexOf('कमरा व फ्लैट') !== -1) {
+          cardId = 'sub-16-3';
+          icon = '🏠';
+          rawText = 'कमरा व फ्लैट खोज (Rental Search)';
+        } else {
+          return;
+        }
       }
 
+      var cleanLabel = rawText.replace(/खोलें.*$/, '').replace(/जल्द उपलब्ध.*$/, '').trim();
       var isPinned = isItemPinned(cardId);
       var pinBtn = card.querySelector('.sivme-pin-action-btn');
 
@@ -105,8 +121,7 @@
           z-index: 20;
         `;
 
-        // Insert before action button (खोलें/खेलें)
-        var actionSlot = card.querySelector('button:not(.sivme-pin-action-btn), a, span.text-cyan-400, span.text-emerald-400');
+        var actionSlot = card.querySelector('button, a, span.text-cyan-400, span.text-emerald-400, span[class*="text-slate"]');
         if (actionSlot && actionSlot.parentNode) {
           actionSlot.parentNode.insertBefore(pinBtn, actionSlot);
         } else {
@@ -117,16 +132,15 @@
           e.preventDefault();
           e.stopPropagation();
           e.stopImmediatePropagation();
-          togglePin(cardId, label, '📌');
+          togglePin(cardId, cleanLabel, icon);
         }, true);
       }
 
-      // Update button visual state
       if (isPinned) {
         pinBtn.innerHTML = '<span>📌</span><span style="color:#38bdf8;">पिन है</span>';
         pinBtn.style.borderColor = '#0284c7';
-        pinBtn.style.background = 'rgba(3, 105, 161, 0.25)';
-        pinBtn.style.boxShadow = '0 0 8px rgba(56, 189, 248, 0.35)';
+        pinBtn.style.background = 'rgba(3, 105, 161, 0.3)';
+        pinBtn.style.boxShadow = '0 0 8px rgba(56, 189, 248, 0.4)';
       } else {
         pinBtn.innerHTML = '<span style="opacity:0.6;">📌</span><span>पिन करें</span>';
         pinBtn.style.borderColor = 'rgba(255, 255, 255, 0.15)';
@@ -136,26 +150,35 @@
     });
   }
 
-  // 3. RENDER PINNED SHORTCUTS & NEON DIVIDER ON HOME SCREEN
+  // 3. RENDER HOME SCREEN PINNED SECTION & NEON DIVIDER ABOVE 9 CORE VERTICALS
   function renderHomePinnedSection() {
     var pinnedList = getPinnedList();
     var existingSec = document.getElementById('rmUserPinnedSection');
 
-    // If no items are pinned, hide section
     if (!pinnedList || pinnedList.length === 0) {
       if (existingSec) existingSec.remove();
       return;
     }
 
-    // Locate mounting spot: right above 9 Core Verticals
-    var verticals = document.querySelectorAll('.sivme-vertical-card, [data-vertical-id]');
-    var targetMount = null;
+    // Find "9 CORE VERTICALS" header container so we can mount ABOVE it
+    var header9 = null;
+    var allNodes = document.querySelectorAll('div, h2, h3, p, span');
+    for (var i = 0; i < allNodes.length; i++) {
+      var t = (allNodes[i].textContent || '').trim();
+      if (t.indexOf('9 CORE VERTICALS') !== -1 && allNodes[i].children.length < 5) {
+        header9 = allNodes[i].closest('.flex') || allNodes[i];
+        break;
+      }
+    }
 
-    if (verticals.length > 0) {
-      var gridContainer = verticals[0].parentElement;
-      targetMount = gridContainer || verticals[0];
-    } else {
-      targetMount = document.querySelector('.grid') || document.querySelector('[data-sivme-card="rm-cash"]');
+    var targetMount = header9;
+    if (!targetMount) {
+      var verticals = document.querySelectorAll('.sivme-vertical-card, [data-vertical-id]');
+      if (verticals.length > 0) {
+        targetMount = verticals[0].parentElement;
+      } else {
+        targetMount = document.querySelector('.grid');
+      }
     }
 
     if (!targetMount || !targetMount.parentElement) return;
@@ -163,11 +186,10 @@
     if (!existingSec) {
       existingSec = document.createElement('div');
       existingSec.id = 'rmUserPinnedSection';
-      existingSec.style.cssText = 'width: 100%; margin-top: 14px; margin-bottom: 8px;';
+      existingSec.style.cssText = 'width: 100%; margin-top: 14px; margin-bottom: 12px;';
       targetMount.parentElement.insertBefore(existingSec, targetMount);
     }
 
-    // Build Pinned Cards HTML
     var cardsHtml = pinnedList.map(function (item) {
       return `
         <div data-pinned-target="${item.id}" style="
@@ -178,25 +200,25 @@
           border: 1px solid rgba(56,189,248,0.35);
           border-left: 3px solid #38bdf8;
           border-radius: 12px;
-          padding: 10px 12px;
+          padding: 10px 14px;
           margin-bottom: 8px;
           box-shadow: 0 4px 12px rgba(0,0,0,0.5);
           cursor: pointer;
         ">
-          <div style="display:flex;align-items:center;gap:8px;">
-            <span style="font-size:16px;">${item.icon || '📌'}</span>
-            <span style="font-size:12px;font-weight:800;color:#f1f5f9;">${item.label}</span>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:18px;">${item.icon || '⚡'}</span>
+            <span style="font-size:13px;font-weight:800;color:#f1f5f9;">${item.label || 'सेवा'}</span>
           </div>
-          <div style="display:flex;align-items:center;gap:6px;">
+          <div style="display:flex;align-items:center;gap:8px;">
             <span style="font-size:11px;color:#38bdf8;font-weight:700;">खोलें ›</span>
             <button class="rm-unpin-btn" data-unpin-id="${item.id}" style="
-              background:rgba(239,68,68,0.2);
-              border:1px solid rgba(239,68,68,0.4);
+              background:rgba(239,68,68,0.25);
+              border:1px solid rgba(239,68,68,0.45);
               color:#fca5a5;
               border-radius:9999px;
-              width:20px;
-              height:20px;
-              font-size:10px;
+              width:22px;
+              height:22px;
+              font-size:11px;
               cursor:pointer;
               display:flex;
               align-items:center;
@@ -216,7 +238,7 @@
       <div class="rm-pinned-divider"></div>
     `;
 
-    // Bind Unpin Actions
+    // Unpin Action
     existingSec.querySelectorAll('.rm-unpin-btn').forEach(function (btn) {
       btn.addEventListener('click', function (e) {
         e.stopPropagation();
@@ -225,33 +247,33 @@
       });
     });
 
-    // Bind Card Click to Trigger Original Action
+    // Pinned Card Click
     existingSec.querySelectorAll('[data-pinned-target]').forEach(function (cardEl) {
       cardEl.addEventListener('click', function (e) {
         if (e.target.closest('.rm-unpin-btn')) return;
         var tid = cardEl.getAttribute('data-pinned-target');
 
-        // Target either catalog card or sub-c16 element
-        var targetCard = document.querySelector('[data-cat-id="' + tid + '"], #' + tid);
-        if (targetCard) {
-          var openTrigger = targetCard.querySelector('button, a, div[onclick]') || targetCard;
-          openTrigger.click();
-        } else {
-          // If modal closed, open catalog modal
-          var catBtn = document.querySelector('button[onclick*="category"], a[href*="category"]');
-          if (catBtn) catBtn.click();
+        if (tid === 'sub-16-2') {
+          var ledgerBtn = document.querySelector('button[onclick*="rentalLedger"], [onclick*="RentalLedger"]');
+          if (ledgerBtn) { ledgerBtn.click(); return; }
+        } else if (tid === 'sub-16-3') {
+          var searchBtn = document.querySelector('button[onclick*="rentalSearch"], [onclick*="RentalSearch"]');
+          if (searchBtn) { searchBtn.click(); return; }
         }
+
+        var catBtn = document.querySelector('button[onclick*="category"], a[href*="category"]');
+        if (catBtn) catBtn.click();
       });
     });
   }
 
-  // 4. MAIN AUDIT WRAPPER
+  // 4. AUDIT DISPATCHER
   function auditPinnedShortcuts() {
     auditCatalogPinButtons();
     renderHomePinnedSection();
   }
 
-  // 5. REGISTER WITH CORE ENGINE
+  // 5. REGISTER ADAPTER
   function register() {
     if (window.RM_SIVME && typeof window.RM_SIVME.registerAdapter === 'function') {
       window.RM_SIVME.registerAdapter('user-pinned-shortcuts', auditPinnedShortcuts);
