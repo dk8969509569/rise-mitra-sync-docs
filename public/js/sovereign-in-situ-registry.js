@@ -32,10 +32,11 @@
   var DEFAULT_REGISTRY = {
     version: REGISTRY_VERSION,
     lastUpdated: Date.now(),
-    activeMode: 'public', // 'public' | 'in_situ_console'
+    activeMode: 'in_situ_console', // Default active for verified Owner in-situ testing
     registry: {
       // Category 16 Baseline Defaults
       'rm:cat:16': { hidden: false, label: 'House & Home (आवास व मिस्त्री)' },
+      'rm:cat:16:sub:16-1': { hidden: false, label: '16-1. मिस्त्री व गृह मरम्मत' },
       'rm:cat:16:sub:16-2': { hidden: false, label: '16-2. किराया बहीखाता' },
       'rm:cat:16:sub:16-2:elem:pincode_box': { hidden: false, label: 'पिनकोड इनपुट बॉक्स' },
       'rm:cat:16:sub:16-2:elem:btn_add_slip': { hidden: false, label: 'रसीद बनाएं बटन' },
@@ -110,6 +111,9 @@
         var event = new CustomEvent('rm:sov:visibility-changed', { detail: data });
         window.dispatchEvent(event);
       }
+
+      // Apply In-Situ visual inspection outline & badges
+      applyInSituVisualInspection();
       return true;
     } catch (err) {
       console.error('[RM-SIVME] Registry storage write failed:', err);
@@ -157,21 +161,17 @@
 
   /**
    * Parse Parent URN to enforce Cascading Inheritance
-   * Udaharan:
-   * 'rm:cat:16:sub:16-3:elem:budget_slider' -> Parent 1: 'rm:cat:16:sub:16-3', Parent 2: 'rm:cat:16'
    */
   function getParentURNs(urn) {
     if (!urn || typeof urn !== 'string') return [];
     var parts = urn.split(':');
     var parents = [];
 
-    // If it has :elem:, the parent sub-feature is everything before :elem:
     var elemIndex = parts.indexOf('elem');
     if (elemIndex !== -1) {
       parents.push(parts.slice(0, elemIndex).join(':'));
     }
 
-    // If it has :sub:, the parent category is everything before :sub:
     var subIndex = parts.indexOf('sub');
     if (subIndex !== -1) {
       parents.push(parts.slice(0, subIndex).join(':'));
@@ -231,9 +231,10 @@
    */
   function isConsoleModeActive() {
     try {
-      var sessionTicket = sessionStorage.getItem(SESSION_AUTH_KEY);
       var reg = loadRegistry();
-      return Boolean(sessionTicket === 'SOV_ACTIVE_2026' || reg.activeMode === 'in_situ_console');
+      var sessionTicket = sessionStorage.getItem(SESSION_AUTH_KEY);
+      var localTicket = localStorage.getItem(SESSION_AUTH_KEY);
+      return Boolean(localTicket === 'SOV_ACTIVE_2026' || sessionTicket === 'SOV_ACTIVE_2026' || reg.activeMode === 'in_situ_console');
     } catch (_) {
       return false;
     }
@@ -247,11 +248,14 @@
       var state = loadRegistry();
       state.activeMode = active ? 'in_situ_console' : 'public';
       if (active) {
+        localStorage.setItem(SESSION_AUTH_KEY, 'SOV_ACTIVE_2026');
         sessionStorage.setItem(SESSION_AUTH_KEY, 'SOV_ACTIVE_2026');
       } else {
+        localStorage.removeItem(SESSION_AUTH_KEY);
         sessionStorage.removeItem(SESSION_AUTH_KEY);
       }
       saveRegistry(state);
+      applyInSituVisualInspection();
       return true;
     } catch (err) {
       console.error('[RM-SIVME] Failed to toggle console mode:', err);
@@ -272,15 +276,13 @@
     });
     state.activeMode = 'public';
     try {
+      localStorage.removeItem(SESSION_AUTH_KEY);
       sessionStorage.removeItem(SESSION_AUTH_KEY);
     } catch (_) {}
     saveRegistry(state);
+    applyInSituVisualInspection();
     return true;
   }
-
-  // ==============================================================================
-  // PHASE 2: CANONICAL BADGE DOCKING & ADAPTER ORCHESTRATION ENGINE
-  // ==============================================================================
 
   /**
    * Dock Floating Badges Cleanly Inside Cards (Categories 01 to 50)
@@ -349,7 +351,7 @@
   }
 
   /**
-   * Adapter Registration and Dispatch (Transforms skinny rows to 108px broad cards)
+   * Adapter Registration and Dispatch
    */
   function registerAdapter(name, initFn) {
     adapters[name] = initFn;
@@ -366,12 +368,103 @@
     });
   }
 
-  // Auto-trigger adapters when Universal Catalog opens
+  // ==============================================================================
+  // IN-SITU DASHED BORDER INJECTION & FLOATING DOCK ENGINE
+  // ==============================================================================
+
+  function applyInSituVisualInspection() {
+    var active = isConsoleModeActive();
+
+    // 1. Create or Update Top-Level Floating Control Dock
+    var dock = document.getElementById('sivme-floating-console-dock');
+    if (!dock) {
+      dock = document.createElement('div');
+      dock.id = 'sivme-floating-console-dock';
+      dock.style.cssText = [
+        'position: fixed !important',
+        'bottom: 14px !important',
+        'left: 50% !important',
+        'transform: translateX(-50%) !important',
+        'z-index: 99999 !important',
+        'background: rgba(15, 23, 42, 0.95) !important',
+        'backdrop-filter: blur(12px) !important',
+        'border: 1px solid rgba(16, 185, 129, 0.5) !important',
+        'box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.8), 0 0 15px rgba(16, 185, 129, 0.3) !important',
+        'border-radius: 9999px !important',
+        'padding: 6px 14px !important',
+        'display: flex !important',
+        'align-items: center !important',
+        'gap: 10px !important',
+        'color: #f8fafc !important',
+        'font-family: system-ui, -apple-system, sans-serif !important',
+        'font-size: 11px !important',
+        'font-weight: 700 !important'
+      ].join(';');
+      document.body.appendChild(dock);
+    }
+
+    dock.style.display = active ? 'flex' : 'none';
+    dock.innerHTML = [
+      '<span style="display:flex;align-items:center;gap:4px;color:#34d399;">',
+      '  <span style="width:7px;height:7px;border-radius:50%;background:#10b981;box-shadow:0 0 6px #10b981;"></span>',
+      '  <span>OWNER IN-SITU</span>',
+      '</span>',
+      '<span style="color:#64748b;">|</span>',
+      '<button id="sivme-toggle-mode-btn" style="background:#1e293b;border:1px solid #475569;color:#e2e8f0;padding:3px 8px;border-radius:9999px;cursor:pointer;">' + (active ? 'Disable' : 'Enable') + '</button>',
+      '<button id="sivme-reload-btn" style="background:#065f46;border:1px solid #10b981;color:#a7f3d0;padding:3px 8px;border-radius:9999px;cursor:pointer;">⚡ Reload</button>'
+    ].join('');
+
+    var toggleBtn = document.getElementById('sivme-toggle-mode-btn');
+    if (toggleBtn) {
+      toggleBtn.onclick = function (e) {
+        e.stopPropagation();
+        setConsoleMode(!active);
+      };
+    }
+
+    var reloadBtn = document.getElementById('sivme-reload-btn');
+    if (reloadBtn) {
+      reloadBtn.onclick = function (e) {
+        e.stopPropagation();
+        window.location.reload();
+      };
+    }
+
+    // 2. Scan and Inject Green/Red Dashed Borders on Every Tracked Surface Element
+    var targets = document.querySelectorAll('[data-cat-id], .sivme-subcat-card, [onclick*="togglePinService"], [onclick*="handleLaunchVideo"], [onclick*="handleLaunchCategory"]');
+
+    targets.forEach(function (el) {
+      var urn = el.getAttribute('data-sivme-urn') || el.getAttribute('data-cat-id') || el.className;
+      var live = isVisible(urn);
+
+      if (active) {
+        el.style.position = 'relative';
+        if (live) {
+          el.style.outline = '2px dashed #10b981 !important';
+          el.style.outlineOffset = '2px !important';
+        } else {
+          el.style.outline = '2px dashed #ef4444 !important';
+          el.style.outlineOffset = '2px !important';
+          el.style.opacity = '0.65';
+        }
+      } else {
+        el.style.outline = 'none';
+        el.style.opacity = '1';
+      }
+    });
+  }
+
+  // Auto-trigger adapters and inspection when catalog opens
   if (typeof document !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', function () {
+      applyInSituVisualInspection();
+    });
     document.addEventListener('click', function (e) {
       if (e.target && e.target.closest && e.target.closest('#cat-menu-btn, [onclick*="category"], [data-cat-id]')) {
         setTimeout(triggerAllAdapters, 50);
+        setTimeout(applyInSituVisualInspection, 60);
         setTimeout(triggerAllAdapters, 200);
+        setTimeout(applyInSituVisualInspection, 220);
       }
     }, true);
   }
@@ -391,10 +484,10 @@
     setConsoleMode: setConsoleMode,
     resetAllToPublicLive: resetAllToPublicLive,
     getParentURNs: getParentURNs,
-    // Phase 2 Additions:
     renderBadge: renderBadge,
     auditElement: auditElement,
     registerAdapter: registerAdapter,
-    triggerAllAdapters: triggerAllAdapters
+    triggerAllAdapters: triggerAllAdapters,
+    applyInSituVisualInspection: applyInSituVisualInspection
   };
 });
