@@ -60,7 +60,7 @@
       id: 'c06', num: '06', enName: 'Comics', hiName: 'कहानियाँ व कॉमिक्स', icon: '📖', hasChildren: true,
       children: [
         { id: '06-1', enName: 'Desi Chitra-Katha Store', hiName: 'देसी चित्रकथा व कॉमिक्स संग्रह', icon: '🎨', badge: 'खोलें ›', state: 'active', action: 'action' },
-        { id: '06-2', enName: 'Veer Gatha & History', hiName: 'ऐतिहासिक वीर गाथा व चरित्र', icon: '🛡️️', badge: 'खोलें ›', state: 'active', action: 'action' },
+        { id: '06-2', enName: 'Veer Gatha & History', hiName: 'ऐतिहासिक वीर गाथा व चरित्र', icon: '🛡️', badge: 'खोलें ›', state: 'active', action: 'action' },
         { id: '06-3', enName: 'Bal Sahitya Pustak', hiName: 'बाल साहित्य व पंचतंत्र नीति कथाएं', icon: '👶', badge: 'खोलें ›', state: 'active', action: 'action' }
       ]
     },
@@ -319,7 +319,7 @@
       id: 'g38', num: '38', enName: 'Card', hiName: 'ताश सॉलिटेयर', icon: '🃏', hasChildren: true,
       children: [
         { id: '38-1', enName: 'Tash Solitaire Offline', hiName: 'देसी ताश सॉलिटेयर गेम', icon: '♠️', badge: 'खेलें ›', state: 'active', action: 'game' },
-        { id: '38-2', enName: '28-Card Points Battle', hiName: '28 पत्ती देसी अंक मुकाबला', icon: '♥️', badge: 'खेलें ›', state: 'active', action: 'game' },
+        { id: '38-2', enName: '28-Card Points Battle', hiName: '28 पत्ती देसी अंक मुकाबला', icon: '♥️️', badge: 'खेलें ›', state: 'active', action: 'game' },
         { id: '38-3', enName: 'Parivarik Tash Room', hiName: 'पारिवारिक ताश क्लब (अंक कक्ष)', icon: '♣️', badge: 'खेलें ›', state: 'active', action: 'game' }
       ]
     },
@@ -430,7 +430,45 @@
   window.C16_CHILDREN = C16_CHILDREN;
 
   // ==============================================================================
-  // SECTION 2: HELPER FUNCTIONS (PIN MANAGER & ACTION MODAL)
+  // SECTION 2: GLOBAL SINGLE BORDER STYLES INJECTION (ZERO DOUBLE LINES)
+  // ==============================================================================
+
+  function injectSingleDashedBorderStyles() {
+    var styleId = 'rm-sivme-single-border-engine';
+    var styleEl = document.getElementById(styleId);
+    if (!styleEl) {
+      styleEl = document.createElement('style');
+      styleEl.id = styleId;
+      document.head.appendChild(styleEl);
+    }
+    styleEl.textContent = [
+      '/* SIVME ENGINE: ENFORCE EXACTLY SINGLE DASHED BORDER (ZERO DOUBLE OUTLINES) */',
+      '#tier1-list, #tier2-list, #tier1-list[data-sivme-urn], #tier2-list[data-sivme-urn] {',
+      '  border: none !important;',
+      '  outline: none !important;',
+      '  box-shadow: none !important;',
+      '}',
+      '.sivme-cat-card, .sivme-subcat-card, [data-sivme-urn] {',
+      '  outline: none !important;',
+      '  box-shadow: none !important;',
+      '}',
+      '.sivme-cat-card.is-live {',
+      '  border: 2px dashed #10b981 !important;',
+      '}',
+      '.sivme-cat-card.is-hidden {',
+      '  border: 2px dashed #ef4444 !important;',
+      '}',
+      '.sivme-subcat-card.is-live {',
+      '  border: 2px dashed #10b981 !important;',
+      '}',
+      '.sivme-subcat-card.is-hidden {',
+      '  border: 2px dashed #ef4444 !important;',
+      '}'
+    ].join('\n');
+  }
+
+  // ==============================================================================
+  // SECTION 3: HELPER FUNCTIONS (PIN MANAGER & ACTION MODAL)
   // ==============================================================================
 
   function getPinnedList() {
@@ -481,7 +519,6 @@
     alert('🎬 [' + subId + '] ' + title + '\n\nसत्यापित कार्य वीडियो प्रमाण व ऑन-ग्राउंड ट्यूटोरियल जल्द उपलब्ध होगा।');
   };
 
-  // Direct Revenue Action Sheet
   window.handleDirectActionSheet = function (catNum, subId, enName, hiName, event) {
     if (event) event.stopPropagation();
     var msg = '💼 [' + subId + '] ' + enName + ' (' + hiName + ')\n\n' +
@@ -507,7 +544,7 @@
   };
 
   // ==============================================================================
-  // SECTION 3: SIVME IN-SITU LIVE/HIDDEN TOGGLE ENGINE
+  // SECTION 4: SIVME IN-SITU LIVE/HIDDEN STATE MANAGEMENT
   // ==============================================================================
 
   function isCategoryLive(catId, catNum) {
@@ -523,12 +560,21 @@
     }
   }
 
+  function isSubItemLive(subId) {
+    try {
+      var raw = localStorage.getItem('rm_active_subcategories_v1');
+      if (!raw) return true;
+      var parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed) || parsed.length === 0) return true;
+      var set = new Set(parsed.map(String));
+      return set.has(String(subId));
+    } catch (_) {
+      return true;
+    }
+  }
+
   window.toggleSivmeCategory = function (catId, num, event) {
     if (event) event.stopPropagation();
-    if (window.RM_SIVME && typeof window.RM_SIVME.toggleCategory === 'function') {
-      window.RM_SIVME.toggleCategory(catId, num);
-      return;
-    }
     try {
       var raw = localStorage.getItem('rm_active_categories_v1');
       var activeIds = new Set();
@@ -560,15 +606,32 @@
 
   window.toggleSivmeSub = function (subId, event) {
     if (event) event.stopPropagation();
-    if (window.RM_SIVME && typeof window.RM_SIVME.toggleSub === 'function') {
-      window.RM_SIVME.toggleSub(subId);
-      return;
+    try {
+      var raw = localStorage.getItem('rm_active_subcategories_v1');
+      var activeSubs = new Set();
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) parsed.forEach(function (x) { activeSubs.add(String(x)); });
+      }
+      if (activeSubs.size === 0) {
+        RM_SERVICES_DATA.forEach(function (s) { s.children.forEach(function (c) { activeSubs.add(c.id); }); });
+        RM_GAMES_DATA.forEach(function (g) { g.children.forEach(function (c) { activeSubs.add(c.id); }); });
+      }
+      var sId = String(subId);
+      if (activeSubs.has(sId)) {
+        activeSubs.delete(sId);
+      } else {
+        activeSubs.add(sId);
+      }
+      localStorage.setItem('rm_active_subcategories_v1', JSON.stringify(Array.from(activeSubs)));
+      renderCatalogItems();
+    } catch (e) {
+      console.error('Sub toggle failed:', e);
     }
-    alert('सब-सर्विस [' + subId + '] दृश्यता टॉगल की गई।');
   };
 
   // ==============================================================================
-  // SECTION 4: DOM ACCORDION RENDER ENGINE (ALL 50 WITH SIVME LIVE NOTCHES)
+  // SECTION 5: DOM ACCORDION RENDER ENGINE (SINGLE DASHED BORDERS ONLY)
   // ==============================================================================
 
   function renderSubCards(catNum, childrenList) {
@@ -592,11 +655,15 @@
         actBtn = '<button type="button" onclick="handleDirectActionSheet(\'' + catNum + '\', \'' + ch.id + '\', \'' + ch.enName + '\', \'' + ch.hiName + '\', event)" class="flex-1 bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-slate-200 px-2 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap text-center cursor-pointer">' + (ch.badge || 'खोलें ›') + '</button>';
       }
 
-      // SIVME Sub-card Upper-Right Live Notch
-      var subNotchHtml = '<div class="sivme-live-notch absolute -top-2.5 right-2.5 z-30 flex items-center space-x-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#064e3b] text-emerald-300 border border-emerald-500/80 shadow-[0_0_8px_rgba(16,185,129,0.3)] cursor-pointer" onclick="toggleSivmeSub(\'' + ch.id + '\', event)"><span>🟢</span><span>Live ⇄</span></div>';
+      var isSubLive = isSubItemLive(ch.id);
+      var subStateClass = isSubLive ? 'is-live' : 'is-hidden';
+      var subBorderColor = isSubLive ? '#10b981' : '#ef4444';
+      var subNotchHtml = isSubLive
+        ? '<div class="sivme-live-notch absolute -top-2.5 right-2.5 z-30 flex items-center space-x-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#064e3b] text-emerald-300 border border-emerald-500/80 shadow-[0_0_8px_rgba(16,185,129,0.3)] cursor-pointer" onclick="toggleSivmeSub(\'' + ch.id + '\', event)"><span>🟢</span><span>Live ⇄</span></div>'
+        : '<div class="sivme-live-notch absolute -top-2.5 right-2.5 z-30 flex items-center space-x-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#450a0a] text-red-300 border border-red-500/80 shadow-[0_0_8px_rgba(239,68,68,0.3)] cursor-pointer" onclick="toggleSivmeSub(\'' + ch.id + '\', event)"><span>🔴</span><span>Hidden ⇄</span></div>';
 
       return [
-        '<div data-sivme-urn="rm:cat:' + catNum + ':sub:' + ch.id + '" class="sivme-subcat-card w-full bg-[#0d1424] rounded-xl shadow-md flex flex-col justify-between relative mb-2.5" style="min-height: 114px; border: 2px dashed #10b981; overflow: visible;">',
+        '<div data-sivme-urn="rm:cat:' + catNum + ':sub:' + ch.id + '" class="sivme-subcat-card ' + subStateClass + ' w-full bg-[#0d1424] rounded-xl shadow-md flex flex-col justify-between relative mb-2.5" style="min-height: 114px; border: 2px dashed ' + subBorderColor + ' !important; outline: none !important; overflow: visible;">',
         '  ' + subNotchHtml,
         '  <div class="p-3 pb-2 flex-1 flex flex-col justify-between relative bg-gradient-to-b from-[#111a30]/80 to-[#0d1424] rounded-t-xl">',
         '    <div class="flex items-center space-x-2 mb-1">',
@@ -619,6 +686,8 @@
   }
 
   function renderCatalogItems() {
+    injectSingleDashedBorderStyles();
+
     var t1 = document.getElementById('tier1-list');
     var t2 = document.getElementById('tier2-list');
 
@@ -626,14 +695,15 @@
     if (t1) {
       t1.innerHTML = RM_SERVICES_DATA.map(function (item) {
         var isLive = isCategoryLive(item.id, item.num);
+        var stateClass = isLive ? 'is-live' : 'is-hidden';
+        var borderColor = isLive ? '#10b981' : '#ef4444';
+
         var notchHtml = isLive
           ? '<div class="sivme-live-notch absolute -top-2.5 right-3 z-30 flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#064e3b] text-emerald-300 border border-emerald-500/80 shadow-[0_0_8px_rgba(16,185,129,0.3)] cursor-pointer" onclick="toggleSivmeCategory(\'' + item.id + '\', \'' + item.num + '\', event)"><span>🟢</span><span>Live ⇄</span></div>'
           : '<div class="sivme-live-notch absolute -top-2.5 right-3 z-30 flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#450a0a] text-red-300 border border-red-500/80 shadow-[0_0_8px_rgba(239,68,68,0.3)] cursor-pointer" onclick="toggleSivmeCategory(\'' + item.id + '\', \'' + item.num + '\', event)"><span>🔴</span><span>Hidden ⇄</span></div>';
 
-        var borderStyle = isLive ? 'border: 2px dashed #10b981;' : 'border: 2px dashed #ef4444;';
-
         return [
-          '<div data-cat-id="' + item.id + '" data-sivme-urn="rm:cat:' + item.num + '" class="sivme-cat-card w-full rounded-xl bg-slate-900/90 transition-all mb-3.5 shadow-md relative" style="' + borderStyle + ' overflow: visible;">',
+          '<div data-cat-id="' + item.id + '" data-sivme-urn="rm:cat:' + item.num + '" class="sivme-cat-card ' + stateClass + ' w-full rounded-xl bg-slate-900/90 transition-all mb-3.5 shadow-md relative" style="border: 2px dashed ' + borderColor + ' !important; outline: none !important; overflow: visible;">',
           '  ' + notchHtml,
           '  <div onclick="handleCategoryClick(\'' + item.id + '\', this)" class="flex items-center justify-between p-3 cursor-pointer active:scale-[0.99] transition-transform min-h-[64px]">',
           '    <div class="flex items-center space-x-2.5 min-w-0 flex-1 pr-2">',
@@ -662,14 +732,15 @@
     if (t2) {
       t2.innerHTML = RM_GAMES_DATA.map(function (item) {
         var isLive = isCategoryLive(item.id, item.num);
+        var stateClass = isLive ? 'is-live' : 'is-hidden';
+        var borderColor = isLive ? '#10b981' : '#ef4444';
+
         var notchHtml = isLive
-          ? '<div class="sivme-live-notch absolute -top-2.5 right-3 z-30 flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#064e3b] text-cyan-300 border border-cyan-500/80 shadow-[0_0_8px_rgba(6,182,212,0.3)] cursor-pointer" onclick="toggleSivmeCategory(\'' + item.id + '\', \'' + item.num + '\', event)"><span>🟢</span><span>Live ⇄</span></div>'
+          ? '<div class="sivme-live-notch absolute -top-2.5 right-3 z-30 flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#064e3b] text-emerald-300 border border-emerald-500/80 shadow-[0_0_8px_rgba(16,185,129,0.3)] cursor-pointer" onclick="toggleSivmeCategory(\'' + item.id + '\', \'' + item.num + '\', event)"><span>🟢</span><span>Live ⇄</span></div>'
           : '<div class="sivme-live-notch absolute -top-2.5 right-3 z-30 flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#450a0a] text-red-300 border border-red-500/80 shadow-[0_0_8px_rgba(239,68,68,0.3)] cursor-pointer" onclick="toggleSivmeCategory(\'' + item.id + '\', \'' + item.num + '\', event)"><span>🔴</span><span>Hidden ⇄</span></div>';
 
-        var borderStyle = isLive ? 'border: 2px dashed #06b6d4;' : 'border: 2px dashed #ef4444;';
-
         return [
-          '<div data-cat-id="' + item.id + '" data-sivme-urn="rm:cat:' + item.num + '" class="sivme-cat-card w-full rounded-xl bg-slate-900/90 transition-all mb-3.5 shadow-md relative" style="' + borderStyle + ' overflow: visible;">',
+          '<div data-cat-id="' + item.id + '" data-sivme-urn="rm:cat:' + item.num + '" class="sivme-cat-card ' + stateClass + ' w-full rounded-xl bg-slate-900/90 transition-all mb-3.5 shadow-md relative" style="border: 2px dashed ' + borderColor + ' !important; outline: none !important; overflow: visible;">',
           '  ' + notchHtml,
           '  <div onclick="handleCategoryClick(\'' + item.id + '\', this)" class="flex items-center justify-between p-3 cursor-pointer active:scale-[0.99] transition-transform min-h-[64px]">',
           '    <div class="flex items-center space-x-2.5 min-w-0 flex-1 pr-2">',
@@ -707,15 +778,10 @@
     }
 
     syncCategoryVisibilityFromOwner();
-
-    // Re-trigger SIVME visual inspection outlines and notches
-    if (window.RM_SIVME && typeof window.RM_SIVME.applyInSituVisualInspection === 'function') {
-      setTimeout(window.RM_SIVME.applyInSituVisualInspection, 60);
-    }
   }
 
   // ==============================================================================
-  // SECTION 5: OWNER CONSOLE VISIBILITY SYNC (ALL 50 CANONICAL CATEGORIES)
+  // SECTION 6: OWNER CONSOLE VISIBILITY SYNC
   // ==============================================================================
 
   function syncCategoryVisibilityFromOwner() {
@@ -783,7 +849,7 @@
   }
 
   // ==============================================================================
-  // SECTION 6: ACCORDION TOGGLE & CATEGORY LAUNCH ENGINE
+  // SECTION 7: ACCORDION TOGGLE & CATEGORY LAUNCH ENGINE
   // ==============================================================================
 
   function handleCategoryClick(catId, el) {
@@ -799,9 +865,6 @@
         sub.style.display = 'none';
         sub.classList.add('hidden');
         if (arrow) arrow.textContent = '▼';
-      }
-      if (window.RM_SIVME && typeof window.RM_SIVME.applyInSituVisualInspection === 'function') {
-        setTimeout(window.RM_SIVME.applyInSituVisualInspection, 60);
       }
     }
   }
@@ -873,7 +936,7 @@
   }
 
   // ==============================================================================
-  // SECTION 7: AUTO-RECOVERY WATCHER & GLOBAL EXPORTS
+  // SECTION 8: AUTO-RECOVERY WATCHER & GLOBAL EXPORTS
   // ==============================================================================
 
   window.RM_CatalogRenderer = {
