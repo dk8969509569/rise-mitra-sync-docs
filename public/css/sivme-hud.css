@@ -1,7 +1,7 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Dedicated SIVME Stylesheet (Fullscreen Modals, Badges, Dock & Cards)
- * VERSION       : v2.5 - 100% ZEL Preserved + Header Collision Fix + Pinned Ready
+ * MODULE        : Dedicated SIVME Stylesheet (Fullscreen Modals, Badges, Dock & Two-Tier Cards)
+ * VERSION       : v2.6 - 100% Strict ZEL Certified + Two-Tier Sub-Categories + 01-N Sequence Badges
  * GOVERNANCE    : GATE-23.5 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
  * DUAL-FOLDER REFS:
@@ -168,7 +168,97 @@
 }
 
 /* =========================================================
-   3. SECTION ACCORDION HEADERS (GAP COLLISION FIX)
+   3. TWO-TIER SUB-CATEGORY CARDS & NUMBERING ARCHITECTURE
+   ========================================================= */
+#sub-c16 > div,
+.sivme-subcat-card {
+  min-height: 84px !important;
+  height: auto !important;
+  padding: 12px 14px !important;
+  margin-bottom: 12px !important;
+  border-radius: 12px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  background: linear-gradient(180deg, rgba(24,33,47,0.9) 0%, rgba(11,17,30,0.98) 100%) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  border-top: 1px solid rgba(255,255,255,0.18) !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.6) !important;
+  box-sizing: border-box !important;
+  touch-action: manipulation !important;
+  cursor: pointer !important;
+}
+
+/* Sub-Category Top Row (Sequence + Icon + Title Stack) */
+.sivme-subcat-top-row {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
+/* 01-N Sub-Category Sequence Badge */
+.sivme-subcat-seq {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  color: #38bdf8 !important;
+  background: rgba(14, 165, 233, 0.15) !important;
+  border: 1px solid rgba(56, 189, 248, 0.35) !important;
+  border-radius: 6px !important;
+  padding: 2px 5px !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+  margin-top: 2px !important;
+}
+
+/* Bilingual Title Stack */
+.sivme-subcat-title-stack {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+.sivme-subcat-title-primary {
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  color: #f8fafc !important;
+  line-height: 1.25 !important;
+  white-space: normal !important;
+}
+
+.sivme-subcat-title-secondary {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: #94a3b8 !important;
+  line-height: 1.2 !important;
+  white-space: normal !important;
+}
+
+/* Sub-Card Internal Divider */
+.sivme-subcat-split {
+  width: 100% !important;
+  height: 1px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  margin: 8px 0 6px 0 !important;
+}
+
+/* Sub-Category Bottom Row (Left: Pin, Right: Action Button) */
+.sivme-subcat-actions-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* =========================================================
+   4. SECTION ACCORDION HEADERS (GAP COLLISION FIX)
    ========================================================= */
 .sivme-catalog-section-header,
 #categoryModal div[onclick*="toggle"],
@@ -186,7 +276,7 @@
 }
 
 /* =========================================================
-   4. SIVME BADGES & GHOST STATES
+   5. SIVME BADGES & GHOST STATES
    ========================================================= */
 .sivme-badge-anchor {
   position: relative !important;
@@ -213,7 +303,7 @@
   left: 14px !important;
   right: auto !important;
   z-index: 9999 !important;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace !important;
   font-size: 10px !important;
   font-weight: 800;
   padding: 3px 9px !important;
@@ -288,23 +378,8 @@
   padding: 2px 7px !important;
 }
 
-/* Category 16 Sub-Cards */
-#sub-c16 > div {
-  min-height: 60px !important;
-  padding: 18px 14px 12px 14px !important;
-  margin-bottom: 14px !important;
-  border-radius: 12px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  background: linear-gradient(180deg, rgba(24,33,47,0.85) 0%, rgba(11,17,30,0.95) 100%) !important;
-  border-top: 1px solid rgba(255,255,255,0.16) !important;
-  touch-action: manipulation !important;
-  cursor: pointer !important;
-}
-
 /* =========================================================
-   5. FLOATING HUD DOCK
+   6. FLOATING HUD DOCK
    ========================================================= */
 #sivmeFloatingDock {
   position: fixed;
@@ -326,12 +401,12 @@
 }
 
 /* =========================================================
-   6. USER PINNED SHORTCUTS & NEON DIVIDER (Ready for Step 2)
+   7. USER PINNED SHORTCUTS & NEON DIVIDER
    ========================================================= */
 .rm-pinned-divider {
   height: 1.5px !important;
   background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.7), transparent) !important;
-  margin: 20px 0 16px 0 !important;
+  margin: 18px 0 16px 0 !important;
   box-shadow: 0 0 10px rgba(56, 189, 248, 0.4) !important;
 }
 
