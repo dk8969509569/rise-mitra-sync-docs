@@ -1,11 +1,11 @@
 /**
  * RISE MITRA — UNIVERSAL 50-CATEGORY & 150 REAL REVENUE SUB-SERVICES ENGINE
- * SPECIFICATION : FOLDER A (SSOT) | 14_04__EXT_004
+ * SPECIFICATION : FOLDER A (SSOT: 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) | 14_04__EXT_004
  * GOVERNANCE    : GATE-23.5 | 75:25 RATIO | 3-PILL ACTION STRIP | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/categories-data.js
  * DUAL-FOLDER REFERENCES:
- *   Folder A (Master Document SSOT)
- *   Folder B (GitHub Mirror)
+ *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
+ *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
  */
 
 (function (window, document) {
@@ -60,7 +60,7 @@
       id: 'c06', num: '06', enName: 'Comics', hiName: 'कहानियाँ व कॉमिक्स', icon: '📖', hasChildren: true,
       children: [
         { id: '06-1', enName: 'Desi Chitra-Katha Store', hiName: 'देसी चित्रकथा व कॉमिक्स संग्रह', icon: '🎨', badge: 'खोलें ›', state: 'active', action: 'action' },
-        { id: '06-2', enName: 'Veer Gatha & History', hiName: 'ऐतिहासिक वीर गाथा व चरित्र', icon: '🛡️', badge: 'खोलें ›', state: 'active', action: 'action' },
+        { id: '06-2', enName: 'Veer Gatha & History', hiName: 'ऐतिहासिक वीर गाथा व चरित्र', icon: '🛡️️', badge: 'खोलें ›', state: 'active', action: 'action' },
         { id: '06-3', enName: 'Bal Sahitya Pustak', hiName: 'बाल साहित्य व पंचतंत्र नीति कथाएं', icon: '👶', badge: 'खोलें ›', state: 'active', action: 'action' }
       ]
     },
@@ -259,7 +259,7 @@
     {
       id: 'c31', num: '31', enName: 'Travel & Local', hiName: 'यात्रा व स्थानीय सेवाएं', icon: '🧭', hasChildren: true,
       children: [
-        { id: '31-1', enName: 'Bus Stand & Auto Timings', hiName: 'रोडवेज bus व ऑटो स्टैंड समय सारणी', icon: '🚌', badge: 'खोलें ›', state: 'active', action: 'action' },
+        { id: '31-1', enName: 'Bus Stand & Auto Timings', hiName: 'रोडवेज बस व ऑटो स्टैंड समय सारणी', icon: '🚌', badge: 'खोलें ›', state: 'active', action: 'action' },
         { id: '31-2', enName: 'Local Taxi Driver Stand', hiName: 'कस्बा टैक्सी व पिकअप ड्राइवर संपर्क', icon: '🚖', badge: 'खोलें ›', state: 'active', action: 'action' },
         { id: '31-3', enName: 'Tirth Yatra Dharmshala', hiName: 'तीर्थ यात्रा बस व धर्मशाला कमरा', icon: '🛕', badge: 'खोलें ›', state: 'active', action: 'action' }
       ]
@@ -359,7 +359,7 @@
       id: 'g43', num: '43', enName: 'Puzzle', hiName: 'दिमागी पहेलियाँ', icon: '🧩', hasChildren: true,
       children: [
         { id: '43-1', enName: 'Desi Bujho To Jane', hiName: 'देसी बूझो तो जाने पहेली', icon: '💡', badge: 'खेलें ›', state: 'active', action: 'game' },
-        { id: '43-2', enName: 'Lakdi Block Puzzle', hiName: 'लकड़ी ब्लॉक मैचिंग बोर्ड पहेली', icon: '🪵', badge: 'खेलें ›', state: 'active', action: 'game' },
+        { id: '43-2', enName: 'Lakdi Block Puzzle', hiName: 'लकड़ी ब्लॉक मैचिंग board पहेली', icon: '🪵', badge: 'खेलें ›', state: 'active', action: 'game' },
         { id: '43-3', enName: 'Kasba Bhool-Bhulaiya', hiName: 'कस्बा भूल-भुलैया रास्ता खोज', icon: '🌀', badge: 'खेलें ›', state: 'active', action: 'game' }
       ]
     },
@@ -481,7 +481,7 @@
     alert('🎬 [' + subId + '] ' + title + '\n\nसत्यापित कार्य वीडियो प्रमाण व ऑन-ग्राउंड ट्यूटोरियल जल्द उपलब्ध होगा।');
   };
 
-  // Direct Revenue Action Sheet (Direct Connect & Micro-Tokens)
+  // Direct Revenue Action Sheet
   window.handleDirectActionSheet = function (catNum, subId, enName, hiName, event) {
     if (event) event.stopPropagation();
     var msg = '💼 [' + subId + '] ' + enName + ' (' + hiName + ')\n\n' +
@@ -507,7 +507,68 @@
   };
 
   // ==============================================================================
-  // SECTION 3: DOM ACCORDION RENDER ENGINE (ALL 50 DROP-DOWNS)
+  // SECTION 3: SIVME IN-SITU LIVE/HIDDEN TOGGLE ENGINE
+  // ==============================================================================
+
+  function isCategoryLive(catId, catNum) {
+    try {
+      var raw = localStorage.getItem('rm_active_categories_v1');
+      if (!raw) return true;
+      var parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed) || parsed.length === 0) return true;
+      var set = new Set(parsed.map(String));
+      return set.has(String(catId)) || set.has(String(catNum));
+    } catch (_) {
+      return true;
+    }
+  }
+
+  window.toggleSivmeCategory = function (catId, num, event) {
+    if (event) event.stopPropagation();
+    if (window.RM_SIVME && typeof window.RM_SIVME.toggleCategory === 'function') {
+      window.RM_SIVME.toggleCategory(catId, num);
+      return;
+    }
+    try {
+      var raw = localStorage.getItem('rm_active_categories_v1');
+      var activeIds = new Set();
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) parsed.forEach(function (x) { activeIds.add(String(x)); });
+      }
+      if (activeIds.size === 0) {
+        RM_SERVICES_DATA.forEach(function (s) { activeIds.add(s.id); activeIds.add(s.num); });
+        RM_GAMES_DATA.forEach(function (g) { activeIds.add(g.id); activeIds.add(g.num); });
+      }
+      activeIds.add('c16'); activeIds.add('16');
+
+      var cId = String(catId);
+      var nId = String(num);
+      if (activeIds.has(cId) || activeIds.has(nId)) {
+        activeIds.delete(cId);
+        activeIds.delete(nId);
+      } else {
+        activeIds.add(cId);
+        activeIds.add(nId);
+      }
+      localStorage.setItem('rm_active_categories_v1', JSON.stringify(Array.from(activeIds)));
+      renderCatalogItems();
+    } catch (e) {
+      console.error('Category toggle failed:', e);
+    }
+  };
+
+  window.toggleSivmeSub = function (subId, event) {
+    if (event) event.stopPropagation();
+    if (window.RM_SIVME && typeof window.RM_SIVME.toggleSub === 'function') {
+      window.RM_SIVME.toggleSub(subId);
+      return;
+    }
+    alert('सब-सर्विस [' + subId + '] दृश्यता टॉगल की गई।');
+  };
+
+  // ==============================================================================
+  // SECTION 4: DOM ACCORDION RENDER ENGINE (ALL 50 WITH SIVME LIVE NOTCHES)
   // ==============================================================================
 
   function renderSubCards(catNum, childrenList) {
@@ -531,9 +592,13 @@
         actBtn = '<button type="button" onclick="handleDirectActionSheet(\'' + catNum + '\', \'' + ch.id + '\', \'' + ch.enName + '\', \'' + ch.hiName + '\', event)" class="flex-1 bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-slate-200 px-2 py-1 rounded-lg text-[10px] font-bold whitespace-nowrap text-center cursor-pointer">' + (ch.badge || 'खोलें ›') + '</button>';
       }
 
+      // SIVME Sub-card Upper-Right Live Notch
+      var subNotchHtml = '<div class="sivme-live-notch absolute -top-2.5 right-2.5 z-30 flex items-center space-x-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#064e3b] text-emerald-300 border border-emerald-500/80 shadow-[0_0_8px_rgba(16,185,129,0.3)] cursor-pointer" onclick="toggleSivmeSub(\'' + ch.id + '\', event)"><span>🟢</span><span>Live ⇄</span></div>';
+
       return [
-        '<div data-sivme-urn="rm:cat:' + catNum + ':sub:' + ch.id + '" class="sivme-subcat-card w-full bg-[#0d1424] border border-slate-800/90 rounded-xl overflow-hidden shadow-md flex flex-col justify-between" style="min-height: 114px;">',
-        '  <div class="p-3 pb-2 flex-1 flex flex-col justify-between relative bg-gradient-to-b from-[#111a30]/80 to-[#0d1424]">',
+        '<div data-sivme-urn="rm:cat:' + catNum + ':sub:' + ch.id + '" class="sivme-subcat-card w-full bg-[#0d1424] rounded-xl shadow-md flex flex-col justify-between relative mb-2.5" style="min-height: 114px; border: 2px dashed #10b981; overflow: visible;">',
+        '  ' + subNotchHtml,
+        '  <div class="p-3 pb-2 flex-1 flex flex-col justify-between relative bg-gradient-to-b from-[#111a30]/80 to-[#0d1424] rounded-t-xl">',
         '    <div class="flex items-center space-x-2 mb-1">',
         '      <span class="text-[10px] font-mono font-bold text-cyan-300 bg-cyan-950/90 border border-cyan-800/70 px-2 py-0.5 rounded leading-none">[' + ch.id + ']</span>',
         '      <span class="text-lg leading-none">' + ch.icon + '</span>',
@@ -543,7 +608,7 @@
         '      <span class="text-[11.5px] font-medium text-slate-400 leading-tight mt-0.5 break-normal">(' + ch.hiName + ')</span>',
         '    </div>',
         '  </div>',
-        '  <div class="px-2.5 py-1.5 bg-slate-950/90 border-t border-slate-800/70 flex items-center justify-between space-x-2 min-h-[30px]">',
+        '  <div class="px-2.5 py-1.5 bg-slate-950/90 border-t border-slate-800/70 flex items-center justify-between space-x-2 min-h-[30px] rounded-b-xl">',
         '    ' + pinBtn,
         '    ' + videoBtn,
         '    ' + actBtn,
@@ -560,8 +625,16 @@
     // Render 33 Services
     if (t1) {
       t1.innerHTML = RM_SERVICES_DATA.map(function (item) {
+        var isLive = isCategoryLive(item.id, item.num);
+        var notchHtml = isLive
+          ? '<div class="sivme-live-notch absolute -top-2.5 right-3 z-30 flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#064e3b] text-emerald-300 border border-emerald-500/80 shadow-[0_0_8px_rgba(16,185,129,0.3)] cursor-pointer" onclick="toggleSivmeCategory(\'' + item.id + '\', \'' + item.num + '\', event)"><span>🟢</span><span>Live ⇄</span></div>'
+          : '<div class="sivme-live-notch absolute -top-2.5 right-3 z-30 flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#450a0a] text-red-300 border border-red-500/80 shadow-[0_0_8px_rgba(239,68,68,0.3)] cursor-pointer" onclick="toggleSivmeCategory(\'' + item.id + '\', \'' + item.num + '\', event)"><span>🔴</span><span>Hidden ⇄</span></div>';
+
+        var borderStyle = isLive ? 'border: 2px dashed #10b981;' : 'border: 2px dashed #ef4444;';
+
         return [
-          '<div data-cat-id="' + item.id + '" data-sivme-urn="rm:cat:' + item.num + '" class="w-full rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 transition-all overflow-hidden mb-2 shadow-md relative">',
+          '<div data-cat-id="' + item.id + '" data-sivme-urn="rm:cat:' + item.num + '" class="sivme-cat-card w-full rounded-xl bg-slate-900/90 transition-all mb-3.5 shadow-md relative" style="' + borderStyle + ' overflow: visible;">',
+          '  ' + notchHtml,
           '  <div onclick="handleCategoryClick(\'' + item.id + '\', this)" class="flex items-center justify-between p-3 cursor-pointer active:scale-[0.99] transition-transform min-h-[64px]">',
           '    <div class="flex items-center space-x-2.5 min-w-0 flex-1 pr-2">',
           '      <span class="text-[10px] font-mono font-bold bg-amber-950/70 text-amber-400 border border-amber-800/50 px-1.5 py-0.5 rounded shrink-0">' + item.num + '.</span>',
@@ -576,7 +649,7 @@
           '      <span class="acc-arrow text-slate-300 text-xs font-mono font-bold bg-slate-800/90 border border-slate-700/80 w-6 h-6 rounded-full flex items-center justify-center">▼</span>',
           '    </div>',
           '  </div>',
-          '  <div id="sub-' + item.id + '" class="p-2 pt-0 space-y-2.5 bg-slate-950/50 hidden">',
+          '  <div id="sub-' + item.id + '" class="p-2 pt-0 space-y-2.5 bg-slate-950/50 hidden rounded-b-xl" style="overflow: visible;">',
           '    ' + renderSubCards(item.num, item.children),
           '  </div>',
           '</div>'
@@ -588,8 +661,16 @@
     // Render 17 Games
     if (t2) {
       t2.innerHTML = RM_GAMES_DATA.map(function (item) {
+        var isLive = isCategoryLive(item.id, item.num);
+        var notchHtml = isLive
+          ? '<div class="sivme-live-notch absolute -top-2.5 right-3 z-30 flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#064e3b] text-cyan-300 border border-cyan-500/80 shadow-[0_0_8px_rgba(6,182,212,0.3)] cursor-pointer" onclick="toggleSivmeCategory(\'' + item.id + '\', \'' + item.num + '\', event)"><span>🟢</span><span>Live ⇄</span></div>'
+          : '<div class="sivme-live-notch absolute -top-2.5 right-3 z-30 flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#450a0a] text-red-300 border border-red-500/80 shadow-[0_0_8px_rgba(239,68,68,0.3)] cursor-pointer" onclick="toggleSivmeCategory(\'' + item.id + '\', \'' + item.num + '\', event)"><span>🔴</span><span>Hidden ⇄</span></div>';
+
+        var borderStyle = isLive ? 'border: 2px dashed #06b6d4;' : 'border: 2px dashed #ef4444;';
+
         return [
-          '<div data-cat-id="' + item.id + '" data-sivme-urn="rm:cat:' + item.num + '" class="w-full rounded-xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/50 transition-all overflow-hidden mb-2 shadow-md relative">',
+          '<div data-cat-id="' + item.id + '" data-sivme-urn="rm:cat:' + item.num + '" class="sivme-cat-card w-full rounded-xl bg-slate-900/90 transition-all mb-3.5 shadow-md relative" style="' + borderStyle + ' overflow: visible;">',
+          '  ' + notchHtml,
           '  <div onclick="handleCategoryClick(\'' + item.id + '\', this)" class="flex items-center justify-between p-3 cursor-pointer active:scale-[0.99] transition-transform min-h-[64px]">',
           '    <div class="flex items-center space-x-2.5 min-w-0 flex-1 pr-2">',
           '      <span class="text-[10px] font-mono font-bold bg-cyan-950/70 text-cyan-400 border border-cyan-800/50 px-1.5 py-0.5 rounded shrink-0">' + item.num + '.</span>',
@@ -604,7 +685,7 @@
           '      <span class="acc-arrow text-slate-300 text-xs font-mono font-bold bg-slate-800/90 border border-slate-700/80 w-6 h-6 rounded-full flex items-center justify-center">▼</span>',
           '    </div>',
           '  </div>',
-          '  <div id="sub-' + item.id + '" class="p-2 pt-0 space-y-2.5 bg-slate-950/50 hidden">',
+          '  <div id="sub-' + item.id + '" class="p-2 pt-0 space-y-2.5 bg-slate-950/50 hidden rounded-b-xl" style="overflow: visible;">',
           '    ' + renderSubCards(item.num, item.children),
           '  </div>',
           '</div>'
@@ -634,7 +715,7 @@
   }
 
   // ==============================================================================
-  // SECTION 4: OWNER CONSOLE VISIBILITY SYNC (ALL 50 CANONICAL CATEGORIES LIVE)
+  // SECTION 5: OWNER CONSOLE VISIBILITY SYNC (ALL 50 CANONICAL CATEGORIES)
   // ==============================================================================
 
   function syncCategoryVisibilityFromOwner() {
@@ -702,7 +783,7 @@
   }
 
   // ==============================================================================
-  // SECTION 5: ACCORDION TOGGLE & CATEGORY LAUNCH ENGINE
+  // SECTION 6: ACCORDION TOGGLE & CATEGORY LAUNCH ENGINE
   // ==============================================================================
 
   function handleCategoryClick(catId, el) {
@@ -792,7 +873,7 @@
   }
 
   // ==============================================================================
-  // SECTION 6: AUTO-RECOVERY WATCHER & GLOBAL EXPORTS
+  // SECTION 7: AUTO-RECOVERY WATCHER & GLOBAL EXPORTS
   // ==============================================================================
 
   window.RM_CatalogRenderer = {
