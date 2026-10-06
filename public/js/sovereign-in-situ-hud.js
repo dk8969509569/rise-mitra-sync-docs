@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Unified Core Engine (Final Pure Kernel v3.0 - Fully Decoupled)
+ * MODULE        : Surface-A Unified Core Engine (Kernel v3.1 - 8 Decoupled Adapters)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
@@ -151,7 +151,7 @@
     var link = document.createElement('link');
     link.id = 'sivme-core-stylesheet';
     link.rel = 'stylesheet';
-    link.href = '/css/sivme-hud.css?v=20261006_css1';
+    link.href = '/css/sivme-hud.css?v=20261006_v25';
     document.head.appendChild(link);
   }
 
@@ -290,7 +290,7 @@
         }
       }
 
-      // Execute All Registered Micro-Adapters (home-widgets, core-verticals-9, catalog-50, cat-16, sub-16-1, sub-16-2, sub-16-3)
+      // Execute All 8 Registered Micro-Adapters
       Object.keys(adapters).forEach(function (key) {
         try { adapters[key](); } catch (_) {}
       });
@@ -339,7 +339,7 @@
     }
   }
 
-  // 10. MICRO-MODULAR ADAPTER AUTOLOADER (7 Complete Modules)
+  // 10. MICRO-MODULAR ADAPTER AUTOLOADER (8 Complete Modules)
   function loadAdapters() {
     var basePath = '/js/sivme-adapters/';
     var curr = document.currentScript;
@@ -357,13 +357,14 @@
       basePath + 'cat-16.js',
       basePath + 'sub-16-1.js',
       basePath + 'sub-16-2.js',
-      basePath + 'sub-16-3.js'
+      basePath + 'sub-16-3.js',
+      basePath + 'user-pinned-shortcuts.js'
     ];
 
     scripts.forEach(function (src) {
       if (!document.querySelector('script[src*="' + src + '"]')) {
         var s = document.createElement('script');
-        s.src = src + '?v=20261006_v7';
+        s.src = src + '?v=20261006_v8';
         s.async = true;
         document.head.appendChild(s);
       }
