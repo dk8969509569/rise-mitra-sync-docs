@@ -3,6 +3,7 @@
 <!-- ============================================================================== -->
 <!-- SECTION 1: HEAD METADATA, TAILWIND CONFIG & DESIGN TOKENS                      -->
 <!-- GOVERNANCE : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-16.7            -->
+<!-- PHASE 1    : MASTER GLOBAL CSS & TOKENS INGESTION (ZEL CERTIFIED)             -->
 <!-- ============================================================================== -->
 <head>
   <meta charset="UTF-8">
@@ -111,79 +112,129 @@
       0%, 100% { opacity: 1; transform: scale(1); }
       50% { opacity: 0.4; transform: scale(1.15); }
     }
+
     /* Shared subcategory hierarchy guides */
-#categoryModal .rm-subcategory-list {
-  --rm-guide-color: #526b78;
-  --rm-guide-offset: 12px;
-  --rm-service-gap: 6px;
-  padding-left: 22px;
-  padding-top: 8px;
-}
+    #categoryModal .rm-subcategory-list {
+      --rm-guide-color: #526b78;
+      --rm-guide-offset: 12px;
+      --rm-service-gap: 6px;
+      padding-left: 22px;
+      padding-top: 8px;
+    }
 
-#categoryModal .rm-subcategory-list > div {
-  position: relative;
-  min-width: 0;
-  overflow: visible;
-}
+    #categoryModal .rm-subcategory-list > div {
+      position: relative;
+      min-width: 0;
+      overflow: visible;
+    }
 
-#categoryModal .rm-subcategory-list > div + div {
-  margin-top: var(--rm-service-gap);
-}
+    #categoryModal .rm-subcategory-list > div + div {
+      margin-top: var(--rm-service-gap);
+    }
 
-#categoryModal .rm-subcategory-list > div::before {
-  content: "";
-  position: absolute;
-  left: calc(0px - var(--rm-guide-offset));
-  top: calc(0px - var(--rm-service-gap) - 1px);
-  bottom: -1px;
-  width: 1px;
-  background-color: var(--rm-guide-color);
-  pointer-events: none;
-}
+    #categoryModal .rm-subcategory-list > div::before {
+      content: "";
+      position: absolute;
+      left: calc(0px - var(--rm-guide-offset));
+      top: calc(0px - var(--rm-service-gap) - 1px);
+      bottom: -1px;
+      width: 1px;
+      background-color: var(--rm-guide-color);
+      pointer-events: none;
+    }
 
-#categoryModal .rm-subcategory-list > div:first-child::before {
-  top: -9px;
-}
+    #categoryModal .rm-subcategory-list > div:first-child::before {
+      top: -9px;
+    }
 
-#categoryModal .rm-subcategory-list > div:last-child::before {
-  bottom: 50%;
-}
+    #categoryModal .rm-subcategory-list > div:last-child::before {
+      bottom: 50%;
+    }
 
-#categoryModal .rm-subcategory-list > div::after {
-  content: "";
-  position: absolute;
-  left: calc(0px - var(--rm-guide-offset));
-  top: 50%;
-  width: var(--rm-guide-offset);
-  height: 1px;
-  background-color: var(--rm-guide-color);
-  pointer-events: none;
-}
+    #categoryModal .rm-subcategory-list > div::after {
+      content: "";
+      position: absolute;
+      left: calc(0px - var(--rm-guide-offset));
+      top: 50%;
+      width: var(--rm-guide-offset);
+      height: 1px;
+      background-color: var(--rm-guide-color);
+      pointer-events: none;
+    }
 
-#categoryModal .rm-subcategory-list > div > div {
-  flex: 1 1 auto;
-  min-width: 0;
-}
+    #categoryModal .rm-subcategory-list > div > div {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
 
-#categoryModal .rm-subcategory-list > div > div > span:first-child {
-  flex-shrink: 0;
-}
+    #categoryModal .rm-subcategory-list > div > div > span:first-child {
+      flex-shrink: 0;
+    }
 
-#categoryModal .rm-subcategory-list > div > div > span:last-child {
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
+    #categoryModal .rm-subcategory-list > div > div > span:last-child {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
 
-#categoryModal .rm-subcategory-list > div > span {
-  flex: 0 0 auto;
-  margin-left: 8px;
-}
+    #categoryModal .rm-subcategory-list > div > span {
+      flex: 0 0 auto;
+      margin-left: 8px;
+    }
 
-@media (forced-colors: active) {
-  #categoryModal .rm-subcategory-list {
-    --rm-guide-color: CanvasText;
-  }
-}
+    @media (forced-colors: active) {
+      #categoryModal .rm-subcategory-list {
+        --rm-guide-color: CanvasText;
+      }
+    }
+
+    /* Master Design Tokens & Canonical Layout Guards */
+    :root {
+      --rm-canvas-bg: #060913;
+      --rm-card-bg: linear-gradient(180deg, rgba(24, 33, 47, 0.94) 0%, rgba(11, 17, 30, 0.98) 100%);
+      --rm-cyan: #38bdf8;
+      --rm-emerald: #10b981;
+      --rm-emerald-glow: #34d399;
+      --rm-slate-sub: #94a3b8;
+    }
+
+    #sub-c16, [id^="sub-c16"], .sivme-subcat-container {
+      border-left: none !important;
+      padding-left: 0 !important;
+      margin-left: 0 !important;
+    }
+    #sub-c16::before, #sub-c16::after,
+    #sub-c16 > div::before, #sub-c16 > div::after,
+    .sivme-subcat-card::before, .sivme-subcat-card::after {
+      display: none !important;
+      content: none !important;
+      border: none !important;
+    }
+
+    #categoryModal [data-cat-id] button,
+    #categoryModal [data-cat-id] a,
+    #categoryModal [data-cat-id] span[class*="text-emerald"],
+    #categoryModal [data-cat-id] span[class*="text-cyan"],
+    .rm-clean-act, .sivme-action-btn {
+      white-space: nowrap !important;
+      flex-shrink: 0 !important;
+      display: inline-flex !important;
+      align-items: center !important;
+    }
+
+    #categoryModal [data-cat-id] {
+      position: relative !important;
+    }
+    #categoryModal [data-cat-id] > .sivme-inline-badge {
+      position: absolute !important;
+      top: 8px !important;
+      right: 76px !important;
+      margin: 0 !important;
+      font-size: 9.5px !important;
+      padding: 2px 6px !important;
+      border-radius: 6px !important;
+      z-index: 10 !important;
+      line-height: 1 !important;
+    }
   </style>
 </head>
 
@@ -219,7 +270,7 @@
     </div>
     <div class="flex justify-between items-center mt-2 pt-1 border-t border-slate-900 text-[10px] text-slate-400 font-sans">
       <div class="flex items-center space-x-1">
-        <span>🛡️️ गोपनीयता व सुरक्षा नीतियां</span>
+        <span>🛡 गोपनीयता व सुरक्षा नीतियां</span>
         <span>•</span>
         <span class="text-emerald-400">DPDP Act, 2023 कंप्लायंस</span>
       </div>
@@ -231,7 +282,7 @@
 
 
 <!-- ============================================================================== -->
-<!-- SECTION 3: HERO WALLET & 9 CORE VERTICALS                                      -->
+<!-- SECTION 3: HERO WALLET & 12 CORE CASHFLOW VERTICALS GRID (MODULAR SHELL)       -->
 <!-- ============================================================================== -->
   <main class="max-w-md mx-auto px-4 py-4 space-y-4">
     <button type="button" id="cat-menu-btn" onclick="toggleMenuDrawer(true)" class="w-full tactile-25d bg-slate-900 p-3.5 rounded-2xl flex items-center justify-between cursor-pointer group shadow-lg min-h-[56px]">
@@ -289,59 +340,16 @@
       </div>
     </section>
 
-    <!-- 9 Core Verticals (Full 2.5D Tactile Depth & High Contrast) -->
+    <!-- 12 Play Store Standard Bilingual Verticals (Auto-rendered by home-grid-engine.js) -->
     <section class="space-y-2">
       <div class="flex justify-between items-center px-1">
-        <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">9 Core Verticals</h2>
+        <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">12 Core Cashflow Verticals</h2>
         <span class="text-[10px] text-emerald-400 font-bold bg-emerald-950/60 border border-emerald-800/40 px-2 py-0.5 rounded-full">जुड़ना मुफ़्त</span>
       </div>
-      <div id="verticalTilesGrid" class="grid grid-cols-3 gap-2.5">
-        <div data-sov-urn="rm:cat:15" data-sov-label="स्वस्थ मन" class="tactile-25d bg-slate-900 p-3 rounded-2xl text-center space-y-1 cursor-pointer min-h-[88px] flex flex-col justify-center items-center">
-          <div class="text-xl">🌿</div>
-          <div class="text-xs font-bold text-slate-200">स्वस्थ मन</div>
-          <div class="text-[9px] text-slate-400">वेलनेस गाइड</div>
-        </div>
-        <div data-sov-urn="rm:cat:09" data-sov-label="कौशल सीखें" class="tactile-25d bg-slate-900 p-3 rounded-2xl text-center space-y-1 cursor-pointer min-h-[88px] flex flex-col justify-center items-center">
-          <div class="text-xl">🎓</div>
-          <div class="text-xs font-bold text-slate-200">कौशल सीखें</div>
-          <div class="text-[9px] text-slate-400">डिजिटल वर्कशॉप</div>
-        </div>
-        <div data-sov-urn="rm:cat:27" data-sov-label="किराना" class="tactile-25d bg-slate-900 p-3 rounded-2xl text-center space-y-1 cursor-pointer min-h-[88px] flex flex-col justify-center items-center">
-          <div class="text-xl">🛒</div>
-          <div class="text-xs font-bold text-slate-200">किराना</div>
-          <div class="text-[9px] text-emerald-400 font-bold">0% कमीशन</div>
-        </div>
-        <div data-sov-urn="rm:cat:26" data-sov-label="डिलीवरी" class="tactile-25d bg-slate-900 p-3 rounded-2xl text-center space-y-1 cursor-pointer min-h-[88px] flex flex-col justify-center items-center">
-          <div class="text-xl">⚡</div>
-          <div class="text-xs font-bold text-slate-200">डिलीवरी</div>
-          <div class="text-[9px] text-slate-400">हाइपरलोकल गिग</div>
-        </div>
-        <div data-sov-urn="rm:cat:05" data-sov-label="व्यापार टूल्स" class="tactile-25d bg-slate-900 p-3 rounded-2xl text-center space-y-1 cursor-pointer min-h-[88px] flex flex-col justify-center items-center">
-          <div class="text-xl">💼</div>
-          <div class="text-xs font-bold text-slate-200">व्यापार टूल्स</div>
-          <div class="text-[9px] text-slate-400">ऑटोमेशन किट</div>
-        </div>
-        <div data-sov-urn="rm:cat:12" data-sov-label="विशेषज्ञ सलाह" class="tactile-25d bg-slate-900 p-3 rounded-2xl text-center space-y-1 cursor-pointer min-h-[88px] flex flex-col justify-center items-center">
-          <div class="text-xl">⚖️</div>
-          <div class="text-xs font-bold text-slate-200">विशेषज्ञ सलाह</div>
-          <div class="text-[9px] text-slate-400">CA व विधिक सेवा</div>
-        </div>
-        <div data-sov-urn="rm:cat:11" data-sov-label="वाउचर" class="tactile-25d bg-slate-900 p-3 rounded-2xl text-center space-y-1 cursor-pointer min-h-[88px] flex flex-col justify-center items-center">
-          <div class="text-xl">🎟️</div>
-          <div class="text-xs font-bold text-slate-200">वाउचर</div>
-          <div class="text-[9px] text-slate-400">ऑफ़लाइन सिंक</div>
-        </div>
-        <!-- Active Ledger Tile with Luminous Ring & Deterministic URN Binding -->
-        <div data-sov-urn="rm:cat:16:sub:16-2" data-sov-label="बहीखाता" class="tactile-25d ring-active-luminous p-3 rounded-2xl text-center space-y-1 cursor-pointer min-h-[88px] flex flex-col justify-center items-center" onclick="handleLaunchCategory('c16', '16-2')">
-          <div class="text-xl">📊</div>
-          <div class="text-xs font-bold text-emerald-300">बहीखाता</div>
-          <div class="text-[9px] text-emerald-400 font-bold">पारदर्शी लेज़र</div>
-        </div>
-        <div data-sov-urn="rm:cat:20" data-sov-label="आपात सहायता" class="tactile-25d bg-slate-900 p-3 rounded-2xl text-center space-y-1 cursor-pointer min-h-[88px] flex flex-col justify-center items-center">
-          <div class="text-xl">🚨</div>
-          <div class="text-xs font-bold text-red-300">आपात सहायता</div>
-          <div class="text-[9px] text-slate-400">तुरंत कॉल/संपर्क</div>
-        </div>
+      
+      <!-- Canonical Grid Mount Target -->
+      <div id="verticalTilesGrid" class="grid grid-cols-3 gap-2.5 sm:grid-cols-4 sm:gap-3 w-full">
+        <div class="p-6 text-center text-xs text-slate-500 animate-pulse col-span-3">वर्टिकल्स लोड हो रहे हैं…</div>
       </div>
     </section>
 
@@ -472,14 +480,11 @@
         <span class="text-[10px] mt-0.5">खाता</span>
       </button>
       <button onclick="alert('वाउचर केंद्र लोड हो रहा है...')" class="flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-200 tactile-25d cursor-pointer min-h-[48px]">
-        <span class="text-base">🎟️️</span>
+        <span class="text-base">🎟</span>
         <span class="text-[10px] mt-0.5">वाउचर</span>
       </button>
     </div>
   </nav>
-
-  <!-- Canonical Decoupled Catalog Engine -->
-  <script src="/js/categories-data.js?v=20260930_canonical"></script>
 
   <!-- Pan-India Master Geographic Dataset -->
   <script src="/js/data/india-geo-data.js"></script>
@@ -487,6 +492,13 @@
   <!-- Sovereign In-Situ Visual Management Engine (SIVME) Core Registry & Floating HUD -->
   <script src="/js/sovereign-in-situ-registry.js"></script>
   <script src="/js/sovereign-in-situ-hud.js"></script>
+
+  <!-- Modular Home Grid Engine (12 Play Store Standard Verticals) -->
+  <script src="/js/home-grid-engine.js?v=20261007_01"></script>
+
+  <!-- Canonical Decoupled Catalog Engine & Data Registry -->
+  <script src="/js/categories-data.js?v=20261007_01"></script>
+  <script src="/js/catalog-sivme-engine.js?v=20261007_01"></script>
 
   <!-- Lightweight Static Shell Controller -->
   <script>
@@ -668,16 +680,6 @@
       document.body.appendChild(script);
     }
 
-    function filterQuickTiles() {
-      const q = (document.getElementById('liveSearchInput').value || '').toLowerCase().trim();
-      const grid = document.getElementById('verticalTilesGrid');
-      if (!grid) return;
-      Array.from(grid.children).forEach(card => {
-        const txt = card.innerText.toLowerCase();
-        card.style.display = txt.includes(q) ? 'flex' : 'none';
-      });
-    }
-
     window.addEventListener('DOMContentLoaded', () => {
       triggerCatalogRender();
     });
@@ -687,5 +689,6 @@
       }
     });
   </script>
+
 </body>
 </html>

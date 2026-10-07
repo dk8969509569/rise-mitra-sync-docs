@@ -1,10 +1,10 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
- * MODULE        : Surface-A Floating HUD & DOM Injection Runtime Engine (2.5D Tactile Elevation, Uniform Geometry & Non-Blocking Opener)
+ * MODULE        : Surface-A Unified Core Engine (Kernel v3.1 - 8 Decoupled Adapters)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : dk8969509569/rise-mitra-sync-docs (pre-main branch)
- * DUAL-FOLDER REFERENCES:
+ * DUAL-FOLDER REFS:
  *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
  *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
  */
@@ -14,21 +14,15 @@
 
   var SESSION_KEY = 'rm_sov_in_situ_session';
   var REGISTRY_STORAGE_KEY = 'rm_sovereign_visibility_registry_v1';
+  var DEV_AUTO_KEY = 'rm_sov_automation_mode_active';
   var isAuditing = false;
-  var auditTimer = null;
-  var lastActionTime = 0;
-  var lastUrnActionTimes = {};
-  var lastAccordionToggleTime = 0;
+  var adapters = {};
 
-  // 1. ZEL TEMPLATE SHIELD: Ensure legacy modules always render complete DOM
+  // 1. ZEL TEMPLATE SHIELD
   function enforceZELTemplateRendering() {
     try {
-      var configKeys = [
-        'rm_local_acct_owner_config',
-        'rm_local_acctdefault_owner_config',
-        'rm_owner_filter_config_v1'
-      ];
-      configKeys.forEach(function (k) {
+      var keys = ['rm_local_acct_owner_config', 'rm_local_acctdefault_owner_config', 'rm_owner_filter_config_v1'];
+      keys.forEach(function (k) {
         var raw = localStorage.getItem(k);
         var cfg = raw ? JSON.parse(raw) : { filterVisibility: {} };
         if (!cfg.filterVisibility) cfg.filterVisibility = {};
@@ -43,22 +37,19 @@
     } catch (_) {}
   }
 
-  if (typeof window !== 'undefined') {
-    enforceZELTemplateRendering();
-    window.addEventListener('rm:sov:visibility-changed', function () {
-      enforceZELTemplateRendering();
-    });
-  }
-
-  // 2. FAIL-CLOSED CHECK: Public user verification
+  // 2. CONSOLE AUTHORIZATION
   function isConsoleAuthorized() {
     try {
       var params = new URLSearchParams(window.location.search);
-      if (params.get('sov_mode') === 'in_situ') {
+      if (params.get('sov_mode') === 'in_situ' || params.get('dev_auto') === '1') {
         sessionStorage.setItem(SESSION_KEY, 'SOV_ACTIVE_2026');
         localStorage.setItem(SESSION_KEY, 'SOV_ACTIVE_2026');
+        localStorage.setItem(DEV_AUTO_KEY, 'true');
       }
-
+      if (localStorage.getItem(DEV_AUTO_KEY) === 'true') {
+        sessionStorage.setItem(SESSION_KEY, 'SOV_ACTIVE_2026');
+        return true;
+      }
       var sToken = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
       if (sToken === 'SOV_ACTIVE_2026') return true;
 
@@ -73,7 +64,7 @@
     }
   }
 
-  // Robust Direct Registry Access (Infallible Fallback)
+  // 3. REGISTRY BRIDGE (Strict Single-Item Setter - Zero Recursive Cascades)
   function getRegistry() {
     try {
       var raw = localStorage.getItem(REGISTRY_STORAGE_KEY);
@@ -84,340 +75,169 @@
   }
 
   function getUrnVisibility(urn) {
-    if (window.RM_SovereignRegistry && typeof window.RM_SovereignRegistry.isVisible === 'function') {
-      return window.RM_SovereignRegistry.isVisible(urn);
+    if (urn === 'rm:cat:16') {
+      var s1 = getUrnVisibility('rm:cat:16:sub:16-1');
+      var s2 = getUrnVisibility('rm:cat:16:sub:16-2');
+      var s3 = getUrnVisibility('rm:cat:16:sub:16-3');
+      return (s1 && s2 && s3);
     }
+
     var reg = getRegistry();
-    if (reg && reg.items && reg.items[urn] !== undefined) {
-      return reg.items[urn].visible !== false;
+    if (reg && reg.items && reg.items[urn] !== undefined && reg.items[urn].visible !== undefined) {
+      return !!reg.items[urn].visible;
+    }
+    if (window.RM_SovereignRegistry && typeof window.RM_SovereignRegistry.isVisible === 'function') {
+      try {
+        return window.RM_SovereignRegistry.isVisible(urn);
+      } catch (_) {}
     }
     return true;
   }
 
   function setUrnVisibility(urn, nextVis, label) {
-    if (window.RM_SovereignRegistry && typeof window.RM_SovereignRegistry.toggleVisibility === 'function') {
-      try {
-        window.RM_SovereignRegistry.toggleVisibility(urn, nextVis, label);
-      } catch (_) {}
-    }
     try {
       var reg = getRegistry();
       if (!reg.items) reg.items = {};
-      reg.items[urn] = {
-        visible: nextVis,
-        label: label,
-        updatedAt: Date.now()
-      };
+      reg.items[urn] = { visible: nextVis, label: label, updatedAt: Date.now() };
       localStorage.setItem(REGISTRY_STORAGE_KEY, JSON.stringify(reg));
     } catch (_) {}
-  }
 
-  // Element URN Selectors Map for Category 16 & Dynamic Nodes
-  var URN_SELECTORS = [
-    {
-      urn: 'rm:cat:16:sub:16-3:elem:smart_omnibox',
-      selector: '#rm-search-locality, #smartOmniboxGroup, #smartOmnibox, [data-sov-urn="rm:cat:16:sub:16-3:elem:smart_omnibox"]',
-      label: 'स्मार्ट खोज'
-    },
-    {
-      urn: 'rm:cat:16:sub:16-3:elem:state_filter',
-      selector: '#rm-cat16-search-state, #stateFilterGroup, #stateFilter, [data-sov-urn="rm:cat:16:sub:16-3:elem:state_filter"]',
-      label: 'राज्य फ़िल्टर'
-    },
-    {
-      urn: 'rm:cat:16:sub:16-3:elem:district_filter',
-      selector: '#rm-cat16-search-district, #districtFilterGroup, #districtFilter, [data-sov-urn="rm:cat:16:sub:16-3:elem:district_filter"]',
-      label: 'जिला फ़िल्टर'
-    },
-    {
-      urn: 'rm:cat:16:sub:16-3:elem:budget_slider',
-      selector: '#rm-search-budget-slider, #budgetSliderGroup, [data-sov-urn="rm:cat:16:sub:16-3:elem:budget_slider"]',
-      label: 'बजट स्लाइडर'
-    },
-    {
-      urn: 'rm:cat:16:sub:16-3:elem:submeter_checkbox',
-      selector: '#rm-search-submeter, #submeterFilterGroup, [data-sov-urn="rm:cat:16:sub:16-3:elem:submeter_checkbox"]',
-      label: 'सब-मीटर फ़िल्टर'
+    if (window.RM_SovereignRegistry) {
+      try {
+        if (typeof window.RM_SovereignRegistry.setVisibility === 'function') {
+          window.RM_SovereignRegistry.setVisibility(urn, nextVis, label);
+        } else if (typeof window.RM_SovereignRegistry.set === 'function') {
+          window.RM_SovereignRegistry.set(urn, nextVis);
+        }
+      } catch (_) {}
     }
-  ];
-
-  // 3. INJECT SIVME STYLES (2.5D Tactile Elevation, Top Rim-Light & Uniform 72px Geometry)
-  function injectStyles() {
-    if (document.getElementById('sivme-core-styles')) return;
-    var style = document.createElement('style');
-    style.id = 'sivme-core-styles';
-    style.textContent = `
-      .sivme-badge-anchor {
-        position: relative !important;
-        isolation: isolate !important;
-      }
-      .sivme-badge-anchor:active {
-        transform: none !important;
-        transition: none !important;
-      }
-      .sivme-ghost-dormant {
-        border: 2px dashed #ef4444 !important;
-        border-radius: 14px !important;
-        position: relative !important;
-        background: repeating-linear-gradient(
-          -45deg,
-          rgba(239, 68, 68, 0.12),
-          rgba(239, 68, 68, 0.12) 10px,
-          transparent 10px,
-          transparent 20px
-        ) !important;
-        box-shadow: none !important;
-        cursor: pointer !important;
-      }
-
-      /* Single Category Dormant Rows Pointer Lock (Cat 16 and Sub-cards completely unlocked) */
-      #categoryModal [data-cat-id]:not([data-cat-id="c16"]).sivme-ghost-dormant > *:not(.sivme-inline-badge) {
-        opacity: 0.55 !important;
-        filter: grayscale(50%) !important;
-        pointer-events: none !important;
-      }
-
-      /* Category 16 Accordion & All Sub-cards MUST ALWAYS have active touch pointers */
-      #categoryModal [data-cat-id="c16"],
-      #categoryModal [data-cat-id="c16"] *,
-      #sub-c16,
-      #sub-c16 * {
-        pointer-events: auto !important;
-      }
-
-      .sivme-public-hidden {
-        display: none !important;
-      }
-
-      /* UNIVERSAL ANTI-SQUISH INLINE BADGE */
-      .sivme-inline-badge {
-        position: absolute;
-        top: -10px !important;
-        left: 14px !important;
-        right: auto !important;
-        z-index: 30 !important;
-        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-        font-size: 10px !important;
-        font-weight: 800;
-        padding: 3px 9px !important;
-        border-radius: 9999px;
-        cursor: pointer;
-        display: inline-flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
-        gap: 4px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.85);
-        user-select: none !important;
-        -webkit-user-select: none !important;
-        touch-action: manipulation !important;
-        pointer-events: auto !important;
-        opacity: 1 !important;
-        white-space: nowrap !important;
-        writing-mode: horizontal-tb !important;
-        width: max-content !important;
-        box-sizing: border-box !important;
-        line-height: 1.2 !important;
-      }
-      .sivme-inline-badge::before {
-        content: '';
-        position: absolute;
-        top: -8px;
-        bottom: -8px;
-        left: -10px;
-        right: -10px;
-        z-index: 1;
-      }
-      .sivme-inline-badge * {
-        pointer-events: none !important;
-        white-space: nowrap !important;
-      }
-      .sivme-inline-badge:active {
-        transform: scale(0.92) !important;
-      }
-
-      /* SECTION HEADERS CLEARANCE & 2.5D RECESSED PILL */
-      .sivme-catalog-section-header {
-        margin-top: 28px !important;
-        margin-bottom: 24px !important;
-        position: relative !important;
-        z-index: 10 !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
-      }
-      #categoryModal > div > div > button:first-of-type,
-      #categoryModal .sivme-first-header {
-        margin-top: 14px !important;
-        margin-bottom: 24px !important;
-      }
-
-      /* 2.5D TACTILE ELEVATION & UNIFORM 72px GEOMETRY ACROSS ALL 33 CATEGORIES + CATEGORY 16 HEADER */
-      #categoryModal [data-cat-id]:not([data-cat-id="c16"]),
-      #categoryModal [data-cat-id="c16"] > div:first-child {
-        min-height: 72px !important;
-        height: 72px !important;
-        padding: 22px 14px 14px 14px !important;
-        border-radius: 14px !important;
-        position: relative !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        box-sizing: border-box !important;
-        overflow: visible !important;
-        width: 100% !important;
-        background: linear-gradient(180deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.98) 100%) !important;
-        border: 1px solid rgba(255, 255, 255, 0.08) !important;
-        border-top: 1px solid rgba(255, 255, 255, 0.22) !important;
-        box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.75), 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
-        transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.12s cubic-bezier(0.4, 0, 0.2, 1) !important;
-      }
-
-      /* 2.5D TACTILE PRESSED EFFECT */
-      #categoryModal [data-cat-id]:not([data-cat-id="c16"]):active,
-      #categoryModal [data-cat-id="c16"] > div:first-child:active {
-        transform: translateY(1.5px) !important;
-        box-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.85), inset 0 2px 4px rgba(0, 0, 0, 0.5) !important;
-      }
-
-      #categoryModal [data-cat-id]:not([data-cat-id="c16"]) {
-        margin-bottom: 20px !important;
-      }
-
-      /* Category 16 Accordion Parent Container */
-      #categoryModal [data-cat-id="c16"] {
-        display: block !important;
-        min-height: auto !important;
-        margin-top: 18px !important;
-        margin-bottom: 24px !important;
-        position: relative !important;
-        box-sizing: border-box !important;
-        overflow: visible !important;
-      }
-
-      #categoryModal [data-cat-id="c16"] > div:first-child {
-        cursor: pointer !important;
-        user-select: none !important;
-      }
-
-      #sub-c16 {
-        width: 100% !important;
-        margin-top: 14px !important;
-        overflow: visible !important;
-        pointer-events: auto !important;
-      }
-      #sub-c16.hidden,
-      #sub-c16[style*="display: none"],
-      #sub-c16.sivme-collapsed {
-        display: none !important;
-      }
-      #sub-c16:not(.hidden):not([style*="display: none"]):not(.sivme-collapsed) {
-        display: block !important;
-      }
-
-      #categoryModal [data-cat-id] > div:first-child > div:first-child,
-      #categoryModal [data-cat-id]:not([data-cat-id="c16"]) > div:first-child {
-        min-width: 0 !important;
-        flex: 1 1 auto !important;
-        padding-right: 12px !important;
-      }
-
-      #categoryModal [data-cat-id] .text-xs,
-      #categoryModal [data-cat-id] .font-bold,
-      #categoryModal [data-cat-id] span,
-      #categoryModal [data-cat-id] div,
-      #sub-c16 * {
-        line-height: 1.5 !important;
-        overflow: visible !important;
-      }
-
-      #categoryModal [data-cat-id] button,
-      #categoryModal [data-cat-id] a,
-      #categoryModal [data-cat-id] .text-cyan-400,
-      #categoryModal [data-cat-id] .text-emerald-400,
-      #categoryModal [data-cat-id] .text-slate-400,
-      #sub-c16 button,
-      #sub-c16 a,
-      #sub-c16 span {
-        white-space: nowrap !important;
-        word-break: keep-all !important;
-        flex-shrink: 0 !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 3px !important;
-      }
-
-      /* 2.5D TACTILE SUB-SERVICES (Category 16) */
-      #sub-c16 > div {
-        min-height: 60px !important;
-        padding: 18px 14px 12px 14px !important;
-        margin-bottom: 14px !important;
-        border-radius: 12px !important;
-        position: relative !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        overflow: visible !important;
-        box-sizing: border-box !important;
-        pointer-events: auto !important;
-        cursor: pointer !important;
-        background: linear-gradient(180deg, rgba(24, 33, 47, 0.85) 0%, rgba(11, 17, 30, 0.95) 100%) !important;
-        border: 1px solid rgba(255, 255, 255, 0.06) !important;
-        border-top: 1px solid rgba(255, 255, 255, 0.16) !important;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-        transition: transform 0.12s ease, box-shadow 0.12s ease !important;
-      }
-      #sub-c16 > div:active {
-        transform: translateY(1.5px) !important;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.75), inset 0 2px 3px rgba(0, 0, 0, 0.45) !important;
-      }
-      #sub-c16 > div .sivme-inline-badge {
-        top: -9px !important;
-        left: 14px !important;
-        right: auto !important;
-      }
-
-      #categoryModal .overflow-y-auto,
-      #categoryModal > div > div:last-child {
-        padding-top: 20px !important;
-        padding-bottom: 120px !important;
-      }
-
-      .sivme-badge-live {
-        background: #064e3b !important;
-        color: #6ee7b7 !important;
-        border: 1.5px solid #10b981 !important;
-      }
-      .sivme-badge-dormant {
-        background: #7f1d1d !important;
-        color: #fca5a5 !important;
-        border: 1.5px solid #ef4444 !important;
-        box-shadow: 0 0 10px rgba(239, 68, 68, 0.6) !important;
-      }
-
-      #categoryModal,
-      #categoryModal > div:first-child {
-        z-index: 99999 !important;
-      }
-      #sivmeFloatingDock {
-        position: fixed;
-        bottom: 18px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 9999999 !important;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: rgba(3, 7, 18, 0.95);
-        backdrop-filter: blur(16px);
-        border: 1px solid rgba(6, 182, 212, 0.5);
-        border-radius: 9999px;
-        padding: 6px 14px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(6, 182, 212, 0.3);
-        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      }
-    `;
-    document.head.appendChild(style);
   }
 
-  // 4. SCAN AND ATTACH IN-SITU CONTROLS
+  // 4. BULLETPROOF RECONCILED HIDDEN COUNTER
+  function getHiddenCount() {
+    var hiddenUrns = {};
+    var reg = getRegistry();
+    if (reg && reg.items) {
+      Object.keys(reg.items).forEach(function (k) {
+        if (k === 'rm:cat:16') return;
+        if (reg.items[k] && reg.items[k].visible === false) {
+          hiddenUrns[k] = true;
+        } else if (reg.items[k] && reg.items[k].visible === true) {
+          delete hiddenUrns[k];
+        }
+      });
+    }
+
+    if (!getUrnVisibility('rm:cat:16')) {
+      hiddenUrns['rm:cat:16'] = true;
+    } else {
+      delete hiddenUrns['rm:cat:16'];
+    }
+
+    return Object.keys(hiddenUrns).length;
+  }
+
+  function cleanText(el) {
+    if (!el) return '';
+    var clone = el.cloneNode(true);
+    var badges = clone.querySelectorAll('.sivme-inline-badge');
+    badges.forEach(function (b) { b.remove(); });
+    return (clone.textContent || '').trim();
+  }
+
+  // 5. LIGHTWEIGHT MODULAR STYLESHEET LOADER
+  function injectStyles() {
+    if (document.getElementById('sivme-core-stylesheet')) return;
+    var link = document.createElement('link');
+    link.id = 'sivme-core-stylesheet';
+    link.rel = 'stylesheet';
+    link.href = '/css/sivme-hud.css?v=20261006_v25';
+    document.head.appendChild(link);
+  }
+
+  // 6. MOUNT INLINE BADGES
+  function mountInlineBadge(parentEl, urn, isVisible, label) {
+    var badge = parentEl.querySelector(':scope > .sivme-inline-badge');
+    var targetClass = isVisible ? 'sivme-inline-badge sivme-badge-live' : 'sivme-inline-badge sivme-badge-dormant';
+    var targetHtml = isVisible ? '<span>👁️</span><span>Live</span>' : '<span>🚫</span><span>Hidden</span>';
+
+    if (!badge) {
+      badge = document.createElement('div');
+      parentEl.appendChild(badge);
+    }
+
+    badge.className = targetClass;
+    if (badge.innerHTML !== targetHtml) badge.innerHTML = targetHtml;
+    badge.setAttribute('data-badge-urn', urn);
+    badge.setAttribute('data-badge-label', label || '');
+    badge.setAttribute('data-badge-vis', String(isVisible));
+  }
+
+  // 7. AUDIT ELEMENT DISPATCHER (Exposed To All Micro-Adapters)
+  function auditElement(el, urn, label, isAuth) {
+    if (!el) return;
+    if (typeof isAuth === 'undefined') isAuth = isConsoleAuthorized();
+    el.setAttribute('data-sov-urn', urn);
+    el.setAttribute('data-sov-label', label || '');
+    var isVis = getUrnVisibility(urn);
+
+    if (!isAuth) {
+      if (!isVis) {
+        el.classList.add('sivme-public-hidden');
+        el.style.setProperty('display', 'none', 'important');
+      } else {
+        el.classList.remove('sivme-public-hidden');
+        el.style.removeProperty('display');
+      }
+      var oldB = el.querySelector(':scope > .sivme-inline-badge');
+      if (oldB) oldB.remove();
+      el.classList.remove('sivme-ghost-dormant', 'sivme-badge-anchor');
+    } else {
+      el.classList.remove('sivme-public-hidden');
+      el.classList.add('sivme-badge-anchor');
+      if (!isVis) {
+        el.classList.add('sivme-ghost-dormant');
+      } else {
+        el.classList.remove('sivme-ghost-dormant');
+      }
+      mountInlineBadge(el, urn, isVis, label);
+
+      if (el.getAttribute('data-sivme-tap-bound') !== 'true') {
+        el.setAttribute('data-sivme-tap-bound', 'true');
+
+        el.addEventListener('click', function (e) {
+          if (!isConsoleAuthorized()) return;
+          if (e.target.closest('.sivme-inline-badge')) return;
+
+          var curVis = getUrnVisibility(urn);
+
+          if (!curVis) {
+            if (e.cancelable) e.preventDefault();
+            e.stopImmediatePropagation();
+            e.stopPropagation();
+            setUrnVisibility(urn, true, label);
+            applyInSituAudit();
+            return;
+          }
+
+          if (e.target.tagName === 'INPUT' || (el.classList.contains('sivme-cash-atomic-card') && e.target.closest('button, a, div[onclick]'))) {
+            return;
+          }
+
+          if (el.classList.contains('sivme-btn-pill') || el.classList.contains('sivme-vertical-card') || el.classList.contains('sivme-catalog-card')) {
+            if (urn === 'rm:cat:16') return;
+            if (e.cancelable) e.preventDefault();
+            e.stopImmediatePropagation();
+            e.stopPropagation();
+            setUrnVisibility(urn, false, label);
+            applyInSituAudit();
+          }
+        }, false);
+      }
+    }
+  }
+
+  // 8. PURE KERNEL AUDIT ENGINE (Delegates to Registered Micro-Adapters)
   function applyInSituAudit() {
     if (isAuditing) return;
     isAuditing = true;
@@ -426,443 +246,185 @@
       enforceZELTemplateRendering();
       var isAuth = isConsoleAuthorized();
 
-      // 4.0 Section Headers Buffer Enforcement
-      var modalElements = document.querySelectorAll('#categoryModal button, #categoryModal [onclick], #categoryModal .cursor-pointer, #categoryModal div');
-      modalElements.forEach(function (el) {
-        var t = (el.textContent || '').trim();
-        if ((t.indexOf('आजीविका') !== -1 || t.indexOf('खेल व मनोरंजन') !== -1) && el.children.length > 0 && el.offsetHeight > 30 && el.offsetHeight < 70) {
-          el.classList.add('sivme-catalog-section-header');
-          el.style.setProperty('margin-top', '28px', 'important');
-          el.style.setProperty('margin-bottom', '24px', 'important');
-        }
+      // Dynamic Full-Screen DOM Enforcement for Open Modals
+      var openModals = document.querySelectorAll('#categoryModal, #rentalLedgerModal, #rentalSearchModal, [id*="Modal"]');
+      openModals.forEach(function (m) {
+        if (m.classList.contains('hidden') || m.style.display === 'none') return;
+        m.style.setProperty('height', '100dvh', 'important');
+        m.style.setProperty('max-height', '100dvh', 'important');
       });
 
-      // 4.0.1 Infallible Capture-Phase Accordion Toggle & 72px Height Enforcement for Category 16 Header
+      // Category 16 Header Audit
       var c16 = document.querySelector('#categoryModal [data-cat-id="c16"]');
       if (c16) {
         var c16Header = c16.querySelector(':scope > div:first-child');
-        if (c16Header) {
-          c16Header.style.setProperty('min-height', '72px', 'important');
-          c16Header.style.setProperty('height', '72px', 'important');
-          c16Header.style.setProperty('padding', '22px 14px 14px 14px', 'important');
-          c16Header.style.setProperty('display', 'flex', 'important');
-          c16Header.style.setProperty('align-items', 'center', 'important');
-          c16Header.style.setProperty('justify-content', 'space-between', 'important');
-          c16Header.style.setProperty('box-sizing', 'border-box', 'important');
-          c16Header.style.setProperty('width', '100%', 'important');
-
-          if (c16Header.getAttribute('data-sivme-toggle-bound') !== 'true') {
-            c16Header.setAttribute('data-sivme-toggle-bound', 'true');
-            c16Header.setAttribute('data-sivme-c16-head', 'true');
-
-            function doAccordionToggle(e) {
-              if (e.target.closest('.sivme-inline-badge')) return;
-
-              if (e.cancelable) e.preventDefault();
-              e.stopPropagation();
-
-              var now = Date.now();
-              if (now - lastAccordionToggleTime < 350) return;
-              lastAccordionToggleTime = now;
-
-              var sub = document.getElementById('sub-c16');
-              if (!sub) return;
-
-              var isCurrentlyVisible = (sub.offsetHeight > 0) && (window.getComputedStyle(sub).display !== 'none') && !sub.classList.contains('sivme-collapsed');
-              var chevron = document.getElementById('chevron-c16') || c16Header.querySelector('svg, [id*="chevron"]');
-
-              if (isCurrentlyVisible) {
-                sub.style.setProperty('display', 'none', 'important');
-                sub.classList.add('hidden', 'sivme-collapsed');
-                if (chevron) chevron.style.transform = 'rotate(0deg)';
-              } else {
-                sub.style.setProperty('display', 'block', 'important');
-                sub.classList.remove('hidden', 'sivme-collapsed');
-                if (chevron) chevron.style.transform = 'rotate(180deg)';
-              }
-            }
-
-            c16Header.addEventListener('click', doAccordionToggle, true);
-          }
-        }
-      }
-
-      var matchedElements = [];
-      var seenNodes = [];
-
-      function registerMatch(node, urn, label) {
-        if (!node || seenNodes.indexOf(node) !== -1) return;
-        seenNodes.push(node);
-        matchedElements.push({ el: node, urn: urn, label: label });
-      }
-
-      // 4.1 Home 9 Core Verticals
-      var explicitNodes = document.querySelectorAll('[data-sov-urn]');
-      explicitNodes.forEach(function (node) {
-        registerMatch(
-          node,
-          node.getAttribute('data-sov-urn'),
-          node.getAttribute('data-sov-label') || 'फ़ीचर'
-        );
-      });
-
-      // 4.2 Category 16-3 Dynamic Filters Resolution
-      URN_SELECTORS.forEach(function (def) {
-        try {
-          var nodes = document.querySelectorAll(def.selector);
-          nodes.forEach(function (node) {
-            var targetNode = node;
-            if (['INPUT', 'SELECT'].indexOf(node.tagName) !== -1 && node.parentElement) {
-              targetNode = node.parentElement;
-            }
-            if (!targetNode.hasAttribute('data-sov-urn')) {
-              targetNode.setAttribute('data-sov-urn', def.urn);
-              targetNode.setAttribute('data-sov-label', def.label);
-            }
-            registerMatch(targetNode, def.urn, def.label);
-          });
-        } catch (_) {}
-      });
-
-      // 4.3 Category 16 Sub-Services Resolution & Non-Blocking 1-Tap Wake-Up Binding
-      var sub16Cards = document.querySelectorAll('#sub-c16 > div');
-      var sub16HasHidden = false;
-      sub16Cards.forEach(function (subCard, idx) {
-        var subUrn = 'rm:cat:16:sub:16-' + (idx + 1);
-        var subLabelEl = subCard.querySelector('.text-xs') || subCard;
-        var subLabel = subLabelEl ? subLabelEl.textContent.trim() : ('16-' + (idx + 1) + ' सेवा');
-
-        if (!subCard.hasAttribute('data-sov-urn')) {
-          subCard.setAttribute('data-sov-urn', subUrn);
-          subCard.setAttribute('data-sov-label', subLabel);
-        }
-        registerMatch(subCard, subUrn, subLabel);
-
-        var subIsVis = getUrnVisibility(subUrn);
-        if (!subIsVis) {
-          sub16HasHidden = true;
-        }
-
-        if (subCard.getAttribute('data-sivme-sub-bound') !== 'true') {
-          subCard.setAttribute('data-sivme-sub-bound', 'true');
-          function handleSubCardTap(e) {
-            if (!isConsoleAuthorized()) return;
-
-            var isDormant = subCard.classList.contains('sivme-ghost-dormant');
-            var isBadgeClick = !!e.target.closest('.sivme-inline-badge');
-
-            if (isDormant || isBadgeClick) {
-              if (e.cancelable) e.preventDefault();
-              e.stopPropagation();
-
-              var now = Date.now();
-              if (now - (lastUrnActionTimes[subUrn] || 0) < 550) return;
-              lastUrnActionTimes[subUrn] = now;
-
-              var curVis = getUrnVisibility(subUrn);
-              var targetVis = isDormant ? true : !curVis;
-
-              setUrnVisibility(subUrn, targetVis, subLabel);
-
-              if (targetVis) {
-                setUrnVisibility('rm:cat:16', true, 'घर व मकान');
-              }
-
-              if (targetVis) {
-                subCard.classList.remove('sivme-ghost-dormant');
-              } else {
-                subCard.classList.add('sivme-ghost-dormant');
-              }
-              var subBadge = subCard.querySelector(':scope > .sivme-inline-badge');
-              if (subBadge) {
-                subBadge.className = targetVis ? 'sivme-inline-badge sivme-badge-live' : 'sivme-inline-badge sivme-badge-dormant';
-                subBadge.innerHTML = targetVis ? '<span>👁️</span><span>Live</span>' : '<span>🚫</span><span>Hidden</span>';
-                subBadge.setAttribute('data-badge-vis', String(targetVis));
-              }
-
-              enforceZELTemplateRendering();
-              setTimeout(applyInSituAudit, 50);
-            }
-          }
-
-          subCard.addEventListener('click', handleSubCardTap, true);
-        }
-      });
-
-      // 4.4 Universal Catalog (33 Services + 17 Games)
-      var catalogCards = document.querySelectorAll('#categoryModal [data-cat-id]');
-      catalogCards.forEach(function (card) {
-        var catId = card.getAttribute('data-cat-id');
-        if (!catId) return;
-
-        var numStr = catId.replace(/[^0-9]/g, '');
-        if (numStr.length === 1) numStr = '0' + numStr;
-        var urn = 'rm:cat:' + numStr;
-
-        var labelEl = card.querySelector('.text-xs.font-bold') || card.querySelector('.font-bold');
-        var label = labelEl ? labelEl.textContent.trim() : ('श्रेणी ' + numStr);
-
-        if (!card.hasAttribute('data-sov-urn')) {
-          card.setAttribute('data-sov-urn', urn);
-          card.setAttribute('data-sov-label', label);
-        }
-        registerMatch(card, urn, label);
-      });
-
-      var totalTracked = matchedElements.length;
-      var totalHidden = 0;
-
-      matchedElements.forEach(function (item) {
-        var isVis = getUrnVisibility(item.urn);
-
-        if (item.urn === 'rm:cat:16' && isAuth) {
-          if (sub16HasHidden) {
-            isVis = false;
-          }
-        }
-
-        if (!isVis) totalHidden++;
+        var isCat16Vis = getUrnVisibility('rm:cat:16');
 
         if (!isAuth) {
-          if (!isVis) {
-            item.el.classList.add('sivme-public-hidden');
+          if (!isCat16Vis) {
+            c16.classList.add('sivme-public-hidden');
+            c16.style.setProperty('display', 'none', 'important');
           } else {
-            item.el.classList.remove('sivme-public-hidden');
+            c16.classList.remove('sivme-public-hidden');
+            c16.style.removeProperty('display');
           }
-          var oldBadge = item.el.querySelector(':scope > .sivme-inline-badge');
-          if (oldBadge) oldBadge.remove();
-          item.el.classList.remove('sivme-ghost-dormant', 'sivme-badge-anchor');
-          return;
-        }
-
-        if (item.el.style.display === 'none') {
-          item.el.style.display = '';
-        }
-
-        item.el.classList.remove('sivme-public-hidden');
-        item.el.classList.add('sivme-badge-anchor');
-
-        if (!isVis) {
-          item.el.classList.add('sivme-ghost-dormant');
+          if (c16Header) {
+            var oldB = c16Header.querySelector(':scope > .sivme-inline-badge');
+            if (oldB) oldB.remove();
+            c16Header.classList.remove('sivme-ghost-dormant', 'sivme-badge-anchor');
+          }
         } else {
-          item.el.classList.remove('sivme-ghost-dormant');
-        }
+          c16.classList.remove('sivme-public-hidden');
+          c16.style.removeProperty('display');
+          c16.classList.remove('sivme-ghost-dormant', 'sivme-badge-anchor');
 
-        mountInlineBadge(item.el, item.urn, isVis, item.label);
+          if (c16Header) {
+            c16Header.classList.add('sivme-badge-anchor');
+            if (!isCat16Vis) {
+              c16Header.classList.add('sivme-ghost-dormant');
+            } else {
+              c16Header.classList.remove('sivme-ghost-dormant');
+            }
+            mountInlineBadge(c16Header, 'rm:cat:16', isCat16Vis, 'घर व मकान (House & Home)');
+          }
+        }
+      }
+
+      // Execute All 8 Registered Micro-Adapters
+      Object.keys(adapters).forEach(function (key) {
+        try { adapters[key](); } catch (_) {}
       });
 
-      updateFloatingDock(isAuth, totalHidden, totalTracked);
+      updateFloatingDock(isAuth, getHiddenCount());
     } finally {
-      setTimeout(function () {
-        isAuditing = false;
-      }, 40);
+      setTimeout(function () { isAuditing = false; }, 30);
     }
   }
 
-  // 5. MOUNT INLINE TOGGLE BADGE & FULL-CARD WAKE-UP
-  function mountInlineBadge(parentEl, urn, isVisible, label) {
-    var badge = parentEl.querySelector(':scope > .sivme-inline-badge');
-    var targetClass = isVisible ? 'sivme-inline-badge sivme-badge-live' : 'sivme-inline-badge sivme-badge-dormant';
-    var targetHtml = isVisible ? '<span>👁️</span><span>Live</span>' : '<span>🚫</span><span>Hidden</span>';
+  // 9. FLOATING HUD DOCK
+  function updateFloatingDock(isAuth, hiddenCount) {
+    var dock = document.getElementById('sivmeFloatingDock');
+    if (!isAuth) { if (dock) dock.remove(); return; }
 
-    function executeToggle(e) {
-      if (e.cancelable) e.preventDefault();
-      e.stopPropagation();
-
-      var now = Date.now();
-      if (now - (lastUrnActionTimes[urn] || 0) < 550) return;
-      lastUrnActionTimes[urn] = now;
-
-      var bUrn = badge ? badge.getAttribute('data-badge-urn') : urn;
-      var bVis = badge ? (badge.getAttribute('data-badge-vis') === 'true') : isVisible;
-      var bLabel = badge ? (badge.getAttribute('data-badge-label') || label) : label;
-      var newTargetVis = !bVis;
-
-      if (bUrn === 'rm:cat:16') {
-        setUrnVisibility('rm:cat:16', newTargetVis, bLabel);
-        for (var sIdx = 1; sIdx <= 3; sIdx++) {
-          setUrnVisibility('rm:cat:16:sub:16-' + sIdx, newTargetVis, '16-' + sIdx + ' सेवा');
-        }
-      } else {
-        setUrnVisibility(bUrn, newTargetVis, bLabel);
-      }
-
-      try {
-        var match = bUrn.match(/^rm:cat:([0-9]{2})$/);
-        if (match) {
-          var catNum = match[1];
-          var rawActive = localStorage.getItem('rm_active_categories_v1');
-          var activeArr = rawActive ? JSON.parse(rawActive) : [];
-          var id1 = 'c' + catNum;
-          var id2 = 'g' + catNum;
-          var id3 = catNum;
-          if (!bVis) {
-            if (activeArr.indexOf(id1) === -1) activeArr.push(id1);
-            if (activeArr.indexOf(id2) === -1) activeArr.push(id2);
-            if (activeArr.indexOf(id3) === -1) activeArr.push(id3);
-          } else {
-            activeArr = activeArr.filter(function (x) {
-              return x !== id1 && x !== id2 && x !== id3;
-            });
-          }
-          localStorage.setItem('rm_active_categories_v1', JSON.stringify(activeArr));
-        }
-      } catch (_) {}
-
-      enforceZELTemplateRendering();
-      applyInSituAudit();
-    }
-
-    if (!badge) {
-      badge = document.createElement('div');
-      parentEl.appendChild(badge);
-
-      if (urn.indexOf('sub:') === -1) {
-        badge.addEventListener('click', executeToggle);
-
-        function handleCardWakeUp(e) {
-          if (!parentEl.classList.contains('sivme-ghost-dormant')) return;
-          if (e.target.closest('.sivme-inline-badge')) return;
-          if (urn === 'rm:cat:16') return;
-          if (e.target.closest('button') || e.target.closest('a')) return;
-
-          executeToggle(e);
-        }
-
-        parentEl.addEventListener('click', handleCardWakeUp);
-      }
-    }
-
-    badge.className = targetClass;
-    if (badge.innerHTML !== targetHtml) badge.innerHTML = targetHtml;
-    badge.setAttribute('data-badge-urn', urn);
-    badge.setAttribute('data-badge-vis', String(isVisible));
-    badge.setAttribute('data-badge-label', label);
-    badge.title = label + (isVisible ? ' छुपाने के लिए टैप करें (Hide)' : ' लाइव दिखाने के लिए टैप करें (Show)');
-  }
-
-  // 6. FLOATING HUD DOCK
-  function updateFloatingDock(isAuth, hiddenCount, trackedCount) {
-    var existingDock = document.getElementById('sivmeFloatingDock');
-
-    if (!isAuth) {
-      if (existingDock) existingDock.remove();
-      return;
-    }
-
-    if (!existingDock) {
-      existingDock = document.createElement('div');
-      existingDock.id = 'sivmeFloatingDock';
-      existingDock.innerHTML = `
-        <div style="display:flex;align-items:center;gap:6px;">
-          <span style="font-size:13px;">🛡️</span>
-          <span style="color:#22d3ee;font-size:11px;font-weight:900;letter-spacing:0.5px;">SIVME HUD</span>
-        </div>
-        <span style="background:#0f172a;border:1px solid #334155;color:#94a3b8;font-size:10px;font-weight:700;padding:2px 7px;border-radius:9999px;">
+    if (!dock) {
+      dock = document.createElement('div');
+      dock.id = 'sivmeFloatingDock';
+      dock.innerHTML = `
+        <div style="display:flex;align-items:center;gap:5px;"><span>🛡️</span><span style="color:#22d3ee;font-size:11px;font-weight:900;">SIVME</span></div>
+        <span style="background:#0f172a;border:1px solid #334155;color:#94a3b8;font-size:10px;font-weight:700;padding:2px 6px;border-radius:9999px;">
           Hidden: <span id="sivmeHiddenCountNum" style="color:#f87171;">${hiddenCount}</span>
         </span>
-        <button id="btnExitInSitu" style="background:#450a0a;border:1px solid #b91c1c;color:#fca5a5;font-size:10px;font-weight:800;padding:3px 8px;border-radius:8px;cursor:pointer;">
-          Exit ✕
-        </button>
-        <a href="/owner-console.html" style="background:#1e1b4b;border:1px solid #4338ca;color:#a5b4fc;font-size:10px;font-weight:800;padding:3px 8px;border-radius:8px;text-decoration:none;display:inline-flex;align-items:center;gap:3px;">
-          <span>Surface-B ⚙️</span>
-        </a>
+        <button id="btnHardReloadBust" style="background:#0369a1;border:1px solid #38bdf8;color:#e0f2fe;font-size:10px;font-weight:900;padding:3px 8px;border-radius:8px;cursor:pointer;">⚡ Reload</button>
+        <button id="btnExitInSitu" style="background:#450a0a;border:1px solid #b91c1c;color:#fca5a5;font-size:10px;font-weight:800;padding:3px 7px;border-radius:8px;cursor:pointer;">Exit ✕</button>
+        <a href="/owner-console.html" style="background:#1e1b4b;border:1px solid #4338ca;color:#a5b4fc;font-size:10px;font-weight:800;padding:3px 7px;border-radius:8px;text-decoration:none;">B ⚙</a>
       `;
-      document.body.appendChild(existingDock);
+      document.body.appendChild(dock);
 
-      var exitBtn = document.getElementById('btnExitInSitu');
-      if (exitBtn) {
-        function handleCleanExit(e) {
-          if (e.cancelable) e.preventDefault();
-          e.stopPropagation();
+      document.getElementById('btnHardReloadBust').addEventListener('click', async function () {
+        if ('caches' in window) { var names = await caches.keys(); await Promise.all(names.map(function(n){ return caches.delete(n); })); }
+        if (navigator.serviceWorker) { var regs = await navigator.serviceWorker.getRegistrations(); for (var i=0; i<regs.length; i++) await regs[i].unregister(); }
+        localStorage.setItem(DEV_AUTO_KEY, 'true');
+        var u = new URL(window.location.origin + window.location.pathname);
+        u.searchParams.set('sov_mode', 'in_situ'); u.searchParams.set('dev_auto', '1'); u.searchParams.set('cb', String(Date.now()));
+        window.location.href = u.toString();
+      });
 
-          sessionStorage.removeItem(SESSION_KEY);
-          localStorage.removeItem(SESSION_KEY);
-          sessionStorage.removeItem('rm_sov_in_situ_session');
-          localStorage.removeItem('rm_sov_in_situ_session');
-
-          if (window.RM_SovereignRegistry) {
-            window.RM_SovereignRegistry.setConsoleMode(false);
-          }
-          try {
-            var regRaw = localStorage.getItem(REGISTRY_STORAGE_KEY);
-            if (regRaw) {
-              var reg = JSON.parse(regRaw);
-              if (reg) {
-                reg.activeMode = 'public';
-                localStorage.setItem(REGISTRY_STORAGE_KEY, JSON.stringify(reg));
-              }
-            }
-          } catch (_) {}
-
-          if (existingDock) existingDock.remove();
-          var badges = document.querySelectorAll('.sivme-inline-badge');
-          badges.forEach(function (b) { b.remove(); });
-
-          var cleanTargetUrl = window.location.origin + window.location.pathname;
-          window.location.replace(cleanTargetUrl);
-        }
-
-        exitBtn.addEventListener('click', handleCleanExit);
-      }
+      document.getElementById('btnExitInSitu').addEventListener('click', function () {
+        sessionStorage.removeItem(SESSION_KEY); localStorage.removeItem(SESSION_KEY); localStorage.removeItem(DEV_AUTO_KEY);
+        window.location.replace(window.location.origin + window.location.pathname);
+      });
     } else {
-      var numSpan = document.getElementById('sivmeHiddenCountNum');
-      if (numSpan && numSpan.textContent !== String(hiddenCount)) {
-        numSpan.textContent = String(hiddenCount);
-      }
+      var num = document.getElementById('sivmeHiddenCountNum');
+      if (num) num.textContent = String(hiddenCount);
     }
   }
 
-  function scheduleAudit() {
-    if (auditTimer) clearTimeout(auditTimer);
-    auditTimer = setTimeout(function () {
-      applyInSituAudit();
-    }, 60);
+  // 10. MICRO-MODULAR ADAPTER AUTOLOADER (8 Complete Modules)
+  function loadAdapters() {
+    var basePath = '/js/sivme-adapters/';
+    var curr = document.currentScript;
+    if (curr && curr.src) {
+      try {
+        var u = new URL(curr.src);
+        basePath = u.pathname.substring(0, u.pathname.lastIndexOf('/') + 1) + 'sivme-adapters/';
+      } catch (_) {}
+    }
+
+    var scripts = [
+      basePath + 'home-widgets.js',
+      basePath + 'core-verticals-9.js',
+      basePath + 'catalog-50.js',
+      basePath + 'cat-16.js',
+      basePath + 'sub-16-1.js',
+      basePath + 'sub-16-2.js',
+      basePath + 'sub-16-3.js',
+      basePath + 'user-pinned-shortcuts.js'
+    ];
+
+    scripts.forEach(function (src) {
+      if (!document.querySelector('script[src*="' + src + '"]')) {
+        var s = document.createElement('script');
+        s.src = src + '?v=20261006_v8';
+        s.async = true;
+        document.head.appendChild(s);
+      }
+    });
   }
 
-  // 7. OBSERVER & INITIALIZATION
-  function initEngine() {
-    enforceZELTemplateRendering();
-    injectStyles();
+  // 11. BULLETPROOF GLOBAL BADGE CAPTURE LISTENER
+  document.addEventListener('click', function (e) {
+    var badge = e.target.closest('.sivme-inline-badge');
+    if (!badge || !isConsoleAuthorized()) return;
+
+    if (e.cancelable) e.preventDefault();
+    e.stopImmediatePropagation();
+    e.stopPropagation();
+
+    var urn = badge.getAttribute('data-badge-urn');
+    var label = badge.getAttribute('data-badge-label') || '';
+    var curVis = badge.getAttribute('data-badge-vis') === 'true';
+    var nextVis = !curVis;
+
+    if (!urn) return;
+
+    if (urn === 'rm:cat:16') {
+      ['rm:cat:16:sub:16-1', 'rm:cat:16:sub:16-2', 'rm:cat:16:sub:16-3'].forEach(function (su) {
+        setUrnVisibility(su, nextVis);
+      });
+      setUrnVisibility(urn, nextVis, label);
+    } else {
+      setUrnVisibility(urn, nextVis, label);
+    }
+
     applyInSituAudit();
+  }, true);
 
-    window.addEventListener('rm:sov:visibility-changed', function () {
-      applyInSituAudit();
-    });
+  // 12. GLOBAL SIVME API & DYNAMIC OBSERVER
+  window.RM_SIVME = {
+    isConsoleAuthorized: isConsoleAuthorized,
+    getUrnVisibility: getUrnVisibility,
+    setUrnVisibility: setUrnVisibility,
+    mountInlineBadge: mountInlineBadge,
+    auditElement: auditElement,
+    applyInSituAudit: applyInSituAudit,
+    registerAdapter: function (id, fn) {
+      adapters[id] = fn;
+      setTimeout(applyInSituAudit, 20);
+    }
+  };
 
-    window.addEventListener('storage', function (e) {
-      if (e.key === REGISTRY_STORAGE_KEY || e.key === SESSION_KEY) {
-        applyInSituAudit();
-      }
-    });
+  // INITIALIZE
+  enforceZELTemplateRendering();
+  injectStyles();
+  loadAdapters();
+  applyInSituAudit();
 
-    var observer = new MutationObserver(function (mutations) {
-      if (isAuditing) return;
-      var hasStructuralChanges = false;
-      for (var i = 0; i < mutations.length; i++) {
-        var t = mutations[i].target;
-        if (t && t.nodeType === 1) {
-          if (t.id === 'sivmeFloatingDock' || t.classList.contains('sivme-inline-badge') || t.closest('#sivmeFloatingDock') || t.closest('.sivme-inline-badge')) {
-            continue;
-          }
-        }
-        hasStructuralChanges = true;
-        break;
-      }
-      if (hasStructuralChanges) {
-        scheduleAudit();
-      }
-    });
+  document.addEventListener('click', function () { setTimeout(applyInSituAudit, 50); }, false);
+  window.addEventListener('storage', applyInSituAudit);
+  window.addEventListener('rm:sov:visibility-changed', applyInSituAudit);
 
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initEngine);
-  } else {
-    initEngine();
-  }
+  var obs = new MutationObserver(function () {
+    if (!isAuditing) applyInSituAudit();
+  });
+  obs.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'] });
 })();

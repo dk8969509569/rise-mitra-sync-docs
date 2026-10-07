@@ -2,7 +2,7 @@
  * RISE MITRA — SOVEREIGN IN-SITU VISUAL MANAGEMENT ENGINE (SIVME)
  * MODULE        : Universal Visibility Registry & Cascading Inheritance Engine
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
- * GOVERNANCE    : GATE-23.4 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
+ * GOVERNANCE    : GATE-23.5 | DEC-RM-SOV-VISUAL-IN-SITU-20261003 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-registry.js
  * DUAL-FOLDER REFERENCES:
  *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
@@ -19,6 +19,7 @@
     var lib = factory();
     root.RM_SovereignRegistry = lib;
     root.RiseMitraSIVME = lib;
+    root.RM_SIVME = lib; // Phase 2 Global Alias
   }
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
@@ -31,10 +32,11 @@
   var DEFAULT_REGISTRY = {
     version: REGISTRY_VERSION,
     lastUpdated: Date.now(),
-    activeMode: 'public', // 'public' | 'in_situ_console'
+    activeMode: 'in_situ_console', // Default active for verified Owner in-situ testing
     registry: {
       // Category 16 Baseline Defaults
       'rm:cat:16': { hidden: false, label: 'House & Home (आवास व मिस्त्री)' },
+      'rm:cat:16:sub:16-1': { hidden: false, label: '16-1. मिस्त्री व गृह मरम्मत' },
       'rm:cat:16:sub:16-2': { hidden: false, label: '16-2. किराया बहीखाता' },
       'rm:cat:16:sub:16-2:elem:pincode_box': { hidden: false, label: 'पिनकोड इनपुट बॉक्स' },
       'rm:cat:16:sub:16-2:elem:btn_add_slip': { hidden: false, label: 'रसीद बनाएं बटन' },
@@ -51,6 +53,9 @@
       totalHidden: 1
     }
   };
+
+  var adapters = {};
+  var elementRegistry = {};
 
   /**
    * Safe localStorage Reader
@@ -106,6 +111,9 @@
         var event = new CustomEvent('rm:sov:visibility-changed', { detail: data });
         window.dispatchEvent(event);
       }
+
+      // Re-apply In-Situ visual inspection outline & anti-overlap notches
+      applyInSituVisualInspection();
       return true;
     } catch (err) {
       console.error('[RM-SIVME] Registry storage write failed:', err);
@@ -153,21 +161,17 @@
 
   /**
    * Parse Parent URN to enforce Cascading Inheritance
-   * Udaharan:
-   * 'rm:cat:16:sub:16-3:elem:budget_slider' -> Parent 1: 'rm:cat:16:sub:16-3', Parent 2: 'rm:cat:16'
    */
   function getParentURNs(urn) {
     if (!urn || typeof urn !== 'string') return [];
     var parts = urn.split(':');
     var parents = [];
 
-    // If it has :elem:, the parent sub-feature is everything before :elem:
     var elemIndex = parts.indexOf('elem');
     if (elemIndex !== -1) {
       parents.push(parts.slice(0, elemIndex).join(':'));
     }
 
-    // If it has :sub:, the parent category is everything before :sub:
     var subIndex = parts.indexOf('sub');
     if (subIndex !== -1) {
       parents.push(parts.slice(0, subIndex).join(':'));
@@ -184,17 +188,15 @@
     var state = loadRegistry();
     var reg = state.registry || {};
 
-    // 1. Direct Self Check
     if (reg[urn] && reg[urn].hidden === true) {
       return false;
     }
 
-    // 2. Cascading Parent Check
     var parents = getParentURNs(urn);
     for (var i = 0; i < parents.length; i++) {
       var p = parents[i];
       if (reg[p] && reg[p].hidden === true) {
-        return false; // Inherited Dormant
+        return false;
       }
     }
 
@@ -202,7 +204,7 @@
   }
 
   /**
-   * Toggle Visibility of a specific URN
+   * Toggle Visibility of a specific URN (1-Tap Live/Hidden Switch)
    */
   function toggleVisibility(urn, explicitState, label) {
     if (!urn) return false;
@@ -227,9 +229,10 @@
    */
   function isConsoleModeActive() {
     try {
-      var sessionTicket = sessionStorage.getItem(SESSION_AUTH_KEY);
       var reg = loadRegistry();
-      return Boolean(sessionTicket === 'SOV_ACTIVE_2026' || reg.activeMode === 'in_situ_console');
+      var sessionTicket = sessionStorage.getItem(SESSION_AUTH_KEY);
+      var localTicket = localStorage.getItem(SESSION_AUTH_KEY);
+      return Boolean(localTicket === 'SOV_ACTIVE_2026' || sessionTicket === 'SOV_ACTIVE_2026' || reg.activeMode === 'in_situ_console');
     } catch (_) {
       return false;
     }
@@ -243,11 +246,14 @@
       var state = loadRegistry();
       state.activeMode = active ? 'in_situ_console' : 'public';
       if (active) {
+        localStorage.setItem(SESSION_AUTH_KEY, 'SOV_ACTIVE_2026');
         sessionStorage.setItem(SESSION_AUTH_KEY, 'SOV_ACTIVE_2026');
       } else {
+        localStorage.removeItem(SESSION_AUTH_KEY);
         sessionStorage.removeItem(SESSION_AUTH_KEY);
       }
       saveRegistry(state);
+      applyInSituVisualInspection();
       return true;
     } catch (err) {
       console.error('[RM-SIVME] Failed to toggle console mode:', err);
@@ -268,10 +274,282 @@
     });
     state.activeMode = 'public';
     try {
+      localStorage.removeItem(SESSION_AUTH_KEY);
       sessionStorage.removeItem(SESSION_AUTH_KEY);
     } catch (_) {}
     saveRegistry(state);
+    applyInSituVisualInspection();
     return true;
+  }
+
+  function renderBadge(parentEl, urn, label, isAuth) {
+    // Purged to eliminate text overlap on long category titles
+    return;
+  }
+
+  function auditElement(el, urn, label, isAuth) {
+    if (!el || !urn) return;
+    elementRegistry[urn] = { el: el, label: label, isAuth: isAuth };
+  }
+
+  function registerAdapter(name, initFn) {
+    adapters[name] = initFn;
+    if (typeof initFn === 'function') {
+      try { initFn(); } catch (err) { console.error('[RM-SIVME] Adapter Error (' + name + '):', err); }
+    }
+  }
+
+  function triggerAllAdapters() {
+    Object.keys(adapters).forEach(function (name) {
+      if (typeof adapters[name] === 'function') {
+        try { adapters[name](); } catch (e) {}
+      }
+    });
+  }
+
+  // ==============================================================================
+  // ANTI-CLIPPING SPACING & UNCLIPPED UPPER-RIGHT NOTCH TOGGLE ENGINE
+  // ==============================================================================
+
+  function getUrnFromElement(el) {
+    if (el.getAttribute('data-sivme-urn')) return el.getAttribute('data-sivme-urn');
+    var catId = el.getAttribute('data-cat-id');
+    if (catId) {
+      var num = catId.replace('c', '').replace('g', '');
+      return 'rm:cat:' + num;
+    }
+    var subMatch = el.innerHTML.match(/\[(16-[123])\]/);
+    if (subMatch && subMatch[1]) {
+      return 'rm:cat:16:sub:' + subMatch[1];
+    }
+    return null;
+  }
+
+  // Inject Global Style Rules: FORCE OVERFLOW VISIBLE (No Clipping)
+  function injectSpacingStyles() {
+    var styleId = 'sivme-anti-overlap-spacing';
+    var styleEl = document.getElementById(styleId);
+    if (!styleEl) {
+      styleEl = document.createElement('style');
+      styleEl.id = styleId;
+      document.head.appendChild(styleEl);
+    }
+    styleEl.innerHTML = [
+      '/* 1. Permanent purge of static overlapping badges */',
+      '.sivme-inline-badge { display: none !important; visibility: hidden !important; }',
+      '/* 2. CRITICAL: Force overflow visible so upper-right notch is NEVER clipped */',
+      '#tier1-list > div, #tier2-list > div, [data-cat-id], .sivme-subcat-card {',
+      '  overflow: visible !important;',
+      '  margin-top: 14px !important;',
+      '  margin-bottom: 22px !important;',
+      '  position: relative !important;',
+      '}',
+      '/* 3. Padding for list containers so first card has room for top notch */',
+      '#tier1-list, #tier2-list {',
+      '  padding-top: 14px !important;',
+      '  padding-bottom: 96px !important;',
+      '  overflow: visible !important;',
+      '}',
+      '/* 4. Safe right-margin on title text container to avoid button squeeze */',
+      '[data-cat-id] .flex-col, .sivme-subcat-card .flex-col {',
+      '  padding-right: 8px !important;',
+      '}',
+      '/* 5. Ensure notch pill always renders above everything */',
+      '.sivme-notch-pill {',
+      '  z-index: 80 !important;',
+      '}'
+    ].join('\n');
+  }
+
+  function applyInSituVisualInspection() {
+    var active = isConsoleModeActive();
+
+    // 1. Inject anti-clipping CSS rules
+    injectSpacingStyles();
+
+    // 2. Hide redundant legacy HUD
+    var legacyHud = document.getElementById('sivme-hud') || document.querySelector('.sivme-legacy-hud');
+    if (legacyHud) legacyHud.style.display = 'none';
+
+    // 3. Purge all overlapping inline text badges
+    var oldBadges = document.querySelectorAll('.sivme-inline-badge');
+    oldBadges.forEach(function (b) { b.remove(); });
+
+    // 4. Create or Update Top-Level Floating Control Dock
+    var dock = document.getElementById('sivme-floating-console-dock');
+    if (!dock) {
+      dock = document.createElement('div');
+      dock.id = 'sivme-floating-console-dock';
+      dock.style.cssText = [
+        'position: fixed !important',
+        'bottom: 14px !important',
+        'left: 50% !important',
+        'transform: translateX(-50%) !important',
+        'z-index: 99999 !important',
+        'background: rgba(15, 23, 42, 0.96) !important',
+        'backdrop-filter: blur(14px) !important',
+        'border: 1px solid rgba(16, 185, 129, 0.6) !important',
+        'box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.85), 0 0 15px rgba(16, 185, 129, 0.3) !important',
+        'border-radius: 9999px !important',
+        'padding: 6px 14px !important',
+        'display: flex !important',
+        'align-items: center !important',
+        'gap: 10px !important',
+        'color: #f8fafc !important',
+        'font-family: system-ui, -apple-system, sans-serif !important',
+        'font-size: 11px !important',
+        'font-weight: 700 !important'
+      ].join(';');
+      document.body.appendChild(dock);
+    }
+
+    var state = loadRegistry();
+    var hiddenCount = (state.metrics && state.metrics.totalHidden !== undefined) ? state.metrics.totalHidden : 0;
+
+    dock.style.display = active ? 'flex' : 'none';
+    dock.innerHTML = [
+      '<span style="display:flex;align-items:center;gap:5px;color:#34d399;">',
+      '  <span style="width:7px;height:7px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;"></span>',
+      '  <span>OWNER IN-SITU</span>',
+      '</span>',
+      '<span style="color:#64748b;">|</span>',
+      '<span style="font-size:10px;color:' + (hiddenCount > 0 ? '#f87171' : '#94a3b8') + ';">Hidden: ' + hiddenCount + '</span>',
+      '<button id="sivme-toggle-mode-btn" style="background:#1e293b;border:1px solid #475569;color:#e2e8f0;padding:3px 9px;border-radius:9999px;cursor:pointer;font-size:10.5px;">' + (active ? 'Disable' : 'Enable') + '</button>',
+      '<button id="sivme-reload-btn" style="background:#065f46;border:1px solid #10b981;color:#a7f3d0;padding:3px 9px;border-radius:9999px;cursor:pointer;font-size:10.5px;">⚡ Reload</button>'
+    ].join('');
+
+    var toggleBtn = document.getElementById('sivme-toggle-mode-btn');
+    if (toggleBtn) {
+      toggleBtn.onclick = function (e) {
+        e.stopPropagation();
+        setConsoleMode(!active);
+      };
+    }
+
+    var reloadBtn = document.getElementById('sivme-reload-btn');
+    if (reloadBtn) {
+      reloadBtn.onclick = function (e) {
+        e.stopPropagation();
+        window.location.reload();
+      };
+    }
+
+    // 5. Scan Elements & Inject Upper-Right Interactive Notch (UNCLIPPED)
+    var targets = document.querySelectorAll('[data-cat-id], .sivme-subcat-card');
+    targets.forEach(function (el) {
+      var urn = getUrnFromElement(el);
+      if (!urn) return;
+
+      var live = isVisible(urn);
+
+      // Clean existing notch pill
+      var oldNotch = el.querySelector(':scope > .sivme-notch-pill');
+      if (oldNotch) oldNotch.remove();
+
+      if (active) {
+        // Enforce visible overflow so notch outside the top edge is NEVER sliced
+        el.style.setProperty('overflow', 'visible', 'important');
+        if (window.getComputedStyle(el).position === 'static') {
+          el.style.position = 'relative';
+        }
+
+        // Apply Green or Red Dashed Ghera
+        if (live) {
+          el.style.setProperty('outline', '2px dashed #10b981', 'important');
+          el.style.setProperty('outline-offset', '2px', 'important');
+          el.style.opacity = '1';
+        } else {
+          el.style.setProperty('outline', '2px dashed #ef4444', 'important');
+          el.style.setProperty('outline-offset', '2px', 'important');
+          el.style.opacity = '0.55'; // Ghost mode for hidden element
+        }
+
+        // Create Upper-Right Interactive Notch (Positioned cleanly on dashed boundary)
+        var notch = document.createElement('div');
+        notch.className = 'sivme-notch-pill';
+        notch.setAttribute('data-target-urn', urn);
+        
+        if (live) {
+          notch.innerHTML = '<span style="color:#10b981;font-size:10px;line-height:1;">🟢</span> <span style="line-height:1;">Live</span> <span style="font-size:9px;opacity:0.8;line-height:1;">⇄</span>';
+          notch.style.cssText = [
+            'position: absolute !important',
+            'top: -10px !important',
+            'right: 14px !important',
+            'z-index: 80 !important',
+            'background: #064e3b !important',
+            'border: 1.5px solid #10b981 !important',
+            'color: #34d399 !important',
+            'font-family: ui-sans-serif, system-ui, -apple-system, sans-serif !important',
+            'font-size: 10px !important',
+            'font-weight: 800 !important',
+            'padding: 2px 8px !important',
+            'border-radius: 9999px !important',
+            'box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7), 0 0 6px rgba(16, 185, 129, 0.4) !important',
+            'cursor: pointer !important',
+            'display: inline-flex !important',
+            'align-items: center !important',
+            'gap: 4px !important',
+            'user-select: none !important',
+            'line-height: 1 !important',
+            'white-space: nowrap !important'
+          ].join(';');
+        } else {
+          notch.innerHTML = '<span style="color:#ef4444;font-size:10px;line-height:1;">🔴</span> <span style="line-height:1;">Hidden</span> <span style="font-size:9px;opacity:0.8;line-height:1;">⇄</span>';
+          notch.style.cssText = [
+            'position: absolute !important',
+            'top: -10px !important',
+            'right: 14px !important',
+            'z-index: 80 !important',
+            'background: #7f1d1d !important',
+            'border: 1.5px solid #ef4444 !important',
+            'color: #fca5a5 !important',
+            'font-family: ui-sans-serif, system-ui, -apple-system, sans-serif !important',
+            'font-size: 10px !important',
+            'font-weight: 800 !important',
+            'padding: 2px 8px !important',
+            'border-radius: 9999px !important',
+            'box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7), 0 0 6px rgba(239, 68, 68, 0.4) !important',
+            'cursor: pointer !important',
+            'display: inline-flex !important',
+            'align-items: center !important',
+            'gap: 4px !important',
+            'user-select: none !important',
+            'line-height: 1 !important',
+            'white-space: nowrap !important'
+          ].join(';');
+        }
+
+        // Tap-to-Toggle Handler (Direct In-Situ Switch)
+        notch.onclick = function (e) {
+          e.stopPropagation();
+          e.preventDefault();
+          var targetUrn = this.getAttribute('data-target-urn');
+          toggleVisibility(targetUrn);
+        };
+
+        el.appendChild(notch);
+      } else {
+        // Public Mode: Strip inspection outlines and notches
+        el.style.removeProperty('outline');
+        el.style.removeProperty('outline-offset');
+        el.style.removeProperty('overflow');
+        el.style.opacity = '1';
+        el.style.display = live ? '' : 'none';
+      }
+    });
+  }
+
+  // Auto-trigger on DOM load and catalog interactions
+  if (typeof document !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', applyInSituVisualInspection);
+    document.addEventListener('click', function (e) {
+      if (e.target && e.target.closest && e.target.closest('#cat-menu-btn, [onclick*="category"], [data-cat-id]')) {
+        setTimeout(triggerAllAdapters, 50);
+        setTimeout(applyInSituVisualInspection, 60);
+        setTimeout(triggerAllAdapters, 200);
+        setTimeout(applyInSituVisualInspection, 220);
+      }
+    }, true);
   }
 
   return {
@@ -281,10 +559,18 @@
     loadRegistry: loadRegistry,
     saveRegistry: saveRegistry,
     isVisible: isVisible,
+    getUrnVisibility: isVisible,
     toggleVisibility: toggleVisibility,
+    setUrnVisibility: toggleVisibility,
     isConsoleModeActive: isConsoleModeActive,
+    isConsoleAuthorized: isConsoleModeActive,
     setConsoleMode: setConsoleMode,
     resetAllToPublicLive: resetAllToPublicLive,
-    getParentURNs: getParentURNs
+    getParentURNs: getParentURNs,
+    renderBadge: renderBadge,
+    auditElement: auditElement,
+    registerAdapter: registerAdapter,
+    triggerAllAdapters: triggerAllAdapters,
+    applyInSituVisualInspection: applyInSituVisualInspection
   };
 });
