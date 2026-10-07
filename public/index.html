@@ -2,7 +2,8 @@
 <html lang="hi" class="dark" data-theme="dark">
 <!-- ============================================================================== -->
 <!-- RISE MITRA — SLIM MODULAR HTML SHELL                                           -->
-<!-- GOVERNANCE : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-24.6            -->
+<!-- GOVERNANCE : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0            -->
+<!-- SPEC SSOT  : FOLDER A (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)                       -->
 <!-- STATUS     : FULLY DECOUPLED (CSS -> app.css | JS -> shell-controller.js)     -->
 <!-- ============================================================================== -->
 <head>
@@ -37,7 +38,7 @@
   </script>
 </head>
 
-<body class="pb-36 antialiased">
+<body class="bg-[#030712] text-slate-100 min-h-screen pb-36 antialiased select-none font-sans">
 
   <!-- ============================================================================ -->
   <!-- HEADER: LOGO, SYNC STATUS & ANGEL ONE CIRCULAR PROFILE AVATAR                -->
@@ -112,8 +113,8 @@
       <span class="absolute right-3 top-3.5 text-slate-500 text-sm">🔍</span>
     </div>
 
-    <!-- Hero Wallet Card -->
-    <section class="wallet-card p-4 rounded-2xl space-y-3">
+    <!-- Hero Wallet Card: Dark Fintech Theme Contrast (White Clash Resolved) -->
+    <section class="wallet-card bg-gradient-to-b from-[#111a30] to-[#0d1424] border border-slate-800/80 p-4 rounded-2xl space-y-3 shadow-xl">
       <div class="flex justify-between items-center text-xs">
         <span class="text-slate-300 font-medium">उपलब्ध शेष राशि (RM CASH)</span>
         <span class="bg-emerald-950/90 border border-emerald-700/60 text-emerald-300 px-2 py-0.5 rounded text-[10px] font-bold">
@@ -123,13 +124,13 @@
       <div class="flex items-baseline space-x-2">
         <span class="text-3xl font-black text-white tracking-tight">₹0.00</span>
         <span class="text-xs text-emerald-400 font-bold flex items-center space-x-1">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
           <span>खाता सक्रिय</span>
         </span>
       </div>
-      <div class="flex justify-between items-center pt-1 text-[10px] text-slate-400 border-t border-emerald-900/60">
-        <span>लेन-देन स्थिति: सत्यापित</span>
-        <span class="text-emerald-300">ऑफलाइन-फर्स्ट सिंक</span>
+      <div class="flex justify-between items-center pt-1 text-[10px] text-slate-400 border-t border-slate-800/80">
+        <span>लेन-देन स्थिति: <span class="text-emerald-400 font-bold">सत्यापित</span></span>
+        <span class="text-emerald-300 font-mono text-[11px] font-bold">ऑफलाइन-फर्स्ट सिंक</span>
       </div>
       <div class="grid grid-cols-2 gap-2 pt-1">
         <button type="button" onclick="alert('नया लेन-देन खुला')" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1 shadow-md tactile-25d cursor-pointer min-h-[48px]">
@@ -162,7 +163,7 @@
   </main>
 
   <!-- Play Store Banner -->
-  <div id="playStoreInstallBanner" class="fixed bottom-16 left-3 right-3 max-w-md mx-auto z-40 play-install-card rounded-2xl p-3.5 shadow-2xl transition-all">
+  <div id="playStoreInstallBanner" class="fixed bottom-16 left-3 right-3 max-w-md mx-auto z-40 play-install-card bg-[#0b0f19] border border-slate-800 rounded-2xl p-3.5 shadow-2xl transition-all">
     <div class="flex items-start justify-between">
       <div class="flex items-center space-x-3">
         <img src="/rise-mitra-logo.svg" alt="App Icon" class="w-12 h-12 rounded-xl object-contain bg-[#02091d] border border-slate-700 p-0.5 shadow-md">
