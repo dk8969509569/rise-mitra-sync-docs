@@ -2,11 +2,13 @@
  * RISE MITRA — SOVEREIGN PROFILE & CONTROL HUB ENGINE
  * SPECIFICATION : FOLDER A (SSOT: 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)
  * REPO TARGET   : public/js/profile-hub-engine.js
- * GOVERNANCE    : GATE-24.1 | ANGEL ONE 1:1 SOVEREIGN TAXONOMY | 100% ZEL
+ * GOVERNANCE    : GATE-24.2 | ANGEL ONE AVATAR & PHOTO UPLOAD | 100% ZEL
  */
 
 (function (window, document) {
   'use strict';
+
+  var STORAGE_KEY_AVATAR = 'rm_user_avatar_base64';
 
   var profileState = {
     userName: 'Diwakar Kumar',
@@ -18,11 +20,96 @@
     appVersion: 'RM WORLD v1.0.4 (Build 20261007)'
   };
 
+  function getSavedAvatar() {
+    try {
+      return localStorage.getItem(STORAGE_KEY_AVATAR) || '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function saveAvatar(base64Data) {
+    try {
+      if (base64Data) {
+        localStorage.setItem(STORAGE_KEY_AVATAR, base64Data);
+      } else {
+        localStorage.removeItem(STORAGE_KEY_AVATAR);
+      }
+    } catch (e) {
+      console.warn('Avatar storage failed:', e);
+    }
+    syncAllAvatars();
+  }
+
+  function syncAllAvatars() {
+    var avatarData = getSavedAvatar();
+    
+    // 1. Sync Header Avatar
+    var headerAvatar = document.getElementById('header-user-avatar');
+    if (headerAvatar) {
+      if (avatarData) {
+        headerAvatar.innerHTML = '<img src="' + avatarData + '" alt="Profile" class="w-full h-full object-cover rounded-full" />';
+      } else {
+        headerAvatar.innerHTML = 'D';
+      }
+    }
+
+    // 2. Sync Profile Hub Modal Avatar
+    var modalAvatar = document.getElementById('profile-hub-avatar');
+    if (modalAvatar) {
+      if (avatarData) {
+        modalAvatar.innerHTML = '<img src="' + avatarData + '" alt="Profile" class="w-full h-full object-cover rounded-full" />';
+      } else {
+        modalAvatar.innerHTML = '<span class="text-white text-2xl font-black">D</span>';
+      }
+    }
+  }
+
+  // Handle Photo Picker & Compression (offline friendly)
+  function handlePhotoSelect(event) {
+    var file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var img = new Image();
+      img.onload = function () {
+        // Compress & scale to 200x200 square
+        var canvas = document.createElement('canvas');
+        var maxSide = 200;
+        var w = img.width;
+        var h = img.height;
+        var size = Math.min(w, h);
+        var sx = (w - size) / 2;
+        var sy = (h - size) / 2;
+
+        canvas.width = maxSide;
+        canvas.height = maxSide;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, sx, sy, size, size, 0, 0, maxSide, maxSide);
+
+        var compressedBase64 = canvas.toDataURL('image/jpeg', 0.82);
+        saveAvatar(compressedBase64);
+        alert('प्रोफ़ाइल फ़ोटो सफलतापूर्वक सेट हो गई!');
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
   function renderProfileHub(container) {
     if (!container) return;
 
+    var savedAvatar = getSavedAvatar();
+    var avatarInnerHtml = savedAvatar
+      ? '<img src="' + savedAvatar + '" alt="Profile" class="w-full h-full object-cover rounded-full" />'
+      : '<span class="text-white text-2xl font-black">D</span>';
+
     container.innerHTML = [
       '<div class="w-full max-w-md mx-auto text-slate-100 font-sans pb-10 space-y-4">',
+
+      // Hidden File Input for Camera / Gallery
+      '  <input type="file" id="rm-avatar-file-input" accept="image/*" class="hidden" onchange="window.RM_ProfileHub.handlePhoto(event)" />',
 
       // 1. Top Bar (Back Arrow, Title, Bell Icon)
       '  <div class="flex items-center justify-between pb-2 border-b border-slate-800/80">',
@@ -33,11 +120,16 @@
       '    <button type="button" onclick="alert(\'कोई नई सूचना नहीं है\')" class="text-slate-400 hover:text-white p-1.5 cursor-pointer">🔔</button>',
       '  </div>',
 
-      // 2. Identity Card (Avatar + Name + Client ID)
+      // 2. Identity Card with Interactive Photo Upload (Angel One Pattern)
       '  <div class="bg-gradient-to-b from-[#111a30] to-[#0d1424] border border-slate-800 rounded-2xl p-4 shadow-lg">',
       '    <div class="flex items-center space-x-3.5">',
-      '      <div class="w-14 h-14 rounded-full bg-gradient-to-tr from-cyan-600 to-blue-500 flex items-center justify-center text-white text-2xl font-black shadow-inner border border-cyan-400/40">',
-      '        D',
+      '      <div class="relative cursor-pointer group" onclick="document.getElementById(\'rm-avatar-file-input\').click()" title="फ़ोटो बदलें">',
+      '        <div id="profile-hub-avatar" class="w-16 h-16 rounded-full bg-gradient-to-tr from-cyan-600 to-blue-500 flex items-center justify-center shadow-inner border-2 border-cyan-400/50 overflow-hidden">',
+      '          ' + avatarInnerHtml,
+      '        </div>',
+      '        <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 border border-slate-900 flex items-center justify-center text-[11px] shadow-md group-hover:scale-110 transition-transform">',
+      '          📷',
+      '        </div>',
       '      </div>',
       '      <div class="flex-1 min-w-0">',
       '        <div class="flex items-center space-x-2">',
@@ -49,10 +141,15 @@
       '          <span class="bg-slate-900 border border-slate-700/80 text-cyan-300 px-2 py-0.5 rounded font-bold">' + profileState.clientId + '</span>',
       '          <button type="button" onclick="navigator.clipboard.writeText(\'' + profileState.rawClientId + '\'); alert(\'Client ID कॉपी हो गया: ' + profileState.rawClientId + '\');" class="text-slate-400 hover:text-cyan-300">📋</button>',
       '        </div>',
+      '        <div class="mt-1 flex items-center space-x-2">',
+      '          <button type="button" onclick="document.getElementById(\'rm-avatar-file-input\').click()" class="text-[10px] text-cyan-400 hover:underline font-bold">फ़ोटो बदलें</button>',
+      '          <span class="text-slate-600">•</span>',
+      '          <button type="button" onclick="if(confirm(\'क्या आप फ़ोटो हटाना चाहते हैं?\')) window.RM_ProfileHub.removePhoto();" class="text-[10px] text-slate-400 hover:text-red-400">हटाएं</button>',
+      '        </div>',
       '      </div>',
       '    </div>',
 
-      // 3. 4 Core Quick Tiles (Angel One Style Grid)
+      // 3. 4 Core Quick Tiles
       '    <div class="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-slate-800/80">',
       '      <div onclick="alert(\'व्यक्तिगत व व्यापार विवरण खुला\')" class="cursor-pointer bg-slate-900/90 hover:bg-slate-800/90 border border-slate-800 p-2.5 rounded-xl flex items-center space-x-2.5 transition-all">',
       '        <span class="text-lg">🪪</span>',
@@ -198,7 +295,20 @@
         var container = document.getElementById('rm-module-container');
         if (container) renderProfileHub(container);
       }
-    }
+    },
+    handlePhoto: handlePhotoSelect,
+    removePhoto: function () {
+      saveAvatar('');
+      alert('फ़ोटो हटा दी गई');
+    },
+    syncAvatars: syncAllAvatars
   };
+
+  // Auto-sync avatar on load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', syncAllAvatars);
+  } else {
+    syncAllAvatars();
+  }
 
 })(typeof window !== 'undefined' ? window : this, typeof document !== 'undefined' ? document : null);
