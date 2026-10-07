@@ -12,6 +12,59 @@
   'use strict';
 
   // ==============================================================================
+  // SECTION 0: FAIL-OPEN CANONICAL TAXONOMY CONSTANTS (ZERO-ELEMENT-LOSS)
+  // ==============================================================================
+
+  var CANONICAL_50_IDS = [
+    // 33 आजीविका सेवाएं (Tier-1)
+    'c01', 'c02', 'c03', 'c04', 'c05', 'c06', 'c07', 'c08', 'c09', 'c10',
+    'c11', 'c12', 'c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19', 'c20',
+    'c21', 'c22', 'c23', 'c24', 'c25', 'c26', 'c27', 'c28', 'c29', 'c30',
+    'c31', 'c32', 'c33',
+    // 17 सुरक्षा व खेल (Tier-2)
+    'g34', 'g35', 'g36', 'g37', 'g38', 'g39', 'g40', 'g41', 'g42', 'g43',
+    'g44', 'g45', 'g46', 'g47', 'g48', 'g49', 'g50'
+  ];
+
+  function ensureFailOpenRegistry() {
+    try {
+      // 1. Active Categories Array Check
+      var rawActive = localStorage.getItem('rm_active_categories_v1');
+      var activeList = [];
+      if (rawActive) {
+        try { activeList = JSON.parse(rawActive); } catch (_) { activeList = []; }
+      }
+      if (!Array.isArray(activeList) || activeList.length < 2) {
+        localStorage.setItem('rm_active_categories_v1', JSON.stringify(CANONICAL_50_IDS.slice()));
+      }
+
+      // 2. Sovereign Visibility Registry Mass-Lock Check (Clear Hidden: 49)
+      var regRaw = localStorage.getItem('rm_sovereign_visibility_registry_v1');
+      if (regRaw) {
+        try {
+          var reg = JSON.parse(regRaw);
+          if (reg && reg.visibility) {
+            var hiddenCount = 0;
+            Object.keys(reg.visibility).forEach(function (k) {
+              if (reg.visibility[k] === false) hiddenCount++;
+            });
+            // यदि 30 से अधिक कैटेगरीज गलती से लॉक हो गई हों, तो उन्हें वापस लाइव करें
+            if (hiddenCount >= 30) {
+              for (var i = 1; i <= 50; i++) {
+                var numStr = i < 10 ? '0' + i : String(i);
+                reg.visibility['rm:cat:' + numStr] = true;
+              }
+              localStorage.setItem('rm_sovereign_visibility_registry_v1', JSON.stringify(reg));
+            }
+          }
+        } catch (_) {}
+      }
+    } catch (e) {
+      console.warn('[SIVME] Fail-open guard initialization note:', e);
+    }
+  }
+
+  // ==============================================================================
   // SECTION 1: GLOBAL SINGLE OUTLINE STYLES (ELIMINATE INNER DASHED BORDER)
   // ==============================================================================
 
@@ -122,7 +175,7 @@
   };
 
   // ==============================================================================
-  // SECTION 3: SIVME IN-SITU LIVE/HIDDEN STATE MANAGEMENT
+  // SECTION 3: SIVME IN-SITU LIVE/HIDDEN STATE MANAGEMENT (FAIL-OPEN EQUIPPED)
   // ==============================================================================
 
   function isCategoryLive(catId, catNum) {
@@ -130,7 +183,7 @@
       var raw = localStorage.getItem('rm_active_categories_v1');
       if (!raw) return true;
       var parsed = JSON.parse(raw);
-      if (!Array.isArray(parsed) || parsed.length === 0) return true;
+      if (!Array.isArray(parsed) || parsed.length <= 1) return true; // Fail-open safeguard
       var set = new Set(parsed.map(String));
       return set.has(String(catId)) || set.has(String(catNum));
     } catch (_) {
@@ -158,11 +211,14 @@
       var activeIds = new Set();
       if (raw) {
         var parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) parsed.forEach(function (x) { activeIds.add(String(x)); });
+        if (Array.isArray(parsed) && parsed.length > 1) {
+          parsed.forEach(function (x) { activeIds.add(String(x)); });
+        }
       }
-      if (activeIds.size === 0) {
+      if (activeIds.size <= 1) {
         (window.RM_SERVICES_DATA || []).forEach(function (s) { activeIds.add(s.id); activeIds.add(s.num); });
         (window.RM_GAMES_DATA || []).forEach(function (g) { activeIds.add(g.id); activeIds.add(g.num); });
+        CANONICAL_50_IDS.forEach(function (id) { activeIds.add(id); });
       }
       activeIds.add('c16'); activeIds.add('16');
 
@@ -311,6 +367,7 @@
   }
 
   function renderCatalogItems() {
+    ensureFailOpenRegistry();
     injectSingleDashedStyles();
     patchSivmeGlobalEngine();
 
@@ -414,26 +471,31 @@
   }
 
   // ==============================================================================
-  // SECTION 6: OWNER CONSOLE VISIBILITY SYNC
+  // SECTION 6: OWNER CONSOLE VISIBILITY SYNC (FAIL-OPEN EQUIPPED)
   // ==============================================================================
 
   function syncCategoryVisibilityFromOwner() {
     try {
+      ensureFailOpenRegistry();
       var raw = localStorage.getItem('rm_active_categories_v1');
       var activeIds = new Set();
 
       if (raw) {
         try {
           var parsed = JSON.parse(raw);
-          if (Array.isArray(parsed) && parsed.length > 0) {
+          if (Array.isArray(parsed) && parsed.length > 1) {
             parsed.forEach(function (id) { activeIds.add(String(id)); });
           }
         } catch (_) {}
       }
 
-      if (activeIds.size === 0) {
+      if (activeIds.size <= 1) {
         (window.RM_SERVICES_DATA || []).forEach(function (s) { activeIds.add(s.id); activeIds.add(s.num); });
         (window.RM_GAMES_DATA || []).forEach(function (g) { activeIds.add(g.id); activeIds.add(g.num); });
+        CANONICAL_50_IDS.forEach(function (id) {
+          activeIds.add(id);
+          activeIds.add(id.replace(/[cg]/, ''));
+        });
       }
 
       activeIds.add('c16');
