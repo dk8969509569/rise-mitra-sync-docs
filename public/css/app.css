@@ -1,6 +1,7 @@
 /* ==========================================================================
-   RM-UI-INTERACTION-FEEDBACK-01 | CANONICAL STYLESHEET
+   PART 1: RM-UI-INTERACTION-FEEDBACK-01 | CANONICAL STYLESHEET
    Ref: EXT_001 Part D (D-04, D-05) & DEC-RM-SOV-UX-20260929-001
+   GOVERNANCE: 100% ZEL PRESERVED
    ========================================================================== */
 
 button,
@@ -65,4 +66,213 @@ a:focus-visible,
     box-shadow: none !important;
     outline: 2px solid #10B981 !important;
   }
+}
+
+
+/* ==========================================================================
+   PART 2: GLOBAL CORE TOKENS, TACTILE 2.5D & MODULAR LAYOUT GUARDS
+   Ref: FOLDER A (SSOT: 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)
+   GOVERNANCE: DECOUPLED FROM INDEX.HTML (100% ZEL)
+   ========================================================================== */
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+  -webkit-touch-callout: none;
+}
+
+body {
+  background-color: #030712;
+  color: #f8fafc;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input, textarea {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+}
+
+/* 2.5D Tactile Elevation Tokens (EL-UX-ELEVATION-25D) */
+.tactile-25d {
+  position: relative;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 2px solid rgba(15, 23, 42, 0.90);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12),
+              0 4px 0 #020914,
+              0 8px 16px -2px rgba(0, 0, 0, 0.60);
+  transition: transform 0.06s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.06s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tactile-25d:active {
+  transform: translateY(2px) scale(0.94) !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.70),
+              0 1px 0 #020914,
+              0 2px 6px rgba(0, 0, 0, 0.40) !important;
+}
+
+/* High-Contrast Luminous Active Ring (EL-UX-LUMINOUS-AURA) */
+.ring-active-luminous {
+  border: 2px solid #34d399 !important;
+  box-shadow: 0 0 14px -1px rgba(16, 185, 129, 0.45),
+              inset 0 1px 0 rgba(255, 255, 255, 0.20) !important;
+  background: linear-gradient(135deg, rgba(6, 78, 59, 0.35) 0%, rgba(11, 15, 25, 0.95) 100%) !important;
+}
+
+.wallet-card {
+  background: radial-gradient(circle at 100% 0%, rgba(16, 185, 129, 0.15) 0%, transparent 60%),
+              linear-gradient(135deg, #064e3b 0%, #022c22 40%, #0b0f19 100%);
+  border: 1px solid rgba(16, 185, 129, 0.30);
+  box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.25);
+}
+
+.nav-glass {
+  background: rgba(3, 7, 18, 0.95);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.play-install-card {
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.80);
+}
+
+.pulse-live {
+  animation: pulseGreen 2s infinite;
+}
+
+@keyframes pulseGreen {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.15); }
+}
+
+/* Shared subcategory hierarchy guides */
+#categoryModal .rm-subcategory-list {
+  --rm-guide-color: #526b78;
+  --rm-guide-offset: 12px;
+  --rm-service-gap: 6px;
+  padding-left: 22px;
+  padding-top: 8px;
+}
+
+#categoryModal .rm-subcategory-list > div {
+  position: relative;
+  min-width: 0;
+  overflow: visible;
+}
+
+#categoryModal .rm-subcategory-list > div + div {
+  margin-top: var(--rm-service-gap);
+}
+
+#categoryModal .rm-subcategory-list > div::before {
+  content: "";
+  position: absolute;
+  left: calc(0px - var(--rm-guide-offset));
+  top: calc(0px - var(--rm-service-gap) - 1px);
+  bottom: -1px;
+  width: 1px;
+  background-color: var(--rm-guide-color);
+  pointer-events: none;
+}
+
+#categoryModal .rm-subcategory-list > div:first-child::before {
+  top: -9px;
+}
+
+#categoryModal .rm-subcategory-list > div:last-child::before {
+  bottom: 50%;
+}
+
+#categoryModal .rm-subcategory-list > div::after {
+  content: "";
+  position: absolute;
+  left: calc(0px - var(--rm-guide-offset));
+  top: 50%;
+  width: var(--rm-guide-offset);
+  height: 1px;
+  background-color: var(--rm-guide-color);
+  pointer-events: none;
+}
+
+#categoryModal .rm-subcategory-list > div > div {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+#categoryModal .rm-subcategory-list > div > div > span:first-child {
+  flex-shrink: 0;
+}
+
+#categoryModal .rm-subcategory-list > div > div > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+#categoryModal .rm-subcategory-list > div > span {
+  flex: 0 0 auto;
+  margin-left: 8px;
+}
+
+@media (forced-colors: active) {
+  #categoryModal .rm-subcategory-list {
+    --rm-guide-color: CanvasText;
+  }
+}
+
+/* Master Design Tokens & Canonical Layout Guards */
+:root {
+  --rm-canvas-bg: #060913;
+  --rm-card-bg: linear-gradient(180deg, rgba(24, 33, 47, 0.94) 0%, rgba(11, 17, 30, 0.98) 100%);
+  --rm-cyan: #38bdf8;
+  --rm-emerald: #10b981;
+  --rm-emerald-glow: #34d399;
+  --rm-slate-sub: #94a3b8;
+}
+
+#sub-c16, [id^="sub-c16"], .sivme-subcat-container {
+  border-left: none !important;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+}
+
+#sub-c16::before, #sub-c16::after,
+#sub-c16 > div::before, #sub-c16 > div::after,
+.sivme-subcat-card::before, .sivme-subcat-card::after {
+  display: none !important;
+  content: none !important;
+  border: none !important;
+}
+
+#categoryModal [data-cat-id] button,
+#categoryModal [data-cat-id] a,
+#categoryModal [data-cat-id] span[class*="text-emerald"],
+#categoryModal [data-cat-id] span[class*="text-cyan"],
+.rm-clean-act, .sivme-action-btn {
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+#categoryModal [data-cat-id] {
+  position: relative !important;
+}
+
+#categoryModal [data-cat-id] > .sivme-inline-badge {
+  position: absolute !important;
+  top: 8px !important;
+  right: 76px !important;
+  margin: 0 !important;
+  font-size: 9.5px !important;
+  padding: 2px 6px !important;
+  border-radius: 6px !important;
+  z-index: 10 !important;
+  line-height: 1 !important;
 }
