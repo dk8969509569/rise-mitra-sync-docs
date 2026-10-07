@@ -187,9 +187,7 @@
       }
     }
 
-    /* ========================================================================== */
-    /* RISE MITRA — PHASE 1 MASTER DESIGN TOKENS & CANONICAL LAYOUT GUARDS       */
-    /* ========================================================================== */
+    /* Master Design Tokens & Canonical Layout Guards */
     :root {
       --rm-canvas-bg: #060913;
       --rm-card-bg: linear-gradient(180deg, rgba(24, 33, 47, 0.94) 0%, rgba(11, 17, 30, 0.98) 100%);
@@ -199,7 +197,6 @@
       --rm-slate-sub: #94a3b8;
     }
 
-    /* 1. Sub-Category Tree-line Removal Guard (Strict Modern Card Boundary) */
     #sub-c16, [id^="sub-c16"], .sivme-subcat-container {
       border-left: none !important;
       padding-left: 0 !important;
@@ -213,7 +210,6 @@
       border: none !important;
     }
 
-    /* 2. Action Buttons Nowrap Protection ('खोलें ›' Single-line Lock) */
     #categoryModal [data-cat-id] button,
     #categoryModal [data-cat-id] a,
     #categoryModal [data-cat-id] span[class*="text-emerald"],
@@ -225,7 +221,6 @@
       align-items: center !important;
     }
 
-    /* 3. SIVME Badge Containment Boundary (Main Catalog 01 to 50 Docking Guard) */
     #categoryModal [data-cat-id] {
       position: relative !important;
     }
@@ -287,7 +282,7 @@
 
 
 <!-- ============================================================================== -->
-<!-- SECTION 3: HERO WALLET & 12 CORE CASHFLOW VERTICALS GRID                       -->
+<!-- SECTION 3: HERO WALLET & 12 CORE CASHFLOW VERTICALS GRID (MODULAR SHELL)       -->
 <!-- ============================================================================== -->
   <main class="max-w-md mx-auto px-4 py-4 space-y-4">
     <button type="button" id="cat-menu-btn" onclick="toggleMenuDrawer(true)" class="w-full tactile-25d bg-slate-900 p-3.5 rounded-2xl flex items-center justify-between cursor-pointer group shadow-lg min-h-[56px]">
@@ -345,147 +340,16 @@
       </div>
     </section>
 
-    <!-- 12 Core Cashflow Verticals (3x4 High-Velocity Revenue Grid) -->
+    <!-- 12 Play Store Standard Bilingual Verticals (Auto-rendered by home-grid-engine.js) -->
     <section class="space-y-2">
       <div class="flex justify-between items-center px-1">
         <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">12 Core Cashflow Verticals</h2>
         <span class="text-[10px] text-emerald-400 font-bold bg-emerald-950/60 border border-emerald-800/40 px-2 py-0.5 rounded-full">जुड़ना मुफ़्त</span>
       </div>
       
+      <!-- Canonical Grid Mount Target -->
       <div id="verticalTilesGrid" class="grid grid-cols-3 gap-2.5 sm:grid-cols-4 sm:gap-3 w-full">
-
-        <!-- 1. Makaan & Rental (Cat 16) -->
-        <div onclick="handleQuickTileClick('c16', '16-2')" class="cursor-pointer bg-gradient-to-b from-[#111a30] to-[#0d1424] hover:from-[#172342] hover:to-[#111a30] border border-emerald-500/40 rounded-xl p-2.5 flex flex-col items-center justify-between text-center transition-transform active:scale-95 shadow-md relative min-h-[96px]">
-          <span class="absolute top-1.5 left-2 text-[9px] font-mono font-bold text-amber-400 bg-amber-950/80 px-1 rounded">16</span>
-          <span class="text-2xl mt-1">🏠</span>
-          <div class="mt-1 leading-tight">
-            <div class="text-[12px] font-bold text-slate-100">कमरा व किराया</div>
-            <div class="text-[9.5px] text-slate-400">Rental Ledger</div>
-          </div>
-          <span class="mt-1 text-[9px] font-bold text-emerald-400 bg-emerald-950/80 border border-emerald-700/50 px-2 py-0.5 rounded-full w-full">खोलें ›</span>
-        </div>
-
-        <!-- 2. Auto & Garage (Cat 02) -->
-        <div onclick="handleQuickTileClick('c02')" class="cursor-pointer bg-gradient-to-b from-[#111a30] to-[#0d1424] hover:from-[#172342] hover:to-[#111a30] border border-slate-700/60 rounded-xl p-2.5 flex flex-col items-center justify-between text-center transition-transform active:scale-95 shadow-md relative min-h-[96px]">
-          <span class="absolute top-1.5 left-2 text-[9px] font-mono font-bold text-amber-400 bg-amber-950/80 px-1 rounded">02</span>
-          <span class="text-2xl mt-1">🚗</span>
-          <div class="mt-1 leading-tight">
-            <div class="text-[12px] font-bold text-slate-100">गैराज व पंक्चर</div>
-            <div class="text-[9.5px] text-slate-400">Auto & Garage</div>
-          </div>
-          <span class="mt-1 text-[9px] font-medium text-slate-300 bg-slate-800/80 border border-slate-700 px-2 py-0.5 rounded-full w-full">3 सेवाएं ›</span>
-        </div>
-
-        <!-- 3. Beauty & Salon (Cat 03) -->
-        <div onclick="handleQuickTileClick('c03')" class="cursor-pointer bg-gradient-to-b from-[#111a30] to-[#0d1424] hover:from-[#172342] hover:to-[#111a30] border border-slate-700/60 rounded-xl p-2.5 flex flex-col items-center justify-between text-center transition-transform active:scale-95 shadow-md relative min-h-[96px]">
-          <span class="absolute top-1.5 left-2 text-[9px] font-mono font-bold text-amber-400 bg-amber-950/80 px-1 rounded">03</span>
-          <span class="text-2xl mt-1">✂️</span>
-          <div class="mt-1 leading-tight">
-            <div class="text-[12px] font-bold text-slate-100">सैलून व ब्यूटी</div>
-            <div class="text-[9.5px] text-slate-400">Beauty & Salon</div>
-          </div>
-          <span class="mt-1 text-[9px] font-medium text-slate-300 bg-slate-800/80 border border-slate-700 px-2 py-0.5 rounded-full w-full">3 सेवाएं ›</span>
-        </div>
-
-        <!-- 4. Dhaba & Dairy (Cat 14) -->
-        <div onclick="handleQuickTileClick('c14')" class="cursor-pointer bg-gradient-to-b from-[#111a30] to-[#0d1424] hover:from-[#172342] hover:to-[#111a30] border border-slate-700/60 rounded-xl p-2.5 flex flex-col items-center justify-between text-center transition-transform active:scale-95 shadow-md relative min-h-[96px]">
-          <span class="absolute top-1.5 left-2 text-[9px] font-mono font-bold text-amber-400 bg-amber-950/80 px-1 rounded">14</span>
-          <span class="text-2xl mt-1">🍲</span>
-          <div class="mt-1 leading-tight">
-            <div class="text-[12px] font-bold text-slate-100">ढाबा व शुद्ध दूध</div>
-            <div class="text-[9.5px] text-slate-400">Food & Dairy</div>
-          </div>
-          <span class="mt-1 text-[9px] font-medium text-slate-300 bg-slate-800/80 border border-slate-700 px-2 py-0.5 rounded-full w-full">3 सेवाएं ›</span>
-        </div>
-
-        <!-- 5. Medical & Clinic (Cat 20) -->
-        <div onclick="handleQuickTileClick('c20')" class="cursor-pointer bg-gradient-to-b from-[#111a30] to-[#0d1424] hover:from-[#172342] hover:to-[#111a30] border border-slate-700/60 rounded-xl p-2.5 flex flex-col items-center justify-between text-center transition-transform active:scale-95 shadow-md relative min-h-[96px]">
-          <span class="absolute top-1.5 left-2 text-[9px] font-mono font-bold text-amber-400 bg-amber-950/80 px-1 rounded">20</span>
-          <span class="text-2xl mt-1">💊</span>
-          <div class="mt-1 leading-tight">
-            <div class="text-[12px] font-bold text-slate-100">दवाई व क्लिनिक</div>
-            <div class="text-[9.5px] text-slate-400">Medical OPD</div>
-          </div>
-          <span class="mt-1 text-[9px] font-medium text-slate-300 bg-slate-800/80 border border-slate-700 px-2 py-0.5 rounded-full w-full">3 सेवाएं ›</span>
-        </div>
-
-        <!-- 6. Kirana & Bartan Store (Cat 27) -->
-        <div onclick="handleQuickTileClick('c27')" class="cursor-pointer bg-gradient-to-b from-[#111a30] to-[#0d1424] hover:from-[#172342] hover:to-[#111a30] border border-slate-700/60 rounded-xl p-2.5 flex flex-col items-center justify-between text-center transition-transform active:scale-95 shadow-md relative min-h-[96px]">
-          <span class="absolute top-1.5 left-2 text-[9px] font-mono font-bold text-amber-400 bg-amber-950/80 px-1 rounded">27</span>
-          <span class="text-2xl mt-1">🛒</span>
-          <div class="mt-1 leading-tight">
-            <div class="text-[12px] font-bold text-slate-100">किराना व बर्तन</div>
-            <div class="text-[9.5px] text-slate-400">0% Retail Mandi</div>
-          </div>
-          <span class="mt-1 text-[9px] font-medium text-slate-300 bg-slate-800/80 border border-slate-700 px-2 py-0.5 rounded-full w-full">3 सेवाएं ›</span>
-        </div>
-
-        <!-- 7. Business Khata & Sarafa (Cat 05) -->
-        <div onclick="handleQuickTileClick('c05', '05-1')" class="cursor-pointer bg-gradient-to-b from-[#111a30] to-[#0d1424] hover:from-[#172342] hover:to-[#111a30] border border-cyan-500/40 rounded-xl p-2.5 flex flex-col items-center justify-between text-center transition-transform active:scale-95 shadow-md relative min-h-[96px]">
-          <span class="absolute top-1.5 left-2 text-[9px] font-mono font-bold text-amber-400 bg-amber-950/80 px-1 rounded">05</span>
-          <span class="text-2xl mt-1">💼</span>
-          <div class="mt-1 leading-tight">
-            <div class="text-[12px] font-bold text-slate-100">बहीखाता व सराफा</div>
-            <div class="text-[9.5px] text-slate-400">Business Khata</div>
-          </div>
-          <span class="mt-1 text-[9px] font-bold text-cyan-300 bg-cyan-950/80 border border-cyan-700/50 px-2 py-0.5 rounded-full w-full">खोलें ›</span>
-        </div>
-
-        <!-- 8. Finance, RM Cash & Girvi (Cat 13) -->
-        <div onclick="handleQuickTileClick('c13')" class="cursor-pointer bg-gradient-to-b from-[#111a30] to-[#0d1424] hover:from-[#172342] hover:to-[#111a30] border border-slate-700/60 rounded-xl p-2.5 flex flex-col items-center justify-between text-center transition-transform active:scale-95 shadow-md relative min-h-[96px]">
-          <span class="absolute top-1.5 left-2 text-[9px] font-mono font-bold text-amber-400 bg-amber-950/80 px-1 rounded">13</span>
-          <span class="text-2xl mt-1">💰</span>
-          <div class="mt-1 leading-tight">
-            <div class="text-[12px] font-bold text-slate-100">नकद व गिरवी लेज़र</div>
-            <div class="text-[9.5px] text-slate-400">RM Cash Vault</div>
-          </div>
-          <span class="mt-1 text-[9px] font-medium text-slate-300 bg-slate-800/80 border border-slate-700 px-2 py-0.5 rounded-full w-full">3 सेवाएं ›</span>
-        </div>
-
-        <!-- 9. Hunar, Mistry & Workshop (Cat 09) -->
-        <div onclick="handleQuickTileClick('c09')" class="cursor-pointer bg-gradient-to-b from-[#111a30] to-[#0d1424] hover:from-[#172342] hover:to-[#111a30] border border-slate-700/60 rounded-xl p-2.5 flex flex-col items-center justify-between text-center transition-transform active:scale-95 shadow-md relative min-h-[96px]">
-          <span class="absolute top-1.5 left-2 text-[9px] font-mono font-bold text-amber-400 bg-amber-950/80 px-1 rounded">09</span>
-          <span class="text-2xl mt-1">🔨</span>
-          <div class="mt-1 leading-tight">
-            <div class="text-[12px] font-bold text-slate-100">कारीगर व हुनर</div>
-            <div class="text-[9.5px] text-slate-400">Skills & Mistry</div>
-          </div>
-          <span class="mt-1 text-[9px] font-medium text-slate-300 bg-slate-800/80 border border-slate-700 px-2 py-0.5 rounded-full w-full">3 सेवाएं ›</span>
-        </div>
-
-        <!-- 10. Taxi, Bus Stand & Travel (Cat 31) -->
-        <div onclick="handleQuickTileClick('c31')" class="cursor-pointer bg-gradient-to-b from-[#111a30] to-[#0d1424] hover:from-[#172342] hover:to-[#111a30] border border-slate-700/60 rounded-xl p-2.5 flex flex-col items-center justify-between text-center transition-transform active:scale-95 shadow-md relative min-h-[96px]">
-          <span class="absolute top-1.5 left-2 text-[9px] font-mono font-bold text-amber-400 bg-amber-950/80 px-1 rounded">31</span>
-          <span class="text-2xl mt-1">🚖</span>
-          <div class="mt-1 leading-tight">
-            <div class="text-[12px] font-bold text-slate-100">टैक्सी व बस स्टैंड</div>
-            <div class="text-[9.5px] text-slate-400">Travel & Stand</div>
-          </div>
-          <span class="mt-1 text-[9px] font-medium text-slate-300 bg-slate-800/80 border border-slate-700 px-2 py-0.5 rounded-full w-full">3 सेवाएं ›</span>
-        </div>
-
-        <!-- 11. Zameen Naap & Calculator (Cat 30) -->
-        <div onclick="handleQuickTileClick('c30')" class="cursor-pointer bg-gradient-to-b from-[#111a30] to-[#0d1424] hover:from-[#172342] hover:to-[#111a30] border border-slate-700/60 rounded-xl p-2.5 flex flex-col items-center justify-between text-center transition-transform active:scale-95 shadow-md relative min-h-[96px]">
-          <span class="absolute top-1.5 left-2 text-[9px] font-mono font-bold text-amber-400 bg-amber-950/80 px-1 rounded">30</span>
-          <span class="text-2xl mt-1">📐</span>
-          <div class="mt-1 leading-tight">
-            <div class="text-[12px] font-bold text-slate-100">ज़मीन नाप व ब्याज</div>
-            <div class="text-[9.5px] text-slate-400">Bigha / Gaj Tool</div>
-          </div>
-          <span class="mt-1 text-[9px] font-medium text-slate-300 bg-slate-800/80 border border-slate-700 px-2 py-0.5 rounded-full w-full">3 टूल्स ›</span>
-        </div>
-
-        <!-- 12. Mela, Dangal & Passes (Cat 11) -->
-        <div onclick="handleQuickTileClick('c11')" class="cursor-pointer bg-gradient-to-b from-[#111a30] to-[#0d1424] hover:from-[#172342] hover:to-[#111a30] border border-slate-700/60 rounded-xl p-2.5 flex flex-col items-center justify-between text-center transition-transform active:scale-95 shadow-md relative min-h-[96px]">
-          <span class="absolute top-1.5 left-2 text-[9px] font-mono font-bold text-amber-400 bg-amber-950/80 px-1 rounded">11</span>
-          <span class="text-2xl mt-1">🎟️</span>
-          <div class="mt-1 leading-tight">
-            <div class="text-[12px] font-bold text-slate-100">मेला, दंगल व पास</div>
-            <div class="text-[9.5px] text-slate-400">Events & Passes</div>
-          </div>
-          <span class="mt-1 text-[9px] font-medium text-slate-300 bg-slate-800/80 border border-slate-700 px-2 py-0.5 rounded-full w-full">3 पासेस ›</span>
-        </div>
-
+        <div class="p-6 text-center text-xs text-slate-500 animate-pulse col-span-3">वर्टिकल्स लोड हो रहे हैं…</div>
       </div>
     </section>
 
@@ -629,6 +493,9 @@
   <script src="/js/sovereign-in-situ-registry.js"></script>
   <script src="/js/sovereign-in-situ-hud.js"></script>
 
+  <!-- Modular Home Grid Engine (12 Play Store Standard Verticals) -->
+  <script src="/js/home-grid-engine.js?v=20261007_01"></script>
+
   <!-- Canonical Decoupled Catalog Engine & Data Registry -->
   <script src="/js/categories-data.js?v=20261007_01"></script>
   <script src="/js/catalog-sivme-engine.js?v=20261007_01"></script>
@@ -721,37 +588,6 @@
       }
     }
 
-    // 12 Core Verticals Quick Dispatcher
-    window.handleQuickTileClick = function (catId, subId) {
-      if (catId === 'c16') {
-        if (typeof handleLaunchCategory === 'function') {
-          handleLaunchCategory('c16', subId || '16-2');
-        }
-        return;
-      }
-      if (catId === 'c05') {
-        if (typeof handleLaunchCategory === 'function') {
-          handleLaunchCategory('c05', subId || '05-1');
-        }
-        return;
-      }
-      if (typeof toggleMenuDrawer === 'function') {
-        toggleMenuDrawer(true);
-      }
-      setTimeout(function () {
-        var el = document.querySelector('[data-cat-id="' + catId + '"]');
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          var sub = document.getElementById('sub-' + catId);
-          if (sub && (sub.style.display === 'none' || sub.classList.contains('hidden'))) {
-            if (typeof handleCategoryClick === 'function') {
-              handleCategoryClick(catId, el);
-            }
-          }
-        }
-      }, 180);
-    };
-
     function handleLaunchCategory(catId, subId) {
       toggleMenuDrawer(false);
       const container = document.getElementById('rm-module-container');
@@ -842,16 +678,6 @@
         container.innerHTML = '<div class="p-6 text-center text-xs text-red-400 bg-red-950/40 border border-red-800/60 rounded-xl">मॉड्यूल लोड नहीं हो सका — कृपया पुनः प्रयास करें।</div>';
       };
       document.body.appendChild(script);
-    }
-
-    function filterQuickTiles() {
-      const q = (document.getElementById('liveSearchInput').value || '').toLowerCase().trim();
-      const grid = document.getElementById('verticalTilesGrid');
-      if (!grid) return;
-      Array.from(grid.children).forEach(card => {
-        const txt = card.innerText.toLowerCase();
-        card.style.display = txt.includes(q) ? 'flex' : 'none';
-      });
     }
 
     window.addEventListener('DOMContentLoaded', () => {
