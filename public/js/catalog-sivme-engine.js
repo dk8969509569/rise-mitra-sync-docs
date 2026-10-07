@@ -12,10 +12,10 @@
   'use strict';
 
   // ==============================================================================
-  // SECTION 1: GLOBAL SINGLE BORDER STYLES INJECTION (ZERO DOUBLE LINES)
+  // SECTION 1: GLOBAL SINGLE OUTLINE STYLES (ELIMINATE INNER DASHED BORDER)
   // ==============================================================================
 
-  function injectSingleDashedBorderStyles() {
+  function injectSingleDashedStyles() {
     var styleId = 'rm-sivme-single-border-engine';
     var styleEl = document.getElementById(styleId);
     if (!styleEl) {
@@ -24,48 +24,25 @@
       document.head.appendChild(styleEl);
     }
     styleEl.textContent = [
-      '/* SIVME ENGINE: ENFORCE EXACTLY SINGLE DASHED BORDER (ZERO DOUBLE OUTLINES) */',
+      '/* SIVME ENGINE: EXACTLY ONE DASHED GHERA (NO DOUBLE BORDERS) */',
       '#tier1-list, #tier2-list, #tier1-list[data-sivme-urn], #tier2-list[data-sivme-urn] {',
       '  border: none !important;',
       '  outline: none !important;',
       '  box-shadow: none !important;',
       '}',
-      '.sivme-cat-card, .sivme-subcat-card, [data-sivme-urn] {',
-      '  outline: none !important;',
+      '.sivme-cat-card, .sivme-subcat-card {',
+      '  border: 1px solid rgba(51, 65, 85, 0.6) !important;',
       '  box-shadow: none !important;',
       '}',
       '.sivme-cat-card.is-live, .sivme-subcat-card.is-live {',
-      '  border: 2px dashed #10b981 !important;',
+      '  outline: 2px dashed #10b981 !important;',
+      '  outline-offset: 3px !important;',
       '}',
       '.sivme-cat-card.is-hidden, .sivme-subcat-card.is-hidden {',
-      '  border: 2px dashed #ef4444 !important;',
+      '  outline: 2px dashed #ef4444 !important;',
+      '  outline-offset: 3px !important;',
       '}'
     ].join('\n');
-  }
-
-  function purgeOuterOutlines() {
-    var targets = document.querySelectorAll(
-      '[data-sivme-urn], .sivme-cat-card, .sivme-subcat-card, #tier1-list, #tier2-list'
-    );
-    for (var i = 0; i < targets.length; i++) {
-      targets[i].style.removeProperty('outline');
-      targets[i].style.removeProperty('outline-offset');
-      targets[i].style.outline = 'none';
-      targets[i].style.boxShadow = 'none';
-    }
-  }
-
-  function patchSivmeOutlineEngine() {
-    if (window.RM_SIVME && !window.RM_SIVME.__outlinePatched) {
-      var origInspect = window.RM_SIVME.applyInSituVisualInspection;
-      window.RM_SIVME.applyInSituVisualInspection = function () {
-        if (typeof origInspect === 'function') {
-          try { origInspect.apply(this, arguments); } catch (_) {}
-        }
-        purgeOuterOutlines();
-      };
-      window.RM_SIVME.__outlinePatched = true;
-    }
   }
 
   // ==============================================================================
@@ -200,8 +177,6 @@
       }
       localStorage.setItem('rm_active_categories_v1', JSON.stringify(Array.from(activeIds)));
       renderCatalogItems();
-      setTimeout(purgeOuterOutlines, 30);
-      setTimeout(purgeOuterOutlines, 90);
     } catch (e) {
       console.error('Category toggle failed:', e);
     }
@@ -228,15 +203,60 @@
       }
       localStorage.setItem('rm_active_subcategories_v1', JSON.stringify(Array.from(activeSubs)));
       renderCatalogItems();
-      setTimeout(purgeOuterOutlines, 30);
-      setTimeout(purgeOuterOutlines, 90);
     } catch (e) {
       console.error('Sub toggle failed:', e);
     }
   };
 
   // ==============================================================================
-  // SECTION 4: DOM ACCORDION RENDER ENGINE (SINGLE DASHED GHERA ONLY)
+  // SECTION 4: SINGLE GHERA ENFORCER (HOOKS SIVME ENGINE)
+  // ==============================================================================
+
+  function enforceSingleSivmeOutline() {
+    // 1. Categories
+    var catCards = document.querySelectorAll('.sivme-cat-card[data-cat-id]');
+    catCards.forEach(function (card) {
+      var catId = card.getAttribute('data-cat-id') || '';
+      var num = catId.replace(/[cg]/, '');
+      var isLive = isCategoryLive(catId, num);
+      var color = isLive ? '#10b981' : '#ef4444';
+
+      card.style.setProperty('border', '1px solid rgba(51, 65, 85, 0.6)', 'important');
+      card.style.setProperty('outline', '2px dashed ' + color, 'important');
+      card.style.setProperty('outline-offset', '3px', 'important');
+    });
+
+    // 2. Sub-categories
+    var subCards = document.querySelectorAll('.sivme-subcat-card[data-sivme-urn]');
+    subCards.forEach(function (sub) {
+      var urn = sub.getAttribute('data-sivme-urn') || '';
+      var subId = urn.split(':sub:')[1] || '';
+      var isSubLive = isSubItemLive(subId);
+      var color = isSubLive ? '#10b981' : '#ef4444';
+
+      sub.style.setProperty('border', '1px solid rgba(51, 65, 85, 0.6)', 'important');
+      sub.style.setProperty('outline', '2px dashed ' + color, 'important');
+      sub.style.setProperty('outline-offset', '3px', 'important');
+    });
+
+    // 3. Purge container outlines
+    var containers = document.querySelectorAll('#tier1-list, #tier2-list');
+    containers.forEach(function (c) {
+      c.style.removeProperty('outline');
+      c.style.setProperty('outline', 'none', 'important');
+      c.style.setProperty('border', 'none', 'important');
+    });
+  }
+
+  function patchSivmeGlobalEngine() {
+    if (window.RM_SIVME && !window.RM_SIVME.__singleOutlineEnforced) {
+      window.RM_SIVME.applyInSituVisualInspection = enforceSingleSivmeOutline;
+      window.RM_SIVME.__singleOutlineEnforced = true;
+    }
+  }
+
+  // ==============================================================================
+  // SECTION 5: DOM ACCORDION RENDER ENGINE (SINGLE OUTLINE ARCHITECTURE)
   // ==============================================================================
 
   function renderSubCards(catNum, childrenList) {
@@ -261,13 +281,14 @@
       }
 
       var isSubLive = isSubItemLive(ch.id);
-      var subBorder = isSubLive ? 'border: 2px dashed #10b981 !important;' : 'border: 2px dashed #ef4444 !important;';
+      var subStateClass = isSubLive ? 'is-live' : 'is-hidden';
+      var subOutlineColor = isSubLive ? '#10b981' : '#ef4444';
       var subNotchHtml = isSubLive
         ? '<div class="sivme-live-notch absolute -top-2.5 right-2.5 z-30 flex items-center space-x-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#064e3b] text-emerald-300 border border-emerald-500/80 shadow-[0_0_8px_rgba(16,185,129,0.3)] cursor-pointer" onclick="toggleSivmeSub(\'' + ch.id + '\', event)"><span>🟢</span><span>Live ⇄</span></div>'
         : '<div class="sivme-live-notch absolute -top-2.5 right-2.5 z-30 flex items-center space-x-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#450a0a] text-red-300 border border-red-500/80 shadow-[0_0_8px_rgba(239,68,68,0.3)] cursor-pointer" onclick="toggleSivmeSub(\'' + ch.id + '\', event)"><span>🔴</span><span>Hidden ⇄</span></div>';
 
       return [
-        '<div data-sivme-urn="rm:cat:' + catNum + ':sub:' + ch.id + '" class="sivme-subcat-card w-full bg-[#0d1424] rounded-xl shadow-md flex flex-col justify-between relative mb-2.5" style="min-height: 114px; ' + subBorder + ' outline: none !important; box-shadow: none !important; overflow: visible;">',
+        '<div data-sivme-urn="rm:cat:' + catNum + ':sub:' + ch.id + '" class="sivme-subcat-card ' + subStateClass + ' w-full bg-[#0d1424] rounded-xl shadow-md flex flex-col justify-between relative mb-2.5" style="min-height: 114px; border: 1px solid rgba(51, 65, 85, 0.6) !important; outline: 2px dashed ' + subOutlineColor + ' !important; outline-offset: 3px !important; overflow: visible;">',
         '  ' + subNotchHtml,
         '  <div class="p-3 pb-2 flex-1 flex flex-col justify-between relative bg-gradient-to-b from-[#111a30]/80 to-[#0d1424] rounded-t-xl">',
         '    <div class="flex items-center space-x-2 mb-1">',
@@ -290,8 +311,8 @@
   }
 
   function renderCatalogItems() {
-    injectSingleDashedBorderStyles();
-    patchSivmeOutlineEngine();
+    injectSingleDashedStyles();
+    patchSivmeGlobalEngine();
 
     var services = window.RM_SERVICES_DATA || [];
     var games = window.RM_GAMES_DATA || [];
@@ -305,14 +326,15 @@
     if (t1) {
       t1.innerHTML = services.map(function (item) {
         var isLive = isCategoryLive(item.id, item.num);
-        var borderStyle = isLive ? 'border: 2px dashed #10b981 !important;' : 'border: 2px dashed #ef4444 !important;';
+        var stateClass = isLive ? 'is-live' : 'is-hidden';
+        var outlineColor = isLive ? '#10b981' : '#ef4444';
 
         var notchHtml = isLive
           ? '<div class="sivme-live-notch absolute -top-2.5 right-3 z-30 flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#064e3b] text-emerald-300 border border-emerald-500/80 shadow-[0_0_8px_rgba(16,185,129,0.3)] cursor-pointer" onclick="toggleSivmeCategory(\'' + item.id + '\', \'' + item.num + '\', event)"><span>🟢</span><span>Live ⇄</span></div>'
           : '<div class="sivme-live-notch absolute -top-2.5 right-3 z-30 flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#450a0a] text-red-300 border border-red-500/80 shadow-[0_0_8px_rgba(239,68,68,0.3)] cursor-pointer" onclick="toggleSivmeCategory(\'' + item.id + '\', \'' + item.num + '\', event)"><span>🔴</span><span>Hidden ⇄</span></div>';
 
         return [
-          '<div data-cat-id="' + item.id + '" data-sivme-urn="rm:cat:' + item.num + '" class="sivme-cat-card w-full rounded-xl bg-slate-900/90 transition-all mb-3.5 shadow-md relative" style="' + borderStyle + ' outline: none !important; box-shadow: none !important; overflow: visible;">',
+          '<div data-cat-id="' + item.id + '" data-sivme-urn="rm:cat:' + item.num + '" class="sivme-cat-card ' + stateClass + ' w-full rounded-xl bg-slate-900/90 transition-all mb-3.5 shadow-md relative" style="border: 1px solid rgba(51, 65, 85, 0.6) !important; outline: 2px dashed ' + outlineColor + ' !important; outline-offset: 3px !important; overflow: visible;">',
           '  ' + notchHtml,
           '  <div onclick="handleCategoryClick(\'' + item.id + '\', this)" class="flex items-center justify-between p-3 cursor-pointer active:scale-[0.99] transition-transform min-h-[64px]">',
           '    <div class="flex items-center space-x-2.5 min-w-0 flex-1 pr-2">',
@@ -341,14 +363,15 @@
     if (t2) {
       t2.innerHTML = games.map(function (item) {
         var isLive = isCategoryLive(item.id, item.num);
-        var borderStyle = isLive ? 'border: 2px dashed #10b981 !important;' : 'border: 2px dashed #ef4444 !important;';
+        var stateClass = isLive ? 'is-live' : 'is-hidden';
+        var outlineColor = isLive ? '#10b981' : '#ef4444';
 
         var notchHtml = isLive
           ? '<div class="sivme-live-notch absolute -top-2.5 right-3 z-30 flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#064e3b] text-emerald-300 border border-emerald-500/80 shadow-[0_0_8px_rgba(16,185,129,0.3)] cursor-pointer" onclick="toggleSivmeCategory(\'' + item.id + '\', \'' + item.num + '\', event)"><span>🟢</span><span>Live ⇄</span></div>'
           : '<div class="sivme-live-notch absolute -top-2.5 right-3 z-30 flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#450a0a] text-red-300 border border-red-500/80 shadow-[0_0_8px_rgba(239,68,68,0.3)] cursor-pointer" onclick="toggleSivmeCategory(\'' + item.id + '\', \'' + item.num + '\', event)"><span>🔴</span><span>Hidden ⇄</span></div>';
 
         return [
-          '<div data-cat-id="' + item.id + '" data-sivme-urn="rm:cat:' + item.num + '" class="sivme-cat-card w-full rounded-xl bg-slate-900/90 transition-all mb-3.5 shadow-md relative" style="' + borderStyle + ' outline: none !important; box-shadow: none !important; overflow: visible;">',
+          '<div data-cat-id="' + item.id + '" data-sivme-urn="rm:cat:' + item.num + '" class="sivme-cat-card ' + stateClass + ' w-full rounded-xl bg-slate-900/90 transition-all mb-3.5 shadow-md relative" style="border: 1px solid rgba(51, 65, 85, 0.6) !important; outline: 2px dashed ' + outlineColor + ' !important; outline-offset: 3px !important; overflow: visible;">',
           '  ' + notchHtml,
           '  <div onclick="handleCategoryClick(\'' + item.id + '\', this)" class="flex items-center justify-between p-3 cursor-pointer active:scale-[0.99] transition-transform min-h-[64px]">',
           '    <div class="flex items-center space-x-2.5 min-w-0 flex-1 pr-2">',
@@ -385,13 +408,13 @@
     }
 
     syncCategoryVisibilityFromOwner();
-    purgeOuterOutlines();
-    setTimeout(purgeOuterOutlines, 60);
-    setTimeout(purgeOuterOutlines, 180);
+    enforceSingleSivmeOutline();
+    setTimeout(enforceSingleSivmeOutline, 60);
+    setTimeout(enforceSingleSivmeOutline, 180);
   }
 
   // ==============================================================================
-  // SECTION 5: OWNER CONSOLE VISIBILITY SYNC
+  // SECTION 6: OWNER CONSOLE VISIBILITY SYNC
   // ==============================================================================
 
   function syncCategoryVisibilityFromOwner() {
@@ -458,7 +481,7 @@
   }
 
   // ==============================================================================
-  // SECTION 6: ACCORDION TOGGLE & CATEGORY LAUNCH ENGINE
+  // SECTION 7: ACCORDION TOGGLE & CATEGORY LAUNCH ENGINE
   // ==============================================================================
 
   function handleCategoryClick(catId, el) {
@@ -475,7 +498,7 @@
         sub.classList.add('hidden');
         if (arrow) arrow.textContent = '▼';
       }
-      purgeOuterOutlines();
+      enforceSingleSivmeOutline();
     }
   }
 
@@ -546,7 +569,7 @@
   }
 
   // ==============================================================================
-  // SECTION 7: RESILIENT DATA-LOAD WATCHER & GLOBAL EXPORTS
+  // SECTION 8: RESILIENT DATA-LOAD WATCHER & GLOBAL EXPORTS
   // ==============================================================================
 
   window.RM_CatalogRenderer = {
@@ -574,7 +597,10 @@
     initCatalogWhenDataReady();
   }
 
-  window.addEventListener('storage', syncCategoryVisibilityFromOwner);
+  window.addEventListener('storage', function () {
+    syncCategoryVisibilityFromOwner();
+    enforceSingleSivmeOutline();
+  });
 
   document.addEventListener('click', function (e) {
     if (e.target && e.target.closest && e.target.closest('#cat-menu-btn, [onclick*="catalog"], [onclick*="category"], #menu-btn')) {
