@@ -2,13 +2,20 @@
  * RISE MITRA — SOVEREIGN PROFILE & CONTROL HUB ENGINE
  * SPECIFICATION : FOLDER A (SSOT: 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)
  * REPO TARGET   : public/js/profile-hub-engine.js
- * GOVERNANCE    : GATE-24.2 | ANGEL ONE AVATAR & PHOTO UPLOAD | 100% ZEL
+ * GOVERNANCE    : GATE-24.3 | ANGEL ONE 1:1 AVATAR SILHOUETTE & PHOTO SYNC | 100% ZEL
  */
 
 (function (window, document) {
   'use strict';
 
   var STORAGE_KEY_AVATAR = 'rm_user_avatar_base64';
+
+  // Angel One style clean vector fintech silhouette
+  var DEFAULT_SILHOUETTE_SVG = [
+    '<svg class="w-full h-full text-slate-200 fill-current p-0.5" viewBox="0 0 24 24">',
+    '  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>',
+    '</svg>'
+  ].join('');
 
   var profileState = {
     userName: 'Diwakar Kumar',
@@ -44,13 +51,13 @@
   function syncAllAvatars() {
     var avatarData = getSavedAvatar();
     
-    // 1. Sync Header Avatar
+    // 1. Sync Header Avatar (Top-Right)
     var headerAvatar = document.getElementById('header-user-avatar');
     if (headerAvatar) {
       if (avatarData) {
         headerAvatar.innerHTML = '<img src="' + avatarData + '" alt="Profile" class="w-full h-full object-cover rounded-full" />';
       } else {
-        headerAvatar.innerHTML = 'D';
+        headerAvatar.innerHTML = DEFAULT_SILHOUETTE_SVG;
       }
     }
 
@@ -60,7 +67,7 @@
       if (avatarData) {
         modalAvatar.innerHTML = '<img src="' + avatarData + '" alt="Profile" class="w-full h-full object-cover rounded-full" />';
       } else {
-        modalAvatar.innerHTML = '<span class="text-white text-2xl font-black">D</span>';
+        modalAvatar.innerHTML = '<div class="w-full h-full flex items-center justify-center p-2.5">' + DEFAULT_SILHOUETTE_SVG + '</div>';
       }
     }
   }
@@ -103,7 +110,7 @@
     var savedAvatar = getSavedAvatar();
     var avatarInnerHtml = savedAvatar
       ? '<img src="' + savedAvatar + '" alt="Profile" class="w-full h-full object-cover rounded-full" />'
-      : '<span class="text-white text-2xl font-black">D</span>';
+      : '<div class="w-full h-full flex items-center justify-center p-2.5">' + DEFAULT_SILHOUETTE_SVG + '</div>';
 
     container.innerHTML = [
       '<div class="w-full max-w-md mx-auto text-slate-100 font-sans pb-10 space-y-4">',
@@ -299,7 +306,7 @@
     handlePhoto: handlePhotoSelect,
     removePhoto: function () {
       saveAvatar('');
-      alert('फ़ोटो हटा दी गई');
+      alert('फ़ोटो हटा दी गई — डिफ़ॉल्ट सिलुएट बहाल हो गया!');
     },
     syncAvatars: syncAllAvatars
   };
