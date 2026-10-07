@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="hi" class="dark" data-theme="dark">
 <!-- ============================================================================== -->
-<!-- SECTION 1: HEAD METADATA, TAILWIND CONFIG & DESIGN TOKENS                      -->
-<!-- GOVERNANCE : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-16.7            -->
-<!-- PHASE 1    : MASTER GLOBAL CSS & TOKENS INGESTION (ZEL CERTIFIED)             -->
+<!-- RISE MITRA — SLIM MODULAR HTML SHELL                                           -->
+<!-- GOVERNANCE : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-24.6            -->
+<!-- STATUS     : FULLY DECOUPLED (CSS -> app.css | JS -> shell-controller.js)     -->
 <!-- ============================================================================== -->
 <head>
   <meta charset="UTF-8">
@@ -18,6 +18,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
+  <!-- Master Decoupled Global CSS & Design Tokens -->
   <link rel="stylesheet" href="/css/app.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -34,216 +35,13 @@
       }
     }
   </script>
-
-  <style>
-    * {
-      -webkit-tap-highlight-color: transparent;
-      box-sizing: border-box;
-      -webkit-touch-callout: none;
-    }
-    body {
-      background-color: #030712;
-      color: #f8fafc;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      touch-action: manipulation;
-      -webkit-user-select: none;
-      user-select: none;
-    }
-
-    input, textarea {
-      -webkit-user-select: text !important;
-      user-select: text !important;
-    }
-
-    /* 2.5D Tactile Elevation Tokens (EL-UX-ELEVATION-25D) */
-    .tactile-25d {
-      position: relative;
-      border-top: 1px solid rgba(255, 255, 255, 0.12);
-      border-bottom: 2px solid rgba(15, 23, 42, 0.90);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12),
-                  0 4px 0 #020914,
-                  0 8px 16px -2px rgba(0, 0, 0, 0.60);
-      transition: transform 0.06s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.06s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .tactile-25d:active {
-      transform: translateY(2px) scale(0.94) !important;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.70),
-                  0 1px 0 #020914,
-                  0 2px 6px rgba(0, 0, 0, 0.40) !important;
-    }
-
-    /* High-Contrast Luminous Active Ring (EL-UX-LUMINOUS-AURA) */
-    .ring-active-luminous {
-      border: 2px solid #34d399 !important;
-      box-shadow: 0 0 14px -1px rgba(16, 185, 129, 0.45),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.20) !important;
-      background: linear-gradient(135deg, rgba(6, 78, 59, 0.35) 0%, rgba(11, 15, 25, 0.95) 100%) !important;
-    }
-
-    .wallet-card {
-      background: radial-gradient(circle at 100% 0%, rgba(16, 185, 129, 0.15) 0%, transparent 60%),
-                  linear-gradient(135deg, #064e3b 0%, #022c22 40%, #0b0f19 100%);
-      border: 1px solid rgba(16, 185, 129, 0.30);
-      box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.25);
-    }
-    .nav-glass {
-      background: rgba(3, 7, 18, 0.95);
-      backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-    }
-    .play-install-card {
-      background: #0f172a;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.80);
-    }
-
-    button:focus-visible, a:focus-visible, input:focus-visible {
-      outline: 2px solid #10b981 !important;
-      outline-offset: 2px !important;
-    }
-
-    .pulse-live {
-      animation: pulseGreen 2s infinite;
-    }
-    @keyframes pulseGreen {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(1.15); }
-    }
-
-    /* Shared subcategory hierarchy guides */
-    #categoryModal .rm-subcategory-list {
-      --rm-guide-color: #526b78;
-      --rm-guide-offset: 12px;
-      --rm-service-gap: 6px;
-      padding-left: 22px;
-      padding-top: 8px;
-    }
-
-    #categoryModal .rm-subcategory-list > div {
-      position: relative;
-      min-width: 0;
-      overflow: visible;
-    }
-
-    #categoryModal .rm-subcategory-list > div + div {
-      margin-top: var(--rm-service-gap);
-    }
-
-    #categoryModal .rm-subcategory-list > div::before {
-      content: "";
-      position: absolute;
-      left: calc(0px - var(--rm-guide-offset));
-      top: calc(0px - var(--rm-service-gap) - 1px);
-      bottom: -1px;
-      width: 1px;
-      background-color: var(--rm-guide-color);
-      pointer-events: none;
-    }
-
-    #categoryModal .rm-subcategory-list > div:first-child::before {
-      top: -9px;
-    }
-
-    #categoryModal .rm-subcategory-list > div:last-child::before {
-      bottom: 50%;
-    }
-
-    #categoryModal .rm-subcategory-list > div::after {
-      content: "";
-      position: absolute;
-      left: calc(0px - var(--rm-guide-offset));
-      top: 50%;
-      width: var(--rm-guide-offset);
-      height: 1px;
-      background-color: var(--rm-guide-color);
-      pointer-events: none;
-    }
-
-    #categoryModal .rm-subcategory-list > div > div {
-      flex: 1 1 auto;
-      min-width: 0;
-    }
-
-    #categoryModal .rm-subcategory-list > div > div > span:first-child {
-      flex-shrink: 0;
-    }
-
-    #categoryModal .rm-subcategory-list > div > div > span:last-child {
-      min-width: 0;
-      overflow-wrap: anywhere;
-    }
-
-    #categoryModal .rm-subcategory-list > div > span {
-      flex: 0 0 auto;
-      margin-left: 8px;
-    }
-
-    @media (forced-colors: active) {
-      #categoryModal .rm-subcategory-list {
-        --rm-guide-color: CanvasText;
-      }
-    }
-
-    /* Master Design Tokens & Canonical Layout Guards */
-    :root {
-      --rm-canvas-bg: #060913;
-      --rm-card-bg: linear-gradient(180deg, rgba(24, 33, 47, 0.94) 0%, rgba(11, 17, 30, 0.98) 100%);
-      --rm-cyan: #38bdf8;
-      --rm-emerald: #10b981;
-      --rm-emerald-glow: #34d399;
-      --rm-slate-sub: #94a3b8;
-    }
-
-    #sub-c16, [id^="sub-c16"], .sivme-subcat-container {
-      border-left: none !important;
-      padding-left: 0 !important;
-      margin-left: 0 !important;
-    }
-    #sub-c16::before, #sub-c16::after,
-    #sub-c16 > div::before, #sub-c16 > div::after,
-    .sivme-subcat-card::before, .sivme-subcat-card::after {
-      display: none !important;
-      content: none !important;
-      border: none !important;
-    }
-
-    #categoryModal [data-cat-id] button,
-    #categoryModal [data-cat-id] a,
-    #categoryModal [data-cat-id] span[class*="text-emerald"],
-    #categoryModal [data-cat-id] span[class*="text-cyan"],
-    .rm-clean-act, .sivme-action-btn {
-      white-space: nowrap !important;
-      flex-shrink: 0 !important;
-      display: inline-flex !important;
-      align-items: center !important;
-    }
-
-    #categoryModal [data-cat-id] {
-      position: relative !important;
-    }
-    #categoryModal [data-cat-id] > .sivme-inline-badge {
-      position: absolute !important;
-      top: 8px !important;
-      right: 76px !important;
-      margin: 0 !important;
-      font-size: 9.5px !important;
-      padding: 2px 6px !important;
-      border-radius: 6px !important;
-      z-index: 10 !important;
-      line-height: 1 !important;
-    }
-  </style>
 </head>
 
-
-<!-- ============================================================================== -->
-<!-- SECTION 2: STICKY HEADER & SOVEREIGN IDENTITY REGION                           -->
-<!-- ============================================================================== -->
 <body class="pb-36 antialiased">
 
+  <!-- ============================================================================ -->
+  <!-- HEADER: LOGO, SYNC STATUS & ANGEL ONE CIRCULAR PROFILE AVATAR                -->
+  <!-- ============================================================================ -->
   <header class="sticky top-0 z-40 bg-[#030712]/95 backdrop-blur-md border-b border-slate-800/80 px-4 py-3">
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-3">
@@ -258,14 +56,20 @@
           <p class="text-[10px] text-slate-400 font-medium">Rise Mitra • स्वास्थ्य और स्वावलंबन</p>
         </div>
       </div>
-      <div class="flex items-center space-x-2">
+      <div class="flex items-center space-x-2.5">
         <div class="flex items-center space-x-1.5 bg-emerald-950/80 border border-emerald-700/60 rounded-full px-2.5 py-1">
           <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-live"></span>
           <span class="text-[10px] font-bold text-emerald-300">ऑनलाइन सिंक</span>
         </div>
-        <div class="text-[10px] font-mono bg-slate-900 border border-slate-800 rounded-full px-2.5 py-1 text-slate-300">
-          USR-***489
-        </div>
+        
+        <!-- Standard Circular Profile Avatar Button (Angel One Clean UX — 100% ZEL) -->
+        <button type="button" onclick="if(window.RM_ProfileHub) window.RM_ProfileHub.open();" title="प्रोफ़ाइल व सेटिंग्स खोलें" class="w-9 h-9 rounded-full bg-slate-900 border border-slate-700/80 hover:border-cyan-400/80 flex items-center justify-center cursor-pointer active:scale-90 transition-all tactile-25d shadow-md overflow-hidden p-0.5 min-w-[36px] min-h-[36px]">
+          <div id="header-user-avatar" class="w-full h-full rounded-full bg-gradient-to-tr from-cyan-600 to-blue-500 flex items-center justify-center text-white overflow-hidden shadow-inner">
+            <svg class="w-full h-full text-slate-200 fill-current p-1" viewBox="0 0 24 24">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+          </div>
+        </button>
       </div>
     </div>
     <div class="flex justify-between items-center mt-2 pt-1 border-t border-slate-900 text-[10px] text-slate-400 font-sans">
@@ -280,10 +84,9 @@
     </div>
   </header>
 
-
-<!-- ============================================================================== -->
-<!-- SECTION 3: HERO WALLET & 12 CORE CASHFLOW VERTICALS GRID (MODULAR SHELL)       -->
-<!-- ============================================================================== -->
+  <!-- ============================================================================ -->
+  <!-- MAIN CONTENT: DIRECTORY BUTTON, WALLET & 12 CORE CASHFLOW VERTICALS          -->
+  <!-- ============================================================================ -->
   <main class="max-w-md mx-auto px-4 py-4 space-y-4">
     <button type="button" id="cat-menu-btn" onclick="toggleMenuDrawer(true)" class="w-full tactile-25d bg-slate-900 p-3.5 rounded-2xl flex items-center justify-between cursor-pointer group shadow-lg min-h-[56px]">
       <div class="flex items-center space-x-3">
@@ -340,14 +143,12 @@
       </div>
     </section>
 
-    <!-- 12 Play Store Standard Bilingual Verticals (Auto-rendered by home-grid-engine.js) -->
+    <!-- 12 Core Cashflow Verticals Grid Target -->
     <section class="space-y-2">
       <div class="flex justify-between items-center px-1">
         <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">12 Core Cashflow Verticals</h2>
         <span class="text-[10px] text-emerald-400 font-bold bg-emerald-950/60 border border-emerald-800/40 px-2 py-0.5 rounded-full">जुड़ना मुफ़्त</span>
       </div>
-      
-      <!-- Canonical Grid Mount Target -->
       <div id="verticalTilesGrid" class="grid grid-cols-3 gap-2.5 sm:grid-cols-4 sm:gap-3 w-full">
         <div class="p-6 text-center text-xs text-slate-500 animate-pulse col-span-3">वर्टिकल्स लोड हो रहे हैं…</div>
       </div>
@@ -395,11 +196,10 @@
     </div>
   </div>
 
-
-<!-- ============================================================================== -->
-<!-- SECTION 4: UNIVERSAL CATALOG MODAL & FULLSCREEN VIEWPORT                       -->
-<!-- ============================================================================== -->
-  <!-- Universal Catalog Modal (Slim Shell Mount Viewports) -->
+  <!-- ============================================================================ -->
+  <!-- MODALS & FULLSCREEN VIEWPORT MOUNT TARGETS                                   -->
+  <!-- ============================================================================ -->
+  <!-- Universal Catalog Modal -->
   <div id="categoryModal" onclick="if(event.target === this) toggleMenuDrawer(false)" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex flex-col justify-start pt-14 px-3 sm:px-4 transition-all">
     <div class="bg-[#0b0f19] border border-slate-800 rounded-2xl max-w-md w-full mx-auto max-h-[82vh] flex flex-col shadow-2xl overflow-hidden">
       <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/70">
@@ -418,8 +218,6 @@
             <span id="tier1-header-text">💼 आजीविका (33 सेवाएं)</span>
             <span class="acc-arrow text-sm font-bold font-mono">▼</span>
           </button>
-          
-          <!-- Canonical Mount Container #tier1-list -->
           <div id="tier1-list" class="space-y-2 pl-1 transition-all" style="display: block;">
             <div class="p-4 text-xs text-slate-500 animate-pulse text-center">कैटलॉग लोड हो रहा है…</div>
           </div>
@@ -430,8 +228,6 @@
             <span id="tier2-header-text">🎮 खेल व मनोरंजन (17 श्रेणियां)</span>
             <span class="acc-arrow text-sm font-bold font-mono">▼</span>
           </button>
-          
-          <!-- Canonical Mount Container #tier2-list -->
           <div id="tier2-list" class="space-y-2 pl-1 transition-all" style="display: block;">
             <div class="p-4 text-xs text-slate-500 animate-pulse text-center">गेम्स लोड हो रहे हैं…</div>
           </div>
@@ -455,16 +251,13 @@
       </button>
     </div>
     <div class="flex-1 w-full max-w-md mx-auto p-3 sm:p-4 pb-24 box-border overflow-x-hidden">
-      <!-- Canonical Mount Container #rm-module-container -->
       <div id="rm-module-container" class="w-full max-w-full box-border"></div>
     </div>
   </div>
 
-
-<!-- ============================================================================== -->
-<!-- SECTION 5: BOTTOM NAVIGATION & SHELL CONTROLLER                                -->
-<!-- ============================================================================== -->
-  <!-- Bottom Navigation -->
+  <!-- ============================================================================ -->
+  <!-- BOTTOM NAVIGATION                                                            -->
+  <!-- ============================================================================ -->
   <nav class="fixed bottom-0 left-0 right-0 nav-glass z-40 px-4 py-2">
     <div class="max-w-md mx-auto grid grid-cols-4 gap-1 text-center">
       <button class="flex flex-col items-center justify-center py-1 text-emerald-400 font-bold tactile-25d cursor-pointer min-h-[48px]">
@@ -486,6 +279,9 @@
     </div>
   </nav>
 
+  <!-- ============================================================================ -->
+  <!-- MODULAR ENGINES & DECOUPLED CONTROLLERS (100% ZEL)                           -->
+  <!-- ============================================================================ -->
   <!-- Pan-India Master Geographic Dataset -->
   <script src="/js/data/india-geo-data.js"></script>
 
@@ -496,199 +292,15 @@
   <!-- Modular Home Grid Engine (12 Play Store Standard Verticals) -->
   <script src="/js/home-grid-engine.js?v=20261007_01"></script>
 
+  <!-- Sovereign Profile & Control Hub Engine (Angel One Taxonomy) -->
+  <script src="/js/profile-hub-engine.js?v=20261007_01"></script>
+
   <!-- Canonical Decoupled Catalog Engine & Data Registry -->
   <script src="/js/categories-data.js?v=20261007_01"></script>
   <script src="/js/catalog-sivme-engine.js?v=20261007_01"></script>
 
-  <!-- Lightweight Static Shell Controller -->
-  <script>
-    let deferredPrompt = null;
-    const banner = document.getElementById('playStoreInstallBanner');
-
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW:', err));
-      });
-    }
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      if (banner && !window.matchMedia('(display-mode: standalone)').matches) {
-        banner.style.display = 'block';
-      }
-    });
-
-    async function triggerPWAInstall() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted' && banner) banner.style.display = 'none';
-        deferredPrompt = null;
-      }
-    }
-
-    function dismissPlayBanner() {
-      if (banner) banner.style.display = 'none';
-    }
-
-    window.addEventListener('appinstalled', () => {
-      if (banner) banner.style.display = 'none';
-      deferredPrompt = null;
-    });
-
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      if (banner) banner.style.display = 'none';
-    }
-
-    function toggleAccordion(listId, btnEl) {
-      triggerCatalogRender();
-      const list = document.getElementById(listId);
-      if (!list) return;
-      const isHidden = list.style.display === 'none';
-      list.style.display = isHidden ? 'block' : 'none';
-      const arrow = btnEl.querySelector('.acc-arrow');
-      if (arrow) arrow.textContent = isHidden ? '▼' : '▶';
-    }
-
-    function toggleMenuDrawer(show) {
-      const modal = document.getElementById('categoryModal');
-      if (!modal) return;
-      if (show) {
-        triggerCatalogRender();
-        modal.classList.remove('hidden');
-      } else {
-        modal.classList.add('hidden');
-      }
-    }
-
-    function triggerCatalogRender() {
-      if (window.RM_CatalogRenderer && typeof window.RM_CatalogRenderer.render === 'function') {
-        window.RM_CatalogRenderer.render();
-      } else if (typeof window.renderCatalogItems === 'function') {
-        window.renderCatalogItems();
-      }
-    }
-
-    function openFullscreenModule(titleText) {
-      const fsView = document.getElementById('rm-fullscreen-view');
-      const titleEl = document.getElementById('fs-module-title');
-      if (titleEl && titleText) titleEl.textContent = titleText;
-      if (fsView) {
-        fsView.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-      }
-    }
-
-    function closeFullscreenModule() {
-      const fsView = document.getElementById('rm-fullscreen-view');
-      if (fsView) {
-        fsView.classList.add('hidden');
-        document.body.style.overflow = '';
-      }
-    }
-
-    function handleLaunchCategory(catId, subId) {
-      toggleMenuDrawer(false);
-      const container = document.getElementById('rm-module-container');
-      if (!container) return;
-
-      // 16-2: किराया बहीखाता (Rental Ledger)
-      if (catId === 'c16' && (subId === '16-2' || !subId)) {
-        openFullscreenModule('🏠 16-2. किराया बहीखाता (Rental Ledger)');
-        if (window.RM_Cat16_Sub2_RentalLedger) {
-          window.RM_Cat16_Sub2_RentalLedger.mount(container);
-        } else {
-          loadModuleScript('/js/catalog/category-16/16-2-rental-ledger.js', () => {
-            if (window.RM_Cat16_Sub2_RentalLedger) window.RM_Cat16_Sub2_RentalLedger.mount(container);
-          }, container);
-        }
-      } 
-      // 16-3: कमरा व फ्लैट खोज (Canonical Modular Engine Mount)
-      else if (catId === 'c16' && subId === '16-3') {
-        openFullscreenModule('🏠 16-3. कमरा व फ्लैट खोज (Rental Search)');
-        
-        const mountSub3 = () => {
-          if (window.RM_Cat16_Sub3_RentalSearch) {
-            window.RM_Cat16_Sub3_RentalSearch.mount(container, {
-              state: {
-                publicListings: [
-                  {
-                    listingId: 'LST-001',
-                    title: '1 BHK स्वतंत्र फ्लैट (ग्राउंड फ्लोर)',
-                    status: 'AVAILABLE',
-                    monthlyRent: 4500,
-                    securityDeposit: 4500,
-                    unitType: '1 BHK',
-                    addressPublic: { city: 'इंदौर', locality: 'शांति नगर', pincode: '452010' },
-                    electricityBilling: { meterType: 'sub_meter_per_unit', ratePerUnit: 8.0 },
-                    landlordContactMasked: { name: 'सुरेश जी (मकान मालिक)', maskedPhone: '+91 98XXXXXX01' },
-                    lifecycleVerification: { availableFromDate: 'तत्काल' }
-                  },
-                  {
-                    listingId: 'LST-002',
-                    title: 'सिंगल रूम (अटैच लेट-बाथ)',
-                    status: 'AVAILABLE',
-                    monthlyRent: 2500,
-                    securityDeposit: 2000,
-                    unitType: 'Single Room',
-                    addressPublic: { city: 'इंदौर', locality: 'कॉलेज रोड', pincode: '452001' },
-                    electricityBilling: { meterType: 'sub_meter_per_unit', ratePerUnit: 7.5 },
-                    landlordContactMasked: { name: 'राजेश वर्मा', maskedPhone: '+91 97XXXXXX42' },
-                    lifecycleVerification: { availableFromDate: 'तत्काल' }
-                  },
-                  {
-                    listingId: 'LST-003',
-                    title: '2 BHK फॅमिली आवास (कार पार्किंग सहित)',
-                    status: 'AVAILABLE',
-                    monthlyRent: 7500,
-                    securityDeposit: 7500,
-                    unitType: '2 BHK',
-                    addressPublic: { city: 'इंदौर', locality: 'विजयनगर', pincode: '452010' },
-                    electricityBilling: { meterType: 'sub_meter_per_unit', ratePerUnit: 8.5 },
-                    landlordContactMasked: { name: 'अमित शर्मा', maskedPhone: '+91 94XXXXXX18' },
-                    lifecycleVerification: { availableFromDate: 'तत्काल' }
-                  }
-                ]
-              }
-            });
-          }
-        };
-
-        if (window.RM_Cat16_Sub3_RentalSearch) {
-          mountSub3();
-        } else {
-          loadModuleScript('/js/catalog/category-16/16-3-rental-search.js', mountSub3, container);
-        }
-      } else if (catId === 'c05') {
-        alert('सॉवरेन बहीखाता (Business Khata) लोड हो रहा है...');
-      } else {
-        alert(catId + ' सेवा का विस्तार जल्द उपलब्ध होगा।');
-      }
-    }
-
-    // Generic Dynamic Script Loader Helper
-    function loadModuleScript(src, onLoadCallback, container) {
-      container.innerHTML = '<div class="p-6 text-center text-xs text-cyan-400 animate-pulse">मॉड्यूल लोड हो रहा है...</div>';
-      const script = document.createElement('script');
-      script.src = src + '?v=' + Date.now();
-      script.async = true;
-      script.onload = onLoadCallback;
-      script.onerror = function () {
-        container.innerHTML = '<div class="p-6 text-center text-xs text-red-400 bg-red-950/40 border border-red-800/60 rounded-xl">मॉड्यूल लोड नहीं हो सका — कृपया पुनः प्रयास करें।</div>';
-      };
-      document.body.appendChild(script);
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      triggerCatalogRender();
-    });
-    window.addEventListener('storage', () => {
-      if (typeof window.syncCategoryVisibilityFromOwner === 'function') {
-        window.syncCategoryVisibilityFromOwner();
-      }
-    });
-  </script>
+  <!-- Decoupled Shell Controller Engine & Viewport Dispatcher -->
+  <script src="/js/shell-controller.js?v=20261007_01"></script>
 
 </body>
 </html>
