@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU ADAPTER: CATEGORY 16 (ISOLATED MODULE)
- * MODULE        : Dedicated House & Home (Cat-16) Controller, Rich UI Blueprint & Universal Engine Bridge
+ * MODULE        : Dedicated House & Home (Cat-16) Google Play Store Card Layout & Universal Bridge
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sivme-adapters/cat16-adapter.js
@@ -191,44 +191,67 @@
     if (!existing) headerEl.appendChild(badge);
   }
 
-  // 3. ENRICH CATEGORY 16 HEADER (GOLDEN BLUEPRINT: RICH, BALANCED & ATTRACTIVE)
-  function enrichCat16CardLayout(headerEl) {
-    if (!headerEl || headerEl.querySelector('#c16-rich-features-strip')) return;
+  // 3. GOOGLE PLAY STORE CARD ARCHITECTURE (FULL-CARD, ATTRACTIVE & BALANCED)
+  function renderPlayStoreCard(headerEl, isOpen) {
+    if (!headerEl) return;
 
-    var richStrip = document.createElement('div');
-    richStrip.id = 'c16-rich-features-strip';
-    richStrip.style.cssText = [
-      'margin-top: 10px !important',
-      'margin-bottom: 8px !important',
-      'padding: 8px 10px !important',
-      'background: rgba(15, 23, 42, 0.65) !important',
-      'border: 1px solid rgba(56, 189, 248, 0.2) !important',
-      'border-radius: 8px !important',
-      'display: flex !important',
-      'flex-direction: column !important',
-      'gap: 6px !important',
-      'pointer-events: none !important'
-    ].join(';');
+    var container = headerEl.querySelector('#c16-playstore-layout');
+    if (!container) {
+      // Hide empty legacy structure without deleting native listeners
+      Array.from(headerEl.children).forEach(function (child) {
+        if (!child.id || (child.id !== 'sivme-c16-authoritative-badge' && child.id !== 'c16-playstore-layout')) {
+          child.style.display = 'none';
+        }
+      });
 
-    richStrip.innerHTML = [
-      '<div style="font-size: 11px; color: #94a3b8; font-weight: 500; display: flex; align-items: center; gap: 4px;">',
-      '  <span style="color: #38bdf8;">✦</span> त्वरित सेवाएं व प्रबंधन:',
+      container = document.createElement('div');
+      container.id = 'c16-playstore-layout';
+      container.style.cssText = [
+        'width: 100% !important',
+        'display: flex !important',
+        'flex-direction: column !important',
+        'gap: 10px !important',
+        'padding: 12px 14px 10px 14px !important',
+        'box-sizing: border-box !important'
+      ].join(';');
+
+      headerEl.appendChild(container);
+    }
+
+    container.innerHTML = [
+      '<!-- Top Row: Play Store App Icon + App Meta -->',
+      '<div style="display: flex; align-items: center; gap: 12px; width: 100%;">',
+      '  <div style="width: 52px; height: 52px; border-radius: 14px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 1.5px solid rgba(56, 189, 248, 0.35); box-shadow: 0 4px 12px rgba(0,0,0,0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0;">',
+      '    <span style="font-size: 24px; line-height: 1;">🏠</span>',
+      '    <span style="font-size: 9.5px; font-weight: 800; color: #38bdf8; line-height: 1; margin-top: 2px;">#16</span>',
+      '  </div>',
+      '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0;">',
+      '    <div style="font-size: 16px; font-weight: 700; color: #ffffff; letter-spacing: -0.3px; line-height: 1.2; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">House & Home</div>',
+      '    <div style="font-size: 12px; font-weight: 500; color: #34d399; line-height: 1.3; margin-top: 2px;">घर व मकान (दैनिक रखरखाव)</div>',
+      '    <div style="font-size: 11px; color: #94a3b8; display: flex; align-items: center; gap: 6px; margin-top: 4px; font-weight: 500;">',
+      '      <span style="color: #facc15; font-weight: 700;">★ 4.9</span>',
+      '      <span style="opacity: 0.5;">•</span>',
+      '      <span>3 सेवाएं</span>',
+      '      <span style="opacity: 0.5;">•</span>',
+      '      <span style="color: #38bdf8; font-size: 10px; background: rgba(56, 189, 248, 0.12); padding: 1px 5px; border-radius: 4px;">Rise Verified</span>',
+      '    </div>',
+      '  </div>',
       '</div>',
-      '<div style="display: flex; flex-wrap: wrap; gap: 4px;">',
-      '  <span style="font-size: 10.5px; font-weight: 600; padding: 2px 7px; background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 4px;">🔧 मिस्त्री व रिपेयर</span>',
-      '  <span style="font-size: 10.5px; font-weight: 600; padding: 2px 7px; background: rgba(234, 179, 8, 0.12); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 4px;">⚡ वायरिंग व इलेक्ट्रीशियन</span>',
-      '  <span style="font-size: 10.5px; font-weight: 600; padding: 2px 7px; background: rgba(168, 85, 247, 0.12); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 4px;">🎨 रंगाई व पुताई</span>',
-      '  <span style="font-size: 10.5px; font-weight: 600; padding: 2px 7px; background: rgba(34, 197, 94, 0.12); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 4px;">🏠 कमरा व फ्लैट रेंट</span>',
-      '  <span style="font-size: 10.5px; font-weight: 600; padding: 2px 7px; background: rgba(244, 63, 94, 0.12); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.3); border-radius: 4px;">📒 डिजिटल किराया लेजर</span>',
+      '<!-- Middle Row: Google Play Category Chips -->',
+      '<div style="display: flex; flex-wrap: wrap; gap: 5px; width: 100%; margin-top: 2px;">',
+      '  <span style="font-size: 11px; font-weight: 500; padding: 3px 8px; background: #1e293b; color: #93c5fd; border: 1px solid #334155; border-radius: 6px;">🔧 मिस्त्री</span>',
+      '  <span style="font-size: 11px; font-weight: 500; padding: 3px 8px; background: #1e293b; color: #fde047; border: 1px solid #334155; border-radius: 6px;">⚡ इलेक्ट्रीशियन</span>',
+      '  <span style="font-size: 11px; font-weight: 500; padding: 3px 8px; background: #1e293b; color: #d8b4fe; border: 1px solid #334155; border-radius: 6px;">🎨 रंगाई-पुताई</span>',
+      '  <span style="font-size: 11px; font-weight: 500; padding: 3px 8px; background: #1e293b; color: #86efac; border: 1px solid #334155; border-radius: 6px;">🏠 कमरा/फ्लैट</span>',
+      '</div>',
+      '<!-- Bottom Row: Play Store Style Action Button -->',
+      '<div style="display: flex; justify-content: flex-end; align-items: center; width: 100%; margin-top: 4px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.06);">',
+      '  <div style="font-size: 11.5px; font-weight: 700; color: #10b981; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.4); padding: 4px 12px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 5px;">',
+      '    <span>3 सेवाएं ' + (isOpen ? 'छुपाएं' : 'देखें') + '</span>',
+      '    <span style="font-size: 10px;">' + (isOpen ? '▲' : '▼') + '</span>',
+      '  </div>',
       '</div>'
     ].join('');
-
-    var toggleBtn = headerEl.querySelector('[onclick*="toggleAccordion"], .acc-arrow, button');
-    if (toggleBtn && toggleBtn.parentElement && toggleBtn.parentElement !== headerEl) {
-      headerEl.insertBefore(richStrip, toggleBtn.parentElement);
-    } else {
-      headerEl.appendChild(richStrip);
-    }
   }
 
   // 4. AUDIT CATEGORY 16 (DECOUPLED NATIVE PASS-THROUGH)
@@ -237,6 +260,7 @@
     var c16Container = document.querySelector('#categoryModal [data-cat-id="c16"], #categoryModal [data-cat-id="16"]');
     if (!c16Container) return;
 
+    // Hard-lock: Outer container never gets an outline
     c16Container.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
     c16Container.style.setProperty('outline', 'none', 'important');
     c16Container.querySelectorAll(':scope > .sivme-notch-pill, :scope > .sivme-live-notch, :scope > .sivme-inline-badge').forEach(function (n) {
@@ -245,6 +269,8 @@
 
     var c16Header = c16Container.querySelector(':scope > div:first-child');
     var isCat16Vis = core.getUrnVisibility('rm:cat:16');
+    var subContainer = document.getElementById('sub-c16');
+    var isSubOpen = subContainer && !subContainer.classList.contains('hidden') && subContainer.style.display !== 'none';
 
     if (!isAuth) {
       c16Container.classList.toggle('sivme-public-hidden', !isCat16Vis);
@@ -253,7 +279,7 @@
         c16Header.querySelectorAll('.sivme-notch-pill, .sivme-inline-badge, .sivme-live-notch').forEach(function (n) { n.remove(); });
         c16Header.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
         c16Header.style.removeProperty('outline');
-        enrichCat16CardLayout(c16Header);
+        renderPlayStoreCard(c16Header, isSubOpen);
       }
     } else {
       c16Container.classList.remove('sivme-public-hidden');
@@ -267,7 +293,7 @@
         c16Header.style.setProperty('opacity', '1', 'important');
 
         mountCat16AuthoritativeBadge(c16Header, isCat16Vis);
-        enrichCat16CardLayout(c16Header);
+        renderPlayStoreCard(c16Header, isSubOpen);
 
         // Native Pass-Through: Strip conflicting inline style without hijacking accordion toggle
         if (c16Header.getAttribute('data-sivme-pass-bound') !== 'true') {
@@ -287,10 +313,7 @@
       }
     }
 
-    // Sub-cards handling: Controlled strictly by open/closed state
-    var subContainer = document.getElementById('sub-c16');
-    var isSubOpen = subContainer && !subContainer.classList.contains('hidden') && subContainer.style.display !== 'none';
-
+    // Sub-cards handling
     document.querySelectorAll('#sub-c16 > div').forEach(function (subCard, idx) {
       var subUrn = 'rm:cat:16:sub:16-' + (idx + 1);
       var subLabelEl = subCard.querySelector('.text-xs') || subCard;
