@@ -178,7 +178,7 @@
       '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0;">',
       '    <div style="display: flex; align-items: center; gap: 6px;">',
       '      <span style="font-size: 11.5px; font-weight: 800; color: #38bdf8; background: rgba(56, 189, 248, 0.15); padding: 1px 6px; border-radius: 4px;">' + info.code + '</span>',
-      '      <span style="font-size: 11.5px; font-weight: 700; color: #94a3b8;">' + info.categoryTag + '</span>',
+      '      <span style="font-size: 11.5px; font-weight: 700; color: #94a3b8;">' + (info.categoryTag || 'Rise Mitra Official') + '</span>',
       '    </div>',
       '    <div style="font-size: 18.5px; font-weight: 800; color: #ffffff; letter-spacing: -0.3px; line-height: 1.25; margin-top: 2px;">' + info.title + '</div>',
       '    <div style="font-size: 13.5px; font-weight: 600; color: #34d399; line-height: 1.35; margin-top: 2px;">' + (info.hindiTitle || info.hindi) + '</div>',
