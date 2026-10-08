@@ -4,6 +4,9 @@
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-scanner.js
+ * DUAL-FOLDER REFS:
+ *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
+ *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
  */
 
 (function () {
@@ -54,6 +57,7 @@
       el.classList.add('sivme-badge-anchor');
       el.classList.toggle('sivme-ghost-live', isVis);
       el.classList.toggle('sivme-ghost-dormant', !isVis);
+      el.style.setProperty('opacity', '1', 'important');
       ext.mountInlineBadge(el, urn, isVis, label);
 
       if (el.getAttribute('data-sivme-tap-bound') !== 'true') {
@@ -132,16 +136,27 @@
         var labelEl = cCard.querySelector('.font-bold') || cCard;
         var label = core.cleanText(labelEl) || ('Category ' + num);
         auditElement(cCard, 'rm:cat:' + (num.length === 1 ? '0' + num : num), label, isAuth);
+      } else if (num === '16') {
+        // Enforce single anchor: C16 outer container NEVER gets outlines or badges
+        cCard.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
+        cCard.style.removeProperty('outline');
+        cCard.querySelectorAll(':scope > .sivme-notch-pill, :scope > .sivme-live-notch, :scope > .sivme-inline-badge').forEach(function (n) { n.remove(); });
       }
     });
 
     // 6. Universal Catalog Sub-Cards
+    var subC16 = document.getElementById('sub-c16');
+    var isSubC16Open = subC16 && !subC16.classList.contains('hidden') && subC16.style.display !== 'none';
     document.querySelectorAll('#categoryModal .sivme-subcat-card[data-sivme-urn]').forEach(function (sub) {
       var urn = sub.getAttribute('data-sivme-urn') || '';
       if (urn && urn.indexOf('rm:cat:16') === -1) {
         var sLabelEl = sub.querySelector('span.font-bold') || sub;
         var sLabel = core.cleanText(sLabelEl) || urn;
         auditElement(sub, urn, sLabel, isAuth);
+      } else if (urn && urn.indexOf('rm:cat:16') !== -1 && !isSubC16Open) {
+        sub.querySelectorAll('.sivme-notch-pill, .sivme-live-notch, .sivme-inline-badge').forEach(function (n) { n.remove(); });
+        sub.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
+        sub.style.removeProperty('outline');
       }
     });
 
@@ -255,7 +270,7 @@
       }
     }
 
-    // 2. Persist across registries
+    // 2. Persist across all local storage structures
     if (ext.persistToggle) {
       ext.persistToggle(urn, nextVis, label, core);
     } else {
