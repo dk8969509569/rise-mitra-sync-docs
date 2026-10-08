@@ -24,7 +24,7 @@
   }
 
   // ==============================================================================
-  // 1. UNIVERSAL ANTI-OVERLAP, SAFE SPACING & MODAL UNCLIPPED SHIELD
+  // 1. UNIVERSAL ANTI-OVERLAP, STACKING ISOLATION & MODAL ACTIVE SHIELD
   // ==============================================================================
   (function injectSpacingShield() {
     var styleId = 'sivme-universal-spacing-shield';
@@ -32,46 +32,77 @@
     var st = document.createElement('style');
     st.id = styleId;
     st.textContent = [
-      '/* 1. Modal Stacking & Universal Visible Notches */',
-      '#categoryModal, #rm-fullscreen-view, div[id*="Modal"], div[id*="modal"] { z-index: 99990 !important; }',
-      '#categoryModal div, #categoryModal section, #tier1-list, #tier2-list { overflow: visible !important; }',
-      'body.sivme-modal-active #verticalTilesGrid .sivme-notch-pill,',
-      'body.sivme-modal-active .wallet-card .sivme-notch-pill,',
-      'body.sivme-modal-active #cat-menu-btn .sivme-notch-pill,',
-      'body.sivme-modal-active .sivme-search-container .sivme-notch-pill { display: none !important; visibility: hidden !important; }',
-      '#categoryModal .sivme-notch-pill, #categoryModal .sivme-live-notch {',
-      '  display: inline-flex !important;',
-      '  visibility: visible !important;',
-      '  opacity: 1 !important;',
-      '  z-index: 100000 !important;',
-      '  position: absolute !important;',
-      '  top: -10px !important;',
-      '  right: 12px !important;',
-      '  pointer-events: auto !important;',
+      '/* 1. Stacking isolation: Confines home screen elements to low z-index */',
+      'main, header {',
+      '  isolation: isolate !important;',
+      '  position: relative !important;',
+      '  z-index: 10 !important;',
+      '}',
+      '#categoryModal, #rm-fullscreen-view, div[id*="Modal"], div[id*="modal"] {',
+      '  z-index: 99990 !important;',
       '}',
       '',
-      '/* 2. Home Widgets Clearance & RM CASH Dedicated Border Notch */',
+      '/* 2. Absolute suppression of background widgets when modal is active */',
+      'body.sivme-modal-active main,',
+      'body.sivme-modal-active header {',
+      '  visibility: hidden !important;',
+      '  pointer-events: none !important;',
+      '}',
+      '',
+      '/* 3. Eliminate duplicate legacy notches */',
+      '.sivme-live-notch { display: none !important; }',
+      '',
+      '/* 4. Home Widgets Clearance & RM CASH Dedicated Border Notch */',
       '#cat-menu-btn { margin-bottom: 20px !important; position: relative !important; overflow: visible !important; }',
       '.sivme-search-container { margin-top: 20px !important; margin-bottom: 22px !important; position: relative !important; overflow: visible !important; }',
       '.wallet-card { margin-top: 24px !important; margin-bottom: 24px !important; position: relative !important; overflow: visible !important; }',
       '.wallet-card .sivme-notch-pill { top: -12px !important; right: 14px !important; z-index: 100 !important; }',
-      '.wallet-card > div:first-child > span:last-child { margin-right: 72px !important; }',
+      '.wallet-card > div:first-child > span:last-child { margin-right: 76px !important; }',
       '',
-      '/* 3. 12 Core Cashflow Verticals Grid Row & Column Clearance */',
+      '/* 5. 12 Core Cashflow Verticals Grid Row & Column Clearance */',
       '#verticalTilesGrid { margin-top: 24px !important; margin-bottom: 24px !important; row-gap: 26px !important; }',
       '#verticalTilesGrid > div { position: relative !important; overflow: visible !important; margin-bottom: 0 !important; }',
       '#verticalTilesGrid > div .sivme-notch-pill { top: -11px !important; right: 4px !important; font-size: 9.5px !important; padding: 1.5px 6px !important; }',
       '',
-      '/* 4. Suppress Unwanted Notch on 12 Verticals Header Bar */',
+      '/* 6. Suppress Unwanted Notch on 12 Verticals Header Bar & Tier Toggles */',
       '.sivme-verticals-header-blocked .sivme-notch-pill,',
+      '#rm-tier1-toggle .sivme-notch-pill,',
+      '#rm-tier2-toggle .sivme-notch-pill,',
       'div:has(> #verticalTilesGrid) > div:first-child .sivme-notch-pill { display: none !important; }',
       '',
-      '/* 5. Universal Catalog Cards Safe Spacing & Typography Shield */',
-      '[data-cat-id], .sivme-cat-card, .sivme-subcat-card { position: relative !important; overflow: visible !important; margin-top: 14px !important; margin-bottom: 20px !important; }',
-      '[data-cat-id] > div:first-child { padding-right: 12px !important; line-height: 1.35 !important; flex: 1 1 auto !important; min-width: 0 !important; }',
+      '/* 7. Universal Catalog Cards Safe Spacing & Typography Shield */',
+      '[data-cat-id], .sivme-cat-card, .sivme-subcat-card {',
+      '  position: relative !important;',
+      '  overflow: visible !important;',
+      '  margin-top: 14px !important;',
+      '  margin-bottom: 20px !important;',
+      '}',
+      '[data-cat-id] > div:first-child {',
+      '  padding-right: 14px !important;',
+      '  line-height: 1.35 !important;',
+      '  flex: 1 1 auto !important;',
+      '  min-width: 0 !important;',
+      '}',
+      '#categoryModal [data-cat-id] > .sivme-notch-pill {',
+      '  position: absolute !important;',
+      '  top: -10px !important;',
+      '  right: 12px !important;',
+      '  z-index: 100 !important;',
+      '}',
       '',
-      '/* 6. Base Authoritative Notch Styles */',
-      '.sivme-notch-pill { position: absolute !important; top: -10px !important; right: 10px !important; z-index: 99 !important; display: inline-flex !important; visibility: visible !important; opacity: 1 !important; white-space: nowrap !important; pointer-events: auto !important; touch-action: manipulation !important; }',
+      '/* 8. Base Authoritative Notch Styles */',
+      '.sivme-notch-pill {',
+      '  position: absolute !important;',
+      '  top: -10px !important;',
+      '  right: 10px !important;',
+      '  z-index: 99 !important;',
+      '  display: inline-flex !important;',
+      '  visibility: visible !important;',
+      '  opacity: 1 !important;',
+      '  white-space: nowrap !important;',
+      '  pointer-events: auto !important;',
+      '  touch-action: manipulation !important;',
+      '}',
       '.sivme-badge-anchor { position: relative !important; overflow: visible !important; }',
       '.sivme-ghost-dormant { outline: 2px dashed #ef4444 !important; outline-offset: 3px !important; opacity: 0.45 !important; }',
       '.sivme-ghost-live { outline: 2px dashed #10b981 !important; outline-offset: 3px !important; opacity: 1 !important; }',
@@ -95,7 +126,7 @@
   // 3. MOUNT SINGLE TOP-RIGHT NOTCH PILL WITH STRICT BARRIER
   // ==============================================================================
   function mountInlineBadge(parentEl, urn, isVisible, label) {
-    var allExisting = parentEl.querySelectorAll(':scope > .sivme-notch-pill, :scope > .sivme-inline-badge');
+    var allExisting = parentEl.querySelectorAll(':scope > .sivme-notch-pill, :scope > .sivme-inline-badge, :scope > .sivme-live-notch');
     for (var i = 1; i < allExisting.length; i++) allExisting[i].remove();
     var badge = allExisting[0] || document.createElement('div');
 
@@ -110,7 +141,7 @@
       : '<span style="color:#ef4444;font-size:10px;line-height:1;">🔴</span> <span style="line-height:1;">Hidden</span> <span style="font-size:9px;opacity:0.8;line-height:1;">⇄</span>';
 
     badge.style.cssText = [
-      'position: absolute !important', 'top: -10px !important', 'right: 10px !important', 'z-index: 100000 !important',
+      'position: absolute !important', 'top: -10px !important', 'right: 10px !important', 'z-index: 100 !important',
       'background: ' + (isVisible ? '#064e3b' : '#7f1d1d') + ' !important',
       'border: 1.5px solid ' + (isVisible ? '#10b981' : '#ef4444') + ' !important',
       'color: ' + (isVisible ? '#34d399' : '#fca5a5') + ' !important',
@@ -144,9 +175,11 @@
     if (!el || el.nodeType !== 1) return true;
     if (!el.classList.contains('wallet-card') && el.closest('.wallet-card')) return true;
 
+    // Block 12 Verticals Header Bar & Tier Toggles from getting badges
     var txt = el.textContent || '';
     if (txt.indexOf('12 CORE CASHFLOW VERTICALS') !== -1 && !el.closest('#verticalTilesGrid')) return true;
     if (txt.indexOf('जुड़ना मुफ़्त') !== -1) return true;
+    if (el.id === 'rm-tier1-toggle' || el.id === 'rm-tier2-toggle' || el.closest('#rm-tier1-toggle') || el.closest('#rm-tier2-toggle')) return true;
 
     return !!(
       el.closest('header') || el.closest('nav') || el.closest('#header-user-avatar') ||
@@ -172,7 +205,7 @@
       c16.classList.toggle('sivme-public-hidden', !isCat16Vis);
       c16.style.display = isCat16Vis ? '' : 'none';
       if (c16Header) {
-        var oldB = c16Header.querySelector(':scope > .sivme-notch-pill, :scope > .sivme-inline-badge');
+        var oldB = c16Header.querySelector(':scope > .sivme-notch-pill, :scope > .sivme-inline-badge, :scope > .sivme-live-notch');
         if (oldB) oldB.remove();
         c16Header.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
       }
@@ -188,7 +221,7 @@
         if (c16Header.getAttribute('data-sivme-toggle-bound') !== 'true') {
           c16Header.setAttribute('data-sivme-toggle-bound', 'true');
           c16Header.addEventListener('click', function (e) {
-            if (e.target.closest('.sivme-notch-pill, .sivme-inline-badge')) return;
+            if (e.target.closest('.sivme-notch-pill, .sivme-inline-badge, .sivme-live-notch')) return;
             var now = Date.now();
             if (now - lastAccordionToggleTime < 350) return;
             lastAccordionToggleTime = now;
@@ -221,7 +254,7 @@
         subCard.addEventListener('click', function (e) {
           if (!core.isConsoleAuthorized()) return;
           var isDormant = subCard.classList.contains('sivme-ghost-dormant');
-          var isBadgeClick = !!e.target.closest('.sivme-notch-pill, .sivme-inline-badge');
+          var isBadgeClick = !!e.target.closest('.sivme-notch-pill, .sivme-inline-badge, .sivme-live-notch');
           if (isDormant || isBadgeClick) {
             if (e.cancelable) e.preventDefault();
             e.stopPropagation();
