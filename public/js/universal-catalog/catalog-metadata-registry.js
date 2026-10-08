@@ -306,7 +306,7 @@
   };
     // Automatic Modular Extension Loader (Loads small batches dynamically)
   var extBatches = [
-    'ext-batch-04-10.js',
+    'ext-batch-01-10.js',
     'ext-batch-11-20.js',
     'ext-batch-21-30.js',
     'ext-batch-31-40.js',
