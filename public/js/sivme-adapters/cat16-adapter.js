@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU ADAPTER: CATEGORY 16 (ISOLATED MODULE)
- * MODULE        : Dedicated House & Home (Cat-16) Pure Isolated Domain Architecture (Zero Duplication)
+ * MODULE        : Dedicated House & Home (Cat-16) Pure Isolated Domain Architecture & Universal Engine Bridge
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sivme-adapters/cat16-adapter.js
@@ -14,14 +14,22 @@
 
   var lastUrnActionTimes = {};
 
-  // Auto-bridge: Ensure universal accordion engine is loaded
-  (function ensureUniversalAccordion() {
-    if (!window.RM_ACCORDION_ENGINE && !document.querySelector('script[src*="universal-accordion-engine.js"]')) {
-      var sc = document.createElement('script');
-      sc.src = 'js/sivme-adapters/universal-accordion-engine.js';
-      sc.async = false;
-      document.head.appendChild(sc);
-    }
+  // Auto-bridge: Ensure all universal engines and registries are auto-loaded
+  (function ensureUniversalScripts() {
+    var dependencies = [
+      'js/sivme-adapters/universal-accordion-engine.js',
+      'js/universal-catalog/catalog-metadata-registry.js',
+      'js/universal-catalog/universal-card-engine.js'
+    ];
+    dependencies.forEach(function (src) {
+      var fileName = src.split('/').pop();
+      if (!document.querySelector('script[src*="' + fileName + '"]')) {
+        var sc = document.createElement('script');
+        sc.src = src;
+        sc.async = false;
+        document.head.appendChild(sc);
+      }
+    });
   })();
 
   function getCore() {
@@ -191,9 +199,13 @@
     if (!existing) headerEl.appendChild(badge);
   }
 
-  // 3. CATEGORY 16 HEADER: PURE MACRO LEVEL (NO REPETITION OF SUBCATEGORIES)
-  function renderPlayStoreCard(headerEl, isOpen) {
+  // 3. PLAY STORE PARENT CARD RENDERING (FALLBACK & ENGINE COMPATIBLE)
+  function renderPlayStoreCardInternal(headerEl, isOpen) {
     if (!headerEl) return;
+    if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard === 'function') {
+      window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard(headerEl, '16', isOpen);
+      return;
+    }
 
     var container = headerEl.querySelector('#c16-playstore-layout');
     if (!container) {
@@ -229,13 +241,13 @@
       '    <div style="font-size: 13px; font-weight: 600; color: #34d399; line-height: 1.3; margin-top: 2px;">घर, आवास व दैनिक व्यवस्थापन केंद्र</div>',
       '  </div>',
       '</div>',
-      '<!-- Row 2: Category Credibility & Trust Markers -->',
+      '<!-- Row 2: Credibility Badges -->',
       '<div style="display: flex; align-items: center; gap: 8px; width: 100%; margin-top: 1px;">',
       '  <span style="font-size: 12px; font-weight: 800; color: #facc15; background: rgba(250, 204, 21, 0.12); border: 1px solid rgba(250, 204, 21, 0.3); padding: 2px 7px; border-radius: 5px; display: inline-flex; align-items: center; gap: 3px;">★ 4.9 रेटिंग</span>',
       '  <span style="font-size: 12px; font-weight: 700; color: #38bdf8; background: rgba(56, 189, 248, 0.14); border: 1px solid rgba(56, 189, 248, 0.35); padding: 2px 8px; border-radius: 5px; display: inline-flex; align-items: center; gap: 3px;">✓ Rise Verified Network</span>',
       '  <span style="font-size: 12px; font-weight: 700; color: #e2e8f0; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); padding: 2px 8px; border-radius: 5px;">24x7 सहायता</span>',
       '</div>',
-      '<!-- Row 3: Pure Macro Category Value Pillars (Zero Sub-card Duplication) -->',
+      '<!-- Row 3: Macro Value Pillars -->',
       '<div style="display: flex; flex-wrap: wrap; gap: 6px; width: 100%; margin-top: 2px;">',
       '  <span style="font-size: 12px; font-weight: 600; padding: 4px 10px; background: #1e293b; color: #93c5fd; border: 1.2px solid #334155; border-radius: 7px;">🏡 संपूर्ण घरेलू समाधान</span>',
       '  <span style="font-size: 12px; font-weight: 600; padding: 4px 10px; background: #1e293b; color: #86efac; border: 1.2px solid #334155; border-radius: 7px;">🛡️ 100% सुरक्षित लेन-देन</span>',
@@ -251,7 +263,7 @@
     ].join('');
   }
 
-  // 4. SUB-CARDS STRICT SINGLE-PURPOSE DICTIONARY (EACH HAS ITS OWN DOMAIN ONLY)
+  // 4. SUB-CARDS DATA REGISTRY (LOCAL BACKUP + ZERO DUPLICATION)
   var SUBCARD_DATA = {
     '16-1': {
       meta: '<span style="color:#facc15;font-weight:800;">★ 4.8</span> • <span>120+ कुशल कारीगर</span> • <span style="color:#34d399;font-weight:700;">⚡ 30 मिनट विज़िट</span>',
@@ -282,15 +294,27 @@
         { text: '👩 गर्ल्स हॉस्टल/PG', bg: 'rgba(244,114,182,0.12)', c: '#f472b6' },
         { text: '👨 बॉयज लॉज', bg: 'rgba(250,204,21,0.12)', c: '#facc15' }
       ],
-      desc: 'बिना किसी ब्रोकर और दलाली के सीधे मकान मालिक से किराए पर कमra या फ्लैट लें। लालपुर, डोरंडा, बरियातू, कांके।'
+      desc: 'बिना किसी ब्रोकर और दलाली के सीधे मकान मालिक से किराए पर कमरा या फ्लैट लें। लालपुर, डोरंडा, बरियातू, कांके।'
     }
   };
 
-  // 5. FILL VOID COMPLETELY & POSITION CONTENT RIGHT UNDER SUBCARD TITLE
-  function enrichSubCardUI(subCard, subId) {
+  // 5. SUB-CARDS RENDERING (DELEGATED + LOCAL VOID-COLLAPSE FALLBACK)
+  function enrichSubCardUIInternal(subCard, subId) {
     if (!subCard) return;
+    if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard === 'function') {
+      window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(subCard, '16', subId);
+      return;
+    }
+
     var info = SUBCARD_DATA[subId];
     if (!info) return;
+
+    subCard.style.setProperty('height', 'auto', 'important');
+    subCard.style.setProperty('min-height', 'auto', 'important');
+    subCard.style.setProperty('display', 'flex', 'important');
+    subCard.style.setProperty('flex-direction', 'column', 'important');
+    subCard.style.setProperty('justify-content', 'flex-start', 'important');
+    subCard.style.setProperty('gap', '10px', 'important');
 
     var old = subCard.querySelector('#subcard-enrich-' + subId);
     if (old) old.remove();
@@ -299,13 +323,10 @@
     enrichDiv.id = 'subcard-enrich-' + subId;
     enrichDiv.style.cssText = [
       'width: 100% !important',
-      'flex: 1 1 auto !important',
       'display: flex !important',
       'flex-direction: column !important',
-      'justify-content: center !important',
       'gap: 8px !important',
       'padding: 10px 12px !important',
-      'margin: 6px 0 8px 0 !important',
       'background: rgba(15, 23, 42, 0.65) !important',
       'border: 1px solid rgba(56, 189, 248, 0.2) !important',
       'border-radius: 10px !important',
@@ -323,10 +344,9 @@
       '<div style="font-size:12px;color:#cbd5e1;line-height:1.4;opacity:0.95;">' + info.desc + '</div>'
     ].join('');
 
-    // Remove any empty spacer elements between title and buttons
     Array.from(subCard.children).forEach(function (ch) {
       if (ch.tagName === 'DIV' && !ch.id && !ch.textContent.trim() && ch !== enrichDiv) {
-        ch.remove();
+        ch.style.display = 'none';
       }
     });
 
@@ -342,8 +362,6 @@
 
     if (bottomButtons && bottomButtons.parentElement === subCard) {
       subCard.insertBefore(enrichDiv, bottomButtons);
-    } else if (subCard.lastElementChild) {
-      subCard.insertBefore(enrichDiv, subCard.lastElementChild);
     } else {
       subCard.appendChild(enrichDiv);
     }
@@ -366,6 +384,8 @@
     var subContainer = document.getElementById('sub-c16');
     var isSubOpen = subContainer && !subContainer.classList.contains('hidden') && subContainer.style.display !== 'none';
 
+    renderPlayStoreCardInternal(c16Header, isSubOpen);
+
     if (!isAuth) {
       c16Container.classList.toggle('sivme-public-hidden', !isCat16Vis);
       c16Container.style.display = isCat16Vis ? '' : 'none';
@@ -373,7 +393,6 @@
         c16Header.querySelectorAll('.sivme-notch-pill, .sivme-inline-badge, .sivme-live-notch').forEach(function (n) { n.remove(); });
         c16Header.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
         c16Header.style.removeProperty('outline');
-        renderPlayStoreCard(c16Header, isSubOpen);
       }
     } else {
       c16Container.classList.remove('sivme-public-hidden');
@@ -387,7 +406,6 @@
         c16Header.style.setProperty('opacity', '1', 'important');
 
         mountCat16AuthoritativeBadge(c16Header, isCat16Vis);
-        renderPlayStoreCard(c16Header, isSubOpen);
 
         if (c16Header.getAttribute('data-sivme-pass-bound') !== 'true') {
           c16Header.setAttribute('data-sivme-pass-bound', 'true');
@@ -413,7 +431,7 @@
       var subLabelEl = subCard.querySelector('.text-xs') || subCard;
       var subLabel = subLabelEl ? subLabelEl.textContent.trim() : (subId + ' सेवा');
 
-      enrichSubCardUI(subCard, subId);
+      enrichSubCardUIInternal(subCard, subId);
 
       if (!isSubOpen || !isAuth) {
         subCard.querySelectorAll('.sivme-notch-pill, .sivme-live-notch, .sivme-inline-badge').forEach(function (n) { n.remove(); });
