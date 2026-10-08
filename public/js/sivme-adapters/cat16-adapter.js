@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU ADAPTER: CATEGORY 16 (ISOLATED MODULE)
- * MODULE        : Dedicated House & Home (Cat-16) Accordion, Sub-Cards & Filter Controller
+ * MODULE        : Dedicated House & Home (Cat-16) Controller & Universal Engine Bridge
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sivme-adapters/cat16-adapter.js
@@ -14,6 +14,16 @@
 
   var lastAccordionToggleTime = 0;
   var lastUrnActionTimes = {};
+
+  // Auto-bridge: Ensure universal accordion engine is loaded
+  (function ensureUniversalAccordion() {
+    if (!window.RM_ACCORDION_ENGINE && !document.querySelector('script[src*="universal-accordion-engine.js"]')) {
+      var sc = document.createElement('script');
+      sc.src = 'js/sivme-adapters/universal-accordion-engine.js';
+      sc.async = false;
+      document.head.appendChild(sc);
+    }
+  })();
 
   function getCore() {
     return window.RM_SIVME || {
@@ -41,7 +51,6 @@
           core.setUrnVisibility(su, nextVis);
         });
       } else if (urn.indexOf('rm:cat:16:sub:') === 0 && nextVis === true) {
-        // Child wake-up automatically ensures parent Category 16 is live
         core.setUrnVisibility('rm:cat:16', true, 'घर व मकान (House & Home)');
       }
       core.setUrnVisibility(urn, nextVis, label);
@@ -96,7 +105,7 @@
     }
   }
 
-  // 2. MOUNT SINGLE AUTHORITATIVE NOTCH PILL FOR CAT 16 HEADER
+  // 2. MOUNT SINGLE AUTHORITATIVE NOTCH PILL FOR CAT 16 HEADER ONLY
   function mountCat16AuthoritativeBadge(headerEl, isVisible) {
     if (!headerEl) return;
 
@@ -183,12 +192,13 @@
     if (!existing) headerEl.appendChild(badge);
   }
 
-  // 3. AUDIT CATEGORY 16 ACCORDION & SUB-CARDS (UNFROZEN ACCORDION & DIRECT TOGGLE)
+  // 3. AUDIT CATEGORY 16 (DECOUPLED NATIVE PASS-THROUGH)
   function auditCat16Complete(isAuth, auditElementFn) {
     var core = getCore();
     var c16Container = document.querySelector('#categoryModal [data-cat-id="c16"], #categoryModal [data-cat-id="16"]');
     if (!c16Container) return;
 
+    // Hard-lock: Outer container NEVER gets an outline or badge
     c16Container.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
     c16Container.style.setProperty('outline', 'none', 'important');
     c16Container.querySelectorAll(':scope > .sivme-notch-pill, :scope > .sivme-live-notch, :scope > .sivme-inline-badge').forEach(function (n) {
@@ -219,37 +229,25 @@
 
         mountCat16AuthoritativeBadge(c16Header, isCat16Vis);
 
-        // Reliable 1-Tap Accordion Toggle & Clean Display Removal
-        if (c16Header.getAttribute('data-sivme-accordion-bound') !== 'true') {
-          c16Header.setAttribute('data-sivme-accordion-bound', 'true');
+        // Native Pass-Through: Strip conflicting inline style without hijacking accordion toggle
+        if (c16Header.getAttribute('data-sivme-pass-bound') !== 'true') {
+          c16Header.setAttribute('data-sivme-pass-bound', 'true');
           c16Header.addEventListener('click', function (e) {
             if (e.target.closest('.sivme-notch-pill, #sivme-c16-authoritative-badge')) return;
-
             var sub = document.getElementById('sub-c16');
-            if (!sub) return;
-
-            var now = Date.now();
-            if (now - lastAccordionToggleTime < 280) return;
-            lastAccordionToggleTime = now;
-
-            // Strip conflicting inline style so Tailwind class controls state cleanly
-            sub.style.removeProperty('display');
-
-            var isCurrentlyHidden = sub.classList.contains('hidden');
-            sub.classList.toggle('hidden', !isCurrentlyHidden);
-
-            var chevron = c16Header.querySelector('.acc-arrow');
-            if (chevron) chevron.textContent = isCurrentlyHidden ? '▲' : '▼';
-
+            if (sub) {
+              sub.style.removeProperty('display');
+            }
             if (window.RM_SIVME && typeof window.RM_SIVME.applyInSituAudit === 'function') {
-              setTimeout(window.RM_SIVME.applyInSituAudit, 40);
+              setTimeout(window.RM_SIVME.applyInSituAudit, 60);
+              setTimeout(window.RM_SIVME.applyInSituAudit, 250);
             }
           }, false);
         }
       }
     }
 
-    // Sub-cards handling
+    // Sub-cards handling: Controlled strictly by open/closed state
     var subContainer = document.getElementById('sub-c16');
     var isSubOpen = subContainer && !subContainer.classList.contains('hidden') && subContainer.style.display !== 'none';
 
