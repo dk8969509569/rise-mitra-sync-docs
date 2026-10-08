@@ -1,12 +1,12 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU SCANNER EXTENSION (CHILD MODULE)
- * MODULE        : UI Shield, 50-Cat Touch Scroll, Instant 1-Tap Toggle & Category-16 Accordion
+ * MODULE        : UI Shield, 50-Cat Touch Scroll, Deep Badge Purge & Category-16 Accordion
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-scanner-ext.js
  * DUAL-FOLDER REFS:
- *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
- *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
+ *   Folder A (Master Document SSOT)
+ *   Folder B (GitHub Mirror)
  */
 
 (function () {
@@ -75,13 +75,12 @@
       '  pointer-events: none !important;',
       '}',
       '',
-      '/* 3. Authoritative Top-Right Notch with 44px Safe Touch Target */',
-      '#categoryModal [data-cat-id] > .sivme-notch-pill,',
-      '.sivme-subcat-card > .sivme-notch-pill,',
+      '/* 3. Strict Top-Right Notch with 44px Safe Touch Target (Never Left, Never Stacked) */',
       '.sivme-notch-pill {',
       '  position: absolute !important;',
       '  top: -11px !important;',
       '  right: 12px !important;',
+      '  left: auto !important;',
       '  z-index: 100 !important;',
       '  display: inline-flex !important;',
       '  visibility: visible !important;',
@@ -104,25 +103,46 @@
       '  z-index: 1 !important;',
       '}',
       '',
-      '/* 4. Home Widgets Clearance & RM CASH Dedicated Border Notch */',
+      '/* 4. Complete Isolation of Collapsed Accordion Sub-Cards (Permanent Zero-Leak) */',
+      '#categoryModal [id^="sub-"].hidden,',
+      '#categoryModal [id^="sub-"][style*="display: none"] {',
+      '  display: none !important;',
+      '  height: 0 !important;',
+      '  max-height: 0 !important;',
+      '  overflow: hidden !important;',
+      '  visibility: hidden !important;',
+      '  pointer-events: none !important;',
+      '}',
+      '#categoryModal [id^="sub-"].hidden *,',
+      '#categoryModal [id^="sub-"][style*="display: none"] * {',
+      '  display: none !important;',
+      '  visibility: hidden !important;',
+      '  pointer-events: none !important;',
+      '  outline: none !important;',
+      '}',
+      '',
+      '/* 5. Home Widgets Clearance & RM CASH Dedicated Border Notch */',
       '#cat-menu-btn { margin-bottom: 20px !important; position: relative !important; overflow: visible !important; }',
       '.sivme-search-container { margin-top: 20px !important; margin-bottom: 22px !important; position: relative !important; overflow: visible !important; }',
       '.wallet-card { margin-top: 24px !important; margin-bottom: 24px !important; position: relative !important; overflow: visible !important; }',
       '.wallet-card .sivme-notch-pill { top: -12px !important; right: 14px !important; z-index: 100 !important; }',
       '.wallet-card > div:first-child > span:last-child { margin-right: 76px !important; }',
       '',
-      '/* 5. 12 Core Cashflow Verticals Grid Row & Column Clearance */',
+      '/* 6. 12 Core Cashflow Verticals Grid Row & Column Clearance */',
       '#verticalTilesGrid { margin-top: 24px !important; margin-bottom: 24px !important; row-gap: 26px !important; }',
       '#verticalTilesGrid > div { position: relative !important; overflow: visible !important; margin-bottom: 0 !important; }',
       '#verticalTilesGrid > div .sivme-notch-pill { top: -11px !important; right: 4px !important; font-size: 9.5px !important; padding: 1.5px 6px !important; }',
       '',
-      '/* 6. Suppress Unwanted Notch on 12 Verticals Header Bar & Tier Toggles */',
+      '/* 7. Suppress Unwanted Notch on Headers and Outer C16 Container */',
       '.sivme-verticals-header-blocked .sivme-notch-pill,',
       '#rm-tier1-toggle .sivme-notch-pill,',
       '#rm-tier2-toggle .sivme-notch-pill,',
+      '#categoryModal [data-cat-id="c16"] > .sivme-notch-pill,',
+      '#categoryModal [data-cat-id="c16"] > .sivme-live-notch,',
       'div:has(> #verticalTilesGrid) > div:first-child .sivme-notch-pill { display: none !important; }',
+      '#categoryModal [data-cat-id="c16"] { outline: none !important; }',
       '',
-      '/* 7. Universal Catalog Cards Safe Spacing & Typography Shield */',
+      '/* 8. Universal Catalog Cards Safe Spacing & Typography Shield */',
       '[data-cat-id], .sivme-cat-card, .sivme-subcat-card {',
       '  position: relative !important;',
       '  overflow: visible !important;',
@@ -136,7 +156,7 @@
       '  min-width: 0 !important;',
       '}',
       '',
-      '/* 8. Vibrant Dashed Borders (100% Unfaded Visibility) */',
+      '/* 9. Vibrant Dashed Borders (100% Unfaded Visibility) */',
       '.sivme-badge-anchor { position: relative !important; overflow: visible !important; }',
       '.sivme-ghost-live, .is-live {',
       '  outline: 2.5px dashed #10b981 !important;',
@@ -232,14 +252,27 @@
   }
 
   // ==============================================================================
-  // 3. MOUNT SINGLE TOP-RIGHT NOTCH PILL WITH DIRECT 1-TAP ACTION
+  // 3. MOUNT SINGLE TOP-RIGHT NOTCH PILL (DEEP PURGE & 1-TAP INSTANT TOGGLE)
   // ==============================================================================
   function mountInlineBadge(parentEl, urn, isVisible, label) {
-    parentEl.querySelectorAll(':scope > .sivme-live-notch, :scope > .sivme-inline-badge').forEach(function (n) { n.remove(); });
-    var allExisting = parentEl.querySelectorAll(':scope > .sivme-notch-pill');
-    for (var i = 1; i < allExisting.length; i++) allExisting[i].remove();
-    var badge = allExisting[0] || document.createElement('div');
+    if (!parentEl) return;
 
+    // Deep purge: Remove ALL existing badges anywhere inside parentEl
+    parentEl.querySelectorAll('.sivme-notch-pill, .sivme-live-notch, .sivme-inline-badge').forEach(function (n) {
+      n.remove();
+    });
+
+    // Outer container purge: If parent is inside c16, clean up c16 outer element too
+    var outerCard = parentEl.closest('[data-cat-id="c16"]');
+    if (outerCard && outerCard !== parentEl) {
+      outerCard.querySelectorAll(':scope > .sivme-notch-pill, :scope > .sivme-live-notch, :scope > .sivme-inline-badge').forEach(function (n) {
+        n.remove();
+      });
+      outerCard.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
+      outerCard.style.removeProperty('outline');
+    }
+
+    var badge = document.createElement('div');
     badge.className = 'sivme-notch-pill ' + (isVisible ? 'sivme-badge-live' : 'sivme-badge-dormant');
     badge.setAttribute('data-badge-urn', urn);
     badge.setAttribute('data-target-urn', urn);
@@ -253,7 +286,7 @@
     badge.innerHTML = targetHtml;
 
     badge.style.cssText = [
-      'position: absolute !important', 'top: -11px !important', 'right: 12px !important', 'z-index: 100 !important',
+      'position: absolute !important', 'top: -11px !important', 'right: 12px !important', 'left: auto !important', 'z-index: 100 !important',
       'background: ' + (isVisible ? '#064e3b' : '#7f1d1d') + ' !important',
       'border: 1.5px solid ' + (isVisible ? '#10b981' : '#ff4d4d') + ' !important',
       'color: ' + (isVisible ? '#34d399' : '#fca5a5') + ' !important',
@@ -267,8 +300,8 @@
       'line-height: 1 !important', 'white-space: nowrap !important'
     ].join(';');
 
-    // Dedicated 1-Tap Instant Handler
-    var handleFastToggle = function (ev) {
+    // 1-Tap Instant Toggle Handler with Safe Debounce
+    badge.onclick = function (ev) {
       if (ev) {
         if (ev.cancelable) ev.preventDefault();
         ev.stopPropagation();
@@ -277,6 +310,10 @@
 
       var core = getCore();
       if (!core.isConsoleAuthorized()) return;
+
+      var now = Date.now();
+      if (now - (lastUrnActionTimes[urn] || 0) < 250) return;
+      lastUrnActionTimes[urn] = now;
 
       var currentVis = isVisible;
       if (core.getUrnVisibility) {
@@ -320,13 +357,11 @@
       }
     };
 
-    badge.onclick = handleFastToggle;
-
     parentEl.style.setProperty('overflow', 'visible', 'important');
     if (window.getComputedStyle(parentEl).position === 'static') {
       parentEl.style.setProperty('position', 'relative', 'important');
     }
-    if (!allExisting[0]) parentEl.appendChild(badge);
+    parentEl.appendChild(badge);
   }
 
   // ==============================================================================
@@ -356,12 +391,20 @@
   }
 
   // ==============================================================================
-  // 5. CATEGORY 16 ACCORDION CONTROLLER
+  // 5. CATEGORY 16 ACCORDION CONTROLLER (STRICT SINGLE ANCHOR ON HEADER ONLY)
   // ==============================================================================
   function auditCategory16Accordion(isAuth, auditElementFn, applyAuditFn) {
     var core = getCore();
     var c16 = document.querySelector('#categoryModal [data-cat-id="c16"]');
     if (!c16) return;
+
+    // Strict Rule: Outer c16 container NEVER gets a badge or outline
+    c16.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
+    c16.style.removeProperty('outline');
+    c16.querySelectorAll(':scope > .sivme-notch-pill, :scope > .sivme-live-notch, :scope > .sivme-inline-badge').forEach(function (n) {
+      n.remove();
+    });
+
     var c16Header = c16.querySelector(':scope > div:first-child');
     var isCat16Vis = core.getUrnVisibility('rm:cat:16');
 
@@ -369,8 +412,7 @@
       c16.classList.toggle('sivme-public-hidden', !isCat16Vis);
       c16.style.display = isCat16Vis ? '' : 'none';
       if (c16Header) {
-        var oldB = c16Header.querySelector(':scope > .sivme-notch-pill, :scope > .sivme-inline-badge');
-        if (oldB) oldB.remove();
+        c16Header.querySelectorAll('.sivme-notch-pill, .sivme-inline-badge, .sivme-live-notch').forEach(function (n) { n.remove(); });
         c16Header.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
       }
     } else {
@@ -385,7 +427,7 @@
         if (c16Header.getAttribute('data-sivme-toggle-bound') !== 'true') {
           c16Header.setAttribute('data-sivme-toggle-bound', 'true');
           c16Header.addEventListener('click', function (e) {
-            if (e.target.closest('.sivme-notch-pill, .sivme-inline-badge')) return;
+            if (e.target.closest('.sivme-notch-pill, .sivme-inline-badge, .sivme-live-notch')) return;
             var now = Date.now();
             if (now - lastAccordionToggleTime < 350) return;
             lastAccordionToggleTime = now;
@@ -407,10 +449,21 @@
   // ==============================================================================
   function auditSub16Cards(isAuth, auditElementFn, applyAuditFn) {
     var core = getCore();
+    var sub = document.getElementById('sub-c16');
+    var isSubOpen = sub && !sub.classList.contains('hidden') && sub.style.display !== 'none';
+
     document.querySelectorAll('#sub-c16 > div').forEach(function (subCard, idx) {
       var subUrn = 'rm:cat:16:sub:16-' + (idx + 1);
       var subLabelEl = subCard.querySelector('.text-xs') || subCard;
       var subLabel = subLabelEl ? subLabelEl.textContent.trim() : ('16-' + (idx + 1) + ' सेवा');
+
+      if (!isSubOpen) {
+        subCard.querySelectorAll('.sivme-notch-pill, .sivme-live-notch, .sivme-inline-badge').forEach(function (n) { n.remove(); });
+        subCard.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
+        subCard.style.removeProperty('outline');
+        return;
+      }
+
       auditElementFn(subCard, subUrn, subLabel, isAuth);
 
       if (subCard.getAttribute('data-sivme-sub-bound') !== 'true') {
