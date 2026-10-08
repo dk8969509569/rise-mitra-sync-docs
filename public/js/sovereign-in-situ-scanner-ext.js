@@ -5,8 +5,8 @@
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-scanner-ext.js
  * DUAL-FOLDER REFS:
- *   Folder A (Master Document SSOT)
- *   Folder B (GitHub Mirror)
+ *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
+ *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
  */
 
 (function () {
@@ -75,13 +75,13 @@
       '  pointer-events: none !important;',
       '}',
       '',
-      '/* 3. Strict Top-Right Notch with 44px Safe Touch Target (Never Left, Never Stacked) */',
+      '/* 3. Strict Top-Right Notch with 44px Safe Touch Target */',
       '.sivme-notch-pill {',
       '  position: absolute !important;',
       '  top: -11px !important;',
       '  right: 12px !important;',
       '  left: auto !important;',
-      '  z-index: 100 !important;',
+      '  z-index: 50 !important;',
       '  display: inline-flex !important;',
       '  visibility: visible !important;',
       '  opacity: 1 !important;',
@@ -103,29 +103,41 @@
       '  z-index: 1 !important;',
       '}',
       '',
-      '/* 4. Complete Isolation of Collapsed Accordion Sub-Cards (Permanent Zero-Leak) */',
-      '#categoryModal [id^="sub-"].hidden,',
-      '#categoryModal [id^="sub-"][style*="display: none"] {',
+      '/* 4. Complete Isolation of Sub-Cards (Permanent Anti-Overlap Shield) */',
+      '#categoryModal [data-cat-id="c16"] {',
+      '  outline: none !important;',
+      '  position: relative !important;',
+      '}',
+      '#categoryModal [data-cat-id="c16"] > .sivme-notch-pill,',
+      '#categoryModal [data-cat-id="c16"] > .sivme-live-notch {',
+      '  display: none !important;',
+      '}',
+      '#sub-c16 {',
+      '  position: relative !important;',
+      '  overflow: visible !important;',
+      '  margin-top: 14px !important;',
+      '}',
+      '#sub-c16 > div {',
+      '  position: relative !important;',
+      '  overflow: visible !important;',
+      '  min-height: 80px !important;',
+      '  margin-top: 14px !important;',
+      '  margin-bottom: 14px !important;',
+      '}',
+      '#sub-c16.hidden, #sub-c16[style*="display: none"] {',
       '  display: none !important;',
       '  height: 0 !important;',
-      '  max-height: 0 !important;',
-      '  overflow: hidden !important;',
       '  visibility: hidden !important;',
-      '  pointer-events: none !important;',
       '}',
-      '#categoryModal [id^="sub-"].hidden *,',
-      '#categoryModal [id^="sub-"][style*="display: none"] * {',
+      '#sub-c16.hidden .sivme-notch-pill, #sub-c16[style*="display: none"] .sivme-notch-pill {',
       '  display: none !important;',
-      '  visibility: hidden !important;',
-      '  pointer-events: none !important;',
-      '  outline: none !important;',
       '}',
       '',
       '/* 5. Home Widgets Clearance & RM CASH Dedicated Border Notch */',
       '#cat-menu-btn { margin-bottom: 20px !important; position: relative !important; overflow: visible !important; }',
       '.sivme-search-container { margin-top: 20px !important; margin-bottom: 22px !important; position: relative !important; overflow: visible !important; }',
       '.wallet-card { margin-top: 24px !important; margin-bottom: 24px !important; position: relative !important; overflow: visible !important; }',
-      '.wallet-card .sivme-notch-pill { top: -12px !important; right: 14px !important; z-index: 100 !important; }',
+      '.wallet-card .sivme-notch-pill { top: -12px !important; right: 14px !important; z-index: 50 !important; }',
       '.wallet-card > div:first-child > span:last-child { margin-right: 76px !important; }',
       '',
       '/* 6. 12 Core Cashflow Verticals Grid Row & Column Clearance */',
@@ -133,14 +145,11 @@
       '#verticalTilesGrid > div { position: relative !important; overflow: visible !important; margin-bottom: 0 !important; }',
       '#verticalTilesGrid > div .sivme-notch-pill { top: -11px !important; right: 4px !important; font-size: 9.5px !important; padding: 1.5px 6px !important; }',
       '',
-      '/* 7. Suppress Unwanted Notch on Headers and Outer C16 Container */',
+      '/* 7. Suppress Unwanted Notch on Headers */',
       '.sivme-verticals-header-blocked .sivme-notch-pill,',
       '#rm-tier1-toggle .sivme-notch-pill,',
       '#rm-tier2-toggle .sivme-notch-pill,',
-      '#categoryModal [data-cat-id="c16"] > .sivme-notch-pill,',
-      '#categoryModal [data-cat-id="c16"] > .sivme-live-notch,',
       'div:has(> #verticalTilesGrid) > div:first-child .sivme-notch-pill { display: none !important; }',
-      '#categoryModal [data-cat-id="c16"] { outline: none !important; }',
       '',
       '/* 8. Universal Catalog Cards Safe Spacing & Typography Shield */',
       '[data-cat-id], .sivme-cat-card, .sivme-subcat-card {',
@@ -252,25 +261,18 @@
   }
 
   // ==============================================================================
-  // 3. MOUNT SINGLE TOP-RIGHT NOTCH PILL (DEEP PURGE & 1-TAP INSTANT TOGGLE)
+  // 3. MOUNT SINGLE TOP-RIGHT NOTCH PILL (DEEP PURGE & SINGLE ANCHOR)
   // ==============================================================================
   function mountInlineBadge(parentEl, urn, isVisible, label) {
     if (!parentEl) return;
+
+    // Never attach badge to Category 16 outer container
+    if (parentEl.getAttribute('data-cat-id') === 'c16') return;
 
     // Deep purge: Remove ALL existing badges anywhere inside parentEl
     parentEl.querySelectorAll('.sivme-notch-pill, .sivme-live-notch, .sivme-inline-badge').forEach(function (n) {
       n.remove();
     });
-
-    // Outer container purge: If parent is inside c16, clean up c16 outer element too
-    var outerCard = parentEl.closest('[data-cat-id="c16"]');
-    if (outerCard && outerCard !== parentEl) {
-      outerCard.querySelectorAll(':scope > .sivme-notch-pill, :scope > .sivme-live-notch, :scope > .sivme-inline-badge').forEach(function (n) {
-        n.remove();
-      });
-      outerCard.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
-      outerCard.style.removeProperty('outline');
-    }
 
     var badge = document.createElement('div');
     badge.className = 'sivme-notch-pill ' + (isVisible ? 'sivme-badge-live' : 'sivme-badge-dormant');
@@ -286,7 +288,7 @@
     badge.innerHTML = targetHtml;
 
     badge.style.cssText = [
-      'position: absolute !important', 'top: -11px !important', 'right: 12px !important', 'left: auto !important', 'z-index: 100 !important',
+      'position: absolute !important', 'top: -11px !important', 'right: 12px !important', 'left: auto !important', 'z-index: 50 !important',
       'background: ' + (isVisible ? '#064e3b' : '#7f1d1d') + ' !important',
       'border: 1.5px solid ' + (isVisible ? '#10b981' : '#ff4d4d') + ' !important',
       'color: ' + (isVisible ? '#34d399' : '#fca5a5') + ' !important',
@@ -422,6 +424,9 @@
         c16Header.classList.add('sivme-badge-anchor');
         c16Header.classList.toggle('sivme-ghost-live', isCat16Vis);
         c16Header.classList.toggle('sivme-ghost-dormant', !isCat16Vis);
+        c16Header.style.setProperty('outline', '2.5px dashed ' + (isCat16Vis ? '#10b981' : '#ff3838'), 'important');
+        c16Header.style.setProperty('outline-offset', '3px', 'important');
+        c16Header.style.setProperty('opacity', '1', 'important');
         mountInlineBadge(c16Header, 'rm:cat:16', isCat16Vis, 'घर व मकान (House & Home)');
 
         if (c16Header.getAttribute('data-sivme-toggle-bound') !== 'true') {
@@ -445,7 +450,7 @@
   }
 
   // ==============================================================================
-  // 6. CATEGORY 16 SUB-CARDS CONTROLLER
+  // 6. CATEGORY 16 SUB-CARDS CONTROLLER (CONTAINED IN #SUB-C16)
   // ==============================================================================
   function auditSub16Cards(isAuth, auditElementFn, applyAuditFn) {
     var core = getCore();
