@@ -1,12 +1,9 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU SCANNER EXTENSION (CHILD MODULE)
- * MODULE        : UI Shield, Interactive Notches & Category-16 Accordion
+ * MODULE        : UI Shield, Anti-Overlap Spacing, Interactive Notches & Category-16 Accordion
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-scanner-ext.js
- * DUAL-FOLDER REFS:
- *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
- *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
  */
 
 (function () {
@@ -23,13 +20,16 @@
     };
   }
 
-  // 1. UNIVERSAL ANTI-CLIPPING, STACKING ISOLATION & SAFE 16px SPACING SHIELD
+  // ==============================================================================
+  // 1. UNIVERSAL ANTI-OVERLAP, SAFE 26px GRID SPACING & STACKING SHIELD
+  // ==============================================================================
   (function injectSpacingShield() {
     var styleId = 'sivme-universal-spacing-shield';
     if (document.getElementById(styleId)) return;
     var st = document.createElement('style');
     st.id = styleId;
     st.textContent = [
+      '/* 1. Modal Stacking isolation */',
       '#categoryModal, #rm-fullscreen-view, div[id*="Modal"], div[id*="modal"] { z-index: 99990 !important; }',
       'body.sivme-modal-active #verticalTilesGrid .sivme-notch-pill,',
       'body.sivme-modal-active .wallet-card .sivme-notch-pill,',
@@ -37,8 +37,27 @@
       'body.sivme-modal-active .sivme-search-container .sivme-notch-pill { display: none !important; visibility: hidden !important; }',
       '#categoryModal .sivme-notch-pill { display: inline-flex !important; visibility: visible !important; opacity: 1 !important; z-index: 100000 !important; }',
       '#categoryModal .sivme-live-notch, .sivme-live-notch { display: none !important; }',
-      '[data-cat-id], .sivme-cat-card, .sivme-subcat-card, #verticalTilesGrid > div, .wallet-card { position: relative !important; overflow: visible !important; margin-bottom: 16px !important; }',
+      '',
+      '/* 2. Anti-Overlap Safe Distances on Home Widgets */',
+      '#cat-menu-btn { margin-bottom: 20px !important; position: relative !important; overflow: visible !important; }',
+      '.sivme-search-container { margin-top: 20px !important; margin-bottom: 22px !important; position: relative !important; overflow: visible !important; }',
+      '.wallet-card { margin-top: 22px !important; margin-bottom: 24px !important; position: relative !important; overflow: visible !important; }',
+      '.wallet-card .sivme-notch-pill { top: -12px !important; right: 12px !important; }',
+      '',
+      '/* 3. 12 Core Cashflow Verticals Grid Row & Column Clearance */',
+      '#verticalTilesGrid { margin-top: 24px !important; margin-bottom: 24px !important; row-gap: 26px !important; }',
+      '#verticalTilesGrid > div { position: relative !important; overflow: visible !important; margin-bottom: 0 !important; }',
+      '#verticalTilesGrid > div .sivme-notch-pill { top: -11px !important; right: 4px !important; font-size: 9.5px !important; padding: 1.5px 6px !important; }',
+      '',
+      '/* 4. Suppress Unwanted Notch on 12 Verticals Header Bar */',
+      '.sivme-verticals-header-blocked .sivme-notch-pill,',
+      'div:has(> #verticalTilesGrid) > div:first-child .sivme-notch-pill { display: none !important; }',
+      '',
+      '/* 5. Universal Catalog Cards Safe 20px Spacing & Right Clearance */',
+      '[data-cat-id], .sivme-cat-card, .sivme-subcat-card { position: relative !important; overflow: visible !important; margin-bottom: 20px !important; }',
       '[data-cat-id] > div:first-child { padding-right: 85px !important; line-height: 1.4 !important; }',
+      '',
+      '/* 6. Base Authoritative Notch Styles */',
       '.sivme-notch-pill { position: absolute !important; top: -10px !important; right: 10px !important; z-index: 99 !important; display: inline-flex !important; visibility: visible !important; opacity: 1 !important; white-space: nowrap !important; pointer-events: auto !important; touch-action: manipulation !important; }',
       '.sivme-badge-anchor { position: relative !important; overflow: visible !important; }',
       '.sivme-ghost-dormant { outline: 2px dashed #ef4444 !important; outline-offset: 3px !important; opacity: 0.45 !important; }',
@@ -48,7 +67,9 @@
     document.head.appendChild(st);
   })();
 
+  // ==============================================================================
   // 2. 16-3 DYNAMIC FILTERS URN SELECTORS CONTRACT
+  // ==============================================================================
   var URN_SELECTORS = [
     { urn: 'rm:cat:16:sub:16-3:elem:smart_omnibox', selector: '#rm-search-locality, #smartOmniboxGroup, #smartOmnibox, input[placeholder*="लालपुर"], input[placeholder*="8340"]', label: 'स्मार्ट खोज' },
     { urn: 'rm:cat:16:sub:16-3:elem:state_filter', selector: '#rm-cat16-search-state, #stateFilterGroup, #stateFilter, select[id*="state"]', label: 'राज्य फ़िल्टर' },
@@ -57,7 +78,9 @@
     { urn: 'rm:cat:16:sub:16-3:elem:submeter_checkbox', selector: '#rm-search-submeter, #submeterFilterGroup, input[type="checkbox"]', label: 'सब-मीटर फ़िल्टर' }
   ];
 
+  // ==============================================================================
   // 3. MOUNT SINGLE TOP-RIGHT NOTCH PILL WITH STRICT BARRIER
+  // ==============================================================================
   function mountInlineBadge(parentEl, urn, isVisible, label) {
     var allExisting = parentEl.querySelectorAll(':scope > .sivme-notch-pill, :scope > .sivme-inline-badge, :scope > .sivme-live-notch');
     for (var i = 1; i < allExisting.length; i++) allExisting[i].remove();
@@ -101,22 +124,31 @@
     if (!allExisting[0]) parentEl.appendChild(badge);
   }
 
+  // ==============================================================================
   // 4. STRICT SYSTEM SHELL DENYLIST
+  // ==============================================================================
   function isSystemShellElement(el) {
     if (!el || el.nodeType !== 1) return true;
     if (!el.classList.contains('wallet-card') && el.closest('.wallet-card')) return true;
+
+    // Block 12 Verticals Header Bar from getting badges
+    var txt = el.textContent || '';
+    if (txt.indexOf('12 CORE CASHFLOW VERTICALS') !== -1 && !el.closest('#verticalTilesGrid')) return true;
+    if (txt.indexOf('जुड़ना मुफ़्त') !== -1) return true;
+
     return !!(
       el.closest('header') || el.closest('nav') || el.closest('#header-user-avatar') ||
       (el.closest('[onclick*="toggleMenuDrawer"]') && el.id !== 'cat-menu-btn') ||
       el.closest('[onclick*="closeFullscreenModule"]') || el.closest('#playStoreInstallBanner') ||
       el.closest('#sivmeFloatingDock') || el.closest('#sivme-floating-console-dock') ||
       el.classList.contains('acc-arrow') ||
-      (el.textContent && el.textContent.indexOf('12 CORE CASHFLOW VERTICALS') !== -1 && !el.closest('#verticalTilesGrid')) ||
       el.tagName === 'HEADER' || el.tagName === 'NAV'
     );
   }
 
-  // 5. CATEGORY 16 ACCORDION & SUB-CARDS CONTROLLER
+  // ==============================================================================
+  // 5. CATEGORY 16 ACCORDION CONTROLLER
+  // ==============================================================================
   function auditCategory16Accordion(isAuth, auditElementFn, applyAuditFn) {
     var core = getCore();
     var c16 = document.querySelector('#categoryModal [data-cat-id="c16"]');
@@ -161,6 +193,9 @@
     }
   }
 
+  // ==============================================================================
+  // 6. CATEGORY 16 SUB-CARDS CONTROLLER
+  // ==============================================================================
   function auditSub16Cards(isAuth, auditElementFn, applyAuditFn) {
     var core = getCore();
     document.querySelectorAll('#sub-c16 > div').forEach(function (subCard, idx) {
@@ -196,7 +231,9 @@
     });
   }
 
-  // Export to Sovereign Engine
+  // ==============================================================================
+  // 7. EXPORT TO SOVEREIGN IN-SITU SCANNER ENGINE
+  // ==============================================================================
   window.RM_SIVME_EXT = {
     URN_SELECTORS: URN_SELECTORS,
     mountInlineBadge: mountInlineBadge,
