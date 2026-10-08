@@ -158,6 +158,26 @@
         cCard.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'is-live', 'is-hidden', 'sivme-badge-anchor');
         cCard.style.setProperty('outline', 'none', 'important');
         cCard.querySelectorAll(':scope > .sivme-notch-pill, :scope > .sivme-live-notch, :scope > .sivme-inline-badge').forEach(function (n) { n.remove(); });
+
+        // Category 16 Dormant Tap-Wakeup Listener
+        if (cCard.getAttribute('data-sivme-c16-wake-bound') !== 'true') {
+          cCard.setAttribute('data-sivme-c16-wake-bound', 'true');
+          cCard.addEventListener('click', function (e) {
+            if (!core.isConsoleAuthorized()) return;
+            if (e.target.closest('.sivme-notch-pill, .sivme-inline-badge, .sivme-live-notch, #sivme-c16-authoritative-badge')) return;
+            if (!core.getUrnVisibility('rm:cat:16')) {
+              if (e.cancelable) e.preventDefault();
+              e.stopPropagation();
+              e.stopImmediatePropagation();
+              if (ext.persistToggle) {
+                ext.persistToggle('rm:cat:16', true, 'घर व मकान (House & Home)', core);
+              } else {
+                core.setUrnVisibility('rm:cat:16', true, 'घर व मकान (House & Home)');
+              }
+              applyInSituAudit();
+            }
+          }, false);
+        }
       }
     });
 
@@ -177,7 +197,7 @@
       }
     });
 
-    // 7. 16-3 Dynamic Filters (Fallback only)
+    // 7. Dynamic Filters (Fallback only)
     ext.URN_SELECTORS.forEach(function (def) {
       var node = document.querySelector(def.selector);
       if (node && !ext.isSystemShellElement(node.parentElement || node)) {
