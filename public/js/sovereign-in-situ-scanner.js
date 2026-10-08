@@ -30,6 +30,7 @@
     return window.RM_SIVME_EXT || {
       URN_SELECTORS: [],
       mountInlineBadge: function () {},
+      persistToggle: function () {},
       isSystemShellElement: function () { return false; },
       auditCategory16Accordion: function () {},
       auditSub16Cards: function () {}
@@ -72,7 +73,11 @@
             if (e.cancelable) e.preventDefault();
             e.stopPropagation();
             e.stopImmediatePropagation();
-            core.setUrnVisibility(urn, true, label);
+            if (ext.persistToggle) {
+              ext.persistToggle(urn, true, label, core);
+            } else {
+              core.setUrnVisibility(urn, true, label);
+            }
             applyInSituAudit();
           }
         }, false);
@@ -80,7 +85,7 @@
     }
   }
 
-  // 2. UNIVERSAL AUTO-SCANNER (12 Verticals, RM CASH, 50 Catalog Cards & Sub-Cards)
+  // 2. UNIVERSAL AUTO-SCANNER
   function autoScanBusinessElements(isAuth) {
     var core = getCore(), ext = getExt();
 
@@ -173,7 +178,6 @@
 
       document.body.classList.toggle('sivme-modal-active', isAnyModalOpen);
 
-      // Suppress Home Screen main & header while modal is open (Zero floating background badges)
       var mainEl = document.querySelector('main');
       var headerEl = document.querySelector('header');
       if (mainEl) {
@@ -206,7 +210,7 @@
     }
   }
 
-  // 4. LEAK-PROOF 1-TAP INSTANT TOGGLE (CAPTURE-PHASE BARRIER & REGISTRY SYNC)
+  // 4. LEAK-PROOF 1-TAP INSTANT TOGGLE (CAPTURE-PHASE INTERCEPTOR)
   document.addEventListener('click', function (e) {
     var badge = e.target.closest('.sivme-notch-pill, .sivme-inline-badge, .sivme-live-notch');
     if (!badge) return;
@@ -215,43 +219,46 @@
     e.stopPropagation();
     e.stopImmediatePropagation();
 
-    var core = getCore();
+    var core = getCore(), ext = getExt();
     if (!core.isConsoleAuthorized()) return;
 
     var now = Date.now();
-    if (now - lastToggleTime < 280) return;
+    if (now - lastToggleTime < 200) return;
     lastToggleTime = now;
 
     var urn = badge.getAttribute('data-badge-urn') || badge.getAttribute('data-target-urn');
     var label = badge.getAttribute('data-badge-label') || '';
-    var curVis = badge.getAttribute('data-badge-vis') === 'true';
-    var nextVis = !curVis;
+    var currentVis = core.getUrnVisibility ? core.getUrnVisibility(urn) : (badge.getAttribute('data-badge-vis') === 'true');
+    var nextVis = !currentVis;
 
-    if (!urn || !core.setUrnVisibility) return;
+    if (!urn) return;
 
-    if (urn === 'rm:cat:16') {
-      ['rm:cat:16:sub:16-1', 'rm:cat:16:sub:16-2', 'rm:cat:16:sub:16-3'].forEach(function (su) {
-        core.setUrnVisibility(su, nextVis);
-      });
-      core.setUrnVisibility(urn, nextVis, label);
+    // 1. Immediate Visual DOM Flip (0ms)
+    badge.setAttribute('data-badge-vis', String(nextVis));
+    badge.className = 'sivme-notch-pill ' + (nextVis ? 'sivme-badge-live' : 'sivme-badge-dormant');
+    badge.innerHTML = nextVis
+      ? '<span style="color:#10b981;font-size:10px;line-height:1;">🟢</span> <span style="line-height:1;">Live</span> <span style="font-size:9px;opacity:0.8;line-height:1;">⇄</span>'
+      : '<span style="color:#ef4444;font-size:10px;line-height:1;">🔴</span> <span style="line-height:1;">Hidden</span> <span style="font-size:9px;opacity:0.8;line-height:1;">⇄</span>';
+    badge.style.setProperty('background', (nextVis ? '#064e3b' : '#7f1d1d'), 'important');
+    badge.style.setProperty('border', '1.5px solid ' + (nextVis ? '#10b981' : '#ef4444'), 'important');
+    badge.style.setProperty('color', (nextVis ? '#34d399' : '#fca5a5'), 'important');
+
+    var parentCard = badge.closest('[data-cat-id], .sivme-cat-card, .sivme-subcat-card, .sivme-vertical-card, .wallet-card');
+    if (parentCard) {
+      parentCard.classList.toggle('sivme-ghost-live', nextVis);
+      parentCard.classList.toggle('sivme-ghost-dormant', !nextVis);
+      parentCard.classList.toggle('is-live', nextVis);
+      parentCard.classList.toggle('is-hidden', !nextVis);
+      parentCard.style.setProperty('outline', '2px dashed ' + (nextVis ? '#10b981' : '#ef4444'), 'important');
+      parentCard.style.setProperty('outline-offset', '3px', 'important');
+      parentCard.style.setProperty('opacity', nextVis ? '1' : '0.45', 'important');
+    }
+
+    // 2. Persist across registries
+    if (ext.persistToggle) {
+      ext.persistToggle(urn, nextVis, label, core);
     } else {
       core.setUrnVisibility(urn, nextVis, label);
-
-      // Bi-directional sync with active categories registry
-      if (urn.indexOf('rm:cat:') === 0 && urn.indexOf(':sub:') === -1) {
-        var cNum = urn.replace('rm:cat:', '');
-        var cId = (parseInt(cNum, 10) >= 34 ? 'g' : 'c') + cNum;
-        try {
-          var rawAct = localStorage.getItem('rm_active_categories_v1');
-          var activeSet = new Set(rawAct ? JSON.parse(rawAct) : []);
-          if (nextVis) {
-            activeSet.add(cId); activeSet.add(cNum); activeSet.add('c' + cNum);
-          } else {
-            activeSet.delete(cId); activeSet.delete(cNum); activeSet.delete('c' + cNum); activeSet.delete('g' + cNum);
-          }
-          localStorage.setItem('rm_active_categories_v1', JSON.stringify(Array.from(activeSet)));
-        } catch (_) {}
-      }
     }
 
     applyInSituAudit();
@@ -263,7 +270,6 @@
 
   applyInSituAudit();
 
-  // Multi-tier audit triggers for dynamic catalog accordion expansion
   document.addEventListener('click', function (e) {
     if (e.target && e.target.closest && e.target.closest('#cat-menu-btn, [onclick*="toggleMenuDrawer"], [onclick*="toggleAccordion"], [data-cat-id], .acc-arrow')) {
       setTimeout(applyInSituAudit, 20);
