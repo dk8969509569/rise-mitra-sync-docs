@@ -178,12 +178,13 @@
     if (!existing) headerEl.appendChild(badge);
   }
 
-  // 3. AUDIT CATEGORY 16 ACCORDION & SUB-CARDS
+  // 3. AUDIT CATEGORY 16 ACCORDION & SUB-CARDS (SMOOTH NON-CONFLICT ENGINE)
   function auditCat16Complete(isAuth, auditElementFn) {
     var core = getCore();
     var c16Container = document.querySelector('#categoryModal [data-cat-id="c16"], #categoryModal [data-cat-id="16"]');
     if (!c16Container) return;
 
+    // Purge badges on outer frame to ensure header has the only notch
     c16Container.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
     c16Container.style.removeProperty('outline');
     c16Container.querySelectorAll(':scope > .sivme-notch-pill, :scope > .sivme-live-notch, :scope > .sivme-inline-badge').forEach(function (n) {
@@ -214,28 +215,41 @@
 
         mountCat16AuthoritativeBadge(c16Header, isCat16Vis);
 
-        if (c16Header.getAttribute('data-sivme-toggle-bound') !== 'true') {
-          c16Header.setAttribute('data-sivme-toggle-bound', 'true');
+        // Smooth non-conflicting accordion toggle handler
+        if (c16Header.getAttribute('data-sivme-accordion-bound') !== 'true') {
+          c16Header.setAttribute('data-sivme-accordion-bound', 'true');
           c16Header.addEventListener('click', function (e) {
+            // If badge is clicked, do not toggle accordion
             if (e.target.closest('.sivme-notch-pill, #sivme-c16-authoritative-badge')) return;
-            var now = Date.now();
-            if (now - lastAccordionToggleTime < 350) return;
-            lastAccordionToggleTime = now;
+
             var sub = document.getElementById('sub-c16');
             if (!sub) return;
-            var isHidden = sub.classList.contains('hidden') || sub.style.display === 'none';
-            var chevron = c16Header.querySelector('.acc-arrow');
-            sub.classList.toggle('hidden', !isHidden);
-            sub.style.display = isHidden ? 'block' : 'none';
-            if (chevron) chevron.textContent = isHidden ? '▲' : '▼';
+
+            var now = Date.now();
+            if (now - lastAccordionToggleTime < 280) return;
+            lastAccordionToggleTime = now;
+
+            // Check if catalog has native onclick handler
+            var hasNative = typeof window.toggleAccordion === 'function' || c16Header.getAttribute('onclick');
+            if (!hasNative) {
+              var isHidden = sub.classList.contains('hidden') || sub.style.display === 'none';
+              var chevron = c16Header.querySelector('.acc-arrow');
+              sub.classList.toggle('hidden', !isHidden);
+              sub.style.display = isHidden ? 'block' : 'none';
+              if (chevron) chevron.textContent = isHidden ? '▲' : '▼';
+            }
+
+            // Sync sub-card badges after accordion state change
             if (window.RM_SIVME && typeof window.RM_SIVME.applyInSituAudit === 'function') {
               setTimeout(window.RM_SIVME.applyInSituAudit, 50);
+              setTimeout(window.RM_SIVME.applyInSituAudit, 220);
             }
-          }, true);
+          }, false);
         }
       }
     }
 
+    // Sub-cards handling
     var subContainer = document.getElementById('sub-c16');
     var isSubOpen = subContainer && !subContainer.classList.contains('hidden') && subContainer.style.display !== 'none';
 
@@ -256,6 +270,7 @@
       }
     });
 
+    // Dynamic 16-3 filters handling
     CAT16_URN_SELECTORS.forEach(function (def) {
       var node = document.querySelector(def.selector);
       if (node && typeof auditElementFn === 'function') {
