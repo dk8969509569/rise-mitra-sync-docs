@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — UNIVERSAL CATALOG CARD ENGINE (UI RENDERER)
- * MODULE        : High-Impact Play Store Card Grid & Zero-Void Architecture for All 50 Categories
+ * MODULE        : Play Store Card Grid, Big Monospace Identity & 3-Button Action Bar (ZEL)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/universal-catalog/universal-card-engine.js
@@ -14,19 +14,17 @@
 
   var isSweeping = false;
 
-  // 1. RENDER PLAY STORE PARENT CARD (LARGE FONTS & UNIFIED GRID)
+  // 1. RENDER PARENT CARD (BIG NUMBER + LOGO ON RIGHT + TITLE/SUBTITLE)
   function renderParentCard(headerEl, catId, isOpen) {
     if (!headerEl) return;
     var numId = String(catId).replace(/^[c]/, '');
     var displayNum = (parseInt(numId, 10) < 10 ? '0' : '') + numId + '.';
 
-    // Idempotency Guard: Skip redundant DOM operations to prevent recursion
     var targetState = numId + ':' + String(isOpen);
     if (headerEl.getAttribute('data-rm-parent-rendered') === targetState) {
       return;
     }
 
-    // Registry SSOT Lookup with Safe Fallback for Any Unregistered Categories
     var data = (window.RM_CATALOG_REGISTRY && window.RM_CATALOG_REGISTRY.getCategoryData(numId)) || {
       number: displayNum,
       icon: headerEl.querySelector('.text-2xl, .text-3xl, span')?.textContent?.trim() || '📂',
@@ -73,14 +71,14 @@
     }).join(' ');
 
     container.innerHTML = [
-      '<!-- Row 1: App Identity (Large Typography, Zero Cut-off) -->',
+      '<!-- Top Row: Big Number + Logo on Right + Big Title/Subtitle -->',
       '<div style="display: flex; align-items: center; gap: 14px; width: 100%;">',
-      '  <div style="font-size: 24px; font-weight: 900; color: #38bdf8; font-family: ui-monospace, monospace; line-height: 1; flex-shrink: 0; padding-right: 2px;">' + (data.number || displayNum) + '</div>',
-      '  <div style="width: 56px; height: 56px; border-radius: 14px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 1.5px solid rgba(56, 189, 248, 0.45); box-shadow: 0 4px 12px rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">',
+      '  <div style="font-size: 26px; font-weight: 900; color: #38bdf8; font-family: ui-monospace, monospace; line-height: 1; flex-shrink: 0; min-width: 44px;">' + (data.number || displayNum) + '</div>',
+      '  <div style="width: 56px; height: 56px; border-radius: 14px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid rgba(56, 189, 248, 0.45); box-shadow: 0 4px 12px rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">',
       '    <span style="font-size: 28px; line-height: 1;">' + data.icon + '</span>',
       '  </div>',
       '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0;">',
-      '    <div style="font-size: 19px; font-weight: 800; color: #ffffff; letter-spacing: -0.3px; line-height: 1.25; white-space: normal; word-break: break-word;">' + data.title + '</div>',
+      '    <div style="font-size: 20px; font-weight: 800; color: #ffffff; letter-spacing: -0.3px; line-height: 1.25; white-space: normal; word-break: break-word;">' + data.title + '</div>',
       '    <div style="font-size: 14px; font-weight: 600; color: #34d399; line-height: 1.35; margin-top: 3px;">' + data.subtitle + '</div>',
       '  </div>',
       '</div>',
@@ -104,18 +102,29 @@
     headerEl.setAttribute('data-rm-parent-rendered', targetState);
   }
 
-  // 2. RENDER SUB-CARD (ZERO VOID: REPLACES LEGACY SPREAD WITH TIGHT PLAY STORE CARD)
+  // Helper: Trigger original hidden button in legacy DOM
+  function triggerLegacySubAction(subCardEl, keyword) {
+    if (!subCardEl) return;
+    var allButtons = Array.from(subCardEl.querySelectorAll('button, [role="button"], a'));
+    var found = allButtons.find(function (b) {
+      return !b.closest('#rm-playstore-sub-' + subCardEl.getAttribute('data-rm-sub-rendered')) &&
+             (b.textContent || '').indexOf(keyword) !== -1;
+    });
+    if (found) {
+      found.click();
+    }
+  }
+
+  // 2. RENDER SUB-CARD (BIG SUB-NUMBER + LOGO + 3 NATIVE BUTTONS INTACT)
   function renderSubCard(subCardEl, catId, subId) {
     if (!subCardEl) return;
     var numId = String(catId).replace(/^[c]/, '');
     var cleanSub = String(subId).replace(/^[c]/, '');
 
-    // Idempotency Guard: Avoid duplicate sub-card work
     if (subCardEl.getAttribute('data-rm-sub-rendered') === cleanSub) {
       return;
     }
 
-    // Registry SSOT Lookup with Safe Fallback
     var info = (window.RM_CATALOG_REGISTRY && window.RM_CATALOG_REGISTRY.getSubcategoryData(numId, cleanSub)) || {
       code: '[' + cleanSub + ']',
       icon: subCardEl.querySelector('.text-xl, .text-2xl, span')?.textContent?.trim() || '🛠️',
@@ -134,9 +143,9 @@
       highlights: [
         'सत्यापित और प्रशिक्षित विशेषज्ञों द्वारा विश्वसनीय सेवा।',
         'तय रेट कार्ड और पारदर्शी ऑनलाइन रसीद।',
-        'Rise Mitra संतुष्टि वारंटी व बीमा सुरक्षा।'
+        'Rise Mitra संतुष्टि वारंटी व सुरक्षा संरक्षण।'
       ],
-      btnText: 'खोलें व बुक करें'
+      btnText: 'खोलें'
     };
 
     // Hard-collapse outer container: Eliminate vertical void completely
@@ -148,7 +157,6 @@
     subCardEl.style.setProperty('gap', '0px', 'important');
     subCardEl.style.setProperty('padding', '12px !important', 'important');
 
-    // Hide legacy spread structure
     Array.from(subCardEl.children).forEach(function (child) {
       if (child.id !== 'rm-playstore-sub-' + cleanSub && !child.classList.contains('sivme-notch-pill')) {
         child.style.display = 'none';
@@ -185,18 +193,18 @@
     }).join('');
 
     container.innerHTML = [
-      '<!-- Top Row: Icon + Title (Large & Readable) -->',
+      '<!-- Top Row: Big Number + Logo on Right + Big Title/Subtitle -->',
       '<div style="display: flex; align-items: center; gap: 12px; width: 100%;">',
-      '  <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 1.5px solid rgba(56, 189, 248, 0.4); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">',
+      '  <div style="font-size: 22px; font-weight: 900; color: #38bdf8; font-family: ui-monospace, monospace; line-height: 1; flex-shrink: 0; min-width: 50px;">' + cleanSub + '.</div>',
+      '  <div style="width: 52px; height: 52px; border-radius: 14px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 1.5px solid rgba(56, 189, 248, 0.4); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">',
       '    <span style="font-size: 26px; line-height: 1;">' + info.icon + '</span>',
       '  </div>',
       '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0;">',
       '    <div style="display: flex; align-items: center; gap: 6px;">',
-      '      <span style="font-size: 11.5px; font-weight: 800; color: #38bdf8; background: rgba(56, 189, 248, 0.15); padding: 1px 6px; border-radius: 4px;">' + info.code + '</span>',
-      '      <span style="font-size: 11.5px; font-weight: 700; color: #94a3b8;">' + (info.categoryTag || 'Rise Mitra Official') + '</span>',
+      '      <span style="font-size: 11.5px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">' + (info.categoryTag || 'Rise Mitra Official') + '</span>',
       '    </div>',
-      '    <div style="font-size: 18.5px; font-weight: 800; color: #ffffff; letter-spacing: -0.3px; line-height: 1.25; margin-top: 2px;">' + info.title + '</div>',
-      '    <div style="font-size: 13.5px; font-weight: 600; color: #34d399; line-height: 1.35; margin-top: 2px;">' + (info.hindiTitle || info.hindi) + '</div>',
+      '    <div style="font-size: 19px; font-weight: 800; color: #ffffff; letter-spacing: -0.3px; line-height: 1.25; margin-top: 2px; white-space: normal; word-break: break-word;">' + info.title + '</div>',
+      '    <div style="font-size: 14px; font-weight: 600; color: #34d399; line-height: 1.35; margin-top: 2px;">' + (info.hindiTitle || info.hindi) + '</div>',
       '  </div>',
       '</div>',
       '<!-- Play Store Rating & Stats Strip -->',
@@ -210,15 +218,43 @@
       '<div style="display: flex; flex-wrap: wrap; gap: 6px; width: 100%;">' + servicesHtml + '</div>',
       '<!-- Highlights Feature Box -->',
       '<div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 10px 12px; margin-top: 4px; display: flex; flex-direction: column; gap: 5px;">' + highlightsHtml + '</div>',
-      '<!-- Play Store Action Bar -->',
-      '<div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 6px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.08);">',
-      '  <div style="font-size: 12px; color: #94a3b8; font-weight: 600;">Rise Mitra Verified</div>',
-      '  <div style="font-size: 13.5px; font-weight: 800; color: #ffffff; background: #059669; border: 1.5px solid #10b981; padding: 6px 18px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 3px 8px rgba(0,0,0,0.4); cursor: pointer;" onclick="var p=this.closest(\'.bg-gray-800, [data-cat-id]\'); var btn=p?.querySelector(\'.grid button, button\'); if(btn && btn !== this) btn.click();">',
-      '    <span>' + (info.btnText || 'खोलें व बुक करें') + '</span>',
-      '    <span style="font-size: 11px;">➔</span>',
-      '  </div>',
+      '<!-- Row 5: 3 Action Buttons (ZEL Protected: Pin, Video, Open) -->',
+      '<div style="display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 8px; width: 100%; margin-top: 6px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08);">',
+      '  <button type="button" class="rm-act-pin" style="background: rgba(30, 41, 59, 0.9); border: 1.2px solid rgba(248, 113, 113, 0.4); color: #fca5a5; border-radius: 10px; padding: 8px 6px; font-size: 12.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">',
+      '    <span>📌</span> <span>पिन करें</span>',
+      '  </button>',
+      '  <button type="button" class="rm-act-video" style="background: rgba(30, 41, 59, 0.9); border: 1.2px solid rgba(167, 139, 250, 0.4); color: #c4b5fd; border-radius: 10px; padding: 8px 6px; font-size: 12.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">',
+      '    <span>▶</span> <span>वीडियो</span>',
+      '  </button>',
+      '  <button type="button" class="rm-act-open" style="background: #059669; border: 1.5px solid #10b981; color: #ffffff; border-radius: 10px; padding: 8px 10px; font-size: 13.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 3px 8px rgba(0,0,0,0.4); cursor: pointer;">',
+      '    <span>' + (info.btnText || 'खोलें') + '</span> <span>➔</span>',
+      '  </button>',
       '</div>'
     ].join('');
+
+    // Wire native ZEL click delegation to original background buttons
+    var pinBtn = container.querySelector('.rm-act-pin');
+    var vidBtn = container.querySelector('.rm-act-video');
+    var openBtn = container.querySelector('.rm-act-open');
+
+    if (pinBtn) {
+      pinBtn.onclick = function (e) {
+        e.stopPropagation();
+        triggerLegacySubAction(subCardEl, 'पिन');
+      };
+    }
+    if (vidBtn) {
+      vidBtn.onclick = function (e) {
+        e.stopPropagation();
+        triggerLegacySubAction(subCardEl, 'वीडियो');
+      };
+    }
+    if (openBtn) {
+      openBtn.onclick = function (e) {
+        e.stopPropagation();
+        triggerLegacySubAction(subCardEl, 'खोलें') || triggerLegacySubAction(subCardEl, 'संपर्क') || triggerLegacySubAction(subCardEl, 'उपलब्ध');
+      };
+    }
 
     subCardEl.setAttribute('data-rm-sub-rendered', cleanSub);
   }
