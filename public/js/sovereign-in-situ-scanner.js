@@ -5,8 +5,8 @@
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-scanner.js
  * DUAL-FOLDER REFS:
- *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
- *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
+ *   Folder A (Master Document SSOT)
+ *   Folder B (GitHub Mirror)
  */
 
 (function () {
@@ -41,6 +41,15 @@
   function auditElement(el, urn, label, isAuth) {
     var ext = getExt(), core = getCore();
     if (!el || ext.isSystemShellElement(el)) return;
+
+    // Strict Isolation Guard: Never apply generic card outline to dedicated C16 outer container
+    var catIdAttr = el.getAttribute('data-cat-id');
+    if (catIdAttr === 'c16' || catIdAttr === '16') {
+      el.style.setProperty('outline', 'none', 'important');
+      el.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'is-live', 'is-hidden', 'sivme-badge-anchor');
+      return;
+    }
+
     if (typeof isAuth === 'undefined') isAuth = core.isConsoleAuthorized();
     el.setAttribute('data-sov-urn', urn);
     el.setAttribute('data-sov-label', label || '');
@@ -57,7 +66,15 @@
       el.classList.add('sivme-badge-anchor');
       el.classList.toggle('sivme-ghost-live', isVis);
       el.classList.toggle('sivme-ghost-dormant', !isVis);
+      el.style.setProperty('outline', '2.5px dashed ' + (isVis ? '#10b981' : '#ff3838'), 'important');
+      el.style.setProperty('outline-offset', '3px', 'important');
       el.style.setProperty('opacity', '1', 'important');
+
+      var cardInner = el.querySelector(':scope > div:first-child');
+      if (cardInner && !el.classList.contains('sivme-subcat-card')) {
+        cardInner.style.setProperty('opacity', isVis ? '1' : '0.55', 'important');
+      }
+
       ext.mountInlineBadge(el, urn, isVis, label);
 
       if (el.getAttribute('data-sivme-tap-bound') !== 'true') {
@@ -136,10 +153,10 @@
         var labelEl = cCard.querySelector('.font-bold') || cCard;
         var label = core.cleanText(labelEl) || ('Category ' + num);
         auditElement(cCard, 'rm:cat:' + (num.length === 1 ? '0' + num : num), label, isAuth);
-      } else if (num === '16') {
-        // Enforce single anchor: C16 outer container NEVER gets outlines or badges
-        cCard.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
-        cCard.style.removeProperty('outline');
+      } else if (num === '16' || catId === 'c16' || catId === '16') {
+        // Enforce hard isolation: C16 outer container NEVER gets outlines or badges
+        cCard.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'is-live', 'is-hidden', 'sivme-badge-anchor');
+        cCard.style.setProperty('outline', 'none', 'important');
         cCard.querySelectorAll(':scope > .sivme-notch-pill, :scope > .sivme-live-notch, :scope > .sivme-inline-badge').forEach(function (n) { n.remove(); });
       }
     });
@@ -156,11 +173,11 @@
       } else if (urn && urn.indexOf('rm:cat:16') !== -1 && !isSubC16Open) {
         sub.querySelectorAll('.sivme-notch-pill, .sivme-live-notch, .sivme-inline-badge').forEach(function (n) { n.remove(); });
         sub.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
-        sub.style.removeProperty('outline');
+        sub.style.setProperty('outline', 'none', 'important');
       }
     });
 
-    // 7. 16-3 Dynamic Filters
+    // 7. 16-3 Dynamic Filters (Fallback only)
     ext.URN_SELECTORS.forEach(function (def) {
       var node = document.querySelector(def.selector);
       if (node && !ext.isSystemShellElement(node.parentElement || node)) {
@@ -207,9 +224,15 @@
         }
       }
 
-      ext.auditCategory16Accordion(isAuth, auditElement, applyInSituAudit);
-      ext.auditSub16Cards(isAuth, auditElement, applyInSituAudit);
+      // Dedicated Category 16 adapter execution
+      if (window.RM_CAT16_ADAPTER && typeof window.RM_CAT16_ADAPTER.auditCat16Complete === 'function') {
+        window.RM_CAT16_ADAPTER.auditCat16Complete(isAuth, auditElement);
+      } else {
+        ext.auditCategory16Accordion(isAuth, auditElement, applyInSituAudit);
+        ext.auditSub16Cards(isAuth, auditElement, applyInSituAudit);
+      }
 
+      // Execute registered adapters pipeline
       var registeredAdapters = core.getAdapters ? core.getAdapters() : {};
       Object.keys(registeredAdapters).forEach(function (key) { try { registeredAdapters[key](); } catch (_) {} });
 
@@ -257,16 +280,21 @@
 
     var parentCard = badge.closest('[data-cat-id], .sivme-cat-card, .sivme-subcat-card, .sivme-vertical-card, .wallet-card');
     if (parentCard) {
-      parentCard.classList.toggle('sivme-ghost-live', nextVis);
-      parentCard.classList.toggle('sivme-ghost-dormant', !nextVis);
-      parentCard.classList.toggle('is-live', nextVis);
-      parentCard.classList.toggle('is-hidden', !nextVis);
-      parentCard.style.setProperty('outline', '2.5px dashed ' + (nextVis ? '#10b981' : '#ff3838'), 'important');
-      parentCard.style.setProperty('outline-offset', '3px', 'important');
-      parentCard.style.setProperty('opacity', '1', 'important');
-      var cardInner = parentCard.querySelector(':scope > div:first-child');
-      if (cardInner) {
-        cardInner.style.setProperty('opacity', nextVis ? '1' : '0.55', 'important');
+      var catIdVal = parentCard.getAttribute('data-cat-id');
+      if (catIdVal === 'c16' || catIdVal === '16') {
+        parentCard.style.setProperty('outline', 'none', 'important');
+      } else {
+        parentCard.classList.toggle('sivme-ghost-live', nextVis);
+        parentCard.classList.toggle('sivme-ghost-dormant', !nextVis);
+        parentCard.classList.toggle('is-live', nextVis);
+        parentCard.classList.toggle('is-hidden', !nextVis);
+        parentCard.style.setProperty('outline', '2.5px dashed ' + (nextVis ? '#10b981' : '#ff3838'), 'important');
+        parentCard.style.setProperty('outline-offset', '3px', 'important');
+        parentCard.style.setProperty('opacity', '1', 'important');
+        var cardInner = parentCard.querySelector(':scope > div:first-child');
+        if (cardInner) {
+          cardInner.style.setProperty('opacity', nextVis ? '1' : '0.55', 'important');
+        }
       }
     }
 
