@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU SCANNER & UI ENGINE (MODULE 2 OF 2)
- * MODULE        : Universal Auto-Scanner, 12 Core Verticals, RM CASH & Touch Handlers
+ * MODULE        : Universal Auto-Scanner, 12 Core Verticals, RM CASH, 16px Spacing & Anti-Clipping Shield
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-scanner.js
@@ -31,7 +31,122 @@
   }
 
   // ==============================================================================
-  // 1. URN SELECTORS CONFIG (16-3 Dynamic Filters)
+  // 1. ZEL TEMPLATE SHIELD
+  // ==============================================================================
+  function enforceZELTemplateRendering() {
+    try {
+      var configKeys = [
+        'rm_local_acct_owner_config',
+        'rm_local_acctdefault_owner_config',
+        'rm_owner_filter_config_v1'
+      ];
+      configKeys.forEach(function (k) {
+        var raw = localStorage.getItem(k);
+        var cfg = raw ? JSON.parse(raw) : { filterVisibility: {} };
+        if (!cfg.filterVisibility) cfg.filterVisibility = {};
+        cfg.filterVisibility.smartOmnibox = true;
+        cfg.filterVisibility.showState = true;
+        cfg.filterVisibility.showDistrict = true;
+        cfg.filterVisibility.showLocality = true;
+        cfg.filterVisibility.budgetSlider = true;
+        cfg.filterVisibility.subMeterOnly = true;
+        localStorage.setItem(k, JSON.stringify(cfg));
+      });
+    } catch (_) {}
+  }
+
+  if (typeof window !== 'undefined') {
+    enforceZELTemplateRendering();
+    window.addEventListener('rm:sov:visibility-changed', enforceZELTemplateRendering);
+  }
+
+  // ==============================================================================
+  // 2. CONSOLE AUTHORIZATION GUARD
+  // ==============================================================================
+  function isConsoleAuthorized() {
+    try {
+      var params = new URLSearchParams(window.location.search);
+      if (params.get('sov_mode') === 'in_situ' || params.get('dev_auto') === '1') {
+        sessionStorage.setItem(SESSION_KEY, 'SOV_ACTIVE_2026');
+        localStorage.setItem(SESSION_KEY, 'SOV_ACTIVE_2026');
+        localStorage.setItem(DEV_AUTO_KEY, 'true');
+      }
+
+      if (localStorage.getItem(DEV_AUTO_KEY) === 'true') {
+        sessionStorage.setItem(SESSION_KEY, 'SOV_ACTIVE_2026');
+        return true;
+      }
+
+      var sToken = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+      if (sToken === 'SOV_ACTIVE_2026') return true;
+
+      var regRaw = localStorage.getItem(REGISTRY_STORAGE_KEY);
+      if (regRaw) {
+        var reg = JSON.parse(regRaw);
+        if (reg && reg.activeMode === 'in_situ_console') return true;
+      }
+      return false;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  // ==============================================================================
+  // 3. REGISTRY BRIDGE (Zero Recursive Cascades)
+  // ==============================================================================
+  function getRegistry() {
+    try {
+      var raw = localStorage.getItem(REGISTRY_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : { activeMode: 'in_situ_console', items: {} };
+    } catch (_) {
+      return { activeMode: 'in_situ_console', items: {} };
+    }
+  }
+
+  function getUrnVisibility(urn) {
+    if (urn === 'rm:cat:16') {
+      var s1 = getUrnVisibility('rm:cat:16:sub:16-1');
+      var s2 = getUrnVisibility('rm:cat:16:sub:16-2');
+      var s3 = getUrnVisibility('rm:cat:16:sub:16-3');
+      return (s1 && s2 && s3);
+    }
+
+    if (window.RM_SovereignRegistry && typeof window.RM_SovereignRegistry.isVisible === 'function') {
+      return window.RM_SovereignRegistry.isVisible(urn);
+    }
+    var reg = getRegistry();
+    if (reg && reg.items && reg.items[urn] !== undefined && reg.items[urn].visible !== undefined) {
+      return !!reg.items[urn].visible;
+    }
+    return true;
+  }
+
+  function setUrnVisibility(urn, nextVis, label) {
+    if (window.RM_SovereignRegistry && typeof window.RM_SovereignRegistry.toggleVisibility === 'function') {
+      try {
+        window.RM_SovereignRegistry.toggleVisibility(urn, nextVis, label);
+      } catch (_) {}
+    }
+    try {
+      var reg = getRegistry();
+      if (!reg.items) reg.items = {};
+      reg.items[urn] = { visible: nextVis, label: label, updatedAt: Date.now() };
+      localStorage.setItem(REGISTRY_STORAGE_KEY, JSON.stringify(reg));
+    } catch (_) {}
+
+    if (window.RM_SovereignRegistry) {
+      try {
+        if (typeof window.RM_SovereignRegistry.setVisibility === 'function') {
+          window.RM_SovereignRegistry.setVisibility(urn, nextVis, label);
+        } else if (typeof window.RM_SovereignRegistry.set === 'function') {
+          window.RM_SovereignRegistry.set(urn, nextVis);
+        }
+      } catch (_) {}
+    }
+  }
+
+  // ==============================================================================
+  // 4. URN SELECTORS CONFIG (16-3 Dynamic Filters)
   // ==============================================================================
   var URN_SELECTORS = [
     {
@@ -62,10 +177,93 @@
   ];
 
   // ==============================================================================
-  // 2. MOUNT UNCLIPPED INTERACTIVE NOTCH PILL
+  // 5. RECONCILED HIDDEN COUNTER & CLEAN TEXT
+  // ==============================================================================
+  function getHiddenCount() {
+    var hiddenUrns = {};
+    var reg = getRegistry();
+    if (reg && reg.items) {
+      Object.keys(reg.items).forEach(function (k) {
+        if (k === 'rm:cat:16') return;
+        if (reg.items[k] && reg.items[k].visible === false) {
+          hiddenUrns[k] = true;
+        } else if (reg.items[k] && reg.items[k].visible === true) {
+          delete hiddenUrns[k];
+        }
+      });
+    }
+
+    if (!getUrnVisibility('rm:cat:16')) {
+      hiddenUrns['rm:cat:16'] = true;
+    } else {
+      delete hiddenUrns['rm:cat:16'];
+    }
+
+    return Object.keys(hiddenUrns).length;
+  }
+
+  function cleanText(el) {
+    if (!el) return '';
+    var clone = el.cloneNode(true);
+    var badges = clone.querySelectorAll('.sivme-inline-badge, .sivme-live-notch, .sivme-notch-pill');
+    badges.forEach(function (b) { b.remove(); });
+    return (clone.textContent || '').trim();
+  }
+
+  // ==============================================================================
+  // 6. UNIVERSAL ANTI-CLIPPING, SAFE 16px SPACING & DEDUP STYLES
+  // ==============================================================================
+  (function injectUniversalSpacingShield() {
+    var styleId = 'sivme-universal-spacing-shield';
+    if (document.getElementById(styleId)) return;
+    var st = document.createElement('style');
+    st.id = styleId;
+    st.textContent = [
+      '/* 1. Eliminate internal catalog duplicate notches */',
+      '#categoryModal .sivme-live-notch { display: none !important; }',
+      '/* 2. Safe Row Height & 16px Gap to Prevent Font & Badge Clipping */',
+      '[data-cat-id], .sivme-cat-card, .sivme-subcat-card, #verticalTilesGrid > div, .wallet-card {',
+      '  position: relative !important;',
+      '  overflow: visible !important;',
+      '  margin-bottom: 16px !important;',
+      '}',
+      '/* 3. Text container safe clearance to prevent font squashing */',
+      '[data-cat-id] > div:first-child {',
+      '  padding-right: 14px !important;',
+      '  line-height: 1.4 !important;',
+      '}',
+      '/* 4. Single Authoritative Top-Right Notch */',
+      '.sivme-notch-pill {',
+      '  position: absolute !important;',
+      '  top: -10px !important;',
+      '  right: 10px !important;',
+      '  z-index: 99 !important;',
+      '  display: inline-flex !important;',
+      '  visibility: visible !important;',
+      '  opacity: 1 !important;',
+      '  white-space: nowrap !important;',
+      '}',
+      '.sivme-badge-anchor { position: relative !important; overflow: visible !important; }',
+      '.sivme-ghost-dormant { outline: 2px dashed #ef4444 !important; outline-offset: 3px !important; opacity: 0.45 !important; }',
+      '.sivme-ghost-live { outline: 2px dashed #10b981 !important; outline-offset: 3px !important; opacity: 1 !important; }',
+      '.sivme-public-hidden { display: none !important; }'
+    ].join('\n');
+    document.head.appendChild(st);
+  })();
+
+  // ==============================================================================
+  // 7. MOUNT SINGLE TOP-RIGHT INTERACTIVE NOTCH (DEDUPLICATED)
   // ==============================================================================
   function mountInlineBadge(parentEl, urn, isVisible, label) {
-    var badge = parentEl.querySelector(':scope > .sivme-notch-pill');
+    // Purge any pre-existing duplicate badges on this element
+    var allExisting = parentEl.querySelectorAll(':scope > .sivme-notch-pill, :scope > .sivme-inline-badge, :scope > .sivme-live-notch');
+    if (allExisting.length > 1) {
+      for (var i = 1; i < allExisting.length; i++) {
+        allExisting[i].remove();
+      }
+    }
+
+    var badge = allExisting[0];
     if (!badge) {
       badge = document.createElement('div');
       parentEl.appendChild(badge);
@@ -86,7 +284,7 @@
     badge.style.cssText = [
       'position: absolute !important',
       'top: -10px !important',
-      'right: 8px !important',
+      'right: 10px !important',
       'z-index: 99 !important',
       'background: ' + (isVisible ? '#064e3b' : '#7f1d1d') + ' !important',
       'border: 1.5px solid ' + (isVisible ? '#10b981' : '#ef4444') + ' !important',
@@ -94,7 +292,7 @@
       'font-family: ui-monospace, SFMono-Regular, system-ui, sans-serif !important',
       'font-size: 10px !important',
       'font-weight: 800 !important',
-      'padding: 2px 7px !important',
+      'padding: 2.5px 8px !important',
       'border-radius: 9999px !important',
       'box-shadow: 0 3px 10px rgba(0, 0, 0, 0.75) !important',
       'cursor: pointer !important',
@@ -102,7 +300,7 @@
       'visibility: visible !important',
       'opacity: 1 !important',
       'align-items: center !important',
-      'gap: 3px !important',
+      'gap: 3.5px !important',
       'user-select: none !important',
       '-webkit-user-select: none !important',
       'touch-action: manipulation !important',
@@ -117,12 +315,12 @@
   }
 
   // ==============================================================================
-  // 3. STRICT SYSTEM SHELL DENYLIST (Permits RM Cash Card, Blocks Inner Child Clutter)
+  // 8. STRICT SYSTEM SHELL DENYLIST (Permits RM Cash Card, Blocks Inner Child Clutter)
   // ==============================================================================
   function isSystemShellElement(el) {
     if (!el || el.nodeType !== 1) return true;
 
-    // Allow wallet-card itself, but block inner action buttons from nested badges
+    // Permit the RM CASH wallet card container itself, but block its inner buttons
     if (!el.classList.contains('wallet-card') && el.closest('.wallet-card')) return true;
 
     return !!(
@@ -157,7 +355,7 @@
         el.classList.remove('sivme-public-hidden');
         el.style.removeProperty('display');
       }
-      var oldB = el.querySelector(':scope > .sivme-notch-pill, :scope > .sivme-inline-badge');
+      var oldB = el.querySelector(':scope > .sivme-notch-pill, :scope > .sivme-inline-badge, :scope > .sivme-live-notch');
       if (oldB) oldB.remove();
       el.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
     } else {
@@ -177,7 +375,7 @@
 
         el.addEventListener('click', function (e) {
           if (!core.isConsoleAuthorized()) return;
-          if (e.target.closest('.sivme-notch-pill, .sivme-inline-badge')) return;
+          if (e.target.closest('.sivme-notch-pill, .sivme-inline-badge, .sivme-live-notch')) return;
 
           var curVis = core.getUrnVisibility(urn);
           if (!curVis) {
@@ -207,7 +405,7 @@
   }
 
   // ==============================================================================
-  // 4. UNIVERSAL AUTO-SCANNER (Directory, Search, RM CASH, 12 Verticals & Filters)
+  // 9. UNIVERSAL AUTO-SCANNER (Directory, Search, RM CASH, 12 Verticals & Filters)
   // ==============================================================================
   function autoScanBusinessElements(isAuth) {
     var core = getCore();
@@ -254,7 +452,21 @@
       }
     });
 
-    // 5. 16-3 Inner Rental Search Dynamic Filters
+    // 5. Universal Catalog Cards (Ensure single clean notch per category)
+    var catalogCards = document.querySelectorAll('#categoryModal [data-cat-id]');
+    catalogCards.forEach(function (cCard) {
+      var catId = cCard.getAttribute('data-cat-id') || '';
+      var num = catId.replace(/[cg]/, '');
+      if (num && num !== '16') {
+        var urn = 'rm:cat:' + (num.length === 1 ? '0' + num : num);
+        var labelEl = cCard.querySelector('.font-bold') || cCard;
+        var label = core.cleanText(labelEl) || ('Category ' + num);
+        cCard.classList.add('sivme-catalog-card');
+        auditElement(cCard, urn, label, isAuth);
+      }
+    });
+
+    // 6. 16-3 Inner Rental Search Dynamic Filters
     URN_SELECTORS.forEach(function (def) {
       try {
         var nodes = document.querySelectorAll(def.selector);
@@ -272,7 +484,7 @@
   }
 
   // ==============================================================================
-  // 5. CATEGORY 16 ACCORDION CONTROLLER & SUB-CARDS
+  // 10. CATEGORY 16 ACCORDION & SUB-CARDS
   // ==============================================================================
   function auditCategory16Accordion(isAuth) {
     var core = getCore();
@@ -291,7 +503,7 @@
         c16.style.removeProperty('display');
       }
       if (c16Header) {
-        var oldB = c16Header.querySelector(':scope > .sivme-notch-pill, :scope > .sivme-inline-badge');
+        var oldB = c16Header.querySelector(':scope > .sivme-notch-pill, :scope > .sivme-inline-badge, :scope > .sivme-live-notch');
         if (oldB) oldB.remove();
         c16Header.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
       }
@@ -313,7 +525,7 @@
         if (c16Header.getAttribute('data-sivme-toggle-bound') !== 'true') {
           c16Header.setAttribute('data-sivme-toggle-bound', 'true');
           c16Header.addEventListener('click', function (e) {
-            if (e.target.closest('.sivme-notch-pill, .sivme-inline-badge')) return;
+            if (e.target.closest('.sivme-notch-pill, .sivme-inline-badge, .sivme-live-notch')) return;
             var now = Date.now();
             if (now - lastAccordionToggleTime < 350) return;
             lastAccordionToggleTime = now;
@@ -354,7 +566,7 @@
         subCard.addEventListener('click', function (e) {
           if (!core.isConsoleAuthorized()) return;
           var isDormant = subCard.classList.contains('sivme-ghost-dormant');
-          var isBadgeClick = !!e.target.closest('.sivme-notch-pill, .sivme-inline-badge');
+          var isBadgeClick = !!e.target.closest('.sivme-notch-pill, .sivme-inline-badge, .sivme-live-notch');
 
           if (isDormant || isBadgeClick) {
             if (e.cancelable) e.preventDefault();
@@ -385,7 +597,7 @@
   }
 
   // ==============================================================================
-  // 6. MAIN AUDIT ENGINE DISPATCHER
+  // 11. MAIN AUDIT ENGINE DISPATCHER
   // ==============================================================================
   function applyInSituAudit() {
     if (isAuditing) return;
@@ -423,10 +635,10 @@
   }
 
   // ==============================================================================
-  // 7. EVENT LISTENERS & OBSERVER INITIALIZATION (Touch & Click Support)
+  // 12. 1-TAP INSTANT TOGGLE LISTENER & OBSERVER
   // ==============================================================================
   function executeBadgeToggle(e) {
-    var badge = e.target.closest('.sivme-notch-pill, .sivme-inline-badge');
+    var badge = e.target.closest('.sivme-notch-pill, .sivme-inline-badge, .sivme-live-notch');
     var core = getCore();
     if (!badge || !core.isConsoleAuthorized()) return;
 
@@ -465,7 +677,7 @@
   window.RM_SIVME.auditElement = auditElement;
   window.RM_SIVME.applyInSituAudit = applyInSituAudit;
 
-  // Initial Execution
+  // Initialize
   applyInSituAudit();
 
   document.addEventListener('click', function () { setTimeout(applyInSituAudit, 50); }, false);
