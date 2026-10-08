@@ -4,9 +4,6 @@
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-scanner-ext.js
- * DUAL-FOLDER REFS:
- *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
- *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
  */
 
 (function () {
@@ -24,7 +21,7 @@
   }
 
   // ==============================================================================
-  // 1. UNIVERSAL ANTI-OVERLAP, STACKING ISOLATION & MODAL ACTIVE SHIELD
+  // 1. UNIVERSAL ANTI-OVERLAP, STACKING ISOLATION & TOP-RIGHT NOTCH SHIELD
   // ==============================================================================
   (function injectSpacingShield() {
     var styleId = 'sivme-universal-spacing-shield';
@@ -32,25 +29,34 @@
     var st = document.createElement('style');
     st.id = styleId;
     st.textContent = [
-      '/* 1. Stacking isolation: Confines home screen elements to low z-index */',
-      'main, header {',
-      '  isolation: isolate !important;',
-      '  position: relative !important;',
-      '  z-index: 10 !important;',
-      '}',
-      '#categoryModal, #rm-fullscreen-view, div[id*="Modal"], div[id*="modal"] {',
-      '  z-index: 99990 !important;',
-      '}',
+      '/* 1. Modal Stacking & Universal Visible Notches */',
+      '#categoryModal, #rm-fullscreen-view, div[id*="Modal"], div[id*="modal"] { z-index: 99990 !important; }',
+      '#categoryModal div, #categoryModal section, #tier1-list, #tier2-list { overflow: visible !important; }',
       '',
-      '/* 2. Absolute suppression of background widgets when modal is active */',
+      '/* 2. Absolute suppression of background widgets when modal is active (No floating home badges) */',
       'body.sivme-modal-active main,',
       'body.sivme-modal-active header {',
+      '  display: none !important;',
       '  visibility: hidden !important;',
       '  pointer-events: none !important;',
       '}',
       '',
-      '/* 3. Eliminate duplicate legacy notches */',
-      '.sivme-live-notch { display: none !important; }',
+      '/* 3. Authoritative Top-Right Notch on EVERY Dashed Border Card */',
+      '#categoryModal [data-cat-id] > .sivme-notch-pill,',
+      '#categoryModal [data-cat-id] > .sivme-live-notch,',
+      '.sivme-subcat-card > .sivme-notch-pill,',
+      '.sivme-notch-pill {',
+      '  position: absolute !important;',
+      '  top: -10px !important;',
+      '  right: 12px !important;',
+      '  z-index: 100 !important;',
+      '  display: inline-flex !important;',
+      '  visibility: visible !important;',
+      '  opacity: 1 !important;',
+      '  white-space: nowrap !important;',
+      '  pointer-events: auto !important;',
+      '  touch-action: manipulation !important;',
+      '}',
       '',
       '/* 4. Home Widgets Clearance & RM CASH Dedicated Border Notch */',
       '#cat-menu-btn { margin-bottom: 20px !important; position: relative !important; overflow: visible !important; }',
@@ -83,26 +89,8 @@
       '  flex: 1 1 auto !important;',
       '  min-width: 0 !important;',
       '}',
-      '#categoryModal [data-cat-id] > .sivme-notch-pill {',
-      '  position: absolute !important;',
-      '  top: -10px !important;',
-      '  right: 12px !important;',
-      '  z-index: 100 !important;',
-      '}',
       '',
-      '/* 8. Base Authoritative Notch Styles */',
-      '.sivme-notch-pill {',
-      '  position: absolute !important;',
-      '  top: -10px !important;',
-      '  right: 10px !important;',
-      '  z-index: 99 !important;',
-      '  display: inline-flex !important;',
-      '  visibility: visible !important;',
-      '  opacity: 1 !important;',
-      '  white-space: nowrap !important;',
-      '  pointer-events: auto !important;',
-      '  touch-action: manipulation !important;',
-      '}',
+      '/* 8. Base Outline Classes */',
       '.sivme-badge-anchor { position: relative !important; overflow: visible !important; }',
       '.sivme-ghost-dormant { outline: 2px dashed #ef4444 !important; outline-offset: 3px !important; opacity: 0.45 !important; }',
       '.sivme-ghost-live { outline: 2px dashed #10b981 !important; outline-offset: 3px !important; opacity: 1 !important; }',
@@ -126,7 +114,8 @@
   // 3. MOUNT SINGLE TOP-RIGHT NOTCH PILL WITH STRICT BARRIER
   // ==============================================================================
   function mountInlineBadge(parentEl, urn, isVisible, label) {
-    var allExisting = parentEl.querySelectorAll(':scope > .sivme-notch-pill, :scope > .sivme-inline-badge, :scope > .sivme-live-notch');
+    parentEl.querySelectorAll(':scope > .sivme-live-notch, :scope > .sivme-inline-badge').forEach(function (n) { n.remove(); });
+    var allExisting = parentEl.querySelectorAll(':scope > .sivme-notch-pill');
     for (var i = 1; i < allExisting.length; i++) allExisting[i].remove();
     var badge = allExisting[0] || document.createElement('div');
 
@@ -136,12 +125,14 @@
     badge.setAttribute('data-badge-label', label || '');
     badge.setAttribute('data-badge-vis', String(isVisible));
 
-    badge.innerHTML = isVisible
+    var targetHtml = isVisible
       ? '<span style="color:#10b981;font-size:10px;line-height:1;">🟢</span> <span style="line-height:1;">Live</span> <span style="font-size:9px;opacity:0.8;line-height:1;">⇄</span>'
       : '<span style="color:#ef4444;font-size:10px;line-height:1;">🔴</span> <span style="line-height:1;">Hidden</span> <span style="font-size:9px;opacity:0.8;line-height:1;">⇄</span>';
 
+    badge.innerHTML = targetHtml;
+
     badge.style.cssText = [
-      'position: absolute !important', 'top: -10px !important', 'right: 10px !important', 'z-index: 100 !important',
+      'position: absolute !important', 'top: -10px !important', 'right: 12px !important', 'z-index: 100 !important',
       'background: ' + (isVisible ? '#064e3b' : '#7f1d1d') + ' !important',
       'border: 1.5px solid ' + (isVisible ? '#10b981' : '#ef4444') + ' !important',
       'color: ' + (isVisible ? '#34d399' : '#fca5a5') + ' !important',
@@ -169,11 +160,15 @@
   }
 
   // ==============================================================================
-  // 4. STRICT SYSTEM SHELL DENYLIST
+  // 4. STRICT SYSTEM SHELL DENYLIST (Never blocks catalog cards)
   // ==============================================================================
   function isSystemShellElement(el) {
     if (!el || el.nodeType !== 1) return true;
-    if (!el.classList.contains('wallet-card') && el.closest('.wallet-card')) return true;
+
+    // NEVER block catalog cards, sub-cards or wallet card
+    if (el.hasAttribute('data-cat-id') || el.classList.contains('sivme-cat-card') || el.classList.contains('sivme-subcat-card')) return false;
+    if (el.classList.contains('wallet-card')) return false;
+    if (el.closest('.wallet-card')) return true;
 
     // Block 12 Verticals Header Bar & Tier Toggles from getting badges
     var txt = el.textContent || '';
@@ -181,9 +176,11 @@
     if (txt.indexOf('जुड़ना मुफ़्त') !== -1) return true;
     if (el.id === 'rm-tier1-toggle' || el.id === 'rm-tier2-toggle' || el.closest('#rm-tier1-toggle') || el.closest('#rm-tier2-toggle')) return true;
 
+    // Block modal backdrop itself, but NOT children cards
+    if (el.id === 'categoryModal') return true;
+
     return !!(
       el.closest('header') || el.closest('nav') || el.closest('#header-user-avatar') ||
-      (el.closest('[onclick*="toggleMenuDrawer"]') && el.id !== 'cat-menu-btn') ||
       el.closest('[onclick*="closeFullscreenModule"]') || el.closest('#playStoreInstallBanner') ||
       el.closest('#sivmeFloatingDock') || el.closest('#sivme-floating-console-dock') ||
       el.classList.contains('acc-arrow') ||
@@ -205,7 +202,7 @@
       c16.classList.toggle('sivme-public-hidden', !isCat16Vis);
       c16.style.display = isCat16Vis ? '' : 'none';
       if (c16Header) {
-        var oldB = c16Header.querySelector(':scope > .sivme-notch-pill, :scope > .sivme-inline-badge, :scope > .sivme-live-notch');
+        var oldB = c16Header.querySelector(':scope > .sivme-notch-pill, :scope > .sivme-inline-badge');
         if (oldB) oldB.remove();
         c16Header.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
       }
@@ -221,7 +218,7 @@
         if (c16Header.getAttribute('data-sivme-toggle-bound') !== 'true') {
           c16Header.setAttribute('data-sivme-toggle-bound', 'true');
           c16Header.addEventListener('click', function (e) {
-            if (e.target.closest('.sivme-notch-pill, .sivme-inline-badge, .sivme-live-notch')) return;
+            if (e.target.closest('.sivme-notch-pill, .sivme-inline-badge')) return;
             var now = Date.now();
             if (now - lastAccordionToggleTime < 350) return;
             lastAccordionToggleTime = now;
@@ -254,7 +251,7 @@
         subCard.addEventListener('click', function (e) {
           if (!core.isConsoleAuthorized()) return;
           var isDormant = subCard.classList.contains('sivme-ghost-dormant');
-          var isBadgeClick = !!e.target.closest('.sivme-notch-pill, .sivme-inline-badge, .sivme-live-notch');
+          var isBadgeClick = !!e.target.closest('.sivme-notch-pill, .sivme-inline-badge');
           if (isDormant || isBadgeClick) {
             if (e.cancelable) e.preventDefault();
             e.stopPropagation();
