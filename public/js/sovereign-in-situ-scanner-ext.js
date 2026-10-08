@@ -4,6 +4,9 @@
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-scanner-ext.js
+ * DUAL-FOLDER REFS:
+ *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
+ *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
  */
 
 (function () {
@@ -21,7 +24,7 @@
   }
 
   // ==============================================================================
-  // 1. UNIVERSAL ANTI-OVERLAP, 50-CAT TOUCH SCROLL & TOP-RIGHT NOTCH SHIELD
+  // 1. UNIVERSAL ANTI-OVERLAP, 50-CAT TOUCH SCROLL & VIBRANT NOTCH SHIELD
   // ==============================================================================
   (function injectSpacingShield() {
     var styleId = 'sivme-universal-spacing-shield';
@@ -37,17 +40,18 @@
       '  height: 100dvh !important;',
       '  max-height: 100dvh !important;',
       '  overflow-y: hidden !important;',
-      '  padding-top: 50px !important;',
+      '  padding-top: 48px !important;',
+      '  padding-bottom: 24px !important;',
       '}',
       '#categoryModal > div:first-child {',
-      '  height: calc(100dvh - 75px) !important;',
-      '  max-height: calc(100dvh - 75px) !important;',
+      '  height: calc(100dvh - 72px) !important;',
+      '  max-height: calc(100dvh - 72px) !important;',
       '  display: flex !important;',
       '  flex-direction: column !important;',
       '  overflow: hidden !important;',
       '  position: relative !important;',
       '}',
-      '/* Enable smooth scrolling across all 50 categories */',
+      '/* Enable smooth scrolling across all 50 categories with dock clearance */',
       '#categoryModal .flex-1,',
       '#categoryModal div[class*="overflow-y-auto"] {',
       '  flex: 1 1 auto !important;',
@@ -57,7 +61,7 @@
       '  overflow-x: hidden !important;',
       '  -webkit-overflow-scrolling: touch !important;',
       '  touch-action: pan-y !important;',
-      '  padding-bottom: 90px !important;',
+      '  padding-bottom: 120px !important;',
       '}',
       '#tier1-list, #tier2-list {',
       '  overflow: visible !important;',
@@ -71,12 +75,12 @@
       '  pointer-events: none !important;',
       '}',
       '',
-      '/* 3. Authoritative Top-Right Notch on EVERY Dashed Border Card */',
+      '/* 3. Authoritative Top-Right Notch with 44px Safe Touch Target */',
       '#categoryModal [data-cat-id] > .sivme-notch-pill,',
       '.sivme-subcat-card > .sivme-notch-pill,',
       '.sivme-notch-pill {',
       '  position: absolute !important;',
-      '  top: -10px !important;',
+      '  top: -11px !important;',
       '  right: 12px !important;',
       '  z-index: 100 !important;',
       '  display: inline-flex !important;',
@@ -85,6 +89,19 @@
       '  white-space: nowrap !important;',
       '  pointer-events: auto !important;',
       '  touch-action: manipulation !important;',
+      '  min-height: 24px !important;',
+      '  padding: 3px 10px !important;',
+      '  font-size: 10.5px !important;',
+      '}',
+      '/* Expanded invisible hit-box for reliable 1-tap thumb touches */',
+      '.sivme-notch-pill::before {',
+      '  content: "" !important;',
+      '  position: absolute !important;',
+      '  top: -8px !important;',
+      '  bottom: -8px !important;',
+      '  left: -10px !important;',
+      '  right: -10px !important;',
+      '  z-index: 1 !important;',
       '}',
       '',
       '/* 4. Home Widgets Clearance & RM CASH Dedicated Border Notch */',
@@ -119,10 +136,21 @@
       '  min-width: 0 !important;',
       '}',
       '',
-      '/* 8. Base Outline Classes */',
+      '/* 8. Vibrant Dashed Borders (100% Unfaded Visibility) */',
       '.sivme-badge-anchor { position: relative !important; overflow: visible !important; }',
-      '.sivme-ghost-dormant { outline: 2px dashed #ef4444 !important; outline-offset: 3px !important; opacity: 0.45 !important; }',
-      '.sivme-ghost-live { outline: 2px dashed #10b981 !important; outline-offset: 3px !important; opacity: 1 !important; }',
+      '.sivme-ghost-live, .is-live {',
+      '  outline: 2.5px dashed #10b981 !important;',
+      '  outline-offset: 3px !important;',
+      '  opacity: 1 !important;',
+      '}',
+      '.sivme-ghost-dormant, .is-hidden {',
+      '  outline: 2.5px dashed #ff3838 !important;',
+      '  outline-offset: 3px !important;',
+      '  opacity: 1 !important;',
+      '}',
+      '.sivme-ghost-dormant > div:first-child, .is-hidden > div:first-child {',
+      '  opacity: 0.55 !important;',
+      '}',
       '.sivme-public-hidden { display: none !important; }'
     ].join('\n');
     document.head.appendChild(st);
@@ -219,28 +247,28 @@
     badge.setAttribute('data-badge-vis', String(isVisible));
 
     var targetHtml = isVisible
-      ? '<span style="color:#10b981;font-size:10px;line-height:1;">🟢</span> <span style="line-height:1;">Live</span> <span style="font-size:9px;opacity:0.8;line-height:1;">⇄</span>'
-      : '<span style="color:#ef4444;font-size:10px;line-height:1;">🔴</span> <span style="line-height:1;">Hidden</span> <span style="font-size:9px;opacity:0.8;line-height:1;">⇄</span>';
+      ? '<span style="color:#10b981;font-size:11px;line-height:1;">🟢</span> <span style="line-height:1;">Live</span> <span style="font-size:9.5px;opacity:0.85;line-height:1;">⇄</span>'
+      : '<span style="color:#ff4d4d;font-size:11px;line-height:1;">🔴</span> <span style="line-height:1;">Hidden</span> <span style="font-size:9.5px;opacity:0.85;line-height:1;">⇄</span>';
 
     badge.innerHTML = targetHtml;
 
     badge.style.cssText = [
-      'position: absolute !important', 'top: -10px !important', 'right: 12px !important', 'z-index: 100 !important',
+      'position: absolute !important', 'top: -11px !important', 'right: 12px !important', 'z-index: 100 !important',
       'background: ' + (isVisible ? '#064e3b' : '#7f1d1d') + ' !important',
-      'border: 1.5px solid ' + (isVisible ? '#10b981' : '#ef4444') + ' !important',
+      'border: 1.5px solid ' + (isVisible ? '#10b981' : '#ff4d4d') + ' !important',
       'color: ' + (isVisible ? '#34d399' : '#fca5a5') + ' !important',
       'font-family: ui-monospace, SFMono-Regular, system-ui, sans-serif !important',
-      'font-size: 10px !important', 'font-weight: 800 !important', 'padding: 2.5px 8px !important',
-      'border-radius: 9999px !important', 'box-shadow: 0 3px 10px rgba(0,0,0,0.75) !important',
+      'font-size: 10.5px !important', 'font-weight: 800 !important', 'padding: 3px 10px !important',
+      'border-radius: 9999px !important', 'box-shadow: 0 3px 10px rgba(0,0,0,0.85) !important',
       'cursor: pointer !important', 'display: inline-flex !important', 'visibility: visible !important',
-      'opacity: 1 !important', 'align-items: center !important', 'gap: 3.5px !important',
+      'opacity: 1 !important', 'align-items: center !important', 'gap: 4px !important',
       'user-select: none !important', '-webkit-user-select: none !important',
       'touch-action: manipulation !important', 'pointer-events: auto !important',
       'line-height: 1 !important', 'white-space: nowrap !important'
     ].join(';');
 
-    // 1-Tap Instant Toggle Handler (0ms Feedback)
-    badge.onclick = function (ev) {
+    // Dedicated 1-Tap Instant Handler
+    var handleFastToggle = function (ev) {
       if (ev) {
         if (ev.cancelable) ev.preventDefault();
         ev.stopPropagation();
@@ -258,14 +286,14 @@
       }
       var nextVis = !currentVis;
 
-      // 1. Immediate DOM Flip
+      // 1. Instant Visual DOM Flip (0ms)
       badge.setAttribute('data-badge-vis', String(nextVis));
       badge.className = 'sivme-notch-pill ' + (nextVis ? 'sivme-badge-live' : 'sivme-badge-dormant');
       badge.innerHTML = nextVis
-        ? '<span style="color:#10b981;font-size:10px;line-height:1;">🟢</span> <span style="line-height:1;">Live</span> <span style="font-size:9px;opacity:0.8;line-height:1;">⇄</span>'
-        : '<span style="color:#ef4444;font-size:10px;line-height:1;">🔴</span> <span style="line-height:1;">Hidden</span> <span style="font-size:9px;opacity:0.8;line-height:1;">⇄</span>';
+        ? '<span style="color:#10b981;font-size:11px;line-height:1;">🟢</span> <span style="line-height:1;">Live</span> <span style="font-size:9.5px;opacity:0.85;line-height:1;">⇄</span>'
+        : '<span style="color:#ff4d4d;font-size:11px;line-height:1;">🔴</span> <span style="line-height:1;">Hidden</span> <span style="font-size:9.5px;opacity:0.85;line-height:1;">⇄</span>';
       badge.style.setProperty('background', (nextVis ? '#064e3b' : '#7f1d1d'), 'important');
-      badge.style.setProperty('border', '1.5px solid ' + (nextVis ? '#10b981' : '#ef4444'), 'important');
+      badge.style.setProperty('border', '1.5px solid ' + (nextVis ? '#10b981' : '#ff4d4d'), 'important');
       badge.style.setProperty('color', (nextVis ? '#34d399' : '#fca5a5'), 'important');
 
       var parentCard = badge.closest('[data-cat-id], .sivme-cat-card, .sivme-subcat-card, .sivme-vertical-card, .wallet-card');
@@ -274,9 +302,13 @@
         parentCard.classList.toggle('sivme-ghost-dormant', !nextVis);
         parentCard.classList.toggle('is-live', nextVis);
         parentCard.classList.toggle('is-hidden', !nextVis);
-        parentCard.style.setProperty('outline', '2px dashed ' + (nextVis ? '#10b981' : '#ef4444'), 'important');
+        parentCard.style.setProperty('outline', '2.5px dashed ' + (nextVis ? '#10b981' : '#ff3838'), 'important');
         parentCard.style.setProperty('outline-offset', '3px', 'important');
-        parentCard.style.setProperty('opacity', nextVis ? '1' : '0.45', 'important');
+        parentCard.style.setProperty('opacity', '1', 'important');
+        var cardInner = parentCard.querySelector(':scope > div:first-child');
+        if (cardInner) {
+          cardInner.style.setProperty('opacity', nextVis ? '1' : '0.55', 'important');
+        }
       }
 
       // 2. Persist across all local storage structures
@@ -287,6 +319,8 @@
         setTimeout(window.RM_SIVME.applyInSituAudit, 30);
       }
     };
+
+    badge.onclick = handleFastToggle;
 
     parentEl.style.setProperty('overflow', 'visible', 'important');
     if (window.getComputedStyle(parentEl).position === 'static') {
