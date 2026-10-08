@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — UNIVERSAL CATALOG METADATA REGISTRY (SSOT)
- * MODULE        : Centralized High-Performance Catalog Registry for All 50 Categories
+ * MODULE        : Centralized High-Performance Catalog Registry & Modular Extension Hub
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/universal-catalog/catalog-metadata-registry.js
@@ -264,8 +264,8 @@
           services: [
             { text: '🛏️ सिंगल कमरा / 1 RK (स्टूडेंट्स व जॉब)', bg: 'rgba(56,189,248,0.12)', c: '#38bdf8' },
             { text: '🏢 1 BHK / 2 BHK / 3 BHK फैमिली फ्लैट', bg: 'rgba(52,211,153,0.12)', c: '#34d399' },
-            { text: '👩 गर्ल्स हॉस्टल व सेफ पीजी (CCTV व सुरक्षा)', bg: 'rgba(244,114,182,0.12)', c: '#f472b6' },
-            { text: '👨 बॉयज लॉज व मेस सुविधा', bg: 'rgba(250,204,21,0.12)', c: '#facc15' },
+            { text: '👩 Girls हॉस्टल व सेफ पीजी (CCTV व सुरक्षा)', bg: 'rgba(244,114,182,0.12)', c: '#f472b6' },
+            { text: '👨 Boys लॉज व मेस सुविधा', bg: 'rgba(250,204,21,0.12)', c: '#facc15' },
             { text: '🏬 दुकान व कमर्शियल ऑफिस स्पेस', bg: 'rgba(192,132,252,0.12)', c: '#c084fc' }
           ],
           highlights: [
@@ -277,11 +277,9 @@
         }
       }
     }
-
-    // EXTENSIBLE SLOTS: CATEGORIES 04 TO 50 WILL BE APPENDED IN THE SAME STRUCTURE
   };
 
-  // Authoritative Registry API
+  // Authoritative Registry API with Modular Extension Support
   window.RM_CATALOG_REGISTRY = {
     getCategoryData: function (catId) {
       var cleanId = String(catId).replace(/^[c]/, '');
@@ -296,6 +294,10 @@
     registerBatch: function (batchData) {
       if (typeof batchData === 'object') {
         Object.assign(RM_CATALOG_REGISTRY, batchData);
+        // Automatically sweep catalog cards whenever a new extension registers
+        if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
+          setTimeout(window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog, 20);
+        }
       }
     },
     getAllCategories: function () {
