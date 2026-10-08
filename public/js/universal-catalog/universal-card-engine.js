@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — UNIVERSAL CATALOG CARD ENGINE (UI RENDERER)
- * MODULE        : 2-Column Stacked Layout (Number on Top, Logo Below, Big Name on Right) & 3-Button Action Bar
+ * MODULE        : 2-Column Stacked Grid (Big Number Top, Logo Below, Big Headers Right) & Clean 3-Button Bar
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/universal-catalog/universal-card-engine.js
@@ -14,7 +14,7 @@
 
   var isSweeping = false;
 
-  // 1. RENDER PARENT CARD (LEFT: NUMBER ON TOP + LOGO BELOW | RIGHT: FULL WIDTH BIG HEADERS)
+  // 1. RENDER PARENT CARD (LEFT: BIG NUMBER TOP + LOGO BELOW | RIGHT: 22PX BOLD TITLE & SUBTITLE)
   function renderParentCard(headerEl, catId, isOpen) {
     if (!headerEl) return;
     var numId = String(catId).replace(/^[c]/, '');
@@ -40,14 +40,17 @@
       ]
     };
 
+    // Purge any legacy/duplicate containers to prevent overwriting & ghosting
+    Array.from(headerEl.children).forEach(function (child) {
+      if (child.id && (child.id.indexOf('rm-c16-master-parent') !== -1 || child.id.indexOf('c16-playstore-layout') !== -1)) {
+        child.remove();
+      } else if (!child.id || (child.id.indexOf('authoritative-badge') === -1 && child.id.indexOf('rm-universal-parent') === -1)) {
+        child.style.display = 'none';
+      }
+    });
+
     var container = headerEl.querySelector('#rm-universal-parent-' + numId);
     if (!container) {
-      Array.from(headerEl.children).forEach(function (child) {
-        if (!child.id || (child.id.indexOf('authoritative-badge') === -1 && child.id.indexOf('rm-universal-parent') === -1)) {
-          child.style.display = 'none';
-        }
-      });
-
       container = document.createElement('div');
       container.id = 'rm-universal-parent-' + numId;
       container.style.cssText = [
@@ -71,19 +74,19 @@
     }).join(' ');
 
     container.innerHTML = [
-      '<!-- Top Row: Left Column (Number on Top, Logo Below) + Right Column (Big Headers, No Cutoff) -->',
+      '<!-- Top Row: Left Column (28px Number Top, Logo Below) + Right Column (22px Bold Title, Zero Cutoff) -->',
       '<div style="display: flex; align-items: flex-start; gap: 14px; width: 100%;">',
       '  <!-- Left Column Stack -->',
       '  <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 6px; flex-shrink: 0; min-width: 54px;">',
-      '    <div style="font-size: 24px; font-weight: 900; color: #38bdf8; font-family: ui-monospace, monospace; line-height: 1; text-align: center;">' + (data.number || displayNum) + '</div>',
+      '    <div style="font-size: 28px; font-weight: 900; color: #38bdf8; font-family: ui-monospace, monospace; line-height: 1; text-align: center; letter-spacing: -0.5px;">' + (data.number || displayNum) + '</div>',
       '    <div style="width: 52px; height: 52px; border-radius: 14px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid rgba(56, 189, 248, 0.45); box-shadow: 0 4px 12px rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">',
       '      <span style="font-size: 28px; line-height: 1;">' + data.icon + '</span>',
       '    </div>',
       '  </div>',
-      '  <!-- Right Column: Big Title & Subtitle (Full Horizontal Space, Zero Cutoff) -->',
-      '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0; padding-top: 2px;">',
-      '    <div style="font-size: 20px; font-weight: 800; color: #ffffff; letter-spacing: -0.3px; line-height: 1.25; white-space: normal; word-break: break-word;">' + data.title + '</div>',
-      '    <div style="font-size: 14px; font-weight: 600; color: #34d399; line-height: 1.35; margin-top: 4px; white-space: normal; word-break: break-word;">' + data.subtitle + '</div>',
+      '  <!-- Right Column: 22px Extra Bold Title & Subtitle (Full Horizontal Space) -->',
+      '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0; padding-top: 1px;">',
+      '    <div style="font-size: 22px; font-weight: 900; color: #ffffff; letter-spacing: -0.4px; line-height: 1.25; white-space: normal; word-break: break-word;">' + data.title + '</div>',
+      '    <div style="font-size: 14.5px; font-weight: 700; color: #34d399; line-height: 1.35; margin-top: 4px; white-space: normal; word-break: break-word;">' + data.subtitle + '</div>',
       '  </div>',
       '</div>',
       '<!-- Row 2: Credibility Badges -->',
@@ -119,7 +122,7 @@
     }
   }
 
-  // 2. RENDER SUB-CARD (LEFT: SUB-NUMBER ON TOP + LOGO BELOW | RIGHT: BIG HEADERS + 3 NATIVE BUTTONS)
+  // 2. RENDER SUB-CARD (LEFT: 24PX NUMBER TOP + LOGO BELOW | RIGHT: 20PX TITLE | ZERO OVERLAP 3 BUTTONS)
   function renderSubCard(subCardEl, catId, subId) {
     if (!subCardEl) return;
     var numId = String(catId).replace(/^[c]/, '');
@@ -161,8 +164,11 @@
     subCardEl.style.setProperty('gap', '0px', 'important');
     subCardEl.style.setProperty('padding', '12px !important', 'important');
 
+    // Purge any conflicting legacy containers from cat16-adapter to stop overwriting/ghosting
     Array.from(subCardEl.children).forEach(function (child) {
-      if (child.id !== 'rm-playstore-sub-' + cleanSub && !child.classList.contains('sivme-notch-pill')) {
+      if (child.id && (child.id.indexOf('rm-master-subcard-') !== -1 || child.id.indexOf('subcard-enrich-') !== -1)) {
+        child.remove();
+      } else if (child.id !== 'rm-playstore-sub-' + cleanSub && !child.classList.contains('sivme-notch-pill')) {
         child.style.display = 'none';
       }
     });
@@ -197,22 +203,22 @@
     }).join('');
 
     container.innerHTML = [
-      '<!-- Top Row: Left Column (Number on Top, Logo Below) + Right Column (Big Titles, Zero Cutoff) -->',
+      '<!-- Top Row: Left Column (24px Number Top, Logo Below) + Right Column (20px Bold Titles, Zero Cutoff) -->',
       '<div style="display: flex; align-items: flex-start; gap: 12px; width: 100%;">',
       '  <!-- Left Column Stack -->',
       '  <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 5px; flex-shrink: 0; min-width: 52px;">',
-      '    <div style="font-size: 20px; font-weight: 900; color: #38bdf8; font-family: ui-monospace, monospace; line-height: 1; text-align: center;">' + cleanSub + '.</div>',
+      '    <div style="font-size: 24px; font-weight: 900; color: #38bdf8; font-family: ui-monospace, monospace; line-height: 1; text-align: center; letter-spacing: -0.5px;">' + cleanSub + '.</div>',
       '    <div style="width: 48px; height: 48px; border-radius: 13px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 1.5px solid rgba(56, 189, 248, 0.4); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">',
-      '      <span style="font-size: 24px; line-height: 1;">' + info.icon + '</span>',
+      '      <span style="font-size: 26px; line-height: 1;">' + info.icon + '</span>',
       '    </div>',
       '  </div>',
-      '  <!-- Right Column Stack -->',
+      '  <!-- Right Column Stack: 20px Bold Title & 14px Subtitle -->',
       '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0; padding-top: 1px;">',
       '    <div style="display: flex; align-items: center; gap: 6px;">',
       '      <span style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 4px;">' + (info.categoryTag || 'Rise Mitra Official') + '</span>',
       '    </div>',
-      '    <div style="font-size: 18.5px; font-weight: 800; color: #ffffff; letter-spacing: -0.3px; line-height: 1.25; margin-top: 3px; white-space: normal; word-break: break-word;">' + info.title + '</div>',
-      '    <div style="font-size: 13.5px; font-weight: 600; color: #34d399; line-height: 1.35; margin-top: 3px; white-space: normal; word-break: break-word;">' + (info.hindiTitle || info.hindi) + '</div>',
+      '    <div style="font-size: 20px; font-weight: 900; color: #ffffff; letter-spacing: -0.3px; line-height: 1.25; margin-top: 3px; white-space: normal; word-break: break-word;">' + info.title + '</div>',
+      '    <div style="font-size: 14px; font-weight: 700; color: #34d399; line-height: 1.35; margin-top: 3px; white-space: normal; word-break: break-word;">' + (info.hindiTitle || info.hindi) + '</div>',
       '  </div>',
       '</div>',
       '<!-- Play Store Rating & Stats Strip -->',
@@ -226,16 +232,16 @@
       '<div style="display: flex; flex-wrap: wrap; gap: 6px; width: 100%;">' + servicesHtml + '</div>',
       '<!-- Highlights Feature Box -->',
       '<div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 10px 12px; margin-top: 4px; display: flex; flex-direction: column; gap: 5px;">' + highlightsHtml + '</div>',
-      '<!-- Row 5: 3 Action Buttons (Folder B ZEL Protected: Pin, Video, Open) -->',
-      '<div style="display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 8px; width: 100%; margin-top: 6px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08);">',
-      '  <button type="button" class="rm-act-pin" style="background: rgba(30, 41, 59, 0.9); border: 1.2px solid rgba(248, 113, 113, 0.4); color: #fca5a5; border-radius: 10px; padding: 8px 6px; font-size: 12.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">',
+      '<!-- Row 5: 3 Action Buttons (Zero Overlap Guaranteed with min-width: 0) -->',
+      '<div style="display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 8px; width: 100%; margin-top: 6px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08); box-sizing: border-box;">',
+      '  <button type="button" class="rm-act-pin" style="min-width: 0 !important; background: rgba(30, 41, 59, 0.9); border: 1.2px solid rgba(248, 113, 113, 0.4); color: #fca5a5; border-radius: 10px; padding: 9px 4px; font-size: 12.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">',
       '    <span>📌</span> <span>पिन करें</span>',
       '  </button>',
-      '  <button type="button" class="rm-act-video" style="background: rgba(30, 41, 59, 0.9); border: 1.2px solid rgba(167, 139, 250, 0.4); color: #c4b5fd; border-radius: 10px; padding: 8px 6px; font-size: 12.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">',
+      '  <button type="button" class="rm-act-video" style="min-width: 0 !important; background: rgba(30, 41, 59, 0.9); border: 1.2px solid rgba(167, 139, 250, 0.4); color: #c4b5fd; border-radius: 10px; padding: 9px 4px; font-size: 12.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">',
       '    <span>▶</span> <span>वीडियो</span>',
       '  </button>',
-      '  <button type="button" class="rm-act-open" style="background: #059669; border: 1.5px solid #10b981; color: #ffffff; border-radius: 10px; padding: 8px 10px; font-size: 13.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 3px 8px rgba(0,0,0,0.4); cursor: pointer;">',
-      '    <span>' + (info.btnText || 'खोलें') + '</span> <span>➔</span>',
+      '  <button type="button" class="rm-act-open" style="min-width: 0 !important; background: #059669; border: 1.5px solid #10b981; color: #ffffff; border-radius: 10px; padding: 9px 6px; font-size: 13.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 3px 8px rgba(0,0,0,0.4); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">',
+      '    <span>खोलें</span> <span style="font-size: 11px;">➔</span>',
       '  </button>',
       '</div>'
     ].join('');
