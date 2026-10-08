@@ -304,4 +304,20 @@
       return RM_CATALOG_REGISTRY;
     }
   };
+    // Automatic Modular Extension Loader (Loads small batches dynamically)
+  var extBatches = [
+    'ext-batch-04-10.js',
+    'ext-batch-11-20.js',
+    'ext-batch-21-30.js',
+    'ext-batch-31-40.js',
+    'ext-batch-41-50.js'
+  ];
+
+  extBatches.forEach(function (file) {
+    var s = document.createElement('script');
+    s.src = '/js/universal-catalog/extensions/' + file;
+    s.async = true;
+    document.head.appendChild(s);
+  });
+
 })();
