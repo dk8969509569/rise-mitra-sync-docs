@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU ADAPTER: CATEGORY 16 (ISOLATED MODULE)
- * MODULE        : Dedicated House & Home (Cat-16) Google Play Store Card Layout & Universal Bridge
+ * MODULE        : Dedicated House & Home (Cat-16) Play Store Card, Top-Left Index & Large Typography
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sivme-adapters/cat16-adapter.js
@@ -191,13 +191,12 @@
     if (!existing) headerEl.appendChild(badge);
   }
 
-  // 3. GOOGLE PLAY STORE CARD ARCHITECTURE (FULL-CARD, ATTRACTIVE & BALANCED)
+  // 3. GOOGLE PLAY STORE CARD ARCHITECTURE (TOP-LEFT BIG NUMBERING & LARGE FONTS)
   function renderPlayStoreCard(headerEl, isOpen) {
     if (!headerEl) return;
 
     var container = headerEl.querySelector('#c16-playstore-layout');
     if (!container) {
-      // Hide empty legacy structure without deleting native listeners
       Array.from(headerEl.children).forEach(function (child) {
         if (!child.id || (child.id !== 'sivme-c16-authoritative-badge' && child.id !== 'c16-playstore-layout')) {
           child.style.display = 'none';
@@ -210,8 +209,8 @@
         'width: 100% !important',
         'display: flex !important',
         'flex-direction: column !important',
-        'gap: 10px !important',
-        'padding: 12px 14px 10px 14px !important',
+        'gap: 12px !important',
+        'padding: 14px 16px 12px 16px !important',
         'box-sizing: border-box !important'
       ].join(';');
 
@@ -219,36 +218,41 @@
     }
 
     container.innerHTML = [
-      '<!-- Top Row: Play Store App Icon + App Meta -->',
-      '<div style="display: flex; align-items: center; gap: 12px; width: 100%;">',
-      '  <div style="width: 52px; height: 52px; border-radius: 14px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 1.5px solid rgba(56, 189, 248, 0.35); box-shadow: 0 4px 12px rgba(0,0,0,0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0;">',
-      '    <span style="font-size: 24px; line-height: 1;">🏠</span>',
-      '    <span style="font-size: 9.5px; font-weight: 800; color: #38bdf8; line-height: 1; margin-top: 2px;">#16</span>',
+      '<!-- Top Row: Top-Left Big Numbering + Squircle Icon + Large App Metadata -->',
+      '<div style="display: flex; align-items: center; gap: 14px; width: 100%;">',
+      '  <!-- Top Left Prominent Numbering -->',
+      '  <div style="font-size: 20px; font-weight: 900; color: #38bdf8; background: rgba(56, 189, 248, 0.15); border: 1.5px solid rgba(56, 189, 248, 0.45); border-radius: 10px; padding: 6px 10px; line-height: 1; letter-spacing: -0.5px; box-shadow: 0 3px 8px rgba(0,0,0,0.4); flex-shrink: 0;">',
+      '    16.',
       '  </div>',
+      '  <!-- Play Store Squircle Icon -->',
+      '  <div style="width: 54px; height: 54px; border-radius: 14px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 1.5px solid rgba(56, 189, 248, 0.35); box-shadow: 0 4px 12px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">',
+      '    <span style="font-size: 28px; line-height: 1;">🏠</span>',
+      '  </div>',
+      '  <!-- Large Typography App Info -->',
       '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0;">',
-      '    <div style="font-size: 16px; font-weight: 700; color: #ffffff; letter-spacing: -0.3px; line-height: 1.2; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">House & Home</div>',
-      '    <div style="font-size: 12px; font-weight: 500; color: #34d399; line-height: 1.3; margin-top: 2px;">घर व मकान (दैनिक रखरखाव)</div>',
-      '    <div style="font-size: 11px; color: #94a3b8; display: flex; align-items: center; gap: 6px; margin-top: 4px; font-weight: 500;">',
-      '      <span style="color: #facc15; font-weight: 700;">★ 4.9</span>',
+      '    <div style="font-size: 18.5px; font-weight: 800; color: #ffffff; letter-spacing: -0.4px; line-height: 1.25; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">House & Home</div>',
+      '    <div style="font-size: 13.5px; font-weight: 600; color: #34d399; line-height: 1.35; margin-top: 3px;">घर व मकान (दैनिक रखरखाव)</div>',
+      '    <div style="font-size: 12.5px; color: #94a3b8; display: flex; align-items: center; gap: 7px; margin-top: 5px; font-weight: 600;">',
+      '      <span style="color: #facc15; font-weight: 800;">★ 4.9</span>',
       '      <span style="opacity: 0.5;">•</span>',
-      '      <span>3 सेवाएं</span>',
+      '      <span style="color: #e2e8f0;">3 सेवाएं</span>',
       '      <span style="opacity: 0.5;">•</span>',
-      '      <span style="color: #38bdf8; font-size: 10px; background: rgba(56, 189, 248, 0.12); padding: 1px 5px; border-radius: 4px;">Rise Verified</span>',
+      '      <span style="color: #38bdf8; font-size: 11px; background: rgba(56, 189, 248, 0.16); border: 1px solid rgba(56, 189, 248, 0.35); padding: 2px 7px; border-radius: 5px; font-weight: 700;">Rise Verified</span>',
       '    </div>',
       '  </div>',
       '</div>',
-      '<!-- Middle Row: Google Play Category Chips -->',
-      '<div style="display: flex; flex-wrap: wrap; gap: 5px; width: 100%; margin-top: 2px;">',
-      '  <span style="font-size: 11px; font-weight: 500; padding: 3px 8px; background: #1e293b; color: #93c5fd; border: 1px solid #334155; border-radius: 6px;">🔧 मिस्त्री</span>',
-      '  <span style="font-size: 11px; font-weight: 500; padding: 3px 8px; background: #1e293b; color: #fde047; border: 1px solid #334155; border-radius: 6px;">⚡ इलेक्ट्रीशियन</span>',
-      '  <span style="font-size: 11px; font-weight: 500; padding: 3px 8px; background: #1e293b; color: #d8b4fe; border: 1px solid #334155; border-radius: 6px;">🎨 रंगाई-पुताई</span>',
-      '  <span style="font-size: 11px; font-weight: 500; padding: 3px 8px; background: #1e293b; color: #86efac; border: 1px solid #334155; border-radius: 6px;">🏠 कमरा/फ्लैट</span>',
+      '<!-- Middle Row: Large Google Play Category Chips -->',
+      '<div style="display: flex; flex-wrap: wrap; gap: 6px; width: 100%; margin-top: 2px;">',
+      '  <span style="font-size: 12.5px; font-weight: 600; padding: 4px 10px; background: #1e293b; color: #93c5fd; border: 1.2px solid #334155; border-radius: 7px;">🔧 मिस्त्री</span>',
+      '  <span style="font-size: 12.5px; font-weight: 600; padding: 4px 10px; background: #1e293b; color: #fde047; border: 1.2px solid #334155; border-radius: 7px;">⚡ इलेक्ट्रीशियन</span>',
+      '  <span style="font-size: 12.5px; font-weight: 600; padding: 4px 10px; background: #1e293b; color: #d8b4fe; border: 1.2px solid #334155; border-radius: 7px;">🎨 रंगाई-पुताई</span>',
+      '  <span style="font-size: 12.5px; font-weight: 600; padding: 4px 10px; background: #1e293b; color: #86efac; border: 1.2px solid #334155; border-radius: 7px;">🏠 कमरा/फ्लैट</span>',
       '</div>',
       '<!-- Bottom Row: Play Store Style Action Button -->',
-      '<div style="display: flex; justify-content: flex-end; align-items: center; width: 100%; margin-top: 4px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.06);">',
-      '  <div style="font-size: 11.5px; font-weight: 700; color: #10b981; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.4); padding: 4px 12px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 5px;">',
+      '<div style="display: flex; justify-content: flex-end; align-items: center; width: 100%; margin-top: 4px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.08);">',
+      '  <div style="font-size: 13px; font-weight: 800; color: #10b981; background: rgba(16, 185, 129, 0.15); border: 1.5px solid rgba(16, 185, 129, 0.5); padding: 5px 14px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">',
       '    <span>3 सेवाएं ' + (isOpen ? 'छुपाएं' : 'देखें') + '</span>',
-      '    <span style="font-size: 10px;">' + (isOpen ? '▲' : '▼') + '</span>',
+      '    <span style="font-size: 11px;">' + (isOpen ? '▲' : '▼') + '</span>',
       '  </div>',
       '</div>'
     ].join('');
@@ -260,7 +264,6 @@
     var c16Container = document.querySelector('#categoryModal [data-cat-id="c16"], #categoryModal [data-cat-id="16"]');
     if (!c16Container) return;
 
-    // Hard-lock: Outer container never gets an outline
     c16Container.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
     c16Container.style.setProperty('outline', 'none', 'important');
     c16Container.querySelectorAll(':scope > .sivme-notch-pill, :scope > .sivme-live-notch, :scope > .sivme-inline-badge').forEach(function (n) {
