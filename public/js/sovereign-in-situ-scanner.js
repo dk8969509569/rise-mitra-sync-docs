@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU SCANNER & UI ENGINE (MODULE 2 OF 2)
- * MODULE        : Universal Auto-Scanner, 12 Core Verticals, Notches & Touch Handlers
+ * MODULE        : Universal Auto-Scanner, 12 Core Verticals, RM CASH & Touch Handlers
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-scanner.js
@@ -15,6 +15,7 @@
   var isAuditing = false;
   var lastUrnActionTimes = {};
   var lastAccordionToggleTime = 0;
+  var lastToggleTime = 0;
 
   function getCore() {
     return window.RM_SIVME || {
@@ -103,6 +104,8 @@
       'align-items: center !important',
       'gap: 3px !important',
       'user-select: none !important',
+      '-webkit-user-select: none !important',
+      'touch-action: manipulation !important',
       'line-height: 1 !important',
       'white-space: nowrap !important'
     ].join(';');
@@ -114,10 +117,14 @@
   }
 
   // ==============================================================================
-  // 3. STRICT SYSTEM SHELL DENYLIST (0% Tampering on System Shell)
+  // 3. STRICT SYSTEM SHELL DENYLIST (Permits RM Cash Card, Blocks Inner Child Clutter)
   // ==============================================================================
   function isSystemShellElement(el) {
     if (!el || el.nodeType !== 1) return true;
+
+    // Allow wallet-card itself, but block inner action buttons from nested badges
+    if (!el.classList.contains('wallet-card') && el.closest('.wallet-card')) return true;
+
     return !!(
       el.closest('header') ||
       el.closest('nav') ||
@@ -125,7 +132,6 @@
       (el.closest('[onclick*="toggleMenuDrawer"]') && el.id !== 'cat-menu-btn') ||
       el.closest('[onclick*="closeFullscreenModule"]') ||
       el.closest('#playStoreInstallBanner') ||
-      el.closest('.wallet-card') ||
       el.closest('#sivmeFloatingDock') ||
       el.closest('#sivme-floating-console-dock') ||
       el.classList.contains('acc-arrow') ||
@@ -201,7 +207,7 @@
   }
 
   // ==============================================================================
-  // 4. UNIVERSAL AUTO-SCANNER
+  // 4. UNIVERSAL AUTO-SCANNER (Directory, Search, RM CASH, 12 Verticals & Filters)
   // ==============================================================================
   function autoScanBusinessElements(isAuth) {
     var core = getCore();
@@ -221,7 +227,15 @@
       auditElement(sParent, 'rm:elem:home-search', 'ग्लोबल खोज बार', isAuth);
     }
 
-    // 3. Home Dashboard 12 Core Cashflow Verticals
+    // 3. RM CASH Atomic Wallet Card
+    var walletCard = document.querySelector('.wallet-card');
+    if (walletCard) {
+      walletCard.style.setProperty('overflow', 'visible', 'important');
+      walletCard.classList.add('sivme-cash-atomic-card');
+      auditElement(walletCard, 'rm:card:rm-cash', 'RM CASH बहीखाता कार्ड', isAuth);
+    }
+
+    // 4. Home Dashboard 12 Core Cashflow Verticals
     var vertCards = document.querySelectorAll('#verticalTilesGrid > div');
     vertCards.forEach(function (card) {
       var numSpan = card.querySelector('span.font-mono');
@@ -240,7 +254,7 @@
       }
     });
 
-    // 4. 16-3 Inner Rental Search Dynamic Filters
+    // 5. 16-3 Inner Rental Search Dynamic Filters
     URN_SELECTORS.forEach(function (def) {
       try {
         var nodes = document.querySelectorAll(def.selector);
@@ -409,12 +423,16 @@
   }
 
   // ==============================================================================
-  // 7. EVENT LISTENERS & OBSERVER INITIALIZATION
+  // 7. EVENT LISTENERS & OBSERVER INITIALIZATION (Touch & Click Support)
   // ==============================================================================
-  document.addEventListener('click', function (e) {
+  function executeBadgeToggle(e) {
     var badge = e.target.closest('.sivme-notch-pill, .sivme-inline-badge');
     var core = getCore();
     if (!badge || !core.isConsoleAuthorized()) return;
+
+    var now = Date.now();
+    if (now - lastToggleTime < 280) return;
+    lastToggleTime = now;
 
     if (e.cancelable) e.preventDefault();
     e.stopImmediatePropagation();
@@ -437,7 +455,10 @@
     }
 
     applyInSituAudit();
-  }, true);
+  }
+
+  document.addEventListener('pointerdown', executeBadgeToggle, true);
+  document.addEventListener('click', executeBadgeToggle, true);
 
   window.RM_SIVME = window.RM_SIVME || {};
   window.RM_SIVME.mountInlineBadge = mountInlineBadge;
