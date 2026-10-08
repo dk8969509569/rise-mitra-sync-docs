@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU SCANNER & UI ENGINE (MODULE 2 OF 2)
- * MODULE        : Universal Auto-Scanner, 12 Core Verticals, RM CASH, 16px Spacing & Anti-Clipping Shield
+ * MODULE        : Universal Auto-Scanner, 12 Core Verticals, RM CASH & Spacing Shield
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-scanner.js
@@ -31,208 +31,25 @@
   }
 
   // ==============================================================================
-  // 1. ZEL TEMPLATE SHIELD
+  // 1. UNIVERSAL ANTI-CLIPPING & SAFE 16px SPACING SHIELD
   // ==============================================================================
-  function enforceZELTemplateRendering() {
-    try {
-      var configKeys = [
-        'rm_local_acct_owner_config',
-        'rm_local_acctdefault_owner_config',
-        'rm_owner_filter_config_v1'
-      ];
-      configKeys.forEach(function (k) {
-        var raw = localStorage.getItem(k);
-        var cfg = raw ? JSON.parse(raw) : { filterVisibility: {} };
-        if (!cfg.filterVisibility) cfg.filterVisibility = {};
-        cfg.filterVisibility.smartOmnibox = true;
-        cfg.filterVisibility.showState = true;
-        cfg.filterVisibility.showDistrict = true;
-        cfg.filterVisibility.showLocality = true;
-        cfg.filterVisibility.budgetSlider = true;
-        cfg.filterVisibility.subMeterOnly = true;
-        localStorage.setItem(k, JSON.stringify(cfg));
-      });
-    } catch (_) {}
-  }
-
-  if (typeof window !== 'undefined') {
-    enforceZELTemplateRendering();
-    window.addEventListener('rm:sov:visibility-changed', enforceZELTemplateRendering);
-  }
-
-  // ==============================================================================
-  // 2. CONSOLE AUTHORIZATION GUARD
-  // ==============================================================================
-  function isConsoleAuthorized() {
-    try {
-      var params = new URLSearchParams(window.location.search);
-      if (params.get('sov_mode') === 'in_situ' || params.get('dev_auto') === '1') {
-        sessionStorage.setItem(SESSION_KEY, 'SOV_ACTIVE_2026');
-        localStorage.setItem(SESSION_KEY, 'SOV_ACTIVE_2026');
-        localStorage.setItem(DEV_AUTO_KEY, 'true');
-      }
-
-      if (localStorage.getItem(DEV_AUTO_KEY) === 'true') {
-        sessionStorage.setItem(SESSION_KEY, 'SOV_ACTIVE_2026');
-        return true;
-      }
-
-      var sToken = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
-      if (sToken === 'SOV_ACTIVE_2026') return true;
-
-      var regRaw = localStorage.getItem(REGISTRY_STORAGE_KEY);
-      if (regRaw) {
-        var reg = JSON.parse(regRaw);
-        if (reg && reg.activeMode === 'in_situ_console') return true;
-      }
-      return false;
-    } catch (_) {
-      return false;
-    }
-  }
-
-  // ==============================================================================
-  // 3. REGISTRY BRIDGE (Zero Recursive Cascades)
-  // ==============================================================================
-  function getRegistry() {
-    try {
-      var raw = localStorage.getItem(REGISTRY_STORAGE_KEY);
-      return raw ? JSON.parse(raw) : { activeMode: 'in_situ_console', items: {} };
-    } catch (_) {
-      return { activeMode: 'in_situ_console', items: {} };
-    }
-  }
-
-  function getUrnVisibility(urn) {
-    if (urn === 'rm:cat:16') {
-      var s1 = getUrnVisibility('rm:cat:16:sub:16-1');
-      var s2 = getUrnVisibility('rm:cat:16:sub:16-2');
-      var s3 = getUrnVisibility('rm:cat:16:sub:16-3');
-      return (s1 && s2 && s3);
-    }
-
-    if (window.RM_SovereignRegistry && typeof window.RM_SovereignRegistry.isVisible === 'function') {
-      return window.RM_SovereignRegistry.isVisible(urn);
-    }
-    var reg = getRegistry();
-    if (reg && reg.items && reg.items[urn] !== undefined && reg.items[urn].visible !== undefined) {
-      return !!reg.items[urn].visible;
-    }
-    return true;
-  }
-
-  function setUrnVisibility(urn, nextVis, label) {
-    if (window.RM_SovereignRegistry && typeof window.RM_SovereignRegistry.toggleVisibility === 'function') {
-      try {
-        window.RM_SovereignRegistry.toggleVisibility(urn, nextVis, label);
-      } catch (_) {}
-    }
-    try {
-      var reg = getRegistry();
-      if (!reg.items) reg.items = {};
-      reg.items[urn] = { visible: nextVis, label: label, updatedAt: Date.now() };
-      localStorage.setItem(REGISTRY_STORAGE_KEY, JSON.stringify(reg));
-    } catch (_) {}
-
-    if (window.RM_SovereignRegistry) {
-      try {
-        if (typeof window.RM_SovereignRegistry.setVisibility === 'function') {
-          window.RM_SovereignRegistry.setVisibility(urn, nextVis, label);
-        } else if (typeof window.RM_SovereignRegistry.set === 'function') {
-          window.RM_SovereignRegistry.set(urn, nextVis);
-        }
-      } catch (_) {}
-    }
-  }
-
-  // ==============================================================================
-  // 4. URN SELECTORS CONFIG (16-3 Dynamic Filters)
-  // ==============================================================================
-  var URN_SELECTORS = [
-    {
-      urn: 'rm:cat:16:sub:16-3:elem:smart_omnibox',
-      selector: '#rm-search-locality, #smartOmniboxGroup, #smartOmnibox, input[placeholder*="लालपुर"], input[placeholder*="8340"]',
-      label: 'स्मार्ट खोज'
-    },
-    {
-      urn: 'rm:cat:16:sub:16-3:elem:state_filter',
-      selector: '#rm-cat16-search-state, #stateFilterGroup, #stateFilter, select[id*="state"]',
-      label: 'राज्य फ़िल्टर'
-    },
-    {
-      urn: 'rm:cat:16:sub:16-3:elem:district_filter',
-      selector: '#rm-cat16-search-district, #districtFilterGroup, #districtFilter, select[id*="district"]',
-      label: 'जिला फ़िल्टर'
-    },
-    {
-      urn: 'rm:cat:16:sub:16-3:elem:budget_slider',
-      selector: '#rm-search-budget-slider, #budgetSliderGroup, input[type="range"]',
-      label: 'बजट स्लाइडर'
-    },
-    {
-      urn: 'rm:cat:16:sub:16-3:elem:submeter_checkbox',
-      selector: '#rm-search-submeter, #submeterFilterGroup, input[type="checkbox"]',
-      label: 'सब-मीटर फ़िल्टर'
-    }
-  ];
-
-  // ==============================================================================
-  // 5. RECONCILED HIDDEN COUNTER & CLEAN TEXT
-  // ==============================================================================
-  function getHiddenCount() {
-    var hiddenUrns = {};
-    var reg = getRegistry();
-    if (reg && reg.items) {
-      Object.keys(reg.items).forEach(function (k) {
-        if (k === 'rm:cat:16') return;
-        if (reg.items[k] && reg.items[k].visible === false) {
-          hiddenUrns[k] = true;
-        } else if (reg.items[k] && reg.items[k].visible === true) {
-          delete hiddenUrns[k];
-        }
-      });
-    }
-
-    if (!getUrnVisibility('rm:cat:16')) {
-      hiddenUrns['rm:cat:16'] = true;
-    } else {
-      delete hiddenUrns['rm:cat:16'];
-    }
-
-    return Object.keys(hiddenUrns).length;
-  }
-
-  function cleanText(el) {
-    if (!el) return '';
-    var clone = el.cloneNode(true);
-    var badges = clone.querySelectorAll('.sivme-inline-badge, .sivme-live-notch, .sivme-notch-pill');
-    badges.forEach(function (b) { b.remove(); });
-    return (clone.textContent || '').trim();
-  }
-
-  // ==============================================================================
-  // 6. UNIVERSAL ANTI-CLIPPING, SAFE 16px SPACING & DEDUP STYLES
-  // ==============================================================================
-  (function injectUniversalSpacingShield() {
+  (function injectSpacingShield() {
     var styleId = 'sivme-universal-spacing-shield';
     if (document.getElementById(styleId)) return;
     var st = document.createElement('style');
     st.id = styleId;
     st.textContent = [
-      '/* 1. Eliminate internal catalog duplicate notches */',
+      '/* Eliminate catalog duplicate inner notches */',
       '#categoryModal .sivme-live-notch { display: none !important; }',
-      '/* 2. Safe Row Height & 16px Gap to Prevent Font & Badge Clipping */',
+      '/* 16px Card-to-Card Gap & Unclipped Overflow */',
       '[data-cat-id], .sivme-cat-card, .sivme-subcat-card, #verticalTilesGrid > div, .wallet-card {',
       '  position: relative !important;',
       '  overflow: visible !important;',
       '  margin-bottom: 16px !important;',
       '}',
-      '/* 3. Text container safe clearance to prevent font squashing */',
-      '[data-cat-id] > div:first-child {',
-      '  padding-right: 14px !important;',
-      '  line-height: 1.4 !important;',
-      '}',
-      '/* 4. Single Authoritative Top-Right Notch */',
+      '/* Safe right clearance on titles to avoid button overlap */',
+      '[data-cat-id] > div:first-child { padding-right: 14px !important; line-height: 1.4 !important; }',
+      '/* Single Authoritative Top-Right Notch */',
       '.sivme-notch-pill {',
       '  position: absolute !important;',
       '  top: -10px !important;',
@@ -252,10 +69,20 @@
   })();
 
   // ==============================================================================
-  // 7. MOUNT SINGLE TOP-RIGHT INTERACTIVE NOTCH (DEDUPLICATED)
+  // 2. 16-3 DYNAMIC FILTERS URN SELECTORS
+  // ==============================================================================
+  var URN_SELECTORS = [
+    { urn: 'rm:cat:16:sub:16-3:elem:smart_omnibox', selector: '#rm-search-locality, #smartOmniboxGroup, input[placeholder*="लालपुर"], input[placeholder*="8340"]', label: 'स्मार्ट खोज' },
+    { urn: 'rm:cat:16:sub:16-3:elem:state_filter', selector: '#rm-cat16-search-state, #stateFilterGroup, select[id*="state"]', label: 'राज्य फ़िल्टर' },
+    { urn: 'rm:cat:16:sub:16-3:elem:district_filter', selector: '#rm-cat16-search-district, #districtFilterGroup, select[id*="district"]', label: 'जिला फ़िल्टर' },
+    { urn: 'rm:cat:16:sub:16-3:elem:budget_slider', selector: '#rm-search-budget-slider, #budgetSliderGroup, input[type="range"]', label: 'बजट स्लाइडर' },
+    { urn: 'rm:cat:16:sub:16-3:elem:submeter_checkbox', selector: '#rm-search-submeter, #submeterFilterGroup, input[type="checkbox"]', label: 'सब-मीटर फ़िल्टर' }
+  ];
+
+  // ==============================================================================
+  // 3. MOUNT SINGLE TOP-RIGHT INTERACTIVE NOTCH (DEDUPLICATED)
   // ==============================================================================
   function mountInlineBadge(parentEl, urn, isVisible, label) {
-    // Purge any pre-existing duplicate badges on this element
     var allExisting = parentEl.querySelectorAll(':scope > .sivme-notch-pill, :scope > .sivme-inline-badge, :scope > .sivme-live-notch');
     if (allExisting.length > 1) {
       for (var i = 1; i < allExisting.length; i++) {
@@ -315,12 +142,10 @@
   }
 
   // ==============================================================================
-  // 8. STRICT SYSTEM SHELL DENYLIST (Permits RM Cash Card, Blocks Inner Child Clutter)
+  // 4. STRICT SYSTEM SHELL DENYLIST (Permits RM CASH Card, Blocks Inner Buttons)
   // ==============================================================================
   function isSystemShellElement(el) {
     if (!el || el.nodeType !== 1) return true;
-
-    // Permit the RM CASH wallet card container itself, but block its inner buttons
     if (!el.classList.contains('wallet-card') && el.closest('.wallet-card')) return true;
 
     return !!(
@@ -405,7 +230,7 @@
   }
 
   // ==============================================================================
-  // 9. UNIVERSAL AUTO-SCANNER (Directory, Search, RM CASH, 12 Verticals & Filters)
+  // 5. UNIVERSAL AUTO-SCANNER
   // ==============================================================================
   function autoScanBusinessElements(isAuth) {
     var core = getCore();
@@ -452,7 +277,7 @@
       }
     });
 
-    // 5. Universal Catalog Cards (Ensure single clean notch per category)
+    // 5. Universal Catalog Cards
     var catalogCards = document.querySelectorAll('#categoryModal [data-cat-id]');
     catalogCards.forEach(function (cCard) {
       var catId = cCard.getAttribute('data-cat-id') || '';
@@ -466,7 +291,7 @@
       }
     });
 
-    // 6. 16-3 Inner Rental Search Dynamic Filters
+    // 6. 16-3 Dynamic Filters
     URN_SELECTORS.forEach(function (def) {
       try {
         var nodes = document.querySelectorAll(def.selector);
@@ -484,7 +309,7 @@
   }
 
   // ==============================================================================
-  // 10. CATEGORY 16 ACCORDION & SUB-CARDS
+  // 6. CATEGORY 16 ACCORDION & SUB-CARDS
   // ==============================================================================
   function auditCategory16Accordion(isAuth) {
     var core = getCore();
@@ -597,7 +422,7 @@
   }
 
   // ==============================================================================
-  // 11. MAIN AUDIT ENGINE DISPATCHER
+  // 7. MAIN AUDIT ENGINE DISPATCHER
   // ==============================================================================
   function applyInSituAudit() {
     if (isAuditing) return;
@@ -635,7 +460,7 @@
   }
 
   // ==============================================================================
-  // 12. 1-TAP INSTANT TOGGLE LISTENER & OBSERVER
+  // 8. 1-TAP INSTANT TOGGLE LISTENER & OBSERVER
   // ==============================================================================
   function executeBadgeToggle(e) {
     var badge = e.target.closest('.sivme-notch-pill, .sivme-inline-badge, .sivme-live-notch');
