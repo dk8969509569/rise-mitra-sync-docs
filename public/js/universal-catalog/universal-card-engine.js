@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — UNIVERSAL CATALOG CARD ENGINE (UI RENDERER)
- * MODULE        : 2-Column Stacked Grid (Big Number Top, Logo Below, Big Headers Right) & Clean 3-Button Bar
+ * MODULE        : 100% Future-Proof Universal Main Category & Play Store Subcard Engine (Decoupled SSOT)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/universal-catalog/universal-card-engine.js
@@ -14,31 +14,32 @@
 
   var isSweeping = false;
 
-  // 1. RENDER PARENT CARD (LEFT: BIG NUMBER TOP + LOGO BELOW | RIGHT: 22PX BOLD TITLE & SUBTITLE)
-  function renderParentCard(headerEl, catId, isOpen) {
+  // 1. RENDER UNIVERSAL PARENT CARD (ZERO SUBCATEGORY COUPLING - FUTURE PROOF FOR 1 TO 100+ SUBS)
+  function renderParentCard(headerEl, catId, isOpen, subCount) {
     if (!headerEl) return;
     var numId = String(catId).replace(/^[c]/, '');
     var displayNum = (parseInt(numId, 10) < 10 ? '0' : '') + numId + '.';
 
-    var targetState = numId + ':' + String(isOpen);
+    var targetState = numId + ':' + String(isOpen) + ':' + String(subCount || 0);
     if (headerEl.getAttribute('data-rm-parent-rendered') === targetState) {
       return;
     }
 
-    var data = (window.RM_CATALOG_REGISTRY && window.RM_CATALOG_REGISTRY.getCategoryData(numId)) || {
-      number: displayNum,
-      icon: headerEl.querySelector('.text-2xl, .text-3xl, span')?.textContent?.trim() || '📂',
-      title: headerEl.querySelector('.font-bold, h3, h4, .text-base')?.textContent?.trim() || ('Category ' + numId),
-      subtitle: headerEl.querySelector('.text-xs, .text-sm, p')?.textContent?.trim() || 'दैनिक जनसेवाएं व सुविधा केंद्र',
-      rating: '★ 4.8 (8k+ नागरिक)',
-      trustBadge: 'Rise Verified Network',
-      supportBadge: '24x7 जनसहायता',
-      macroPillars: [
-        { text: '🛡️ 100% सत्यापित स्थानीय सेवाएं', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.14)' },
-        { text: '⚡ त्वरित समाधान व सीधा संपर्क', color: '#34d399', bg: 'rgba(52, 211, 153, 0.14)' },
-        { text: '💳 पारदर्शी रेट कार्ड व डिजिटल बिलिंग', color: '#facc15', bg: 'rgba(250, 204, 21, 0.14)' }
-      ]
-    };
+    var regData = (window.RM_CATALOG_REGISTRY && window.RM_CATALOG_REGISTRY.getCategoryData(numId)) || null;
+
+    var title = regData?.title || headerEl.querySelector('.font-bold, h3, h4, .text-base')?.textContent?.trim() || ('Category ' + numId);
+    var subtitle = regData?.subtitle || headerEl.querySelector('.text-xs, .text-sm, p')?.textContent?.trim() || 'दैनिक जनसेवाएं व आधिकारिक सुविधा केंद्र';
+    var icon = regData?.icon || headerEl.querySelector('.text-2xl, .text-3xl, span')?.textContent?.trim() || '📂';
+    var rating = regData?.rating || '★ 4.9 (10k+ नागरिक)';
+    var trustBadge = regData?.trustBadge || 'Rise Verified Network';
+    var supportBadge = regData?.supportBadge || '24x7 जनसहायता केंद्र';
+
+    // Universal Future-Proof Domain Value Pillars (Decoupled from Subcategories)
+    var universalPillars = [
+      { icon: '🛡️', text: '100% आधार व पुलिस सत्यापित सेवा प्रदाता नेटवर्क', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.14)' },
+      { icon: '⚡', text: 'पारदर्शी तय रेट कार्ड, डिजिटल बिलिंग व शून्य छुपा शुल्क', color: '#34d399', bg: 'rgba(52, 211, 153, 0.14)' },
+      { icon: '🔒', text: 'Rise Mitra कार्य संतुष्टि गारंटी व प्रत्यक्ष सहायता', color: '#facc15', bg: 'rgba(250, 204, 21, 0.14)' }
+    ];
 
     // Purge any legacy/duplicate containers to prevent overwriting & ghosting
     Array.from(headerEl.children).forEach(function (child) {
@@ -66,41 +67,40 @@
       headerEl.appendChild(container);
     }
 
-    var pillarsHtml = (data.macroPillars || []).map(function (p) {
-      var pColor = p.color || '#38bdf8';
-      var pBg = p.bg || 'rgba(56, 189, 248, 0.12)';
-      var pText = typeof p === 'string' ? p : (p.text || '');
-      return '<span style="font-size:13px;font-weight:700;padding:6px 12px;background:' + pBg + ';color:' + pColor + ';border:1.2px solid ' + pColor + '44;border-radius:8px;">' + pText + '</span>';
-    }).join(' ');
+    var pillarsHtml = universalPillars.map(function (p) {
+      return '<div style="font-size:13px;font-weight:700;padding:7px 12px;background:' + p.bg + ';color:' + p.color + ';border:1.2px solid ' + p.color + '44;border-radius:8px;display:flex;align-items:center;gap:8px;"><span style="font-size:15px;">' + p.icon + '</span><span>' + p.text + '</span></div>';
+    }).join('');
+
+    var countText = (subCount && subCount > 0) ? (subCount + ' सेवाएं ') : 'सभी सेवाएं ';
 
     container.innerHTML = [
       '<!-- Top Row: Left Column (28px Number Top, Logo Below) + Right Column (22px Bold Title, Zero Cutoff) -->',
       '<div style="display: flex; align-items: flex-start; gap: 14px; width: 100%;">',
       '  <!-- Left Column Stack -->',
       '  <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 6px; flex-shrink: 0; min-width: 54px;">',
-      '    <div style="font-size: 28px; font-weight: 900; color: #38bdf8; font-family: ui-monospace, monospace; line-height: 1; text-align: center; letter-spacing: -0.5px;">' + (data.number || displayNum) + '</div>',
+      '    <div style="font-size: 28px; font-weight: 900; color: #38bdf8; font-family: ui-monospace, monospace; line-height: 1; text-align: center; letter-spacing: -0.5px;">' + displayNum + '</div>',
       '    <div style="width: 52px; height: 52px; border-radius: 14px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid rgba(56, 189, 248, 0.45); box-shadow: 0 4px 12px rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">',
-      '      <span style="font-size: 28px; line-height: 1;">' + data.icon + '</span>',
+      '      <span style="font-size: 28px; line-height: 1;">' + icon + '</span>',
       '    </div>',
       '  </div>',
       '  <!-- Right Column: 22px Extra Bold Title & Subtitle (Full Horizontal Space) -->',
       '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0; padding-top: 1px;">',
-      '    <div style="font-size: 22px; font-weight: 900; color: #ffffff; letter-spacing: -0.4px; line-height: 1.25; white-space: normal; word-break: break-word;">' + data.title + '</div>',
-      '    <div style="font-size: 14.5px; font-weight: 700; color: #34d399; line-height: 1.35; margin-top: 4px; white-space: normal; word-break: break-word;">' + data.subtitle + '</div>',
+      '    <div style="font-size: 22px; font-weight: 900; color: #ffffff; letter-spacing: -0.4px; line-height: 1.25; white-space: normal; word-break: break-word;">' + title + '</div>',
+      '    <div style="font-size: 14.5px; font-weight: 700; color: #34d399; line-height: 1.35; margin-top: 4px; white-space: normal; word-break: break-word;">' + subtitle + '</div>',
       '  </div>',
       '</div>',
       '<!-- Row 2: Credibility Badges -->',
       '<div style="display: flex; align-items: center; gap: 8px; width: 100%; margin-top: 2px; flex-wrap: wrap;">',
-      '  <span style="font-size: 13px; font-weight: 800; color: #facc15; background: rgba(250, 204, 21, 0.12); border: 1px solid rgba(250, 204, 21, 0.3); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">' + data.rating + '</span>',
-      '  <span style="font-size: 12.5px; font-weight: 700; color: #38bdf8; background: rgba(56, 189, 248, 0.14); border: 1px solid rgba(56, 189, 248, 0.35); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">✓ ' + data.trustBadge + '</span>',
-      '  <span style="font-size: 12.5px; font-weight: 700; color: #e2e8f0; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); padding: 3px 8px; border-radius: 6px;">' + data.supportBadge + '</span>',
+      '  <span style="font-size: 13px; font-weight: 800; color: #facc15; background: rgba(250, 204, 21, 0.12); border: 1px solid rgba(250, 204, 21, 0.3); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">' + rating + '</span>',
+      '  <span style="font-size: 12.5px; font-weight: 700; color: #38bdf8; background: rgba(56, 189, 248, 0.14); border: 1px solid rgba(56, 189, 248, 0.35); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">✓ ' + trustBadge + '</span>',
+      '  <span style="font-size: 12.5px; font-weight: 700; color: #e2e8f0; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); padding: 3px 8px; border-radius: 6px;">' + supportBadge + '</span>',
       '</div>',
-      '<!-- Row 3: Department Pillars -->',
+      '<!-- Row 3: Universal Domain Value Pillars -->',
       '<div style="display: flex; flex-direction: column; gap: 6px; width: 100%; margin-top: 4px;">' + pillarsHtml + '</div>',
-      '<!-- Row 4: Action Button -->',
+      '<!-- Row 4: Clean Dynamic Action Button -->',
       '<div style="display: flex; justify-content: flex-end; align-items: center; width: 100%; margin-top: 4px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08);">',
       '  <div style="font-size: 13.5px; font-weight: 800; color: #10b981; background: rgba(16, 185, 129, 0.15); border: 1.5px solid rgba(16, 185, 129, 0.5); padding: 6px 16px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">',
-      '    <span>3 सेवाएं ' + (isOpen ? 'छुपाएं' : 'देखें') + '</span>',
+      '    <span>' + countText + (isOpen ? 'छुपाएं' : 'देखें') + '</span>',
       '    <span style="font-size: 11px;">' + (isOpen ? '▲' : '▼') + '</span>',
       '  </div>',
       '</div>'
@@ -122,7 +122,7 @@
     }
   }
 
-  // 2. RENDER SUB-CARD (LEFT: 24PX NUMBER TOP + LOGO BELOW | RIGHT: 20PX TITLE | ZERO OVERLAP 3 BUTTONS)
+  // 2. RENDER SUB-CARD (LEFT: 24PX SUB-NUMBER TOP + LOGO BELOW | RIGHT: 20PX TITLE | ZERO OVERLAP 3 BUTTONS)
   function renderSubCard(subCardEl, catId, subId) {
     if (!subCardEl) return;
     var numId = String(catId).replace(/^[c]/, '');
@@ -288,13 +288,13 @@
         var header = catEl.querySelector(':scope > div:first-child');
         var sub = document.getElementById('sub-c' + cleanNum) || document.getElementById('sub-' + cleanNum);
         var isOpen = sub && !sub.classList.contains('hidden') && sub.style.display !== 'none';
+        var subCards = sub ? sub.querySelectorAll(':scope > div') : [];
 
         if (header) {
-          renderParentCard(header, cleanNum, isOpen);
+          renderParentCard(header, cleanNum, isOpen, subCards.length);
         }
 
         if (sub && isOpen) {
-          var subCards = sub.querySelectorAll(':scope > div');
           subCards.forEach(function (sc, idx) {
             renderSubCard(sc, cleanNum, cleanNum + '-' + (idx + 1));
           });
