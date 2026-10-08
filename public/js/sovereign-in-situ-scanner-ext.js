@@ -4,6 +4,9 @@
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-scanner-ext.js
+ * DUAL-FOLDER REFS:
+ *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
+ *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
  */
 
 (function () {
@@ -21,7 +24,7 @@
   }
 
   // ==============================================================================
-  // 1. UNIVERSAL ANTI-OVERLAP, SAFE 26px GRID SPACING & STACKING SHIELD
+  // 1. UNIVERSAL ANTI-OVERLAP, SAFE SPACING & MODAL UNCLIPPED SHIELD
   // ==============================================================================
   (function injectSpacingShield() {
     var styleId = 'sivme-universal-spacing-shield';
@@ -29,20 +32,30 @@
     var st = document.createElement('style');
     st.id = styleId;
     st.textContent = [
-      '/* 1. Modal Stacking isolation */',
+      '/* 1. Modal Stacking & Universal Visible Notches */',
       '#categoryModal, #rm-fullscreen-view, div[id*="Modal"], div[id*="modal"] { z-index: 99990 !important; }',
+      '#categoryModal div, #categoryModal section, #tier1-list, #tier2-list { overflow: visible !important; }',
       'body.sivme-modal-active #verticalTilesGrid .sivme-notch-pill,',
       'body.sivme-modal-active .wallet-card .sivme-notch-pill,',
       'body.sivme-modal-active #cat-menu-btn .sivme-notch-pill,',
       'body.sivme-modal-active .sivme-search-container .sivme-notch-pill { display: none !important; visibility: hidden !important; }',
-      '#categoryModal .sivme-notch-pill { display: inline-flex !important; visibility: visible !important; opacity: 1 !important; z-index: 100000 !important; }',
-      '#categoryModal .sivme-live-notch, .sivme-live-notch { display: none !important; }',
+      '#categoryModal .sivme-notch-pill, #categoryModal .sivme-live-notch {',
+      '  display: inline-flex !important;',
+      '  visibility: visible !important;',
+      '  opacity: 1 !important;',
+      '  z-index: 100000 !important;',
+      '  position: absolute !important;',
+      '  top: -10px !important;',
+      '  right: 12px !important;',
+      '  pointer-events: auto !important;',
+      '}',
       '',
-      '/* 2. Anti-Overlap Safe Distances on Home Widgets */',
+      '/* 2. Home Widgets Clearance & RM CASH Dedicated Border Notch */',
       '#cat-menu-btn { margin-bottom: 20px !important; position: relative !important; overflow: visible !important; }',
       '.sivme-search-container { margin-top: 20px !important; margin-bottom: 22px !important; position: relative !important; overflow: visible !important; }',
-      '.wallet-card { margin-top: 22px !important; margin-bottom: 24px !important; position: relative !important; overflow: visible !important; }',
-      '.wallet-card .sivme-notch-pill { top: -12px !important; right: 12px !important; }',
+      '.wallet-card { margin-top: 24px !important; margin-bottom: 24px !important; position: relative !important; overflow: visible !important; }',
+      '.wallet-card .sivme-notch-pill { top: -12px !important; right: 14px !important; z-index: 100 !important; }',
+      '.wallet-card > div:first-child > span:last-child { margin-right: 72px !important; }',
       '',
       '/* 3. 12 Core Cashflow Verticals Grid Row & Column Clearance */',
       '#verticalTilesGrid { margin-top: 24px !important; margin-bottom: 24px !important; row-gap: 26px !important; }',
@@ -53,9 +66,9 @@
       '.sivme-verticals-header-blocked .sivme-notch-pill,',
       'div:has(> #verticalTilesGrid) > div:first-child .sivme-notch-pill { display: none !important; }',
       '',
-      '/* 5. Universal Catalog Cards Safe 20px Spacing & Right Clearance */',
-      '[data-cat-id], .sivme-cat-card, .sivme-subcat-card { position: relative !important; overflow: visible !important; margin-bottom: 20px !important; }',
-      '[data-cat-id] > div:first-child { padding-right: 85px !important; line-height: 1.4 !important; }',
+      '/* 5. Universal Catalog Cards Safe Spacing & Typography Shield */',
+      '[data-cat-id], .sivme-cat-card, .sivme-subcat-card { position: relative !important; overflow: visible !important; margin-top: 14px !important; margin-bottom: 20px !important; }',
+      '[data-cat-id] > div:first-child { padding-right: 12px !important; line-height: 1.35 !important; flex: 1 1 auto !important; min-width: 0 !important; }',
       '',
       '/* 6. Base Authoritative Notch Styles */',
       '.sivme-notch-pill { position: absolute !important; top: -10px !important; right: 10px !important; z-index: 99 !important; display: inline-flex !important; visibility: visible !important; opacity: 1 !important; white-space: nowrap !important; pointer-events: auto !important; touch-action: manipulation !important; }',
@@ -82,7 +95,7 @@
   // 3. MOUNT SINGLE TOP-RIGHT NOTCH PILL WITH STRICT BARRIER
   // ==============================================================================
   function mountInlineBadge(parentEl, urn, isVisible, label) {
-    var allExisting = parentEl.querySelectorAll(':scope > .sivme-notch-pill, :scope > .sivme-inline-badge, :scope > .sivme-live-notch');
+    var allExisting = parentEl.querySelectorAll(':scope > .sivme-notch-pill, :scope > .sivme-inline-badge');
     for (var i = 1; i < allExisting.length; i++) allExisting[i].remove();
     var badge = allExisting[0] || document.createElement('div');
 
@@ -97,7 +110,7 @@
       : '<span style="color:#ef4444;font-size:10px;line-height:1;">🔴</span> <span style="line-height:1;">Hidden</span> <span style="font-size:9px;opacity:0.8;line-height:1;">⇄</span>';
 
     badge.style.cssText = [
-      'position: absolute !important', 'top: -10px !important', 'right: 10px !important', 'z-index: 99 !important',
+      'position: absolute !important', 'top: -10px !important', 'right: 10px !important', 'z-index: 100000 !important',
       'background: ' + (isVisible ? '#064e3b' : '#7f1d1d') + ' !important',
       'border: 1.5px solid ' + (isVisible ? '#10b981' : '#ef4444') + ' !important',
       'color: ' + (isVisible ? '#34d399' : '#fca5a5') + ' !important',
@@ -131,7 +144,6 @@
     if (!el || el.nodeType !== 1) return true;
     if (!el.classList.contains('wallet-card') && el.closest('.wallet-card')) return true;
 
-    // Block 12 Verticals Header Bar from getting badges
     var txt = el.textContent || '';
     if (txt.indexOf('12 CORE CASHFLOW VERTICALS') !== -1 && !el.closest('#verticalTilesGrid')) return true;
     if (txt.indexOf('जुड़ना मुफ़्त') !== -1) return true;
