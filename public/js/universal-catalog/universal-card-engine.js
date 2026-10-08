@@ -12,11 +12,19 @@
 (function () {
   'use strict';
 
+  var isSweeping = false;
+
   // 1. RENDER PLAY STORE PARENT CARD (LARGE FONTS & UNIFIED GRID)
   function renderParentCard(headerEl, catId, isOpen) {
     if (!headerEl) return;
     var numId = String(catId).replace(/^[c]/, '');
     var displayNum = (parseInt(numId, 10) < 10 ? '0' : '') + numId + '.';
+
+    // Idempotency Guard: Skip redundant DOM operations to prevent recursion
+    var targetState = numId + ':' + String(isOpen);
+    if (headerEl.getAttribute('data-rm-parent-rendered') === targetState) {
+      return;
+    }
 
     // Registry SSOT Lookup with Safe Fallback for Any Unregistered Categories
     var data = (window.RM_CATALOG_REGISTRY && window.RM_CATALOG_REGISTRY.getCategoryData(numId)) || {
@@ -92,6 +100,8 @@
       '  </div>',
       '</div>'
     ].join('');
+
+    headerEl.setAttribute('data-rm-parent-rendered', targetState);
   }
 
   // 2. RENDER SUB-CARD (ZERO VOID: REPLACES LEGACY SPREAD WITH TIGHT PLAY STORE CARD)
@@ -99,6 +109,11 @@
     if (!subCardEl) return;
     var numId = String(catId).replace(/^[c]/, '');
     var cleanSub = String(subId).replace(/^[c]/, '');
+
+    // Idempotency Guard: Avoid duplicate sub-card work
+    if (subCardEl.getAttribute('data-rm-sub-rendered') === cleanSub) {
+      return;
+    }
 
     // Registry SSOT Lookup with Safe Fallback
     var info = (window.RM_CATALOG_REGISTRY && window.RM_CATALOG_REGISTRY.getSubcategoryData(numId, cleanSub)) || {
@@ -198,56 +213,60 @@
       '<!-- Play Store Action Bar -->',
       '<div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 6px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.08);">',
       '  <div style="font-size: 12px; color: #94a3b8; font-weight: 600;">Rise Mitra Verified</div>',
-      '  <div style="font-size: 13.5px; font-weight: 800; color: #ffffff; background: #059669; border: 1.5px solid #10b981; padding: 6px 18px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 3px 8px rgba(0,0,0,0.4); cursor: pointer;" onclick="var btn=this.closest(\'.bg-gray-800, [data-cat-id]\')?.querySelector(\'button:has-text, .grid button\'); if(btn) btn.click();">',
+      '  <div style="font-size: 13.5px; font-weight: 800; color: #ffffff; background: #059669; border: 1.5px solid #10b981; padding: 6px 18px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 3px 8px rgba(0,0,0,0.4); cursor: pointer;" onclick="var p=this.closest(\'.bg-gray-800, [data-cat-id]\'); var btn=p?.querySelector(\'.grid button, button\'); if(btn && btn !== this) btn.click();">',
       '    <span>' + (info.btnText || 'खोलें व बुक करें') + '</span>',
       '    <span style="font-size: 11px;">➔</span>',
       '  </div>',
       '</div>'
     ].join('');
+
+    subCardEl.setAttribute('data-rm-sub-rendered', cleanSub);
   }
 
   // 3. FULL AUTONOMOUS SCANNER ACROSS ALL 50 CATEGORIES
   function sweepCatalog() {
-    var modal = document.getElementById('categoryModal') || document.body;
-    var cats = modal.querySelectorAll('[data-cat-id]');
-    cats.forEach(function (catEl) {
-      var rawId = catEl.getAttribute('data-cat-id');
-      if (!rawId) return;
-      var cleanNum = rawId.replace(/^[c]/, '');
+    if (isSweeping) return;
+    isSweeping = true;
+    try {
+      var modal = document.getElementById('categoryModal') || document.body;
+      var cats = modal.querySelectorAll('[data-cat-id]');
+      cats.forEach(function (catEl) {
+        var rawId = catEl.getAttribute('data-cat-id');
+        if (!rawId) return;
+        var cleanNum = rawId.replace(/^[c]/, '');
 
-      var header = catEl.querySelector(':scope > div:first-child');
-      var sub = document.getElementById('sub-c' + cleanNum) || document.getElementById('sub-' + cleanNum);
-      var isOpen = sub && !sub.classList.contains('hidden') && sub.style.display !== 'none';
+        var header = catEl.querySelector(':scope > div:first-child');
+        var sub = document.getElementById('sub-c' + cleanNum) || document.getElementById('sub-' + cleanNum);
+        var isOpen = sub && !sub.classList.contains('hidden') && sub.style.display !== 'none';
 
-      if (header) {
-        renderParentCard(header, cleanNum, isOpen);
-      }
+        if (header) {
+          renderParentCard(header, cleanNum, isOpen);
+        }
 
-      if (sub) {
-        var subCards = sub.querySelectorAll(':scope > div');
-        subCards.forEach(function (sc, idx) {
-          renderSubCard(sc, cleanNum, cleanNum + '-' + (idx + 1));
-        });
-      }
-    });
+        if (sub && isOpen) {
+          var subCards = sub.querySelectorAll(':scope > div');
+          subCards.forEach(function (sc, idx) {
+            renderSubCard(sc, cleanNum, cleanNum + '-' + (idx + 1));
+          });
+        }
+      });
+    } finally {
+      isSweeping = false;
+    }
   }
 
-  // Auto Boot Engine with Polling to guarantee registry availability
+  // Auto Boot Engine: Polled & Click Delegated (Zero Mutation Observer Loop)
   function boot() {
     sweepCatalog();
-    setTimeout(sweepCatalog, 50);
-    setTimeout(sweepCatalog, 200);
-    setTimeout(sweepCatalog, 600);
+    setTimeout(sweepCatalog, 100);
+    setTimeout(sweepCatalog, 300);
+    setTimeout(sweepCatalog, 800);
+    setTimeout(sweepCatalog, 1500);
 
-    var modal = document.getElementById('categoryModal');
-    if (modal && !window._rmEngineObs) {
-      window._rmEngineObs = new MutationObserver(sweepCatalog);
-      window._rmEngineObs.observe(modal, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style'] });
-    }
     document.addEventListener('click', function (e) {
-      if (e.target.closest('[data-cat-id]')) {
+      if (e.target.closest('[data-cat-id], #categoryModal, button')) {
         setTimeout(sweepCatalog, 40);
-        setTimeout(sweepCatalog, 200);
+        setTimeout(sweepCatalog, 250);
       }
     }, true);
   }
