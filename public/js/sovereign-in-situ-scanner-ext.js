@@ -1,9 +1,12 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU SCANNER EXTENSION (CHILD MODULE)
- * MODULE        : UI Shield, Anti-Overlap Spacing, Interactive Notches & Category-16 Accordion
+ * MODULE        : UI Shield, 50-Cat Touch Scroll, Instant 1-Tap Toggle & Category-16 Accordion
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-scanner-ext.js
+ * DUAL-FOLDER REFS:
+ *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
+ *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
  */
 
 (function () {
@@ -21,7 +24,7 @@
   }
 
   // ==============================================================================
-  // 1. UNIVERSAL ANTI-OVERLAP, STACKING ISOLATION & TOP-RIGHT NOTCH SHIELD
+  // 1. UNIVERSAL ANTI-OVERLAP, 50-CAT TOUCH SCROLL & TOP-RIGHT NOTCH SHIELD
   // ==============================================================================
   (function injectSpacingShield() {
     var styleId = 'sivme-universal-spacing-shield';
@@ -29,11 +32,39 @@
     var st = document.createElement('style');
     st.id = styleId;
     st.textContent = [
-      '/* 1. Modal Stacking & Universal Visible Notches */',
-      '#categoryModal, #rm-fullscreen-view, div[id*="Modal"], div[id*="modal"] { z-index: 99990 !important; }',
-      '#categoryModal div, #categoryModal section, #tier1-list, #tier2-list { overflow: visible !important; }',
+      '/* 1. Modal Stacking & Native Touch Scroll Engine */',
+      '#categoryModal, #rm-fullscreen-view, div[id*="Modal"], div[id*="modal"] {',
+      '  z-index: 99990 !important;',
+      '}',
+      '#categoryModal {',
+      '  overflow-y: auto !important;',
+      '  -webkit-overflow-scrolling: touch !important;',
+      '  overscroll-behavior: contain !important;',
+      '  touch-action: pan-y !important;',
+      '}',
+      '#categoryModal > div:first-child {',
+      '  max-height: 86vh !important;',
+      '  display: flex !important;',
+      '  flex-direction: column !important;',
+      '  overflow: hidden !important;',
+      '  position: relative !important;',
+      '}',
+      '/* Enable smooth scrolling across all 50 categories */',
+      '#categoryModal .flex-1,',
+      '#categoryModal div[class*="overflow-y-auto"] {',
+      '  overflow-y: auto !important;',
+      '  overflow-x: hidden !important;',
+      '  -webkit-overflow-scrolling: touch !important;',
+      '  touch-action: pan-y !important;',
+      '  flex: 1 1 auto !important;',
+      '  min-height: 0 !important;',
+      '  padding-bottom: 80px !important;',
+      '}',
+      '#tier1-list, #tier2-list {',
+      '  overflow: visible !important;',
+      '}',
       '',
-      '/* 2. Absolute suppression of background widgets when modal is active (No floating home badges) */',
+      '/* 2. Absolute suppression of background widgets when modal is active */',
       'body.sivme-modal-active main,',
       'body.sivme-modal-active header {',
       '  display: none !important;',
@@ -43,7 +74,6 @@
       '',
       '/* 3. Authoritative Top-Right Notch on EVERY Dashed Border Card */',
       '#categoryModal [data-cat-id] > .sivme-notch-pill,',
-      '#categoryModal [data-cat-id] > .sivme-live-notch,',
       '.sivme-subcat-card > .sivme-notch-pill,',
       '.sivme-notch-pill {',
       '  position: absolute !important;',
@@ -111,7 +141,7 @@
   ];
 
   // ==============================================================================
-  // 3. MOUNT SINGLE TOP-RIGHT NOTCH PILL WITH STRICT BARRIER
+  // 3. MOUNT SINGLE TOP-RIGHT NOTCH PILL WITH DIRECT 1-TAP TOGGLE ACTION
   // ==============================================================================
   function mountInlineBadge(parentEl, urn, isVisible, label) {
     parentEl.querySelectorAll(':scope > .sivme-live-notch, :scope > .sivme-inline-badge').forEach(function (n) { n.remove(); });
@@ -146,10 +176,88 @@
       'line-height: 1 !important', 'white-space: nowrap !important'
     ].join(';');
 
+    // 1-TAP INSTANT TOGGLE DISPATCHER (0ms Latency)
     badge.onclick = function (ev) {
-      if (ev.cancelable) ev.preventDefault();
-      ev.stopPropagation();
-      ev.stopImmediatePropagation();
+      if (ev) {
+        if (ev.cancelable) ev.preventDefault();
+        ev.stopPropagation();
+        ev.stopImmediatePropagation();
+      }
+
+      var core = getCore();
+      if (!core.isConsoleAuthorized()) return;
+
+      var curVis = badge.getAttribute('data-badge-vis') === 'true';
+      var nextVis = !curVis;
+      var targetUrn = badge.getAttribute('data-badge-urn') || badge.getAttribute('data-target-urn') || urn;
+      var targetLabel = badge.getAttribute('data-badge-label') || label || '';
+
+      // 1. Immediate Visual DOM Flip (0ms)
+      badge.setAttribute('data-badge-vis', String(nextVis));
+      badge.className = 'sivme-notch-pill ' + (nextVis ? 'sivme-badge-live' : 'sivme-badge-dormant');
+      badge.innerHTML = nextVis
+        ? '<span style="color:#10b981;font-size:10px;line-height:1;">🟢</span> <span style="line-height:1;">Live</span> <span style="font-size:9px;opacity:0.8;line-height:1;">⇄</span>'
+        : '<span style="color:#ef4444;font-size:10px;line-height:1;">🔴</span> <span style="line-height:1;">Hidden</span> <span style="font-size:9px;opacity:0.8;line-height:1;">⇄</span>';
+      badge.style.setProperty('background', (nextVis ? '#064e3b' : '#7f1d1d'), 'important');
+      badge.style.setProperty('border', '1.5px solid ' + (nextVis ? '#10b981' : '#ef4444'), 'important');
+      badge.style.setProperty('color', (nextVis ? '#34d399' : '#fca5a5'), 'important');
+
+      var parentCard = badge.closest('[data-cat-id], .sivme-cat-card, .sivme-subcat-card, .sivme-vertical-card, .wallet-card');
+      if (parentCard) {
+        parentCard.classList.toggle('sivme-ghost-live', nextVis);
+        parentCard.classList.toggle('sivme-ghost-dormant', !nextVis);
+        parentCard.classList.toggle('is-live', nextVis);
+        parentCard.classList.toggle('is-hidden', !nextVis);
+        parentCard.style.setProperty('outline', '2px dashed ' + (nextVis ? '#10b981' : '#ef4444'), 'important');
+        parentCard.style.setProperty('outline-offset', '3px', 'important');
+        parentCard.style.opacity = nextVis ? '1' : '0.45';
+      }
+
+      // 2. Synchronize with Core & Registry Storage
+      if (core && typeof core.setUrnVisibility === 'function') {
+        if (targetUrn === 'rm:cat:16') {
+          ['rm:cat:16:sub:16-1', 'rm:cat:16:sub:16-2', 'rm:cat:16:sub:16-3'].forEach(function (su) {
+            core.setUrnVisibility(su, nextVis);
+          });
+        }
+        core.setUrnVisibility(targetUrn, nextVis, targetLabel);
+      }
+
+      // 3. Bi-directional sync with rm_active_categories_v1
+      if (targetUrn.indexOf('rm:cat:') === 0 && targetUrn.indexOf(':sub:') === -1) {
+        var cNum = targetUrn.replace('rm:cat:', '');
+        var n = parseInt(cNum, 10);
+        var prefix = (n >= 34) ? 'g' : 'c';
+        var catId = prefix + (cNum.length === 1 ? '0' + cNum : cNum);
+        var numStr = (cNum.length === 1 ? '0' + cNum : cNum);
+        try {
+          var rawAct = localStorage.getItem('rm_active_categories_v1');
+          var activeSet = new Set(rawAct ? JSON.parse(rawAct) : []);
+          if (nextVis) {
+            activeSet.add(catId); activeSet.add(numStr); activeSet.add(String(n));
+          } else {
+            activeSet.delete(catId); activeSet.delete(numStr); activeSet.delete(String(n));
+          }
+          localStorage.setItem('rm_active_categories_v1', JSON.stringify(Array.from(activeSet)));
+        } catch (_) {}
+      }
+
+      // 4. Update Sovereign Visibility Registry with dual compatibility
+      try {
+        var regKey = 'rm_sovereign_visibility_registry_v1';
+        var regRaw = localStorage.getItem(regKey);
+        var regData = regRaw ? JSON.parse(regRaw) : { activeMode: 'in_situ_console', registry: {}, items: {} };
+        if (!regData.registry) regData.registry = {};
+        if (!regData.items) regData.items = {};
+        regData.registry[targetUrn] = { hidden: !nextVis, label: targetLabel, updatedAt: Date.now() };
+        regData.items[targetUrn] = { visible: nextVis, label: targetLabel, updatedAt: Date.now() };
+        localStorage.setItem(regKey, JSON.stringify(regData));
+      } catch (_) {}
+
+      // 5. Trigger In-Situ Audit to update floating dock counter
+      if (window.RM_SIVME && typeof window.RM_SIVME.applyInSituAudit === 'function') {
+        setTimeout(window.RM_SIVME.applyInSituAudit, 30);
+      }
     };
 
     parentEl.style.setProperty('overflow', 'visible', 'important');
@@ -202,7 +310,7 @@
       c16.classList.toggle('sivme-public-hidden', !isCat16Vis);
       c16.style.display = isCat16Vis ? '' : 'none';
       if (c16Header) {
-        var oldB = c16Header.querySelector(':scope > .sivme-notch-pill, :scope > .sivme-inline-badge');
+        var oldB = c16Header.querySelector(':scope > .sivme-notch-pill, :scope > .sivme-inline-badge, :scope > .sivme-live-notch');
         if (oldB) oldB.remove();
         c16Header.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
       }
@@ -218,7 +326,7 @@
         if (c16Header.getAttribute('data-sivme-toggle-bound') !== 'true') {
           c16Header.setAttribute('data-sivme-toggle-bound', 'true');
           c16Header.addEventListener('click', function (e) {
-            if (e.target.closest('.sivme-notch-pill, .sivme-inline-badge')) return;
+            if (e.target.closest('.sivme-notch-pill, .sivme-inline-badge, .sivme-live-notch')) return;
             var now = Date.now();
             if (now - lastAccordionToggleTime < 350) return;
             lastAccordionToggleTime = now;
@@ -251,7 +359,7 @@
         subCard.addEventListener('click', function (e) {
           if (!core.isConsoleAuthorized()) return;
           var isDormant = subCard.classList.contains('sivme-ghost-dormant');
-          var isBadgeClick = !!e.target.closest('.sivme-notch-pill, .sivme-inline-badge');
+          var isBadgeClick = !!e.target.closest('.sivme-notch-pill, .sivme-inline-badge, .sivme-live-notch');
           if (isDormant || isBadgeClick) {
             if (e.cancelable) e.preventDefault();
             e.stopPropagation();
