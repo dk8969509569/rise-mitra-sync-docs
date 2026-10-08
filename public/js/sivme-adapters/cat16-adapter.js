@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU ADAPTER: CATEGORY 16 (ISOLATED MODULE)
- * MODULE        : Dedicated House & Home (Cat-16) Play Store Card Grid, Zero Cut-off & Large Typography
+ * MODULE        : Dedicated House & Home (Cat-16) World-Class Cards Blueprint & Universal Bridge
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sivme-adapters/cat16-adapter.js
@@ -191,7 +191,7 @@
     if (!existing) headerEl.appendChild(badge);
   }
 
-  // 3. GOOGLE PLAY STORE CARD ARCHITECTURE (ZERO CUT-OFF & BALANCED 4-ROW GRID)
+  // 3. GOOGLE PLAY STORE HEADER CARD ARCHITECTURE
   function renderPlayStoreCard(headerEl, isOpen) {
     if (!headerEl) return;
 
@@ -218,36 +218,27 @@
     }
 
     container.innerHTML = [
-      '<!-- Row 1: App Identity (Large Numbering + Squircle Icon + Uncut Title) -->',
       '<div style="display: flex; align-items: center; gap: 12px; width: 100%;">',
-      '  <!-- Top Left Prominent Numbering -->',
-      '  <div style="font-size: 22px; font-weight: 900; color: #38bdf8; font-family: ui-monospace, monospace; line-height: 1; flex-shrink: 0; padding-right: 2px;">',
-      '    16.',
-      '  </div>',
-      '  <!-- Play Store Squircle Icon -->',
+      '  <div style="font-size: 22px; font-weight: 900; color: #38bdf8; font-family: ui-monospace, monospace; line-height: 1; flex-shrink: 0; padding-right: 2px;">16.</div>',
       '  <div style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 1.5px solid rgba(56, 189, 248, 0.4); box-shadow: 0 4px 10px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">',
       '    <span style="font-size: 24px; line-height: 1;">🏠</span>',
       '  </div>',
-      '  <!-- Large Typography App Info (Zero Cut-off Guarantee) -->',
       '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0;">',
       '    <div style="font-size: 18px; font-weight: 800; color: #ffffff; letter-spacing: -0.3px; line-height: 1.25; white-space: normal; word-break: break-word;">House &amp; Home</div>',
       '    <div style="font-size: 13px; font-weight: 600; color: #34d399; line-height: 1.3; margin-top: 2px;">घर व मकान (दैनिक रखरखाव)</div>',
       '  </div>',
       '</div>',
-      '<!-- Row 2: Play Store Style Rating & Meta Badges (Full Width, Unsquished) -->',
       '<div style="display: flex; align-items: center; gap: 8px; width: 100%; margin-top: 1px;">',
       '  <span style="font-size: 12px; font-weight: 800; color: #facc15; background: rgba(250, 204, 21, 0.12); border: 1px solid rgba(250, 204, 21, 0.3); padding: 2px 7px; border-radius: 5px; display: inline-flex; align-items: center; gap: 3px;">★ 4.9</span>',
       '  <span style="font-size: 12px; font-weight: 700; color: #e2e8f0; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); padding: 2px 8px; border-radius: 5px;">3 सेवाएं</span>',
       '  <span style="font-size: 11.5px; font-weight: 700; color: #38bdf8; background: rgba(56, 189, 248, 0.14); border: 1px solid rgba(56, 189, 248, 0.35); padding: 2px 8px; border-radius: 5px; display: inline-flex; align-items: center; gap: 3px;">✓ Rise Verified</span>',
       '</div>',
-      '<!-- Row 3: Google Play Category Chips -->',
       '<div style="display: flex; flex-wrap: wrap; gap: 6px; width: 100%; margin-top: 2px;">',
       '  <span style="font-size: 12px; font-weight: 600; padding: 4px 9px; background: #1e293b; color: #93c5fd; border: 1.2px solid #334155; border-radius: 6px;">🔧 मिस्त्री</span>',
       '  <span style="font-size: 12px; font-weight: 600; padding: 4px 9px; background: #1e293b; color: #fde047; border: 1.2px solid #334155; border-radius: 6px;">⚡ इलेक्ट्रीशियन</span>',
       '  <span style="font-size: 12px; font-weight: 600; padding: 4px 9px; background: #1e293b; color: #d8b4fe; border: 1.2px solid #334155; border-radius: 6px;">🎨 रंगाई-पुताई</span>',
       '  <span style="font-size: 12px; font-weight: 600; padding: 4px 9px; background: #1e293b; color: #86efac; border: 1.2px solid #334155; border-radius: 6px;">🏠 कमरा/फ्लैट</span>',
       '</div>',
-      '<!-- Row 4: Play Store Style Action Button -->',
       '<div style="display: flex; justify-content: flex-end; align-items: center; width: 100%; margin-top: 4px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.08);">',
       '  <div style="font-size: 13px; font-weight: 800; color: #10b981; background: rgba(16, 185, 129, 0.15); border: 1.5px solid rgba(16, 185, 129, 0.5); padding: 5px 14px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">',
       '    <span>3 सेवाएं ' + (isOpen ? 'छुपाएं' : 'देखें') + '</span>',
@@ -257,7 +248,84 @@
     ].join('');
   }
 
-  // 4. AUDIT CATEGORY 16 (DECOUPLED NATIVE PASS-THROUGH)
+  // 4. SUB-CARDS PLAY STORE ENRICHMENT (FILLS THE VOID & ADDS REAL UTILITY)
+  var SUBCARD_DATA = {
+    '16-1': {
+      meta: '<span style="color:#facc15;font-weight:800;">★ 4.8</span> • <span>120+ कारीगर</span> • <span style="color:#34d399;font-weight:700;">⚡ 30 मिनट विज़िट</span>',
+      tags: [
+        { text: '🔧 प्लम्बर', bg: 'rgba(56,189,248,0.12)', c: '#38bdf8' },
+        { text: '⚡ इलेक्ट्रीशियन', bg: 'rgba(250,204,21,0.12)', c: '#facc15' },
+        { text: '🪚 बढ़ई/कारपेंटर', bg: 'rgba(244,114,182,0.12)', c: '#f472b6' },
+        { text: '🧱 राजमिस्त्री', bg: 'rgba(52,211,153,0.12)', c: '#34d399' },
+        { text: '🎨 पेंटर', bg: 'rgba(192,132,252,0.12)', c: '#c084fc' }
+      ],
+      desc: 'सत्यापित स्थानीय कारीगर, पारदर्शी रेट कार्ड व 100% संतोषजनक सेवा गारंटी।'
+    },
+    '16-2': {
+      meta: '<span style="color:#facc15;font-weight:800;">★ 4.9</span> • <span>₹0 कमीशन</span> • <span style="color:#38bdf8;font-weight:700;">📱 WhatsApp रसीद</span>',
+      tags: [
+        { text: '🧾 किराया रसीद', bg: 'rgba(52,211,153,0.12)', c: '#34d399' },
+        { text: '⚡ सब-मीटर कैलकुलेटर', bg: 'rgba(250,204,21,0.12)', c: '#facc15' },
+        { text: '👥 किरायेदार खाता', bg: 'rgba(56,189,248,0.12)', c: '#38bdf8' },
+        { text: '📑 रेंट एग्रीमेंट', bg: 'rgba(192,132,252,0.12)', c: '#c084fc' }
+      ],
+      desc: 'मकान मालिक व किरायेदारों के लिए सटीक डिजिटल हिसाब-किताब, PDF रसीद व SMS अलर्ट।'
+    },
+    '16-3': {
+      meta: '<span style="color:#facc15;font-weight:800;">★ 4.9</span> • <span>0% ब्रोकरेज</span> • <span style="color:#34d399;font-weight:700;">🏠 डायरेक्ट मकान मालिक</span>',
+      tags: [
+        { text: '🛏️ 1 RK / सिंगल रूम', bg: 'rgba(56,189,248,0.12)', c: '#38bdf8' },
+        { text: '🏢 1BHK / 2BHK फ्लैट', bg: 'rgba(52,211,153,0.12)', c: '#34d399' },
+        { text: '👩 गर्ल्स PG / हॉस्टल', bg: 'rgba(244,114,182,0.12)', c: '#f472b6' },
+        { text: '👨 बॉयज लॉज', bg: 'rgba(250,204,21,0.12)', c: '#facc15' }
+      ],
+      desc: 'लालपुर, डोरंडा, बरियातू, कांके में सीधे मालिक से संपर्क, बिना दलाली तुरंत फ्लैट व रूम।'
+    }
+  };
+
+  function enrichSubCardUI(subCard, subId) {
+    if (!subCard) return;
+    var info = SUBCARD_DATA[subId];
+    if (!info) return;
+
+    var existingEnrich = subCard.querySelector('#subcard-enrich-' + subId);
+    if (!existingEnrich) {
+      existingEnrich = document.createElement('div');
+      existingEnrich.id = 'subcard-enrich-' + subId;
+      existingEnrich.style.cssText = [
+        'width: 100% !important',
+        'display: flex !important',
+        'flex-direction: column !important',
+        'gap: 8px !important',
+        'padding: 10px 12px !important',
+        'margin-top: 8px !important',
+        'margin-bottom: 10px !important',
+        'background: rgba(15, 23, 42, 0.6) !important',
+        'border: 1px solid rgba(56, 189, 248, 0.18) !important',
+        'border-radius: 10px !important',
+        'box-sizing: border-box !important'
+      ].join(';');
+
+      var tagsHtml = info.tags.map(function (t) {
+        return '<span style="font-size:11.5px;font-weight:600;padding:3px 8px;background:' + t.bg + ';color:' + t.c + ';border:1px solid ' + t.c + '44;border-radius:6px;">' + t.text + '</span>';
+      }).join(' ');
+
+      existingEnrich.innerHTML = [
+        '<div style="font-size:12px;color:#94a3b8;display:flex;align-items:center;gap:6px;">' + info.meta + '</div>',
+        '<div style="display:flex;flex-wrap:wrap;gap:5px;">' + tagsHtml + '</div>',
+        '<div style="font-size:11.5px;color:#cbd5e1;line-height:1.35;opacity:0.9;">' + info.desc + '</div>'
+      ].join('');
+
+      var actionRow = subCard.querySelector('.flex.space-x-2, .grid.grid-cols-3, div[class*="grid"], div[class*="space-x"]');
+      if (actionRow) {
+        subCard.insertBefore(existingEnrich, actionRow);
+      } else {
+        subCard.appendChild(existingEnrich);
+      }
+    }
+  }
+
+  // 5. AUDIT CATEGORY 16 (DECOUPLED NATIVE PASS-THROUGH)
   function auditCat16Complete(isAuth, auditElementFn) {
     var core = getCore();
     var c16Container = document.querySelector('#categoryModal [data-cat-id="c16"], #categoryModal [data-cat-id="16"]');
@@ -297,7 +365,6 @@
         mountCat16AuthoritativeBadge(c16Header, isCat16Vis);
         renderPlayStoreCard(c16Header, isSubOpen);
 
-        // Native Pass-Through: Strip conflicting inline style without hijacking accordion toggle
         if (c16Header.getAttribute('data-sivme-pass-bound') !== 'true') {
           c16Header.setAttribute('data-sivme-pass-bound', 'true');
           c16Header.addEventListener('click', function (e) {
@@ -315,11 +382,14 @@
       }
     }
 
-    // Sub-cards handling
+    // Sub-cards handling & enrichment
     document.querySelectorAll('#sub-c16 > div').forEach(function (subCard, idx) {
-      var subUrn = 'rm:cat:16:sub:16-' + (idx + 1);
+      var subId = '16-' + (idx + 1);
+      var subUrn = 'rm:cat:16:sub:' + subId;
       var subLabelEl = subCard.querySelector('.text-xs') || subCard;
-      var subLabel = subLabelEl ? subLabelEl.textContent.trim() : ('16-' + (idx + 1) + ' सेवा');
+      var subLabel = subLabelEl ? subLabelEl.textContent.trim() : (subId + ' सेवा');
+
+      enrichSubCardUI(subCard, subId);
 
       if (!isSubOpen || !isAuth) {
         subCard.querySelectorAll('.sivme-notch-pill, .sivme-live-notch, .sivme-inline-badge').forEach(function (n) { n.remove(); });
