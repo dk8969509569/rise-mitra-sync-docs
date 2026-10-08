@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU ADAPTER: CATEGORY 16 (ISOLATED MODULE)
- * MODULE        : Dedicated House & Home (Cat-16) World-Class Hierarchy, Zero Duplication & Universal Bridge
+ * MODULE        : Dedicated House & Home (Cat-16) Pure Isolated Domain Architecture (Zero Duplication)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sivme-adapters/cat16-adapter.js
@@ -33,7 +33,7 @@
     };
   }
 
-  // 1. DYNAMIC FILTERS URN SELECTORS CONTRACT (16-3)
+  // 1. DYNAMIC FILTERS URN SELECTORS CONTRACT (16-3 ONLY)
   var CAT16_URN_SELECTORS = [
     { urn: 'rm:cat:16:sub:16-3:elem:smart_omnibox', selector: '#rm-search-locality, #smartOmniboxGroup, #smartOmnibox, input[placeholder*="लालपुर"], input[placeholder*="8340"]', label: 'स्मार्ट खोज' },
     { urn: 'rm:cat:16:sub:16-3:elem:state_filter', selector: '#rm-cat16-search-state, #stateFilterGroup, #stateFilter, select[id*="state"]', label: 'राज्य फ़िल्टर' },
@@ -191,7 +191,7 @@
     if (!existing) headerEl.appendChild(badge);
   }
 
-  // 3. GOOGLE PLAY STORE HEADER CARD (SHOWS ITS 3 SUB-CATEGORIES, ZERO DUPLICATION)
+  // 3. CATEGORY 16 HEADER: PURE MACRO LEVEL (NO REPETITION OF SUBCATEGORIES)
   function renderPlayStoreCard(headerEl, isOpen) {
     if (!headerEl) return;
 
@@ -218,7 +218,7 @@
     }
 
     container.innerHTML = [
-      '<!-- Row 1: Identity & Clear Title (No Ellipsis) -->',
+      '<!-- Row 1: Category Branding & Identity -->',
       '<div style="display: flex; align-items: center; gap: 12px; width: 100%;">',
       '  <div style="font-size: 22px; font-weight: 900; color: #38bdf8; font-family: ui-monospace, monospace; line-height: 1; flex-shrink: 0; padding-right: 2px;">16.</div>',
       '  <div style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 1.5px solid rgba(56, 189, 248, 0.4); box-shadow: 0 4px 10px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">',
@@ -226,22 +226,22 @@
       '  </div>',
       '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0;">',
       '    <div style="font-size: 18px; font-weight: 800; color: #ffffff; letter-spacing: -0.3px; line-height: 1.25; white-space: normal; word-break: break-word;">House &amp; Home</div>',
-      '    <div style="font-size: 13px; font-weight: 600; color: #34d399; line-height: 1.3; margin-top: 2px;">घर, मकान व दैनिक रखरखाव सेवाएं</div>',
+      '    <div style="font-size: 13px; font-weight: 600; color: #34d399; line-height: 1.3; margin-top: 2px;">घर, आवास व दैनिक व्यवस्थापन केंद्र</div>',
       '  </div>',
       '</div>',
-      '<!-- Row 2: Category Scope & Verification -->',
+      '<!-- Row 2: Category Credibility & Trust Markers -->',
       '<div style="display: flex; align-items: center; gap: 8px; width: 100%; margin-top: 1px;">',
-      '  <span style="font-size: 12px; font-weight: 800; color: #facc15; background: rgba(250, 204, 21, 0.12); border: 1px solid rgba(250, 204, 21, 0.3); padding: 2px 7px; border-radius: 5px; display: inline-flex; align-items: center; gap: 3px;">★ 4.9</span>',
-      '  <span style="font-size: 12px; font-weight: 700; color: #e2e8f0; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); padding: 2px 8px; border-radius: 5px;">3 मुख्य सेवाएं शामिल</span>',
-      '  <span style="font-size: 11.5px; font-weight: 700; color: #38bdf8; background: rgba(56, 189, 248, 0.14); border: 1px solid rgba(56, 189, 248, 0.35); padding: 2px 8px; border-radius: 5px; display: inline-flex; align-items: center; gap: 3px;">✓ Rise Verified</span>',
+      '  <span style="font-size: 12px; font-weight: 800; color: #facc15; background: rgba(250, 204, 21, 0.12); border: 1px solid rgba(250, 204, 21, 0.3); padding: 2px 7px; border-radius: 5px; display: inline-flex; align-items: center; gap: 3px;">★ 4.9 रेटिंग</span>',
+      '  <span style="font-size: 12px; font-weight: 700; color: #38bdf8; background: rgba(56, 189, 248, 0.14); border: 1px solid rgba(56, 189, 248, 0.35); padding: 2px 8px; border-radius: 5px; display: inline-flex; align-items: center; gap: 3px;">✓ Rise Verified Network</span>',
+      '  <span style="font-size: 12px; font-weight: 700; color: #e2e8f0; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); padding: 2px 8px; border-radius: 5px;">24x7 सहायता</span>',
       '</div>',
-      '<!-- Row 3: Distinct Subcategories Representation (Clean Architecture) -->',
+      '<!-- Row 3: Pure Macro Category Value Pillars (Zero Sub-card Duplication) -->',
       '<div style="display: flex; flex-wrap: wrap; gap: 6px; width: 100%; margin-top: 2px;">',
-      '  <span style="font-size: 12px; font-weight: 700; padding: 4px 10px; background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1.2px solid rgba(56, 189, 248, 0.35); border-radius: 7px;">🛠️ 16-1: गृह मरम्मत (Mistry)</span>',
-      '  <span style="font-size: 12px; font-weight: 700; padding: 4px 10px; background: rgba(52, 211, 153, 0.12); color: #34d399; border: 1.2px solid rgba(52, 211, 153, 0.35); border-radius: 7px;">📋 16-2: किराया बहीखाता (Ledger)</span>',
-      '  <span style="font-size: 12px; font-weight: 700; padding: 4px 10px; background: rgba(250, 204, 21, 0.12); color: #facc15; border: 1.2px solid rgba(250, 204, 21, 0.35); border-radius: 7px;">🏠 16-3: कमरा व फ्लैट खोज (Rental)</span>',
+      '  <span style="font-size: 12px; font-weight: 600; padding: 4px 10px; background: #1e293b; color: #93c5fd; border: 1.2px solid #334155; border-radius: 7px;">🏡 संपूर्ण घरेलू समाधान</span>',
+      '  <span style="font-size: 12px; font-weight: 600; padding: 4px 10px; background: #1e293b; color: #86efac; border: 1.2px solid #334155; border-radius: 7px;">🛡️ 100% सुरक्षित लेन-देन</span>',
+      '  <span style="font-size: 12px; font-weight: 600; padding: 4px 10px; background: #1e293b; color: #fde047; border: 1.2px solid #334155; border-radius: 7px;">📍 स्थानीय मित्र सपोर्ट</span>',
       '</div>',
-      '<!-- Row 4: Action Button -->',
+      '<!-- Row 4: Clean Action Button -->',
       '<div style="display: flex; justify-content: flex-end; align-items: center; width: 100%; margin-top: 4px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.08);">',
       '  <div style="font-size: 13px; font-weight: 800; color: #10b981; background: rgba(16, 185, 129, 0.15); border: 1.5px solid rgba(16, 185, 129, 0.5); padding: 5px 14px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">',
       '    <span>3 सेवाएं ' + (isOpen ? 'छुपाएं' : 'देखें') + '</span>',
@@ -251,27 +251,28 @@
     ].join('');
   }
 
-  // 4. SUB-CARDS RICH DATA DICTIONARY (EACH HAS ITS OWN UNIQUE PURPOSE)
+  // 4. SUB-CARDS STRICT SINGLE-PURPOSE DICTIONARY (EACH HAS ITS OWN DOMAIN ONLY)
   var SUBCARD_DATA = {
     '16-1': {
-      meta: '<span style="color:#facc15;font-weight:800;">★ 4.8</span> • <span>120+ स्थानीय कारीगर</span> • <span style="color:#34d399;font-weight:700;">⚡ 30 मिनट विज़िट</span>',
+      meta: '<span style="color:#facc15;font-weight:800;">★ 4.8</span> • <span>120+ कुशल कारीगर</span> • <span style="color:#34d399;font-weight:700;">⚡ 30 मिनट विज़िट</span>',
       tags: [
-        { text: '🚰 नल व प्लम्बिंग', bg: 'rgba(56,189,248,0.12)', c: '#38bdf8' },
-        { text: '⚡ वायरिंग व स्विच', bg: 'rgba(250,204,21,0.12)', c: '#facc15' },
-        { text: '🚪 बढ़ई व फर्नीचर', bg: 'rgba(244,114,182,0.12)', c: '#f472b6' },
-        { text: '🎨 पुताई व वॉलपेंट', bg: 'rgba(192,132,252,0.12)', c: '#c084fc' }
+        { text: '🚰 प्लम्बिंग व नल फिटिंग', bg: 'rgba(56,189,248,0.12)', c: '#38bdf8' },
+        { text: '⚡ वायरिंग व उपकरण रिपेयर', bg: 'rgba(250,204,21,0.12)', c: '#facc15' },
+        { text: '🚪 बढ़ई व फर्नीचर कार्य', bg: 'rgba(244,114,182,0.12)', c: '#f472b6' },
+        { text: '🎨 पुताई व वॉलकेयर', bg: 'rgba(192,132,252,0.12)', c: '#c084fc' },
+        { text: '🧱 राजमिस्त्री व प्लास्टर', bg: 'rgba(52,211,153,0.12)', c: '#34d399' }
       ],
-      desc: 'घर की हर मरम्मत और मेंटेनेंस के लिए एक ही जगह पर विश्वसनीय सेवा, फिक्स रेट कार्ड व 100% गारंटी।'
+      desc: 'घर की हर मरम्मत और मेंटेनेंस के लिए एक ही जगह पर विश्वसनीय सेवा, पारदर्शी रेट कार्ड व कार्य गारंटी।'
     },
     '16-2': {
       meta: '<span style="color:#facc15;font-weight:800;">★ 4.9</span> • <span>₹0 कमीशन</span> • <span style="color:#38bdf8;font-weight:700;">📱 WhatsApp रसीद</span>',
       tags: [
-        { text: '🧾 1-टैप रेंट रसीद', bg: 'rgba(52,211,153,0.12)', c: '#34d399' },
+        { text: '🧾 1-टैप किराया रसीद', bg: 'rgba(52,211,153,0.12)', c: '#34d399' },
         { text: '⚡ सब-मीटर कैलकुलेटर', bg: 'rgba(250,204,21,0.12)', c: '#facc15' },
-        { text: '👥 किराएदार प्रोफाइल', bg: 'rgba(56,189,248,0.12)', c: '#38bdf8' },
-        { text: '📑 रेंट एग्रीमेंट', bg: 'rgba(192,132,252,0.12)', c: '#c084fc' }
+        { text: '👥 किराएदार खाता प्रबंधन', bg: 'rgba(56,189,248,0.12)', c: '#38bdf8' },
+        { text: '📑 डिजिटल रेंट एग्रीमेंट', bg: 'rgba(192,132,252,0.12)', c: '#c084fc' }
       ],
-      desc: 'मकान मालिक और किराएदार दोनों के लिए आसान और पारदर्शी डिजिटल हिसाब, PDF रसीद व SMS अलर्ट।'
+      desc: 'मकान मालिक और किराएदार दोनों के लिए आसान और पारदर्शी डिजिटल हिसाब-किताब, PDF रसीद व SMS ड्यू अलर्ट।'
     },
     '16-3': {
       meta: '<span style="color:#facc15;font-weight:800;">★ 4.9</span> • <span>0% ब्रोकरेज</span> • <span style="color:#34d399;font-weight:700;">🏠 डायरेक्ट मकान मालिक</span>',
@@ -281,17 +282,16 @@
         { text: '👩 गर्ल्स हॉस्टल/PG', bg: 'rgba(244,114,182,0.12)', c: '#f472b6' },
         { text: '👨 बॉयज लॉज', bg: 'rgba(250,204,21,0.12)', c: '#facc15' }
       ],
-      desc: 'बिना किसी ब्रोकर और दलाली के सीधे मकान मालिक से किराए पर कमरा या फ्लैट लें। लालपुर, डोरंडा, बरियातू।'
+      desc: 'बिना किसी ब्रोकर और दलाली के सीधे मकान मालिक से किराए पर कमra या फ्लैट लें। लालपुर, डोरंडा, बरियातू, कांके।'
     }
   };
 
-  // 5. INJECT SUB-CARD CONTENT PROPERLY BETWEEN TITLE AND ACTION BUTTONS
+  // 5. FILL VOID COMPLETELY & POSITION CONTENT RIGHT UNDER SUBCARD TITLE
   function enrichSubCardUI(subCard, subId) {
     if (!subCard) return;
     var info = SUBCARD_DATA[subId];
     if (!info) return;
 
-    // Purge any mispositioned previous block
     var old = subCard.querySelector('#subcard-enrich-' + subId);
     if (old) old.remove();
 
@@ -299,12 +299,13 @@
     enrichDiv.id = 'subcard-enrich-' + subId;
     enrichDiv.style.cssText = [
       'width: 100% !important',
+      'flex: 1 1 auto !important',
       'display: flex !important',
       'flex-direction: column !important',
-      'gap: 7px !important',
+      'justify-content: center !important',
+      'gap: 8px !important',
       'padding: 10px 12px !important',
-      'margin-top: 10px !important',
-      'margin-bottom: 12px !important',
+      'margin: 6px 0 8px 0 !important',
       'background: rgba(15, 23, 42, 0.65) !important',
       'border: 1px solid rgba(56, 189, 248, 0.2) !important',
       'border-radius: 10px !important',
@@ -322,7 +323,13 @@
       '<div style="font-size:12px;color:#cbd5e1;line-height:1.4;opacity:0.95;">' + info.desc + '</div>'
     ].join('');
 
-    // Locate the bottom button container strictly (containing 'पिन', 'वीडियो', or 'खोलें')
+    // Remove any empty spacer elements between title and buttons
+    Array.from(subCard.children).forEach(function (ch) {
+      if (ch.tagName === 'DIV' && !ch.id && !ch.textContent.trim() && ch !== enrichDiv) {
+        ch.remove();
+      }
+    });
+
     var bottomButtons = null;
     var children = subCard.children;
     for (var i = children.length - 1; i >= 0; i--) {
@@ -382,7 +389,6 @@
         mountCat16AuthoritativeBadge(c16Header, isCat16Vis);
         renderPlayStoreCard(c16Header, isSubOpen);
 
-        // Native Pass-Through: Strip conflicting inline style without hijacking accordion toggle
         if (c16Header.getAttribute('data-sivme-pass-bound') !== 'true') {
           c16Header.setAttribute('data-sivme-pass-bound', 'true');
           c16Header.addEventListener('click', function (e) {
