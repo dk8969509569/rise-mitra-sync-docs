@@ -4,9 +4,6 @@
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-scanner.js
- * DUAL-FOLDER REFS:
- *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
- *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
  */
 
 (function () {
@@ -237,10 +234,10 @@
     badge.setAttribute('data-badge-vis', String(nextVis));
     badge.className = 'sivme-notch-pill ' + (nextVis ? 'sivme-badge-live' : 'sivme-badge-dormant');
     badge.innerHTML = nextVis
-      ? '<span style="color:#10b981;font-size:10px;line-height:1;">🟢</span> <span style="line-height:1;">Live</span> <span style="font-size:9px;opacity:0.8;line-height:1;">⇄</span>'
-      : '<span style="color:#ef4444;font-size:10px;line-height:1;">🔴</span> <span style="line-height:1;">Hidden</span> <span style="font-size:9px;opacity:0.8;line-height:1;">⇄</span>';
+      ? '<span style="color:#10b981;font-size:11px;line-height:1;">🟢</span> <span style="line-height:1;">Live</span> <span style="font-size:9.5px;opacity:0.85;line-height:1;">⇄</span>'
+      : '<span style="color:#ff4d4d;font-size:11px;line-height:1;">🔴</span> <span style="line-height:1;">Hidden</span> <span style="font-size:9.5px;opacity:0.85;line-height:1;">⇄</span>';
     badge.style.setProperty('background', (nextVis ? '#064e3b' : '#7f1d1d'), 'important');
-    badge.style.setProperty('border', '1.5px solid ' + (nextVis ? '#10b981' : '#ef4444'), 'important');
+    badge.style.setProperty('border', '1.5px solid ' + (nextVis ? '#10b981' : '#ff4d4d'), 'important');
     badge.style.setProperty('color', (nextVis ? '#34d399' : '#fca5a5'), 'important');
 
     var parentCard = badge.closest('[data-cat-id], .sivme-cat-card, .sivme-subcat-card, .sivme-vertical-card, .wallet-card');
@@ -249,9 +246,13 @@
       parentCard.classList.toggle('sivme-ghost-dormant', !nextVis);
       parentCard.classList.toggle('is-live', nextVis);
       parentCard.classList.toggle('is-hidden', !nextVis);
-      parentCard.style.setProperty('outline', '2px dashed ' + (nextVis ? '#10b981' : '#ef4444'), 'important');
+      parentCard.style.setProperty('outline', '2.5px dashed ' + (nextVis ? '#10b981' : '#ff3838'), 'important');
       parentCard.style.setProperty('outline-offset', '3px', 'important');
-      parentCard.style.setProperty('opacity', nextVis ? '1' : '0.45', 'important');
+      parentCard.style.setProperty('opacity', '1', 'important');
+      var cardInner = parentCard.querySelector(':scope > div:first-child');
+      if (cardInner) {
+        cardInner.style.setProperty('opacity', nextVis ? '1' : '0.55', 'important');
+      }
     }
 
     // 2. Persist across registries
