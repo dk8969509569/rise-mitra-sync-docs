@@ -33,19 +33,25 @@
     { urn: 'rm:cat:16:sub:16-3:elem:submeter_checkbox', selector: '#rm-search-submeter, #submeterFilterGroup, input[type="checkbox"]', label: 'सब-मीटर फ़िल्टर' }
   ];
 
-  // Helper: Persist toggle across all storages
+  // Helper: Persist toggle across all storages with auto parent wake-up
   function persistCat16Toggle(urn, nextVis, label, core) {
     if (core && typeof core.setUrnVisibility === 'function') {
       if (urn === 'rm:cat:16') {
         ['rm:cat:16:sub:16-1', 'rm:cat:16:sub:16-2', 'rm:cat:16:sub:16-3'].forEach(function (su) {
           core.setUrnVisibility(su, nextVis);
         });
+      } else if (urn.indexOf('rm:cat:16:sub:') === 0 && nextVis === true) {
+        // Child wake-up automatically ensures parent Category 16 is live
+        core.setUrnVisibility('rm:cat:16', true, 'घर व मकान (House & Home)');
       }
       core.setUrnVisibility(urn, nextVis, label);
     }
 
     if (window.RM_SovereignRegistry && typeof window.RM_SovereignRegistry.toggleVisibility === 'function') {
       try {
+        if (urn.indexOf('rm:cat:16:sub:') === 0 && nextVis === true) {
+          window.RM_SovereignRegistry.toggleVisibility('rm:cat:16', true, 'घर व मकान (House & Home)');
+        }
         window.RM_SovereignRegistry.toggleVisibility(urn, nextVis, label);
       } catch (_) {}
     }
@@ -58,21 +64,24 @@
       if (!regObj.items) regObj.items = {};
       regObj.registry[urn] = { hidden: !nextVis, label: label, updatedAt: Date.now() };
       regObj.items[urn] = { visible: nextVis, label: label, updatedAt: Date.now() };
+      if (urn.indexOf('rm:cat:16:sub:') === 0 && nextVis === true) {
+        regObj.registry['rm:cat:16'] = { hidden: false, label: 'घर व मकान (House & Home)', updatedAt: Date.now() };
+        regObj.items['rm:cat:16'] = { visible: true, label: 'घर व मकान (House & Home)', updatedAt: Date.now() };
+      }
       localStorage.setItem(regKey, JSON.stringify(regObj));
     } catch (_) {}
 
-    if (urn === 'rm:cat:16') {
-      try {
-        var rawAct = localStorage.getItem('rm_active_categories_v1');
-        var activeSet = new Set(rawAct ? JSON.parse(rawAct) : []);
-        if (nextVis) {
-          activeSet.add('c16'); activeSet.add('16');
-        } else {
-          activeSet.delete('c16'); activeSet.delete('16');
-        }
-        localStorage.setItem('rm_active_categories_v1', JSON.stringify(Array.from(activeSet)));
-      } catch (_) {}
-    }
+    try {
+      var rawAct = localStorage.getItem('rm_active_categories_v1');
+      var activeSet = new Set(rawAct ? JSON.parse(rawAct) : []);
+      if (urn === 'rm:cat:16') {
+        if (nextVis) { activeSet.add('c16'); activeSet.add('16'); }
+        else { activeSet.delete('c16'); activeSet.delete('16'); }
+      } else if (urn.indexOf('rm:cat:16:sub:') === 0 && nextVis === true) {
+        activeSet.add('c16'); activeSet.add('16');
+      }
+      localStorage.setItem('rm_active_categories_v1', JSON.stringify(Array.from(activeSet)));
+    } catch (_) {}
 
     if (urn.indexOf(':sub:') !== -1) {
       var subId = urn.split(':sub:')[1];
@@ -80,18 +89,14 @@
         try {
           var rawSub = localStorage.getItem('rm_active_subcategories_v1');
           var subSet = new Set(rawSub ? JSON.parse(rawSub) : []);
-          if (nextVis) {
-            subSet.add(subId);
-          } else {
-            subSet.delete(subId);
-          }
+          if (nextVis) { subSet.add(subId); } else { subSet.delete(subId); }
           localStorage.setItem('rm_active_subcategories_v1', JSON.stringify(Array.from(subSet)));
         } catch (_) {}
       }
     }
   }
 
-  // 2. MOUNT SINGLE AUTHORITATIVE NOTCH PILL FOR CAT 16
+  // 2. MOUNT SINGLE AUTHORITATIVE NOTCH PILL FOR CAT 16 HEADER
   function mountCat16AuthoritativeBadge(headerEl, isVisible) {
     if (!headerEl) return;
 
@@ -178,15 +183,14 @@
     if (!existing) headerEl.appendChild(badge);
   }
 
-  // 3. AUDIT CATEGORY 16 ACCORDION & SUB-CARDS (SMOOTH NON-CONFLICT ENGINE)
+  // 3. AUDIT CATEGORY 16 ACCORDION & SUB-CARDS (UNFROZEN ACCORDION & DIRECT TOGGLE)
   function auditCat16Complete(isAuth, auditElementFn) {
     var core = getCore();
     var c16Container = document.querySelector('#categoryModal [data-cat-id="c16"], #categoryModal [data-cat-id="16"]');
     if (!c16Container) return;
 
-    // Purge badges on outer frame to ensure header has the only notch
     c16Container.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
-    c16Container.style.removeProperty('outline');
+    c16Container.style.setProperty('outline', 'none', 'important');
     c16Container.querySelectorAll(':scope > .sivme-notch-pill, :scope > .sivme-live-notch, :scope > .sivme-inline-badge').forEach(function (n) {
       n.remove();
     });
@@ -215,11 +219,10 @@
 
         mountCat16AuthoritativeBadge(c16Header, isCat16Vis);
 
-        // Smooth non-conflicting accordion toggle handler
+        // Reliable 1-Tap Accordion Toggle & Clean Display Removal
         if (c16Header.getAttribute('data-sivme-accordion-bound') !== 'true') {
           c16Header.setAttribute('data-sivme-accordion-bound', 'true');
           c16Header.addEventListener('click', function (e) {
-            // If badge is clicked, do not toggle accordion
             if (e.target.closest('.sivme-notch-pill, #sivme-c16-authoritative-badge')) return;
 
             var sub = document.getElementById('sub-c16');
@@ -229,20 +232,17 @@
             if (now - lastAccordionToggleTime < 280) return;
             lastAccordionToggleTime = now;
 
-            // Check if catalog has native onclick handler
-            var hasNative = typeof window.toggleAccordion === 'function' || c16Header.getAttribute('onclick');
-            if (!hasNative) {
-              var isHidden = sub.classList.contains('hidden') || sub.style.display === 'none';
-              var chevron = c16Header.querySelector('.acc-arrow');
-              sub.classList.toggle('hidden', !isHidden);
-              sub.style.display = isHidden ? 'block' : 'none';
-              if (chevron) chevron.textContent = isHidden ? '▲' : '▼';
-            }
+            // Strip conflicting inline style so Tailwind class controls state cleanly
+            sub.style.removeProperty('display');
 
-            // Sync sub-card badges after accordion state change
+            var isCurrentlyHidden = sub.classList.contains('hidden');
+            sub.classList.toggle('hidden', !isCurrentlyHidden);
+
+            var chevron = c16Header.querySelector('.acc-arrow');
+            if (chevron) chevron.textContent = isCurrentlyHidden ? '▲' : '▼';
+
             if (window.RM_SIVME && typeof window.RM_SIVME.applyInSituAudit === 'function') {
-              setTimeout(window.RM_SIVME.applyInSituAudit, 50);
-              setTimeout(window.RM_SIVME.applyInSituAudit, 220);
+              setTimeout(window.RM_SIVME.applyInSituAudit, 40);
             }
           }, false);
         }
