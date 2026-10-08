@@ -31,7 +31,7 @@
   }
 
   // ==============================================================================
-  // 1. UNIVERSAL ANTI-CLIPPING & SAFE 16px SPACING SHIELD
+  // 1. UNIVERSAL ANTI-CLIPPING, STACKING ISOLATION & SAFE 16px SPACING SHIELD
   // ==============================================================================
   (function injectSpacingShield() {
     var styleId = 'sivme-universal-spacing-shield';
@@ -39,17 +39,33 @@
     var st = document.createElement('style');
     st.id = styleId;
     st.textContent = [
-      '/* Eliminate catalog duplicate inner notches */',
-      '#categoryModal .sivme-live-notch { display: none !important; }',
-      '/* 16px Card-to-Card Gap & Unclipped Overflow */',
+      '/* 1. Stacking isolation: Prevents home-screen badges from piercing through modals */',
+      'main {',
+      '  isolation: isolate !important;',
+      '  position: relative !important;',
+      '  z-index: 10 !important;',
+      '}',
+      '#categoryModal, #rm-fullscreen-view, div[id*="Modal"], div[id*="modal"] {',
+      '  z-index: 99990 !important;',
+      '}',
+      'body.sivme-modal-active main .sivme-notch-pill {',
+      '  display: none !important;',
+      '  visibility: hidden !important;',
+      '}',
+      '/* 2. Eliminate catalog duplicate inner notches */',
+      '#categoryModal .sivme-live-notch, .sivme-live-notch { display: none !important; }',
+      '/* 3. 16px Card-to-Card Gap & Unclipped Overflow */',
       '[data-cat-id], .sivme-cat-card, .sivme-subcat-card, #verticalTilesGrid > div, .wallet-card {',
       '  position: relative !important;',
       '  overflow: visible !important;',
       '  margin-bottom: 16px !important;',
       '}',
-      '/* Safe right clearance on titles to avoid button overlap */',
-      '[data-cat-id] > div:first-child { padding-right: 14px !important; line-height: 1.4 !important; }',
-      '/* Single Authoritative Top-Right Notch */',
+      '/* 4. Safe right clearance: Title fonts and action buttons never get squashed */',
+      '[data-cat-id] > div:first-child {',
+      '  padding-right: 85px !important;',
+      '  line-height: 1.4 !important;',
+      '}',
+      '/* 5. Single Authoritative Top-Right Notch */',
       '.sivme-notch-pill {',
       '  position: absolute !important;',
       '  top: -10px !important;',
@@ -69,14 +85,34 @@
   })();
 
   // ==============================================================================
-  // 2. 16-3 DYNAMIC FILTERS URN SELECTORS
+  // 2. 16-3 DYNAMIC FILTERS URN SELECTORS CONTRACT (100% ZEL)
   // ==============================================================================
   var URN_SELECTORS = [
-    { urn: 'rm:cat:16:sub:16-3:elem:smart_omnibox', selector: '#rm-search-locality, #smartOmniboxGroup, input[placeholder*="लालपुर"], input[placeholder*="8340"]', label: 'स्मार्ट खोज' },
-    { urn: 'rm:cat:16:sub:16-3:elem:state_filter', selector: '#rm-cat16-search-state, #stateFilterGroup, select[id*="state"]', label: 'राज्य फ़िल्टर' },
-    { urn: 'rm:cat:16:sub:16-3:elem:district_filter', selector: '#rm-cat16-search-district, #districtFilterGroup, select[id*="district"]', label: 'जिला फ़िल्टर' },
-    { urn: 'rm:cat:16:sub:16-3:elem:budget_slider', selector: '#rm-search-budget-slider, #budgetSliderGroup, input[type="range"]', label: 'बजट स्लाइडर' },
-    { urn: 'rm:cat:16:sub:16-3:elem:submeter_checkbox', selector: '#rm-search-submeter, #submeterFilterGroup, input[type="checkbox"]', label: 'सब-मीटर फ़िल्टर' }
+    {
+      urn: 'rm:cat:16:sub:16-3:elem:smart_omnibox',
+      selector: '#rm-search-locality, #smartOmniboxGroup, #smartOmnibox, input[placeholder*="लालपुर"], input[placeholder*="8340"]',
+      label: 'स्मार्ट खोज'
+    },
+    {
+      urn: 'rm:cat:16:sub:16-3:elem:state_filter',
+      selector: '#rm-cat16-search-state, #stateFilterGroup, #stateFilter, select[id*="state"]',
+      label: 'राज्य फ़िल्टर'
+    },
+    {
+      urn: 'rm:cat:16:sub:16-3:elem:district_filter',
+      selector: '#rm-cat16-search-district, #districtFilterGroup, #districtFilter, select[id*="district"]',
+      label: 'जिला फ़िल्टर'
+    },
+    {
+      urn: 'rm:cat:16:sub:16-3:elem:budget_slider',
+      selector: '#rm-search-budget-slider, #budgetSliderGroup, input[type="range"]',
+      label: 'बजट स्लाइडर'
+    },
+    {
+      urn: 'rm:cat:16:sub:16-3:elem:submeter_checkbox',
+      selector: '#rm-search-submeter, #submeterFilterGroup, input[type="checkbox"]',
+      label: 'सब-मीटर फ़िल्टर'
+    }
   ];
 
   // ==============================================================================
@@ -230,7 +266,7 @@
   }
 
   // ==============================================================================
-  // 5. UNIVERSAL AUTO-SCANNER
+  // 5. UNIVERSAL AUTO-SCANNER (Directory, Search, RM CASH, 12 Verticals & Filters)
   // ==============================================================================
   function autoScanBusinessElements(isAuth) {
     var core = getCore();
@@ -277,7 +313,7 @@
       }
     });
 
-    // 5. Universal Catalog Cards
+    // 5. Universal Catalog Cards (Strict single-notch enforcement)
     var catalogCards = document.querySelectorAll('#categoryModal [data-cat-id]');
     catalogCards.forEach(function (cCard) {
       var catId = cCard.getAttribute('data-cat-id') || '';
@@ -309,7 +345,7 @@
   }
 
   // ==============================================================================
-  // 6. CATEGORY 16 ACCORDION & SUB-CARDS
+  // 6. CATEGORY 16 ACCORDION CONTROLLER & SUB-CARDS (100% ZEL)
   // ==============================================================================
   function auditCategory16Accordion(isAuth) {
     var core = getCore();
@@ -422,7 +458,7 @@
   }
 
   // ==============================================================================
-  // 7. MAIN AUDIT ENGINE DISPATCHER
+  // 7. MAIN AUDIT ENGINE DISPATCHER & MODAL STATE SYNC
   // ==============================================================================
   function applyInSituAudit() {
     if (isAuditing) return;
@@ -433,12 +469,25 @@
       core.enforceZELTemplateRendering();
       var isAuth = core.isConsoleAuthorized();
 
-      var openModals = document.querySelectorAll('#categoryModal, #rentalLedgerModal, #rentalSearchModal, [id*="Modal"]');
+      // Check if any modal is currently visible
+      var openModals = document.querySelectorAll('#categoryModal, #rentalLedgerModal, #rentalSearchModal, #rm-fullscreen-view');
+      var isAnyModalOpen = false;
       openModals.forEach(function (m) {
-        if (m.classList.contains('hidden') || m.style.display === 'none') return;
-        m.style.setProperty('height', '100dvh', 'important');
-        m.style.setProperty('max-height', '100dvh', 'important');
+        if (!m.classList.contains('hidden') && m.style.display !== 'none') {
+          isAnyModalOpen = true;
+          m.style.setProperty('height', '100dvh', 'important');
+          m.style.setProperty('max-height', '100dvh', 'important');
+        }
       });
+
+      // Toggle body modal-active class to suppress background badges
+      if (document.body) {
+        if (isAnyModalOpen) {
+          document.body.classList.add('sivme-modal-active');
+        } else {
+          document.body.classList.remove('sivme-modal-active');
+        }
+      }
 
       auditCategory16Accordion(isAuth);
       auditSub16Cards(isAuth);
@@ -449,6 +498,9 @@
       });
 
       autoScanBusinessElements(isAuth);
+
+      // Purge orphan legacy duplicate notches
+      document.querySelectorAll('.sivme-live-notch').forEach(function (el) { el.remove(); });
 
       var legacyDock = document.getElementById('sivmeFloatingDock');
       if (legacyDock) legacyDock.remove();
