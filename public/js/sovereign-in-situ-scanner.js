@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU SCANNER ENGINE (PARENT ORCHESTRATOR)
- * MODULE        : Universal Auto-Scanner, 12 Core Verticals, RM CASH & Capture Barrier
+ * MODULE        : Universal Auto-Scanner, 50 Catalog Cards, RM CASH & Modal Zero-Leak Sync
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-scanner.js
@@ -48,7 +48,7 @@
     if (!isAuth) {
       el.classList.toggle('sivme-public-hidden', !isVis);
       el.style.display = isVis ? '' : 'none';
-      var oldB = el.querySelector(':scope > .sivme-notch-pill, :scope > .sivme-inline-badge');
+      var oldB = el.querySelector(':scope > .sivme-notch-pill, :scope > .sivme-inline-badge, :scope > .sivme-live-notch');
       if (oldB) oldB.remove();
       el.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
     } else {
@@ -62,7 +62,7 @@
         el.setAttribute('data-sivme-tap-bound', 'true');
         el.addEventListener('click', function (e) {
           if (!core.isConsoleAuthorized()) return;
-          if (e.target.closest('.sivme-notch-pill, .sivme-inline-badge')) {
+          if (e.target.closest('.sivme-notch-pill, .sivme-inline-badge, .sivme-live-notch')) {
             if (e.cancelable) e.preventDefault();
             e.stopPropagation();
             e.stopImmediatePropagation();
@@ -80,7 +80,7 @@
     }
   }
 
-  // 2. UNIVERSAL AUTO-SCANNER
+  // 2. UNIVERSAL AUTO-SCANNER (12 Verticals, RM CASH, 50 Catalog Cards & Sub-Cards)
   function autoScanBusinessElements(isAuth) {
     var core = getCore(), ext = getExt();
 
@@ -121,17 +121,29 @@
       }
     });
 
-    // 5. Universal Catalog Cards
+    // 5. Universal Catalog Cards (50 Categories & Games)
     document.querySelectorAll('#categoryModal [data-cat-id]').forEach(function (cCard) {
       var catId = cCard.getAttribute('data-cat-id') || '';
       var num = catId.replace(/[cg]/, '');
       if (num && num !== '16') {
         cCard.classList.add('sivme-catalog-card');
-        auditElement(cCard, 'rm:cat:' + (num.length === 1 ? '0' + num : num), 'Category ' + num, isAuth);
+        var labelEl = cCard.querySelector('.font-bold') || cCard;
+        var label = core.cleanText(labelEl) || ('Category ' + num);
+        auditElement(cCard, 'rm:cat:' + (num.length === 1 ? '0' + num : num), label, isAuth);
       }
     });
 
-    // 6. 16-3 Dynamic Filters
+    // 6. Universal Catalog Sub-Cards
+    document.querySelectorAll('#categoryModal .sivme-subcat-card[data-sivme-urn]').forEach(function (sub) {
+      var urn = sub.getAttribute('data-sivme-urn') || '';
+      if (urn && urn.indexOf('rm:cat:16') === -1) {
+        var sLabelEl = sub.querySelector('span.font-bold') || sub;
+        var sLabel = core.cleanText(sLabelEl) || urn;
+        auditElement(sub, urn, sLabel, isAuth);
+      }
+    });
+
+    // 7. 16-3 Dynamic Filters
     ext.URN_SELECTORS.forEach(function (def) {
       var node = document.querySelector(def.selector);
       if (node && !ext.isSystemShellElement(node.parentElement || node)) {
@@ -140,7 +152,7 @@
     });
   }
 
-  // 3. MAIN AUDIT ENGINE DISPATCHER & MODAL STATE SYNC
+  // 3. MAIN AUDIT ENGINE DISPATCHER & MODAL STATE SUPPRESSOR
   function applyInSituAudit() {
     if (isAuditing) return;
     isAuditing = true;
@@ -158,7 +170,26 @@
           m.style.setProperty('max-height', '100dvh', 'important');
         }
       });
+
       document.body.classList.toggle('sivme-modal-active', isAnyModalOpen);
+
+      // Suppress Home Screen main & header while modal is open (Zero floating background badges)
+      var mainEl = document.querySelector('main');
+      var headerEl = document.querySelector('header');
+      if (mainEl) {
+        if (isAnyModalOpen) {
+          mainEl.style.setProperty('display', 'none', 'important');
+        } else {
+          mainEl.style.removeProperty('display');
+        }
+      }
+      if (headerEl) {
+        if (isAnyModalOpen) {
+          headerEl.style.setProperty('display', 'none', 'important');
+        } else {
+          headerEl.style.removeProperty('display');
+        }
+      }
 
       ext.auditCategory16Accordion(isAuth, auditElement, applyInSituAudit);
       ext.auditSub16Cards(isAuth, auditElement, applyInSituAudit);
@@ -168,7 +199,6 @@
 
       autoScanBusinessElements(isAuth);
 
-      document.querySelectorAll('#categoryModal .sivme-live-notch, .sivme-live-notch').forEach(function (el) { el.remove(); });
       var legacyDock = document.getElementById('sivmeFloatingDock');
       if (legacyDock) legacyDock.remove();
     } finally {
@@ -176,9 +206,9 @@
     }
   }
 
-  // 4. LEAK-PROOF 1-TAP INSTANT TOGGLE (CAPTURE-PHASE BARRIER)
+  // 4. LEAK-PROOF 1-TAP INSTANT TOGGLE (CAPTURE-PHASE BARRIER & REGISTRY SYNC)
   document.addEventListener('click', function (e) {
-    var badge = e.target.closest('.sivme-notch-pill, .sivme-inline-badge');
+    var badge = e.target.closest('.sivme-notch-pill, .sivme-inline-badge, .sivme-live-notch');
     if (!badge) return;
 
     if (e.cancelable) e.preventDefault();
@@ -189,7 +219,7 @@
     if (!core.isConsoleAuthorized()) return;
 
     var now = Date.now();
-    if (now - lastToggleTime < 300) return;
+    if (now - lastToggleTime < 280) return;
     lastToggleTime = now;
 
     var urn = badge.getAttribute('data-badge-urn') || badge.getAttribute('data-target-urn');
@@ -206,6 +236,22 @@
       core.setUrnVisibility(urn, nextVis, label);
     } else {
       core.setUrnVisibility(urn, nextVis, label);
+
+      // Bi-directional sync with active categories registry
+      if (urn.indexOf('rm:cat:') === 0 && urn.indexOf(':sub:') === -1) {
+        var cNum = urn.replace('rm:cat:', '');
+        var cId = (parseInt(cNum, 10) >= 34 ? 'g' : 'c') + cNum;
+        try {
+          var rawAct = localStorage.getItem('rm_active_categories_v1');
+          var activeSet = new Set(rawAct ? JSON.parse(rawAct) : []);
+          if (nextVis) {
+            activeSet.add(cId); activeSet.add(cNum); activeSet.add('c' + cNum);
+          } else {
+            activeSet.delete(cId); activeSet.delete(cNum); activeSet.delete('c' + cNum); activeSet.delete('g' + cNum);
+          }
+          localStorage.setItem('rm_active_categories_v1', JSON.stringify(Array.from(activeSet)));
+        } catch (_) {}
+      }
     }
 
     applyInSituAudit();
@@ -216,7 +262,18 @@
   window.RM_SIVME.applyInSituAudit = applyInSituAudit;
 
   applyInSituAudit();
-  document.addEventListener('click', function () { setTimeout(applyInSituAudit, 50); }, false);
+
+  // Multi-tier audit triggers for dynamic catalog accordion expansion
+  document.addEventListener('click', function (e) {
+    if (e.target && e.target.closest && e.target.closest('#cat-menu-btn, [onclick*="toggleMenuDrawer"], [onclick*="toggleAccordion"], [data-cat-id], .acc-arrow')) {
+      setTimeout(applyInSituAudit, 20);
+      setTimeout(applyInSituAudit, 150);
+      setTimeout(applyInSituAudit, 320);
+    } else {
+      setTimeout(applyInSituAudit, 60);
+    }
+  }, false);
+
   window.addEventListener('storage', applyInSituAudit);
   window.addEventListener('rm:sov:visibility-changed', applyInSituAudit);
 
