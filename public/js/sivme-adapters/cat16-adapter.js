@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU ADAPTER: CATEGORY 16 (ISOLATED MODULE)
- * MODULE        : Dedicated House & Home (Cat-16) Controller & Universal Engine Bridge
+ * MODULE        : Dedicated House & Home (Cat-16) Controller, Rich UI Blueprint & Universal Engine Bridge
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sivme-adapters/cat16-adapter.js
@@ -12,7 +12,6 @@
 (function () {
   'use strict';
 
-  var lastAccordionToggleTime = 0;
   var lastUrnActionTimes = {};
 
   // Auto-bridge: Ensure universal accordion engine is loaded
@@ -192,13 +191,52 @@
     if (!existing) headerEl.appendChild(badge);
   }
 
-  // 3. AUDIT CATEGORY 16 (DECOUPLED NATIVE PASS-THROUGH)
+  // 3. ENRICH CATEGORY 16 HEADER (GOLDEN BLUEPRINT: RICH, BALANCED & ATTRACTIVE)
+  function enrichCat16CardLayout(headerEl) {
+    if (!headerEl || headerEl.querySelector('#c16-rich-features-strip')) return;
+
+    var richStrip = document.createElement('div');
+    richStrip.id = 'c16-rich-features-strip';
+    richStrip.style.cssText = [
+      'margin-top: 10px !important',
+      'margin-bottom: 8px !important',
+      'padding: 8px 10px !important',
+      'background: rgba(15, 23, 42, 0.65) !important',
+      'border: 1px solid rgba(56, 189, 248, 0.2) !important',
+      'border-radius: 8px !important',
+      'display: flex !important',
+      'flex-direction: column !important',
+      'gap: 6px !important',
+      'pointer-events: none !important'
+    ].join(';');
+
+    richStrip.innerHTML = [
+      '<div style="font-size: 11px; color: #94a3b8; font-weight: 500; display: flex; align-items: center; gap: 4px;">',
+      '  <span style="color: #38bdf8;">✦</span> त्वरित सेवाएं व प्रबंधन:',
+      '</div>',
+      '<div style="display: flex; flex-wrap: wrap; gap: 4px;">',
+      '  <span style="font-size: 10.5px; font-weight: 600; padding: 2px 7px; background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 4px;">🔧 मिस्त्री व रिपेयर</span>',
+      '  <span style="font-size: 10.5px; font-weight: 600; padding: 2px 7px; background: rgba(234, 179, 8, 0.12); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3); border-radius: 4px;">⚡ वायरिंग व इलेक्ट्रीशियन</span>',
+      '  <span style="font-size: 10.5px; font-weight: 600; padding: 2px 7px; background: rgba(168, 85, 247, 0.12); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 4px;">🎨 रंगाई व पुताई</span>',
+      '  <span style="font-size: 10.5px; font-weight: 600; padding: 2px 7px; background: rgba(34, 197, 94, 0.12); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 4px;">🏠 कमरा व फ्लैट रेंट</span>',
+      '  <span style="font-size: 10.5px; font-weight: 600; padding: 2px 7px; background: rgba(244, 63, 94, 0.12); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.3); border-radius: 4px;">📒 डिजिटल किराया लेजर</span>',
+      '</div>'
+    ].join('');
+
+    var toggleBtn = headerEl.querySelector('[onclick*="toggleAccordion"], .acc-arrow, button');
+    if (toggleBtn && toggleBtn.parentElement && toggleBtn.parentElement !== headerEl) {
+      headerEl.insertBefore(richStrip, toggleBtn.parentElement);
+    } else {
+      headerEl.appendChild(richStrip);
+    }
+  }
+
+  // 4. AUDIT CATEGORY 16 (DECOUPLED NATIVE PASS-THROUGH)
   function auditCat16Complete(isAuth, auditElementFn) {
     var core = getCore();
     var c16Container = document.querySelector('#categoryModal [data-cat-id="c16"], #categoryModal [data-cat-id="16"]');
     if (!c16Container) return;
 
-    // Hard-lock: Outer container NEVER gets an outline or badge
     c16Container.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
     c16Container.style.setProperty('outline', 'none', 'important');
     c16Container.querySelectorAll(':scope > .sivme-notch-pill, :scope > .sivme-live-notch, :scope > .sivme-inline-badge').forEach(function (n) {
@@ -215,6 +253,7 @@
         c16Header.querySelectorAll('.sivme-notch-pill, .sivme-inline-badge, .sivme-live-notch').forEach(function (n) { n.remove(); });
         c16Header.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
         c16Header.style.removeProperty('outline');
+        enrichCat16CardLayout(c16Header);
       }
     } else {
       c16Container.classList.remove('sivme-public-hidden');
@@ -228,6 +267,7 @@
         c16Header.style.setProperty('opacity', '1', 'important');
 
         mountCat16AuthoritativeBadge(c16Header, isCat16Vis);
+        enrichCat16CardLayout(c16Header);
 
         // Native Pass-Through: Strip conflicting inline style without hijacking accordion toggle
         if (c16Header.getAttribute('data-sivme-pass-bound') !== 'true') {
