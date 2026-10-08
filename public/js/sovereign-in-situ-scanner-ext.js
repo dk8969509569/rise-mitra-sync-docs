@@ -4,9 +4,6 @@
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-scanner-ext.js
- * DUAL-FOLDER REFS:
- *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
- *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
  */
 
 (function () {
@@ -37,13 +34,14 @@
       '  z-index: 99990 !important;',
       '}',
       '#categoryModal {',
-      '  overflow-y: auto !important;',
-      '  -webkit-overflow-scrolling: touch !important;',
-      '  overscroll-behavior: contain !important;',
-      '  touch-action: pan-y !important;',
+      '  height: 100dvh !important;',
+      '  max-height: 100dvh !important;',
+      '  overflow-y: hidden !important;',
+      '  padding-top: 50px !important;',
       '}',
       '#categoryModal > div:first-child {',
-      '  max-height: 86vh !important;',
+      '  height: calc(100dvh - 75px) !important;',
+      '  max-height: calc(100dvh - 75px) !important;',
       '  display: flex !important;',
       '  flex-direction: column !important;',
       '  overflow: hidden !important;',
@@ -52,13 +50,14 @@
       '/* Enable smooth scrolling across all 50 categories */',
       '#categoryModal .flex-1,',
       '#categoryModal div[class*="overflow-y-auto"] {',
-      '  overflow-y: auto !important;',
+      '  flex: 1 1 auto !important;',
+      '  height: 100% !important;',
+      '  min-height: 0 !important;',
+      '  overflow-y: scroll !important;',
       '  overflow-x: hidden !important;',
       '  -webkit-overflow-scrolling: touch !important;',
       '  touch-action: pan-y !important;',
-      '  flex: 1 1 auto !important;',
-      '  min-height: 0 !important;',
-      '  padding-bottom: 80px !important;',
+      '  padding-bottom: 90px !important;',
       '}',
       '#tier1-list, #tier2-list {',
       '  overflow: visible !important;',
@@ -140,8 +139,72 @@
     { urn: 'rm:cat:16:sub:16-3:elem:submeter_checkbox', selector: '#rm-search-submeter, #submeterFilterGroup, input[type="checkbox"]', label: 'सब-मीटर फ़िल्टर' }
   ];
 
+  // Helper: Persist toggle across all storages
+  function persistToggle(urn, nextVis, label, core) {
+    if (core && typeof core.setUrnVisibility === 'function') {
+      if (urn === 'rm:cat:16') {
+        ['rm:cat:16:sub:16-1', 'rm:cat:16:sub:16-2', 'rm:cat:16:sub:16-3'].forEach(function (su) {
+          core.setUrnVisibility(su, nextVis);
+        });
+      }
+      core.setUrnVisibility(urn, nextVis, label);
+    }
+
+    if (window.RM_SovereignRegistry && typeof window.RM_SovereignRegistry.toggleVisibility === 'function') {
+      try {
+        window.RM_SovereignRegistry.toggleVisibility(urn, nextVis, label);
+      } catch (_) {}
+    }
+
+    try {
+      var regKey = 'rm_sovereign_visibility_registry_v1';
+      var raw = localStorage.getItem(regKey);
+      var regObj = raw ? JSON.parse(raw) : { activeMode: 'in_situ_console', registry: {}, items: {} };
+      if (!regObj.registry) regObj.registry = {};
+      if (!regObj.items) regObj.items = {};
+      regObj.registry[urn] = { hidden: !nextVis, label: label, updatedAt: Date.now() };
+      regObj.items[urn] = { visible: nextVis, label: label, updatedAt: Date.now() };
+      localStorage.setItem(regKey, JSON.stringify(regObj));
+    } catch (_) {}
+
+    if (urn.indexOf('rm:cat:') === 0 && urn.indexOf(':sub:') === -1) {
+      var cNum = urn.replace('rm:cat:', '');
+      var n = parseInt(cNum, 10);
+      var prefix = (n >= 34) ? 'g' : 'c';
+      var catId = prefix + (cNum.length === 1 ? '0' + cNum : cNum);
+      var numStr = (cNum.length === 1 ? '0' + cNum : cNum);
+      try {
+        var rawAct = localStorage.getItem('rm_active_categories_v1');
+        var activeSet = new Set(rawAct ? JSON.parse(rawAct) : []);
+        if (nextVis) {
+          activeSet.add(catId); activeSet.add(numStr); activeSet.add(String(n));
+        } else {
+          activeSet.delete(catId); activeSet.delete(numStr); activeSet.delete(String(n));
+          activeSet.delete('c' + numStr); activeSet.delete('g' + numStr);
+        }
+        localStorage.setItem('rm_active_categories_v1', JSON.stringify(Array.from(activeSet)));
+      } catch (_) {}
+    }
+
+    if (urn.indexOf(':sub:') !== -1) {
+      var subId = urn.split(':sub:')[1];
+      if (subId) {
+        try {
+          var rawSub = localStorage.getItem('rm_active_subcategories_v1');
+          var subSet = new Set(rawSub ? JSON.parse(rawSub) : []);
+          if (nextVis) {
+            subSet.add(subId);
+          } else {
+            subSet.delete(subId);
+          }
+          localStorage.setItem('rm_active_subcategories_v1', JSON.stringify(Array.from(subSet)));
+        } catch (_) {}
+      }
+    }
+  }
+
   // ==============================================================================
-  // 3. MOUNT SINGLE TOP-RIGHT NOTCH PILL WITH DIRECT 1-TAP TOGGLE ACTION
+  // 3. MOUNT SINGLE TOP-RIGHT NOTCH PILL WITH DIRECT 1-TAP ACTION
   // ==============================================================================
   function mountInlineBadge(parentEl, urn, isVisible, label) {
     parentEl.querySelectorAll(':scope > .sivme-live-notch, :scope > .sivme-inline-badge').forEach(function (n) { n.remove(); });
@@ -176,7 +239,7 @@
       'line-height: 1 !important', 'white-space: nowrap !important'
     ].join(';');
 
-    // 1-TAP INSTANT TOGGLE DISPATCHER (0ms Latency)
+    // 1-Tap Instant Toggle Handler (0ms Feedback)
     badge.onclick = function (ev) {
       if (ev) {
         if (ev.cancelable) ev.preventDefault();
@@ -187,12 +250,15 @@
       var core = getCore();
       if (!core.isConsoleAuthorized()) return;
 
-      var curVis = badge.getAttribute('data-badge-vis') === 'true';
-      var nextVis = !curVis;
-      var targetUrn = badge.getAttribute('data-badge-urn') || badge.getAttribute('data-target-urn') || urn;
-      var targetLabel = badge.getAttribute('data-badge-label') || label || '';
+      var currentVis = isVisible;
+      if (core.getUrnVisibility) {
+        currentVis = core.getUrnVisibility(urn);
+      } else {
+        currentVis = badge.getAttribute('data-badge-vis') === 'true';
+      }
+      var nextVis = !currentVis;
 
-      // 1. Immediate Visual DOM Flip (0ms)
+      // 1. Immediate DOM Flip
       badge.setAttribute('data-badge-vis', String(nextVis));
       badge.className = 'sivme-notch-pill ' + (nextVis ? 'sivme-badge-live' : 'sivme-badge-dormant');
       badge.innerHTML = nextVis
@@ -210,51 +276,13 @@
         parentCard.classList.toggle('is-hidden', !nextVis);
         parentCard.style.setProperty('outline', '2px dashed ' + (nextVis ? '#10b981' : '#ef4444'), 'important');
         parentCard.style.setProperty('outline-offset', '3px', 'important');
-        parentCard.style.opacity = nextVis ? '1' : '0.45';
+        parentCard.style.setProperty('opacity', nextVis ? '1' : '0.45', 'important');
       }
 
-      // 2. Synchronize with Core & Registry Storage
-      if (core && typeof core.setUrnVisibility === 'function') {
-        if (targetUrn === 'rm:cat:16') {
-          ['rm:cat:16:sub:16-1', 'rm:cat:16:sub:16-2', 'rm:cat:16:sub:16-3'].forEach(function (su) {
-            core.setUrnVisibility(su, nextVis);
-          });
-        }
-        core.setUrnVisibility(targetUrn, nextVis, targetLabel);
-      }
+      // 2. Persist across all local storage structures
+      persistToggle(urn, nextVis, label, core);
 
-      // 3. Bi-directional sync with rm_active_categories_v1
-      if (targetUrn.indexOf('rm:cat:') === 0 && targetUrn.indexOf(':sub:') === -1) {
-        var cNum = targetUrn.replace('rm:cat:', '');
-        var n = parseInt(cNum, 10);
-        var prefix = (n >= 34) ? 'g' : 'c';
-        var catId = prefix + (cNum.length === 1 ? '0' + cNum : cNum);
-        var numStr = (cNum.length === 1 ? '0' + cNum : cNum);
-        try {
-          var rawAct = localStorage.getItem('rm_active_categories_v1');
-          var activeSet = new Set(rawAct ? JSON.parse(rawAct) : []);
-          if (nextVis) {
-            activeSet.add(catId); activeSet.add(numStr); activeSet.add(String(n));
-          } else {
-            activeSet.delete(catId); activeSet.delete(numStr); activeSet.delete(String(n));
-          }
-          localStorage.setItem('rm_active_categories_v1', JSON.stringify(Array.from(activeSet)));
-        } catch (_) {}
-      }
-
-      // 4. Update Sovereign Visibility Registry with dual compatibility
-      try {
-        var regKey = 'rm_sovereign_visibility_registry_v1';
-        var regRaw = localStorage.getItem(regKey);
-        var regData = regRaw ? JSON.parse(regRaw) : { activeMode: 'in_situ_console', registry: {}, items: {} };
-        if (!regData.registry) regData.registry = {};
-        if (!regData.items) regData.items = {};
-        regData.registry[targetUrn] = { hidden: !nextVis, label: targetLabel, updatedAt: Date.now() };
-        regData.items[targetUrn] = { visible: nextVis, label: targetLabel, updatedAt: Date.now() };
-        localStorage.setItem(regKey, JSON.stringify(regData));
-      } catch (_) {}
-
-      // 5. Trigger In-Situ Audit to update floating dock counter
+      // 3. Sync floating console dock
       if (window.RM_SIVME && typeof window.RM_SIVME.applyInSituAudit === 'function') {
         setTimeout(window.RM_SIVME.applyInSituAudit, 30);
       }
@@ -268,23 +296,20 @@
   }
 
   // ==============================================================================
-  // 4. STRICT SYSTEM SHELL DENYLIST (Never blocks catalog cards)
+  // 4. STRICT SYSTEM SHELL DENYLIST
   // ==============================================================================
   function isSystemShellElement(el) {
     if (!el || el.nodeType !== 1) return true;
 
-    // NEVER block catalog cards, sub-cards or wallet card
     if (el.hasAttribute('data-cat-id') || el.classList.contains('sivme-cat-card') || el.classList.contains('sivme-subcat-card')) return false;
     if (el.classList.contains('wallet-card')) return false;
     if (el.closest('.wallet-card')) return true;
 
-    // Block 12 Verticals Header Bar & Tier Toggles from getting badges
     var txt = el.textContent || '';
     if (txt.indexOf('12 CORE CASHFLOW VERTICALS') !== -1 && !el.closest('#verticalTilesGrid')) return true;
     if (txt.indexOf('जुड़ना मुफ़्त') !== -1) return true;
     if (el.id === 'rm-tier1-toggle' || el.id === 'rm-tier2-toggle' || el.closest('#rm-tier1-toggle') || el.closest('#rm-tier2-toggle')) return true;
 
-    // Block modal backdrop itself, but NOT children cards
     if (el.id === 'categoryModal') return true;
 
     return !!(
@@ -310,7 +335,7 @@
       c16.classList.toggle('sivme-public-hidden', !isCat16Vis);
       c16.style.display = isCat16Vis ? '' : 'none';
       if (c16Header) {
-        var oldB = c16Header.querySelector(':scope > .sivme-notch-pill, :scope > .sivme-inline-badge, :scope > .sivme-live-notch');
+        var oldB = c16Header.querySelector(':scope > .sivme-notch-pill, :scope > .sivme-inline-badge');
         if (oldB) oldB.remove();
         c16Header.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
       }
@@ -326,7 +351,7 @@
         if (c16Header.getAttribute('data-sivme-toggle-bound') !== 'true') {
           c16Header.setAttribute('data-sivme-toggle-bound', 'true');
           c16Header.addEventListener('click', function (e) {
-            if (e.target.closest('.sivme-notch-pill, .sivme-inline-badge, .sivme-live-notch')) return;
+            if (e.target.closest('.sivme-notch-pill, .sivme-inline-badge')) return;
             var now = Date.now();
             if (now - lastAccordionToggleTime < 350) return;
             lastAccordionToggleTime = now;
@@ -359,7 +384,7 @@
         subCard.addEventListener('click', function (e) {
           if (!core.isConsoleAuthorized()) return;
           var isDormant = subCard.classList.contains('sivme-ghost-dormant');
-          var isBadgeClick = !!e.target.closest('.sivme-notch-pill, .sivme-inline-badge, .sivme-live-notch');
+          var isBadgeClick = !!e.target.closest('.sivme-notch-pill, .sivme-inline-badge');
           if (isDormant || isBadgeClick) {
             if (e.cancelable) e.preventDefault();
             e.stopPropagation();
@@ -387,6 +412,7 @@
   window.RM_SIVME_EXT = {
     URN_SELECTORS: URN_SELECTORS,
     mountInlineBadge: mountInlineBadge,
+    persistToggle: persistToggle,
     isSystemShellElement: isSystemShellElement,
     auditCategory16Accordion: auditCategory16Accordion,
     auditSub16Cards: auditSub16Cards
