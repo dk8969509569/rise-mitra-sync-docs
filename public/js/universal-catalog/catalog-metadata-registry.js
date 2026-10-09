@@ -279,22 +279,26 @@
     }
   };
 
-  // Authoritative Registry API with Modular Extension Support
+  // Authoritative Registry API with Robust ID Normalization (Google Play Store Standard)
   window.RM_CATALOG_REGISTRY = {
     getCategoryData: function (catId) {
-      var cleanId = String(catId).replace(/^[c]/, '');
-      return RM_CATALOG_REGISTRY[cleanId] || null;
+      if (!catId) return null;
+      var cleanId = String(catId).replace(/[^0-9]/g, '');
+      if (!cleanId) return null;
+      var intId = String(parseInt(cleanId, 10));
+      return RM_CATALOG_REGISTRY[intId] || RM_CATALOG_REGISTRY[cleanId] || null;
     },
     getSubcategoryData: function (catId, subId) {
       var cat = this.getCategoryData(catId);
       if (!cat || !cat.subcategories) return null;
       var cleanSubId = String(subId).replace(/^[c]/, '');
-      return cat.subcategories[cleanSubId] || null;
+      var numParts = String(subId).match(/\d+/g);
+      var normSubId = numParts && numParts.length >= 2 ? (parseInt(numParts[0], 10) + '-' + parseInt(numParts[1], 10)) : cleanSubId;
+      return cat.subcategories[cleanSubId] || cat.subcategories[normSubId] || null;
     },
     registerBatch: function (batchData) {
       if (typeof batchData === 'object') {
         Object.assign(RM_CATALOG_REGISTRY, batchData);
-        // Automatically sweep catalog cards whenever a new extension registers
         if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
           setTimeout(window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog, 20);
         }
@@ -304,7 +308,8 @@
       return RM_CATALOG_REGISTRY;
     }
   };
-    // Automatic Modular Extension Loader (Loads small batches dynamically)
+
+  // Automatic Modular Extension Loader (Loads small batches dynamically)
   var extBatches = [
     'ext-batch-01-10.js',
     'ext-batch-11-20.js',
