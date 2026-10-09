@@ -2,6 +2,7 @@
  * RISE MITRA — REVENUE & VENDOR MONETIZATION ENGINE (STEP 2 + VISUAL BI CHART)
  * MODULE        : public/js/revenue-monetization-engine.js
  * SPECIFICATION : Folder A (SSOT: 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW | File-07 of 18)
+ * ARCHITECTURE  : DECOUPLED SELF-MOUNTING COMPONENT (ZERO-ELEMENT-LOSS)
  * GOVERNANCE    : GATE-23.5 | 28.00% SOLVENCY HARD-CAP | ZERO FORCED PURCHASE (₹0)
  */
 
@@ -19,7 +20,7 @@
 
   var STORAGE_REVENUE_METRICS = 'rm_owner_revenue_metrics_v1';
   var STORAGE_SEARCH_ANALYTICS = 'rm_owner_search_analytics_v1';
-  var MODULE_VERSION = '1.1.0';
+  var MODULE_VERSION = '1.2.0';
 
   var CORRIDOR_LIMITS = {
     P_FLOOR_MIN: 1.50,
@@ -39,7 +40,6 @@
     lastUpdated: new Date().toISOString()
   };
 
-  // Mock historical timeseries datasets for stock-market style visualization
   var TIMEFRAME_DATASETS = {
     '1D': [
       { label: '08:00', gmv: 1200, rev: 336 },
@@ -156,7 +156,6 @@
     });
   }
 
-  // Pure SVG Stock-Market Style Visual Growth Chart Generator (Zero Bloat)
   function renderVisualChart(timeframe) {
     var container = document.getElementById('rm-rev-chart-svg-container');
     if (!container) return;
@@ -217,9 +216,9 @@
               '  <text x="' + (width - padRight) + '" y="' + (corridorY - 3) + '" fill="#f59e0b" font-size="7.5" font-weight="bold" text-anchor="end">28% NCR Corridor</text>' +
               '  <!-- Area Under GMV Curve -->' +
               '  <path d="' + gmvAreaD + '" fill="url(#rmGmvGrad)" />' +
-              '  <!-- GMV Trendline (Bullish Emerald) -->' +
+              '  <!-- GMV Trendline -->' +
               '  <path d="' + gmvPathD + '" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />' +
-              '  <!-- Net Rev Trendline (Cyan) -->' +
+              '  <!-- Net Rev Trendline -->' +
               '  <path d="' + revPathD + '" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />' +
               '  <!-- Data Dots -->' +
               dotsSvg +
@@ -228,6 +227,94 @@
               '</svg>';
 
     container.innerHTML = svg;
+  }
+
+  // Autonomous Dynamic DOM Mounting into Skeleton Shell Slot
+  function mountRevenueDOM() {
+    var slot = document.getElementById('rm-slot-revenue-chart');
+    if (slot && !document.getElementById('rm-surface-b-revenue-cockpit')) {
+      slot.innerHTML = `
+        <section id="rm-surface-b-revenue-cockpit" class="glass-panel p-4 rounded-2xl border-amber-500/40 space-y-3">
+          <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+            <div class="flex items-center space-x-2">
+              <span class="text-sm">💰</span>
+              <div>
+                <div class="text-xs font-black text-amber-400 uppercase tracking-wide">Revenue & Vendor Monetization Engine</div>
+                <div class="text-[9px] text-slate-400">मांग से प्रत्यक्ष वाणिज्यिक रूपांतरण एवं विज़ुअल ग्रोथ चार्ट</div>
+              </div>
+            </div>
+            <span id="rm-rev-leads-badge" class="text-[9px] font-bold bg-amber-950 text-amber-300 border border-amber-600 px-2 py-0.5 rounded-full">
+              14 मुद्रीकृत अवसर
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 pt-1 text-center">
+            <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
+              <div class="text-[9px] text-slate-400">सत्यापित वाणिज्यिक मूल्य (GMV)</div>
+              <div id="rm-rev-gmv-val" class="text-xs font-black text-emerald-400 mt-0.5">₹18,450.00</div>
+            </div>
+            <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
+              <div class="text-[9px] text-slate-400">सुरक्षित एस्क्रो रिजर्व (14-दिन)</div>
+              <div id="rm-rev-escrow-val" class="text-xs font-black text-cyan-400 mt-0.5">₹5,166.00</div>
+            </div>
+          </div>
+
+          <div class="p-3 bg-slate-950/90 rounded-xl border border-amber-500/20 space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <span class="text-xs">📈</span>
+                <span class="text-[11px] font-bold text-slate-200">रेवेन्यू ग्रोथ व सॉल्वेंसी ट्रेंडलाइन</span>
+              </div>
+              <div class="flex space-x-1">
+                <button type="button" id="rm-chart-btn-1D" onclick="window.RM_RevenueEngine.setChartTimeframe('1D')" style="background: rgba(15,23,42,0.8); color: #94a3b8; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); cursor: pointer;">1D</button>
+                <button type="button" id="rm-chart-btn-1W" onclick="window.RM_RevenueEngine.setChartTimeframe('1W')" style="background: rgba(15,23,42,0.8); color: #94a3b8; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); cursor: pointer;">1W</button>
+                <button type="button" id="rm-chart-btn-1M" onclick="window.RM_RevenueEngine.setChartTimeframe('1M')" style="background: #38bdf8; color: #030712; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 6px; border: 1px solid rgba(56,189,248,0.4); cursor: pointer;">1M</button>
+                <button type="button" id="rm-chart-btn-1Y" onclick="window.RM_RevenueEngine.setChartTimeframe('1Y')" style="background: rgba(15,23,42,0.8); color: #94a3b8; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); cursor: pointer;">1Y</button>
+              </div>
+            </div>
+
+            <div id="rm-rev-chart-svg-container" style="min-height: 110px; width: 100%; display: flex; align-items: center; justify-content: center;"></div>
+
+            <div class="flex items-center justify-between text-[8.5px] text-slate-400 pt-1 border-t border-slate-900">
+              <div class="flex items-center space-x-1">
+                <span style="display:inline-block; width:8px; height:8px; background:#10b981; border-radius:2px;"></span>
+                <span>GMV Trend</span>
+              </div>
+              <div class="flex items-center space-x-1">
+                <span style="display:inline-block; width:8px; height:8px; background:#38bdf8; border-radius:2px;"></span>
+                <span>Net Revenue</span>
+              </div>
+              <div class="flex items-center space-x-1">
+                <span style="display:inline-block; width:8px; height:2px; background:#f59e0b; border-bottom:1px dashed #f59e0b;"></span>
+                <span class="text-amber-400 font-bold">28% Solvency Cap</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-1.5 pt-1">
+            <div class="flex justify-between text-[10px] font-bold text-amber-400 px-1">
+              <span>⚡ त्वरित वेंडर अलर्ट (Unmet Lead Broadcast)</span>
+              <span>कार्रवाई</span>
+            </div>
+            <div id="rm-rev-unmet-actions-container" class="space-y-1 text-xs"></div>
+          </div>
+
+          <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs">
+            <div>
+              <div class="font-bold text-slate-200 text-xs">प्रायोजित लिस्टिंग (Sponsored Fair-Share)</div>
+              <div class="text-[9px] text-slate-400">पारदर्शी Sponsored टैग (Default: Off • Organic First)</div>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="cfg_sponsoredRanking" onchange="window.RM_RevenueEngine.setSponsoredMode(this.checked)" class="sr-only switch-checkbox">
+              <div class="w-10 h-5 bg-slate-800 border border-slate-700 rounded-full switch-label transition-colors">
+                <div class="w-4 h-4 bg-white rounded-full switch-dot transform transition-transform mt-0.5 ml-0.5"></div>
+              </div>
+            </label>
+          </div>
+        </section>
+      `;
+    }
+    hydrateRevenueCockpit();
   }
 
   function hydrateRevenueCockpit() {
@@ -276,7 +363,7 @@
                    '    <span style="font-weight: 700; color: #fbbf24; font-size: 12px;">' + item[0] + '</span>' +
                    '    <span style="font-size: 10px; color: #94a3b8; margin-left: 6px;">(' + item[1] + ' ग्राहक खोज)</span>' +
                    '  </div>' +
-                   '  <button type="button" onclick="window.RM_RevenueEngine.triggerUnmetDemandBroadcast(\'' + term + '\')" style="background: #d97706; color: #030712; font-weight: 800; font-size: 10px; padding: 3px 8px; border-radius: 6px; border: none; cursor: pointer;">वेंडर अलर्ट भेजें</button>' +
+                   '  <button type="button" onclick="window.RM_RevenueEngine.triggerUnmetDemandBroadcast(\'' + term + '\')" style="background: #d97706; color: #030712; font-weight: 800; font-size: 10px; padding: 3px 8px; border-radius: 6px; border:  Campe; cursor: pointer;">वेंडर अलर्ट भेजें</button>' +
                    '</div>';
           }).join('');
         }
@@ -284,11 +371,16 @@
     }
   }
 
+  function init() {
+    mountRevenueDOM();
+    hydrateRevenueCockpit();
+  }
+
   if (typeof document !== 'undefined') {
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', hydrateRevenueCockpit);
+      document.addEventListener('DOMContentLoaded', init);
     } else {
-      hydrateRevenueCockpit();
+      init();
     }
   }
 
@@ -302,6 +394,7 @@
     setSponsoredMode: setSponsoredMode,
     setChartTimeframe: setChartTimeframe,
     renderVisualChart: renderVisualChart,
+    mountRevenueDOM: mountRevenueDOM,
     hydrateRevenueCockpit: hydrateRevenueCockpit
   };
 });
