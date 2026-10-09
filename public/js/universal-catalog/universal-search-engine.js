@@ -1,18 +1,14 @@
 /**
  * RISE MITRA — UNIVERSAL SEARCH & DEMAND INTELLIGENCE ENGINE (0.05s FUZZY)
- * MODULE        : User Search History (Surface A) + Owner Market Demand Analytics (Surface B)
- * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
+ * MODULE        : Existing Search Bar Integration + Vertical History Dropdown + Owner Analytics
+ * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.2)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/universal-catalog/universal-search-engine.js
- * DUAL-FOLDER REFS:
- *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
- *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
  */
 
 (function () {
   'use strict';
 
-  var searchBarId = 'rm-universal-search-bar-wrap';
   var debounceTimer = null;
   var STORAGE_USER_HISTORY = 'rm_user_search_history_v1';
   var STORAGE_OWNER_ANALYTICS = 'rm_owner_search_analytics_v1';
@@ -42,7 +38,7 @@
     try {
       localStorage.setItem(STORAGE_USER_HISTORY, JSON.stringify(history));
     } catch (e) {}
-    renderHistoryChips();
+    renderVerticalHistoryList();
   }
 
   // Record Search in Owner BI Database (Surface B Tracking)
@@ -65,120 +61,129 @@
     } catch (e) {}
   }
 
-  // 2. RENDER RECENT SEARCH CHIPS (SURFACE A)
-  function renderHistoryChips() {
-    var chipsContainer = document.getElementById('rm-search-history-chips');
-    if (!chipsContainer) return;
+  // 2. RENDER VERTICAL SEARCH HISTORY DROPDOWN (SURFACE A)
+  function renderVerticalHistoryList() {
+    var input = findSearchInput();
+    if (!input || !input.parentNode) return;
+
+    var listContainer = document.getElementById('rm-search-history-dropdown');
+    if (!listContainer) {
+      listContainer = document.createElement('div');
+      listContainer.id = 'rm-search-history-dropdown';
+      listContainer.style.cssText = [
+        'width: 100%',
+        'background: #0f172a',
+        'border: 1px solid rgba(56, 189, 248, 0.35)',
+        'border-radius: 12px',
+        'margin-top: 6px',
+        'box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5)',
+        'overflow: hidden',
+        'display: none',
+        'z-index: 9999'
+      ].join(';');
+
+      input.parentNode.appendChild(listContainer);
+    }
 
     var history = getUserHistory();
     if (!history || history.length === 0) {
-      chipsContainer.innerHTML = '';
-      chipsContainer.style.display = 'none';
+      listContainer.innerHTML = '';
+      listContainer.style.display = 'none';
       return;
     }
 
-    var html = '<div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; padding: 4px 0 2px 0;">' +
-               '  <span style="font-size: 11px; font-weight: 700; color: #94a3b8;">हाल की खोज:</span>';
+    var html = '<div style="padding: 8px 12px 6px 12px; font-size: 11px; font-weight: 700; color: #94a3b8; border-bottom: 1px solid rgba(255,255,255,0.06);">' +
+               '  🕒 हाल की खोजें (Recent Searches)' +
+               '</div>' +
+               '<div style="display: flex; flex-direction: column;">';
 
     history.forEach(function (term) {
-      html += '<span class="rm-search-chip" data-term="' + term + '" style="font-size: 11.5px; font-weight: 600; background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 9999px; padding: 2px 8px; display: inline-flex; align-items: center; gap: 4px; cursor: pointer;">' +
-              '  <span>' + term + '</span>' +
-              '  <span class="rm-chip-del" data-del="' + term + '" style="color: #94a3b8; font-weight: 800; font-size: 11px; padding-left: 2px;">✕</span>' +
-              '</span>';
+      html += '<div class="rm-history-row" data-term="' + term + '" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; transition: background 0.15s ease;">' +
+              '  <div style="display: flex; align-items: center; gap: 10px; color: #e2e8f0; font-size: 13.5px; font-weight: 600;">' +
+              '    <span style="color: #64748b; font-size: 14px;">🕒</span>' +
+              '    <span>' + term + '</span>' +
+              '  </div>' +
+              '  <span class="rm-history-del" data-del="' + term + '" style="color: #64748b; font-weight: 700; font-size: 13px; padding: 4px 8px; border-radius: 4px;">✕</span>' +
+              '</div>';
     });
 
     html += '</div>';
-    chipsContainer.innerHTML = html;
-    chipsContainer.style.display = 'block';
+    listContainer.innerHTML = html;
+    listContainer.style.display = 'block';
 
-    // Click delegation for chips
-    chipsContainer.querySelectorAll('.rm-search-chip').forEach(function (chip) {
-      chip.onclick = function (e) {
-        if (e.target.classList.contains('rm-chip-del')) {
+    // Click handlers for vertical items
+    listContainer.querySelectorAll('.rm-history-row').forEach(function (row) {
+      row.onclick = function (e) {
+        if (e.target.classList.contains('rm-history-del')) {
           e.stopPropagation();
           removeUserQuery(e.target.getAttribute('data-del'));
           return;
         }
         var term = this.getAttribute('data-term');
-        var input = document.getElementById('rm-catalog-search-input');
         if (input) {
           input.value = term;
-          document.getElementById('rm-catalog-search-clear').style.display = 'block';
+          hideHistoryDropdown();
           performSearch(term);
         }
       };
     });
   }
 
-  // 3. DYNAMIC SEARCH BAR INJECTION (TOP OF CATALOG)
-  function injectSearchBar() {
-    if (document.getElementById(searchBarId)) return;
+  function hideHistoryDropdown() {
+    var listContainer = document.getElementById('rm-search-history-dropdown');
+    if (listContainer) listContainer.style.display = 'none';
+  }
 
-    var container = document.getElementById('categoryModel') || document.querySelector('.rm-catalog-root') || document.body;
-    var targetHeader = container.querySelector(':scope > div:first-child') || container.firstChild;
+  // 3. FIND & ATTACH ENGINE TO EXISTING APP SEARCH BAR
+  function findSearchInput() {
+    return document.getElementById('rm-catalog-search-input') || 
+           document.querySelector('input[placeholder*="श्रेणी"]') || 
+           document.querySelector('input[placeholder*="खोजें"]') || 
+           document.querySelector('input[type="text"]');
+  }
 
-    var searchWrap = document.createElement('div');
-    searchWrap.id = searchBarId;
-    searchWrap.style.cssText = [
-      'width: 100% !important',
-      'padding: 12px 14px 6px 14px !important',
-      'box-sizing: border-box !important',
-      'position: sticky !important',
-      'top: 0 !important',
-      'z-index: 99 !important',
-      'background: rgba(10, 15, 29, 0.95) !important',
-      'backdrop-filter: blur(10px) !important',
-      'border-bottom: 1px solid rgba(56, 189, 248, 0.2) !important'
-    ].join(';');
+  function setupExistingSearchBar() {
+    // Remove unwanted duplicate search bar if present
+    var topDuplicate = document.getElementById('rm-universal-search-bar-wrap');
+    if (topDuplicate) topDuplicate.remove();
 
-    searchWrap.innerHTML = [
-      '<div style="position: relative; width: 100%; display: flex; align-items: center;">',
-      '  <span style="position: absolute; left: 14px; font-size: 16px; color: #38bdf8; pointer-events: none;">🔍</span>',
-      '  <input id="rm-catalog-search-input" type="text" placeholder="खोजें: मिस्त्री, राशन, लूडो, दवा, लोन, कार सर्विस..." style="width: 100%; background: rgba(30, 41, 59, 0.85); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 12px; padding: 11px 40px 11px 42px; font-size: 14px; font-weight: 600; color: #ffffff; outline: none; transition: all 0.2s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); font-family: inherit;" />',
-      '  <button id="rm-catalog-search-clear" type="button" style="position: absolute; right: 12px; background: transparent; border: none; font-size: 16px; color: #94a3b8; cursor: pointer; display: none; padding: 4px;">✕</button>',
-      '</div>',
-      '<div id="rm-search-history-chips" style="margin-top: 5px; display: none;"></div>',
-      '<div id="rm-search-results-counter" style="font-size: 11.5px; font-weight: 700; color: #34d399; margin-top: 6px; padding-left: 4px; display: none;"></div>'
-    ].join('');
+    var input = findSearchInput();
+    if (!input) return;
 
-    if (targetHeader && targetHeader.parentNode) {
-      targetHeader.parentNode.insertBefore(searchWrap, targetHeader);
-    } else {
-      container.appendChild(searchWrap);
+    input.id = 'rm-catalog-search-input';
+    input.placeholder = 'खोजें: मिस्त्री, राशन, लूडो, दवा, लोन, कार सर्विस...';
+
+    if (!input.dataset.rmAttached) {
+      input.dataset.rmAttached = 'true';
+
+      input.addEventListener('focus', function () {
+        if (!this.value.trim()) {
+          renderVerticalHistoryList();
+        }
+      });
+
+      input.addEventListener('input', function () {
+        var query = this.value.trim();
+        if (query) {
+          hideHistoryDropdown();
+        } else {
+          renderVerticalHistoryList();
+        }
+
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(function () {
+          performSearch(query);
+        }, 50);
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', function (e) {
+        var dropdown = document.getElementById('rm-search-history-dropdown');
+        if (dropdown && !input.contains(e.target) && !dropdown.contains(e.target)) {
+          hideHistoryDropdown();
+        }
+      });
     }
-
-    renderHistoryChips();
-
-    var input = document.getElementById('rm-catalog-search-input');
-    var clearBtn = document.getElementById('rm-catalog-search-clear');
-
-    input.addEventListener('focus', function () {
-      this.style.borderColor = '#38bdf8';
-      this.style.boxShadow = '0 0 14px rgba(56, 189, 248, 0.35)';
-      renderHistoryChips();
-    });
-
-    input.addEventListener('blur', function () {
-      this.style.borderColor = 'rgba(56, 189, 248, 0.35)';
-      this.style.boxShadow = 'inset 0 2px 4px rgba(0,0,0,0.3)';
-    });
-
-    input.addEventListener('input', function () {
-      var query = this.value.trim();
-      clearBtn.style.display = query ? 'block' : 'none';
-
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(function () {
-        performSearch(query);
-      }, 50); // 50ms Ultra-Fast Execution
-    });
-
-    clearBtn.addEventListener('click', function () {
-      input.value = '';
-      clearBtn.style.display = 'none';
-      performSearch('');
-      input.focus();
-    });
   }
 
   // 4. IN-MEMORY FUZZY SEARCH CORE (CROSS-CHECK 50 CATS & 150 SUB-SERVICES)
@@ -188,12 +193,16 @@
     var allCatCards = modal.querySelectorAll('[data-cat-id]');
     var counterEl = document.getElementById('rm-search-results-counter');
 
+    if (!counterEl && findSearchInput() && findSearchInput().parentNode) {
+      counterEl = document.createElement('div');
+      counterEl.id = 'rm-search-results-counter';
+      counterEl.style.cssText = 'font-size: 11.5px; font-weight: 700; color: #34d399; margin-top: 6px; padding-left: 4px; display: none;';
+      findSearchInput().parentNode.appendChild(counterEl);
+    }
+
     if (!query) {
-      allCatCards.forEach(function (cat) {
-        cat.style.display = '';
-      });
+      allCatCards.forEach(function (cat) { cat.style.display = ''; });
       if (counterEl) counterEl.style.display = 'none';
-      renderHistoryChips();
       return;
     }
 
@@ -260,7 +269,7 @@
       counterEl.style.color = matchCount > 0 ? '#34d399' : '#f87171';
     }
 
-    // Save User History & Owner Analytics (Delayed by 800ms to avoid recording incomplete keystrokes)
+    // Save User History & Owner Analytics
     clearTimeout(window._rmAnalyticsTimer);
     window._rmAnalyticsTimer = setTimeout(function () {
       saveUserQuery(rawQuery.trim());
@@ -278,8 +287,8 @@
 
         return {
           totalSearches: raw.totalSearches || 0,
-          topDemands: sortedKeywords.slice(0, 10), // Top 10 High Demand Queries
-          unmetDemands: sortedZeroResults.slice(0, 10) // Top 10 Services Users searched but not found
+          topDemands: sortedKeywords.slice(0, 10),
+          unmetDemands: sortedZeroResults.slice(0, 10)
         };
       } catch (e) {
         return { totalSearches: 0, topDemands: [], unmetDemands: [] };
@@ -292,9 +301,9 @@
 
   // 6. ENGINE BOOTSTRAPPER
   function bootSearch() {
-    injectSearchBar();
-    setTimeout(injectSearchBar, 200);
-    setTimeout(injectSearchBar, 800);
+    setupExistingSearchBar();
+    setTimeout(setupExistingSearchBar, 300);
+    setTimeout(setupExistingSearchBar, 1000);
   }
 
   if (document.readyState === 'loading') {
@@ -304,7 +313,7 @@
   }
 
   window.RM_UNIVERSAL_SEARCH = {
-    injectSearchBar: injectSearchBar,
+    setupExistingSearchBar: setupExistingSearchBar,
     performSearch: performSearch
   };
 })();
