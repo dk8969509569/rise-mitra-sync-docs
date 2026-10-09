@@ -208,7 +208,7 @@
     </section>
 
     <!-- ================================================================== -->
-    <!-- 💰 COMMERCIAL REVENUE & VENDOR MONETIZATION (STEP 2 ENGINE)       -->
+    <!-- 💰 COMMERCIAL REVENUE & VENDOR MONETIZATION + VISUAL BI CHART      -->
     <!-- ================================================================== -->
     <section id="rm-surface-b-revenue-cockpit" class="glass-panel p-4 rounded-2xl border-amber-500/40 space-y-3">
       <div class="flex justify-between items-center border-b border-slate-800 pb-2">
@@ -216,7 +216,7 @@
           <span class="text-sm">💰</span>
           <div>
             <div class="text-xs font-black text-amber-400 uppercase tracking-wide">Revenue & Vendor Monetization Engine</div>
-            <div class="text-[9px] text-slate-400">मांग से प्रत्यक्ष वाणिज्यिक रूपांतरण एवं एस्क्रो सुरक्षा</div>
+            <div class="text-[9px] text-slate-400">मांग से प्रत्यक्ष वाणिज्यिक रूपांतरण एवं विज़ुअल ग्रोथ चार्ट</div>
           </div>
         </div>
         <span id="rm-rev-leads-badge" class="text-[9px] font-bold bg-amber-950 text-amber-300 border border-amber-600 px-2 py-0.5 rounded-full">
@@ -233,6 +233,45 @@
         <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
           <div class="text-[9px] text-slate-400">सुरक्षित एस्क्रो रिजर्व (14-दिन)</div>
           <div id="rm-rev-escrow-val" class="text-xs font-black text-cyan-400 mt-0.5">₹5,166.00</div>
+        </div>
+      </div>
+
+      <!-- 📈 STOCK-MARKET STYLE VISUAL REVENUE & SOLVENCY CORRIDOR CHART -->
+      <div class="p-3 bg-slate-950/90 rounded-xl border border-amber-500/20 space-y-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <span class="text-xs">📈</span>
+            <span class="text-[11px] font-bold text-slate-200">रेवेन्यू ग्रोथ व सॉल्वेंसी ट्रेंडलाइन</span>
+          </div>
+
+          <!-- Timeframe Selector Tabs -->
+          <div class="flex space-x-1">
+            <button type="button" id="rm-chart-btn-1D" onclick="window.RM_RevenueEngine.setChartTimeframe('1D')" style="background: rgba(15,23,42,0.8); color: #94a3b8; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); cursor: pointer;">1D</button>
+            <button type="button" id="rm-chart-btn-1W" onclick="window.RM_RevenueEngine.setChartTimeframe('1W')" style="background: rgba(15,23,42,0.8); color: #94a3b8; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); cursor: pointer;">1W</button>
+            <button type="button" id="rm-chart-btn-1M" onclick="window.RM_RevenueEngine.setChartTimeframe('1M')" style="background: #38bdf8; color: #030712; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 6px; border: 1px solid rgba(56,189,248,0.4); cursor: pointer;">1M</button>
+            <button type="button" id="rm-chart-btn-1Y" onclick="window.RM_RevenueEngine.setChartTimeframe('1Y')" style="background: rgba(15,23,42,0.8); color: #94a3b8; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); cursor: pointer;">1Y</button>
+          </div>
+        </div>
+
+        <!-- Dynamic Pure SVG Chart Injection Slot -->
+        <div id="rm-rev-chart-svg-container" style="min-height: 110px; width: 100%; display: flex; align-items: center; justify-content: center;">
+          <!-- Injected dynamically by revenue-monetization-engine.js -->
+        </div>
+
+        <!-- Legend Badges -->
+        <div class="flex items-center justify-between text-[8.5px] text-slate-400 pt-1 border-t border-slate-900">
+          <div class="flex items-center space-x-1">
+            <span style="display:inline-block; width:8px; height:8px; background:#10b981; border-radius:2px;"></span>
+            <span>GMV Trend</span>
+          </div>
+          <div class="flex items-center space-x-1">
+            <span style="display:inline-block; width:8px; height:8px; background:#38bdf8; border-radius:2px;"></span>
+            <span>Net Revenue</span>
+          </div>
+          <div class="flex items-center space-x-1">
+            <span style="display:inline-block; width:8px; height:2px; background:#f59e0b; border-bottom:1px dashed #f59e0b;"></span>
+            <span class="text-amber-400 font-bold">28% Solvency Cap</span>
+          </div>
         </div>
       </div>
 
