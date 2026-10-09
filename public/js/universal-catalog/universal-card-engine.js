@@ -34,11 +34,11 @@
     var icon = regData ? regData.icon : '📦';
     var rating = regData ? regData.rating : '★ 4.9 (10k+ नागरिक)';
     var trustBadge = regData ? regData.trustBadge : 'Rise Verified Network';
-    var supportBadge = regData ? regData.supportBadge : '24x7 जनसहायता केंद्र';
+    var supportBadge = regData ? regData.supportBadge : '24x7 सहायता केंद्र';
 
-    // Universal Future-Proof Domain Value Pillars
+    // Universal Future-Proof Domain Value Pillars (Friendly, Non-Sensitive & High Trust)
     var universalPillars = [
-      { icon: '🛡️', text: '100% आधार व पुलिस सत्यापित सेवा प्रदाता नेटवर्क', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.12)' },
+      { icon: '🛡️', text: '100% सुरक्षित व प्रमाणित सेवा एवं उत्पाद नेटवर्क', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.12)' },
       { icon: '⚡', text: 'पारदर्शी तय रेट कार्ड, डिजिटल बिलिंग व शून्य छुपा शुल्क', color: '#34d399', bg: 'rgba(52, 211, 153, 0.12)' },
       { icon: '🔒', text: 'Rise Mitra कार्य संतुष्टि गारंटी व प्रत्यक्ष सहायता', color: '#facc15', bg: 'rgba(250, 204, 21, 0.12)' }
     ];
@@ -76,8 +76,6 @@
       return '<div style="font-size:13px;font-weight:700;padding:8px 12px;background:' + p.bg + ';color:' + p.color + ';border:1px solid ' + p.color + '33;border-radius:9px;display:flex;align-items:center;gap:8px;"><span style="font-size:15px;">' + p.icon + '</span><span>' + p.text + '</span></div>';
     }).join('');
 
-    var countText = (subCount && subCount > 0) ? (subCount + ' सेवाएं ') : 'सभी सेवाएं ';
-
     container.innerHTML = [
       '<!-- Top Row: Left Column (Number Top, Logo Below) + Right Column (Play Store Title, Subtitle, Badges) -->',
       '<div style="display: flex; align-items: flex-start; gap: 14px; width: 100%;">',
@@ -102,11 +100,10 @@
       '</div>',
       '<!-- Row 2: Universal Domain Value Pillars -->',
       '<div style="display: flex; flex-direction: column; gap: 7px; width: 100%; margin-top: 4px;">' + pillarsHtml + '</div>',
-      '<!-- Row 3: Dropdown Toggle Button -->',
+      '<!-- Row 3: Scalable Dropdown Toggle Button (Unlimited Products & Services Future-Ready) -->',
       '<div style="display: flex; justify-content: flex-end; align-items: center; width: 100%; margin-top: 2px;">',
-      '  <div style="font-size: 13px; font-weight: 800; color: ' + (isOpen ? '#f87171' : '#34d399') + '; background: ' + (isOpen ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)') + '; border: 1px solid ' + (isOpen ? '#ef4444' : '#10b981') + '; padding: 6px 14px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 6px;">',
-      '    <span>' + countText + (isOpen ? 'छुपाएं' : 'देखें') + '</span>',
-      '    <span style="font-size: 11px;">' + (isOpen ? '▲' : '▼') + '</span>',
+      '  <div style="font-size: 13px; font-weight: 800; color: ' + (isOpen ? '#f87171' : '#34d399') + '; background: ' + (isOpen ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)') + '; border: 1px solid ' + (isOpen ? '#ef4444' : '#10b981') + '; padding: 6px 14px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">',
+      '    <span>' + (isOpen ? 'समेटें ▲' : 'और देखें ▼') + '</span>',
       '  </div>',
       '</div>'
     ].join('');
@@ -146,16 +143,16 @@
       rating: '★ 4.8',
       reviewCount: '1,500+ समीक्षाएं',
       metaBadge: '⚡ त्वरित समाधान',
-      servicesTitle: 'उपलब्ध प्रमाणित सेवाएं:',
+      servicesTitle: 'उपलब्ध प्रमाणित सेवाएं व उत्पाद:',
       services: [
         { text: '✓ 100% सत्यापित सुविधा', bg: 'rgba(56,189,248,0.15)', c: '#38bdf8' },
         { text: '⚡ त्वरित स्थानीय पहुंच', bg: 'rgba(52,211,153,0.15)', c: '#34d399' },
         { text: '🛡️ सुरक्षित व पारदर्शी', bg: 'rgba(250,204,21,0.15)', c: '#facc15' }
       ],
       highlights: [
-        'सत्यापित और प्रशिक्षित विशेषज्ञों द्वारा विश्वसनीय सेवा।',
+        'सत्यापित और प्रशिक्षित विशेषज्ञों द्वारा विश्वसनीय सेवा व उत्पाद आपूर्ति।',
         'तय रेट कार्ड और पारदर्शी ऑनलाइन रसीद।',
-        'Rise Mitra संतुष्टि वारंटी व प्रत्यक्ष सहायता।'
+        'Rise Mitra कार्य संतुष्टि गारंटी व प्रत्यक्ष सहायता।'
       ],
       btnText: 'खोलें ➔'
     };
@@ -232,8 +229,8 @@
       '  <span style="font-size: 12px; font-weight: 600; color: #94a3b8;">' + info.reviewCount + '</span>',
       '  <span style="font-size: 12px; font-weight: 700; color: #34d399; background: rgba(52, 211, 153, 0.12); padding: 2px 7px; border-radius: 5px;">' + info.metaBadge + '</span>',
       '</div>',
-      '<!-- Services Chips Row -->',
-      '<div style="font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;">' + (info.servicesTitle || 'उपलब्ध सेवाएं:') + '</div>',
+      '<!-- Services & Products Chips Row -->',
+      '<div style="font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;">' + (info.servicesTitle || 'उपलब्ध सुविधाएं व सामग्री:') + '</div>',
       '<div style="display: flex; flex-wrap: wrap; gap: 6px; width: 100%;">' + servicesHtml + '</div>',
       '<!-- Highlights Feature Box -->',
       '<div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 10px 12px; margin-top: 4px; display: flex; flex-direction: column; gap: 5px;">' + highlightsHtml + '</div>',
