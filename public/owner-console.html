@@ -6,50 +6,18 @@
   <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
   <meta name="theme-color" content="#030712">
   <title>Rise Mitra — Sovereign Cockpit</title>
-
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="js/sovereign-in-situ-registry.js"></script>
   <style>
-    * {
-      -webkit-tap-highlight-color: transparent;
-      box-sizing: border-box;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-    body {
-      background-color: #030712;
-      color: #f8fafc;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      touch-action: manipulation;
-    }
-    .glass-panel {
-      background: linear-gradient(135deg, rgba(17, 24, 39, 0.96) 0%, rgba(11, 15, 25, 0.98) 100%);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(245, 158, 11, 0.35);
-    }
-    .metric-card {
-      background: rgba(3, 7, 18, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-    .pulse-ring {
-      animation: pulseAnimation 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
-    @keyframes pulseAnimation {
-      0%, 100% { opacity: 0.8; transform: scale(1); }
-      50% { opacity: 0.3; transform: scale(1.08); }
-    }
-    #categoryDrawer {
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .switch-checkbox:checked + .switch-label {
-      background-color: #10b981;
-    }
-    .switch-checkbox:checked + .switch-label .switch-dot {
-      transform: translateX(18px);
-    }
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; user-select: none; }
+    body { background-color: #030712; color: #f8fafc; font-family: ui-monospace, Menlo, Consolas, monospace; min-height: 100vh; touch-action: manipulation; }
+    .glass-panel { background: linear-gradient(135deg, rgba(17, 24, 39, 0.96) 0%, rgba(11, 15, 25, 0.98) 100%); backdrop-filter: blur(20px); border: 1px solid rgba(245, 158, 11, 0.35); }
+    .metric-card { background: rgba(3, 7, 18, 0.9); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .pulse-ring { animation: pulseAnimation 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    @keyframes pulseAnimation { 0%, 100% { opacity: 0.8; transform: scale(1); } 50% { opacity: 0.3; transform: scale(1.08); } }
+    #categoryDrawer { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    .switch-checkbox:checked + .switch-label { background-color: #10b981; }
+    .switch-checkbox:checked + .switch-label .switch-dot { transform: translateX(18px); }
   </style>
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen p-4">
@@ -58,467 +26,161 @@
   <div id="authGate" class="max-w-md w-full glass-panel p-6 rounded-3xl text-center shadow-2xl relative z-50">
     <div class="relative w-20 h-20 mx-auto mb-4 cursor-pointer" onclick="triggerBiometricAuth()">
       <div class="absolute inset-0 rounded-full bg-amber-500/20 pulse-ring"></div>
-      <div class="w-20 h-20 rounded-full bg-amber-950/80 border-2 border-amber-500/60 flex items-center justify-center text-4xl shadow-lg relative z-10 active:scale-95 transition-transform">
-        👆
-      </div>
+      <div class="w-20 h-20 rounded-full bg-amber-950/80 border-2 border-amber-500/60 flex items-center justify-center text-4xl shadow-lg relative z-10 active:scale-95 transition-transform">👆</div>
     </div>
-
     <h1 class="text-base font-black text-amber-400 tracking-wider uppercase">Sovereign Gate 23</h1>
     <p id="authStatusText" class="text-xs text-slate-300 mt-1 font-sans">कंसोल लॉक है • फ़िंगरप्रिंट या पिन से अनलॉक करें</p>
 
     <div class="mt-5 space-y-3">
-      <button type="button" onclick="triggerBiometricAuth()" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-95 shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-2 cursor-pointer">
-        <span>🔐 Fingerprint / Screen Lock</span>
+      <button type="button" onclick="triggerBiometricAuth()" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-black py-3 rounded-xl text-xs uppercase tracking-wider active:scale-95 shadow-lg shadow-amber-500/20 cursor-pointer">
+        🔐 Fingerprint / Screen Lock
       </button>
-
       <div class="relative">
         <input type="text" id="otpInput" autocomplete="one-time-code" inputmode="numeric" maxlength="6" placeholder="SMS / Bot Auto-OTP" class="w-full bg-slate-950 text-center text-sm font-bold text-cyan-300 placeholder-slate-600 border border-cyan-500/30 rounded-xl px-4 py-2.5 focus:outline-none focus:border-cyan-400 tracking-widest">
         <span id="otpBadge" class="absolute right-3 top-2.5 text-[10px] text-cyan-400 font-bold hidden">AUTO-FILL</span>
       </div>
-
       <div class="border-t border-slate-800/80 pt-3 space-y-2">
         <input type="password" id="consolePin" maxlength="12" placeholder="Enter Sovereign PIN" class="w-full bg-slate-950 text-center text-sm font-bold text-amber-300 placeholder-slate-600 border border-slate-800 rounded-xl px-4 py-2.5 focus:outline-none focus:border-amber-400">
-        <button type="button" onclick="verifyPinFallback()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-95 border border-slate-700 cursor-pointer">
-          Unlock via PIN
-        </button>
+        <button type="button" onclick="verifyPinFallback()" class="w-full bg-slate-800 text-slate-200 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider active:scale-95 border border-slate-700 cursor-pointer">Unlock via PIN</button>
       </div>
-
-      <a href="/" class="block w-full text-slate-500 hover:text-slate-300 text-[11px] pt-1 no-underline font-sans">
-        ← वापस सुपर ऐप पर जाएँ
-      </a>
+      <a href="/" class="block w-full text-slate-500 hover:text-slate-300 text-[11px] pt-1 no-underline font-sans">← वापस सुपर ऐप पर जाएँ</a>
       <p id="authError" style="display:none;" class="text-[11px] text-red-400 font-bold mt-2 font-sans">⚠️ अमान्य क्रेडेंशियल! फ़ेल-क्लोज़्ड सुरक्षा सक्रिय।</p>
     </div>
   </div>
 
-  <!-- 2. SOVEREIGN OWNER CONSOLE (ACTIVE COCKPIT) -->
+  <!-- 2. SOVEREIGN OWNER CONSOLE (ACTIVE COCKPIT SKELETON) -->
   <main id="consolePanel" style="display:none;" class="max-w-2xl w-full space-y-4 pb-12 relative z-10">
 
     <!-- Header with ☰ Drawer Toggle -->
     <header class="glass-panel p-4 rounded-2xl flex items-center justify-between border-amber-500/30">
       <div class="flex items-center space-x-3">
-        <button type="button" onclick="toggleDrawer(true)" class="bg-amber-950/80 hover:bg-amber-900 border border-amber-500/50 text-amber-400 p-2 rounded-xl text-sm font-black active:scale-95 transition-transform flex items-center space-x-1 cursor-pointer shadow-md">
-          <span>☰</span>
-          <span class="text-[10px] hidden sm:inline">कैटलॉग कंट्रोल</span>
+        <button type="button" onclick="toggleDrawer(true)" class="bg-amber-950/80 border border-amber-500/50 text-amber-400 p-2 rounded-xl text-sm font-black active:scale-95 cursor-pointer shadow-md">
+          <span>☰</span> <span class="text-[10px] hidden sm:inline">कैटलॉग कंट्रोल</span>
         </button>
-
         <div>
-          <div class="flex items-center space-x-1.5">
-            <span class="text-sm">🛡️</span>
-            <h2 class="text-xs font-black uppercase tracking-wider text-amber-400 leading-none">Rise Mitra Sovereign Console</h2>
-          </div>
+          <div class="flex items-center space-x-1.5"><span class="text-sm">🛡️</span><h2 class="text-xs font-black uppercase tracking-wider text-amber-400 leading-none">Rise Mitra Sovereign Console</h2></div>
           <p class="text-[9px] text-slate-400 mt-1">Surface-B • Category Launch Switchboard</p>
         </div>
       </div>
-
-      <span class="text-[9px] font-black bg-amber-950 text-amber-300 px-2 py-1 rounded-full border border-amber-700/60">
-        ROOT-SOVEREIGN
-      </span>
+      <span class="text-[9px] font-black bg-amber-950 text-amber-300 px-2 py-1 rounded-full border border-amber-700/60">ROOT-SOVEREIGN</span>
     </header>
 
-    <!-- Metrics -->
+    <!-- Metrics Grid -->
     <section class="grid grid-cols-3 gap-3">
-      <div class="metric-card p-3 rounded-xl border border-slate-800 text-center">
-        <span class="text-[10px] text-slate-400">Solvency Hard-Cap</span>
-        <div class="text-sm font-black text-emerald-400 mt-1">28.00% MAX</div>
-        <span class="text-[9px] text-emerald-500/80 font-bold">In Compliance</span>
-      </div>
-      <div class="metric-card p-3 rounded-xl border border-slate-800 text-center">
-        <span class="text-[10px] text-slate-400">CoverageRatio</span>
-        <div class="text-sm font-black text-emerald-400 mt-1">1.00 LOCKED</div>
-        <span class="text-[9px] text-emerald-500/80 font-bold">Solvent (Pass)</span>
-      </div>
-      <div class="metric-card p-3 rounded-xl border border-slate-800 text-center">
-        <span class="text-[10px] text-slate-400">Target Elements</span>
-        <div class="text-sm font-black text-cyan-400 mt-1">412 / 412</div>
-        <span class="text-[9px] text-cyan-500/80 font-bold">100% Zero-Loss</span>
-      </div>
+      <div class="metric-card p-3 rounded-xl text-center"><span class="text-[10px] text-slate-400">Solvency Hard-Cap</span><div class="text-sm font-black text-emerald-400 mt-1">28.00% MAX</div><span class="text-[9px] text-emerald-500/80 font-bold">In Compliance</span></div>
+      <div class="metric-card p-3 rounded-xl text-center"><span class="text-[10px] text-slate-400">CoverageRatio</span><div class="text-sm font-black text-emerald-400 mt-1">1.00 LOCKED</div><span class="text-[9px] text-emerald-500/80 font-bold">Solvent (Pass)</span></div>
+      <div class="metric-card p-3 rounded-xl text-center"><span class="text-[10px] text-slate-400">Target Elements</span><div class="text-sm font-black text-cyan-400 mt-1">412 / 412</div><span class="text-[9px] text-cyan-500/80 font-bold">100% Zero-Loss</span></div>
     </section>
 
     <!-- 50-Category Staged Launch Status Bar -->
     <div class="glass-panel p-3 rounded-xl flex items-center justify-between border-cyan-500/30">
-      <div class="flex items-center space-x-2">
-        <span class="text-base">🚀</span>
-        <div>
-          <h3 class="text-xs font-bold text-cyan-300">50-Category Staged Launch State</h3>
-          <p class="text-[10px] text-slate-400">33 सेवाएँ व सुविधाएँ + 17 खेल</p>
-        </div>
-      </div>
-      <button type="button" onclick="toggleDrawer(true)" class="bg-cyan-950 text-cyan-300 border border-cyan-700/60 px-3 py-1.5 rounded-lg text-xs font-bold active:scale-95 cursor-pointer">
-        <span id="activeCountBadge">3 / 50 LIVE</span> ➔
-      </button>
+      <div class="flex items-center space-x-2"><span class="text-base">🚀</span><div><h3 class="text-xs font-bold text-cyan-300">50-Category Staged Launch State</h3><p class="text-[10px] text-slate-400">33 सेवाएँ व सुविधाएँ + 17 खेल</p></div></div>
+      <button type="button" onclick="toggleDrawer(true)" class="bg-cyan-950 text-cyan-300 border border-cyan-700/60 px-3 py-1.5 rounded-lg text-xs font-bold active:scale-95 cursor-pointer"><span id="activeCountBadge">3 / 50 LIVE</span> ➔</button>
     </div>
 
-    <!-- ================================================================== -->
-    <!-- 📊 SEARCH DEMAND INTELLIGENCE (SURFACE-B BI WIDGET)                -->
-    <!-- ================================================================== -->
+    <!-- 📊 STEP 1: SEARCH DEMAND INTELLIGENCE (SURFACE-B BI WIDGET) -->
     <section id="rm-surface-b-demand-widget-wrap" class="glass-panel p-4 rounded-2xl border-cyan-500/40 space-y-3">
       <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-        <div class="flex items-center space-x-2">
-          <span class="text-sm">📊</span>
-          <div>
-            <div class="text-xs font-black text-cyan-400 uppercase tracking-wide">Search Demand Intelligence (Surface-B BI)</div>
-            <div class="text-[9px] text-slate-400">ग्राहकों की वास्तविक मांग एवं अन-मैट बिज़नेस अवसर</div>
-          </div>
-        </div>
-        <span id="rm-bi-total-searches-badge" class="text-[9px] font-bold bg-cyan-950 text-cyan-300 border border-cyan-600 px-2 py-0.5 rounded-full">
-          0 कुल खोजें
-        </span>
+        <div class="flex items-center space-x-2"><span class="text-sm">📊</span><div><div class="text-xs font-black text-cyan-400 uppercase tracking-wide">Search Demand Intelligence (Surface-B BI)</div><div class="text-[9px] text-slate-400">ग्राहकों की वास्तविक मांग एवं अन-मैट बिज़नेस अवसर</div></div></div>
+        <span id="rm-bi-total-searches-badge" class="text-[9px] font-bold bg-cyan-950 text-cyan-300 border border-cyan-600 px-2 py-0.5 rounded-full">0 कुल खोजें</span>
       </div>
-
-      <!-- Top 10 Available Demands -->
       <div class="space-y-1.5 pt-1">
-        <div class="flex justify-between text-[10px] font-bold text-cyan-400 px-1">
-          <span>🔥 TOP 10 AVAILABLE DEMANDS (उपलब्ध सेवाएं)</span>
-          <span>आवृत्ति (Count)</span>
-        </div>
-        <div id="rm-bi-top-demands-container" class="space-y-1.5 text-xs">
-          <div class="flex justify-between items-center p-2 bg-slate-950/70 rounded-xl border border-slate-800">
-            <div class="flex items-center space-x-2 font-bold text-slate-200">
-              <span class="text-[9px] text-cyan-400 font-mono bg-cyan-950/80 px-1.5 py-0.5 rounded border border-cyan-800">#1</span>
-              <span>मिस्त्री</span>
-            </div>
-            <span class="text-[10px] font-bold text-cyan-400 bg-cyan-950/80 px-2 py-0.5 rounded-full border border-cyan-800">12 खोजें</span>
-          </div>
-          <div class="flex justify-between items-center p-2 bg-slate-950/70 rounded-xl border border-slate-800">
-            <div class="flex items-center space-x-2 font-bold text-slate-200">
-              <span class="text-[9px] text-cyan-400 font-mono bg-cyan-950/80 px-1.5 py-0.5 rounded border border-cyan-800">#2</span>
-              <span>राशन</span>
-            </div>
-            <span class="text-[10px] font-bold text-cyan-400 bg-cyan-950/80 px-2 py-0.5 rounded-full border border-cyan-800">8 खोजें</span>
-          </div>
-        </div>
+        <div class="flex justify-between text-[10px] font-bold text-cyan-400 px-1"><span>🔥 TOP 10 AVAILABLE DEMANDS</span><span>Count</span></div>
+        <div id="rm-bi-top-demands-container" class="space-y-1.5 text-xs"></div>
       </div>
-
-      <!-- Top 10 Unavailable Demands -->
       <div class="space-y-1.5 pt-2 border-t border-slate-800/80">
-        <div class="flex justify-between text-[10px] font-bold text-red-400 px-1">
-          <span>💡 TOP 10 UNAVAILABLE DEMANDS (बिज़नेस अवसर)</span>
-          <span>विफल संख्या</span>
-        </div>
-        <div id="rm-bi-unmet-demands-container" class="space-y-1.5 text-xs">
-          <div class="flex justify-between items-center p-2 bg-slate-950/70 rounded-xl border border-slate-800">
-            <div class="flex items-center space-x-2 font-bold text-slate-200">
-              <span class="text-[9px] text-red-400 font-mono bg-red-950/80 px-1.5 py-0.5 rounded border border-red-800">#1</span>
-              <span>⚠️ mistri</span>
-            </div>
-            <span class="text-[10px] font-bold text-red-400 bg-red-950/80 px-2 py-0.5 rounded-full border border-red-800">2 बार विफल</span>
-          </div>
-        </div>
+        <div class="flex justify-between text-[10px] font-bold text-red-400 px-1"><span>💡 TOP 10 UNAVAILABLE DEMANDS</span><span>विफल संख्या</span></div>
+        <div id="rm-bi-unmet-demands-container" class="space-y-1.5 text-xs"></div>
       </div>
     </section>
 
-    <!-- ================================================================== -->
-    <!-- 💰 COMMERCIAL REVENUE & VENDOR MONETIZATION + VISUAL BI CHART      -->
-    <!-- ================================================================== -->
-    <section id="rm-surface-b-revenue-cockpit" class="glass-panel p-4 rounded-2xl border-amber-500/40 space-y-3">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-        <div class="flex items-center space-x-2">
-          <span class="text-sm">💰</span>
-          <div>
-            <div class="text-xs font-black text-amber-400 uppercase tracking-wide">Revenue & Vendor Monetization Engine</div>
-            <div class="text-[9px] text-slate-400">मांग से प्रत्यक्ष वाणिज्यिक रूपांतरण एवं विज़ुअल ग्रोथ चार्ट</div>
-          </div>
-        </div>
-        <span id="rm-rev-leads-badge" class="text-[9px] font-bold bg-amber-950 text-amber-300 border border-amber-600 px-2 py-0.5 rounded-full">
-          14 मुद्रीकृत अवसर
-        </span>
-      </div>
+    <!-- 💰 STEP 2: AUTONOMOUS COMMERCIAL REVENUE & SVG CHART SLOT -->
+    <div id="rm-slot-revenue-chart"></div>
 
-      <!-- Financial Health Snapshot -->
-      <div class="grid grid-cols-2 gap-2 pt-1 text-center">
-        <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
-          <div class="text-[9px] text-slate-400">सत्यापित वाणिज्यिक मूल्य (GMV)</div>
-          <div id="rm-rev-gmv-val" class="text-xs font-black text-emerald-400 mt-0.5">₹18,450.00</div>
-        </div>
-        <div class="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800">
-          <div class="text-[9px] text-slate-400">सुरक्षित एस्क्रो रिजर्व (14-दिन)</div>
-          <div id="rm-rev-escrow-val" class="text-xs font-black text-cyan-400 mt-0.5">₹5,166.00</div>
-        </div>
-      </div>
+    <!-- 📡 STEP 3: AUTONOMOUS HYPERLOCAL GPS & LIVE BOOKING RADAR SLOT -->
+    <div id="rm-slot-hyperlocal-gps"></div>
 
-      <!-- 📈 STOCK-MARKET STYLE VISUAL REVENUE & SOLVENCY CORRIDOR CHART -->
-      <div class="p-3 bg-slate-950/90 rounded-xl border border-amber-500/20 space-y-2">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-2">
-            <span class="text-xs">📈</span>
-            <span class="text-[11px] font-bold text-slate-200">रेवेन्यू ग्रोथ व सॉल्वेंसी ट्रेंडलाइन</span>
-          </div>
-
-          <!-- Timeframe Selector Tabs -->
-          <div class="flex space-x-1">
-            <button type="button" id="rm-chart-btn-1D" onclick="window.RM_RevenueEngine.setChartTimeframe('1D')" style="background: rgba(15,23,42,0.8); color: #94a3b8; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); cursor: pointer;">1D</button>
-            <button type="button" id="rm-chart-btn-1W" onclick="window.RM_RevenueEngine.setChartTimeframe('1W')" style="background: rgba(15,23,42,0.8); color: #94a3b8; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); cursor: pointer;">1W</button>
-            <button type="button" id="rm-chart-btn-1M" onclick="window.RM_RevenueEngine.setChartTimeframe('1M')" style="background: #38bdf8; color: #030712; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 6px; border: 1px solid rgba(56,189,248,0.4); cursor: pointer;">1M</button>
-            <button type="button" id="rm-chart-btn-1Y" onclick="window.RM_RevenueEngine.setChartTimeframe('1Y')" style="background: rgba(15,23,42,0.8); color: #94a3b8; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08); cursor: pointer;">1Y</button>
-          </div>
-        </div>
-
-        <!-- Dynamic Pure SVG Chart Injection Slot -->
-        <div id="rm-rev-chart-svg-container" style="min-height: 110px; width: 100%; display: flex; align-items: center; justify-content: center;">
-          <!-- Injected dynamically by revenue-monetization-engine.js -->
-        </div>
-
-        <!-- Legend Badges -->
-        <div class="flex items-center justify-between text-[8.5px] text-slate-400 pt-1 border-t border-slate-900">
-          <div class="flex items-center space-x-1">
-            <span style="display:inline-block; width:8px; height:8px; background:#10b981; border-radius:2px;"></span>
-            <span>GMV Trend</span>
-          </div>
-          <div class="flex items-center space-x-1">
-            <span style="display:inline-block; width:8px; height:8px; background:#38bdf8; border-radius:2px;"></span>
-            <span>Net Revenue</span>
-          </div>
-          <div class="flex items-center space-x-1">
-            <span style="display:inline-block; width:8px; height:2px; background:#f59e0b; border-bottom:1px dashed #f59e0b;"></span>
-            <span class="text-amber-400 font-bold">28% Solvency Cap</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Unmet Demand Vendor Broadcast Actions -->
-      <div class="space-y-1.5 pt-1">
-        <div class="flex justify-between text-[10px] font-bold text-amber-400 px-1">
-          <span>⚡ त्वरित वेंडर अलर्ट (Unmet Lead Broadcast)</span>
-          <span>कार्रवाई</span>
-        </div>
-        <div id="rm-rev-unmet-actions-container" class="space-y-1 text-xs">
-          <!-- Dynamically Injected by revenue-monetization-engine.js -->
-        </div>
-      </div>
-
-      <!-- Fair-Share Commercial Policy Toggle -->
-      <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs">
-        <div>
-          <div class="font-bold text-slate-200 text-xs">प्रायोजित लिस्टिंग (Sponsored Fair-Share)</div>
-          <div class="text-[9px] text-slate-400">पारदर्शी Sponsored टैग (Default: Off • Organic First)</div>
-        </div>
-        <label class="relative inline-flex items-center cursor-pointer">
-          <input type="checkbox" id="cfg_sponsoredRanking" onchange="window.RM_RevenueEngine.setSponsoredMode(this.checked)" class="sr-only switch-checkbox">
-          <div class="w-10 h-5 bg-slate-800 border border-slate-700 rounded-full switch-label transition-colors">
-            <div class="w-4 h-4 bg-white rounded-full switch-dot transform transition-transform mt-0.5 ml-0.5"></div>
-          </div>
-        </label>
-      </div>
-    </section>
-
-    <!-- PHASE 2: SOVEREIGN IN-SITU VISUAL MANAGEMENT SWITCHBOARD -->
+    <!-- SURFACE-A VISUAL IN-SITU CONTROLLER -->
     <section class="glass-panel p-4 rounded-2xl border-cyan-500/40 space-y-3">
       <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-        <div class="flex items-center space-x-2">
-          <span class="text-sm">🎛️</span>
-          <span class="text-xs font-black text-cyan-400 uppercase tracking-wide">Surface-A Visual In-Situ Controller</span>
-        </div>
-        <span id="inSituModeBadge" class="text-[9px] font-bold bg-slate-900 text-slate-400 border border-slate-700 px-2 py-0.5 rounded-full">
-          PUBLIC LIVE MODE
-        </span>
+        <div class="flex items-center space-x-2"><span class="text-sm">🎛️</span><span class="text-xs font-black text-cyan-400 uppercase tracking-wide">Surface-A Visual In-Situ Controller</span></div>
+        <span id="inSituModeBadge" class="text-[9px] font-bold bg-slate-900 text-slate-400 border border-slate-700 px-2 py-0.5 rounded-full">PUBLIC LIVE MODE</span>
       </div>
-
-      <p class="text-[10px] text-slate-400 font-sans leading-relaxed">
-        Surface-A पर सीधे ब्राउज़ करते हुए हर बटन व फ़ीचर के नीचे लाइव [👁️ Hide / Show] टॉगल चलाने के लिए In-Situ Console सक्रिय करें।
-      </p>
-
       <div class="grid grid-cols-2 gap-2 pt-1">
-        <button type="button" id="btnModePublic" onclick="setInSituMode(false)" class="bg-emerald-950 border-2 border-emerald-400 text-xs py-2.5 px-3 rounded-xl text-emerald-200 font-black shadow-lg shadow-emerald-500/20 active:scale-95 cursor-pointer flex items-center justify-center space-x-1.5 transition-all">
-          <span>👥 Public Mode</span>
-        </button>
-        <button type="button" id="btnModeInSitu" onclick="setInSituMode(true)" class="bg-slate-950 border border-slate-800 text-xs py-2.5 px-3 rounded-xl text-slate-400 font-bold active:scale-95 cursor-pointer flex items-center justify-center space-x-1.5 transition-all">
-          <span>👁️ In-Situ Console</span>
-        </button>
+        <button type="button" id="btnModePublic" onclick="setInSituMode(false)" class="bg-emerald-950 border-2 border-emerald-400 text-xs py-2.5 px-3 rounded-xl text-emerald-200 font-black active:scale-95 cursor-pointer">👥 Public Mode</button>
+        <button type="button" id="btnModeInSitu" onclick="setInSituMode(true)" class="bg-slate-950 border border-slate-800 text-xs py-2.5 px-3 rounded-xl text-slate-400 font-bold active:scale-95 cursor-pointer">👁️ In-Situ Console</button>
       </div>
-
       <div class="pt-1 flex flex-col sm:flex-row gap-2">
-        <button type="button" onclick="launchSurfaceAInSitu()" class="flex-1 bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-500 hover:to-emerald-500 text-slate-950 font-black py-2.5 px-3 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-95 shadow-lg shadow-cyan-500/20 flex items-center justify-center space-x-2 cursor-pointer">
-          <span>🚀 Launch Surface-A with Visual HUD</span>
-        </button>
-        <button type="button" onclick="emergencyResetAllVisible()" class="bg-red-950/80 hover:bg-red-900 border border-red-700/60 text-red-300 text-[11px] font-bold py-2.5 px-3 rounded-xl active:scale-95 cursor-pointer transition-all flex items-center justify-center space-x-1">
-          <span>🔄 Reset All to Public Live</span>
-        </button>
+        <button type="button" onclick="launchSurfaceAInSitu()" class="flex-1 bg-gradient-to-r from-cyan-600 to-emerald-600 text-slate-950 font-black py-2.5 px-3 rounded-xl text-xs uppercase tracking-wider active:scale-95 cursor-pointer">🚀 Launch Surface-A with Visual HUD</button>
+        <button type="button" onclick="emergencyResetAllVisible()" class="bg-red-950/80 border border-red-700/60 text-red-300 text-[11px] font-bold py-2.5 px-3 rounded-xl active:scale-95 cursor-pointer">🔄 Reset All to Public Live</button>
       </div>
     </section>
 
-    <!-- Kill-Switch Matrix -->
+    <!-- KILL-SWITCH SUBSYSTEM -->
     <section class="glass-panel p-4 rounded-2xl border-red-500/30 space-y-3">
       <div class="flex justify-between items-center border-b border-slate-800 pb-2">
         <span class="text-xs font-black text-red-400 uppercase tracking-wide">Kill-Switch Subsystem</span>
-        <span id="killSwitchState" class="text-[10px] font-black bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-700">
-          LEVEL-0 (NORMAL)
-        </span>
+        <span id="killSwitchState" class="text-[10px] font-black bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-700">LEVEL-0 (NORMAL)</span>
       </div>
       <div class="grid grid-cols-3 gap-2 pt-1">
-        <button type="button" onclick="setKillSwitch('L0')" class="bg-slate-900 border border-slate-700 hover:border-emerald-500 text-xs py-2 px-2 rounded-xl text-emerald-400 font-bold active:scale-95 cursor-pointer">
-          L0: Normal
-        </button>
-        <button type="button" onclick="setKillSwitch('L1')" class="bg-slate-900 border border-slate-700 hover:border-amber-500 text-xs py-2 px-2 rounded-xl text-amber-400 font-bold active:scale-95 cursor-pointer">
-          L1: Soft Freeze
-        </button>
-        <button type="button" onclick="setKillSwitch('L2')" class="bg-slate-900 border border-slate-700 hover:border-red-500 text-xs py-2 px-2 rounded-xl text-red-400 font-bold active:scale-95 cursor-pointer">
-          L2: Hard Lockdown
-        </button>
+        <button type="button" onclick="setKillSwitch('L0')" class="bg-slate-900 border border-slate-700 text-xs py-2 rounded-xl text-emerald-400 font-bold active:scale-95 cursor-pointer">L0: Normal</button>
+        <button type="button" onclick="setKillSwitch('L1')" class="bg-slate-900 border border-slate-700 text-xs py-2 rounded-xl text-amber-400 font-bold active:scale-95 cursor-pointer">L1: Soft Freeze</button>
+        <button type="button" onclick="setKillSwitch('L2')" class="bg-slate-900 border border-slate-700 text-xs py-2 rounded-xl text-red-400 font-bold active:scale-95 cursor-pointer">L2: Hard Lockdown</button>
       </div>
-      <p class="text-[10px] text-slate-400 font-sans leading-relaxed">
-        L0 = सम्पूर्ण नेटवर्क सक्रिय। L1 = डिस्पैच फ़्रीज़ (केवल ऑफ़लाइन वॉउचर्स मान्य)। L2 = पूर्ण क्रिप्टोग्राफ़िक सर्किट-ब्रेकर लॉकडाउन।
-      </p>
     </section>
 
-    <!-- Category 16 Dynamic Search Filter Visibility (Phase 4 Switchboard) -->
-    <section class="glass-panel p-4 rounded-2xl border-amber-500/30 space-y-3">
+    <!-- CATEGORY 16 RUNTIME CONTROLS -->
+    <section class="glass-panel p-4 rounded-2xl border-amber-500/30 space-y-2">
       <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-        <div class="flex items-center space-x-2">
-          <span class="text-sm">🏠</span>
-          <span class="text-xs font-black text-amber-400 uppercase tracking-wide">Category 16: Search Filter Runtime Controls</span>
-        </div>
-        <span id="filterSaveIndicator" class="text-[9px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-700/60 px-2 py-0.5 rounded-full">
-          SYNCED TO SURFACE-A
-        </span>
+        <div class="flex items-center space-x-2"><span class="text-sm">🏠</span><span class="text-xs font-black text-amber-400 uppercase tracking-wide">Category 16: Runtime Controls</span></div>
+        <span id="filterSaveIndicator" class="text-[9px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-700/60 px-2 py-0.5 rounded-full">SYNCED</span>
       </div>
-
-      <p class="text-[10px] text-slate-400 font-sans">
-        Zero-Redeploy Toggle: 16-3 (कमरा व फ्लैट खोज) में कौन-कौन से खोज फ़िल्टर प्रदर्शित करने हैं, उन्हें यहाँ से सीधे नियंत्रित करें।
-      </p>
-
-      <div class="space-y-2 pt-1 text-xs">
-        <!-- State Filter Toggle -->
-        <div class="flex items-center justify-between p-2.5 bg-slate-950/70 rounded-xl border border-slate-800">
-          <div>
-            <div class="font-bold text-slate-200 text-xs">राज्य फ़िल्टर (State Filter)</div>
-            <div class="text-[9px] text-slate-400">16-3 में पैन-इंडिया राज्य ड्रॉपडाउन दिखाएँ</div>
-          </div>
-          <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" id="cfg_showState" onchange="updateFilterToggle('showState', this.checked)" class="sr-only switch-checkbox" checked>
-            <div class="w-10 h-5 bg-slate-800 border border-slate-700 rounded-full switch-label transition-colors">
-              <div class="w-4 h-4 bg-white rounded-full switch-dot transform transition-transform mt-0.5 ml-0.5"></div>
-            </div>
-          </label>
-        </div>
-
-        <!-- District Filter Toggle -->
-        <div class="flex items-center justify-between p-2.5 bg-slate-950/70 rounded-xl border border-slate-800">
-          <div>
-            <div class="font-bold text-slate-200 text-xs">जिला फ़िल्टर (District Filter)</div>
-            <div class="text-[9px] text-slate-400">राज्य के अंतर्गत कैस्केडिंग 780+ जिले दिखाएँ</div>
-          </div>
-          <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" id="cfg_showDistrict" onchange="updateFilterToggle('showDistrict', this.checked)" class="sr-only switch-checkbox" checked>
-            <div class="w-10 h-5 bg-slate-800 border border-slate-700 rounded-full switch-label transition-colors">
-              <div class="w-4 h-4 bg-white rounded-full switch-dot transform transition-transform mt-0.5 ml-0.5"></div>
-            </div>
-          </label>
-        </div>
-
-        <!-- Smart Omnibox Toggle -->
-        <div class="flex items-center justify-between p-2.5 bg-slate-950/70 rounded-xl border border-slate-800">
-          <div>
-            <div class="font-bold text-slate-200 text-xs">स्मार्ट खोज (Omnibox Search)</div>
-            <div class="text-[9px] text-slate-400">इलाका, शहर, पिनकोड मल्टी-मैच सर्च बॉक्स दिखाएँ</div>
-          </div>
-          <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" id="cfg_smartOmnibox" onchange="updateFilterToggle('smartOmnibox', this.checked)" class="sr-only switch-checkbox" checked>
-            <div class="w-10 h-5 bg-slate-800 border border-slate-700 rounded-full switch-label transition-colors">
-              <div class="w-4 h-4 bg-white rounded-full switch-dot transform transition-transform mt-0.5 ml-0.5"></div>
-            </div>
-          </label>
-        </div>
-
-        <!-- Budget Slider Toggle -->
-        <div class="flex items-center justify-between p-2.5 bg-slate-950/70 rounded-xl border border-slate-800">
-          <div>
-            <div class="font-bold text-slate-200 text-xs">मासिक किराया बजट (Budget Slider)</div>
-            <div class="text-[9px] text-slate-400">अधिकतम किराया स्लाइडर व संख्या बॉक्स दिखाएँ</div>
-          </div>
-          <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" id="cfg_budgetSlider" onchange="updateFilterToggle('budgetSlider', this.checked)" class="sr-only switch-checkbox" checked>
-            <div class="w-10 h-5 bg-slate-800 border border-slate-700 rounded-full switch-label transition-colors">
-              <div class="w-4 h-4 bg-white rounded-full switch-dot transform transition-transform mt-0.5 ml-0.5"></div>
-            </div>
-          </label>
-        </div>
-
-        <!-- Sub-Meter Only Toggle -->
-        <div class="flex items-center justify-between p-2.5 bg-slate-950/70 rounded-xl border border-slate-800">
-          <div>
-            <div class="font-bold text-slate-200 text-xs">केवल सब-मीटर आवास (Sub-Meter Toggle)</div>
-            <div class="text-[9px] text-slate-400">स्वतंत्र सब-मीटर चेकबॉक्स फ़िल्टर दिखाएँ</div>
-          </div>
-          <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" id="cfg_subMeterOnly" onchange="updateFilterToggle('subMeterOnly', this.checked)" class="sr-only switch-checkbox" checked>
-            <div class="w-10 h-5 bg-slate-800 border border-slate-700 rounded-full switch-label transition-colors">
-              <div class="w-4 h-4 bg-white rounded-full switch-dot transform transition-transform mt-0.5 ml-0.5"></div>
-            </div>
-          </label>
-        </div>
-
-        <!-- Country Select Toggle (Default OFF) -->
-        <div class="flex items-center justify-between p-2.5 bg-slate-950/70 rounded-xl border border-slate-800">
-          <div>
-            <div class="font-bold text-slate-200 text-xs">देश फ़िल्टर (Country Filter)</div>
-            <div class="text-[9px] text-slate-400">पैन-इंडिया से बाहर के लिए देश चयन (Default: Off)</div>
-          </div>
-          <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" id="cfg_showCountry" onchange="updateFilterToggle('showCountry', this.checked)" class="sr-only switch-checkbox">
-            <div class="w-10 h-5 bg-slate-800 border border-slate-700 rounded-full switch-label transition-colors">
-              <div class="w-4 h-4 bg-white rounded-full switch-dot transform transition-transform mt-0.5 ml-0.5"></div>
-            </div>
-          </label>
-        </div>
+      <div class="grid grid-cols-2 gap-2 pt-1 text-xs">
+        <label class="flex items-center justify-between p-2 bg-slate-950/70 rounded-xl border border-slate-800 cursor-pointer"><span>राज्य फ़िल्टर</span><input type="checkbox" id="cfg_showState" onchange="updateFilterToggle('showState', this.checked)" class="sr-only switch-checkbox" checked><div class="w-8 h-4 bg-slate-800 rounded-full switch-label relative"><div class="w-3 h-3 bg-white rounded-full switch-dot mt-0.5 ml-0.5 transition-transform"></div></div></label>
+        <label class="flex items-center justify-between p-2 bg-slate-950/70 rounded-xl border border-slate-800 cursor-pointer"><span>जिला फ़िल्टर</span><input type="checkbox" id="cfg_showDistrict" onchange="updateFilterToggle('showDistrict', this.checked)" class="sr-only switch-checkbox" checked><div class="w-8 h-4 bg-slate-800 rounded-full switch-label relative"><div class="w-3 h-3 bg-white rounded-full switch-dot mt-0.5 ml-0.5 transition-transform"></div></div></label>
+        <label class="flex items-center justify-between p-2 bg-slate-950/70 rounded-xl border border-slate-800 cursor-pointer"><span>स्मार्ट खोज</span><input type="checkbox" id="cfg_smartOmnibox" onchange="updateFilterToggle('smartOmnibox', this.checked)" class="sr-only switch-checkbox" checked><div class="w-8 h-4 bg-slate-800 rounded-full switch-label relative"><div class="w-3 h-3 bg-white rounded-full switch-dot mt-0.5 ml-0.5 transition-transform"></div></div></label>
+        <label class="flex items-center justify-between p-2 bg-slate-950/70 rounded-xl border border-slate-800 cursor-pointer"><span>किराया बजट</span><input type="checkbox" id="cfg_budgetSlider" onchange="updateFilterToggle('budgetSlider', this.checked)" class="sr-only switch-checkbox" checked><div class="w-8 h-4 bg-slate-800 rounded-full switch-label relative"><div class="w-3 h-3 bg-white rounded-full switch-dot mt-0.5 ml-0.5 transition-transform"></div></div></label>
+        <label class="flex items-center justify-between p-2 bg-slate-950/70 rounded-xl border border-slate-800 cursor-pointer"><span>सब-मीटर</span><input type="checkbox" id="cfg_subMeterOnly" onchange="updateFilterToggle('subMeterOnly', this.checked)" class="sr-only switch-checkbox" checked><div class="w-8 h-4 bg-slate-800 rounded-full switch-label relative"><div class="w-3 h-3 bg-white rounded-full switch-dot mt-0.5 ml-0.5 transition-transform"></div></div></label>
+        <label class="flex items-center justify-between p-2 bg-slate-950/70 rounded-xl border border-slate-800 cursor-pointer"><span>देश फ़िल्टर</span><input type="checkbox" id="cfg_showCountry" onchange="updateFilterToggle('showCountry', this.checked)" class="sr-only switch-checkbox"><div class="w-8 h-4 bg-slate-800 rounded-full switch-label relative"><div class="w-3 h-3 bg-white rounded-full switch-dot mt-0.5 ml-0.5 transition-transform"></div></div></label>
       </div>
     </section>
 
-    <!-- Active Invariants -->
-    <section class="glass-panel p-4 rounded-2xl border-slate-800 space-y-2">
+    <!-- ACTIVE INVARIANTS -->
+    <section class="glass-panel p-4 rounded-2xl border-slate-800 space-y-1.5 text-xs">
       <span class="text-xs font-black text-slate-300 uppercase tracking-wide">Active Invariant Controls</span>
-      <div class="space-y-1.5 pt-1 text-xs">
-        <div class="flex justify-between p-2 bg-slate-950/60 rounded-lg border border-slate-800/80">
-          <span class="text-slate-400">Zero Forced Purchases:</span>
-          <span class="text-emerald-400 font-bold">ENFORCED (₹0 Fee)</span>
-        </div>
-        <div class="flex justify-between p-2 bg-slate-950/60 rounded-lg border border-slate-800/80">
-          <span class="text-slate-400">DPDP Act Compliance:</span>
-          <span class="text-emerald-400 font-bold">2025 ACTIVE (Encrypted)</span>
-        </div>
-        <div class="flex justify-between p-2 bg-slate-950/60 rounded-lg border border-slate-800/80">
-          <span class="text-slate-400">CERT-In SLA Protocol:</span>
-          <span class="text-emerald-400 font-bold">6-HR REPORTING SLA</span>
-        </div>
-      </div>
+      <div class="flex justify-between p-2 bg-slate-950/60 rounded-lg"><span class="text-slate-400">Zero Forced Purchases:</span><span class="text-emerald-400 font-bold">ENFORCED (₹0 Fee)</span></div>
+      <div class="flex justify-between p-2 bg-slate-950/60 rounded-lg"><span class="text-slate-400">DPDP Act Compliance:</span><span class="text-emerald-400 font-bold">2025 ACTIVE (Encrypted)</span></div>
+      <div class="flex justify-between p-2 bg-slate-950/60 rounded-lg"><span class="text-slate-400">CERT-In SLA Protocol:</span><span class="text-emerald-400 font-bold">6-HR REPORTING SLA</span></div>
     </section>
 
     <div class="text-center pt-2">
-      <button type="button" onclick="lockConsole()" class="text-xs text-slate-500 hover:text-red-400 underline cursor-pointer font-sans">
-        कंसोल लॉक करें एवं सत्र समाप्त करें (Lock & Exit)
-      </button>
+      <button type="button" onclick="lockConsole()" class="text-xs text-slate-500 hover:text-red-400 underline cursor-pointer font-sans">कंसोल लॉक करें एवं सत्र समाप्त करें (Lock & Exit)</button>
     </div>
-
   </main>
 
-  <!-- 3. SLIDING LEFT SIDEBAR DRAWER (50 CATEGORIES LAUNCH SWITCHBOARD) -->
+  <!-- 3. SLIDING DRAWER (50 CATEGORIES) -->
   <div id="drawerOverlay" onclick="toggleDrawer(false)" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 hidden transition-opacity"></div>
-
   <aside id="categoryDrawer" class="fixed top-0 left-0 bottom-0 w-80 max-w-[85vw] bg-[#030712] border-r border-amber-500/30 z-50 flex flex-col transform -translate-x-full shadow-2xl">
     <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/60">
-      <div>
-        <h3 class="text-xs font-black text-amber-400 uppercase tracking-wider flex items-center space-x-1.5">
-          <span>🎛️</span>
-          <span>50 Categories (कैटलॉग)</span>
-        </h3>
-        <p class="text-[9px] text-slate-400 mt-0.5">33 सेवाएँ व सुविधाएँ + 17 खेल</p>
-      </div>
-      <button type="button" onclick="toggleDrawer(false)" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center font-bold text-sm hover:bg-slate-700 active:scale-95 cursor-pointer">✕</button>
+      <div><h3 class="text-xs font-black text-amber-400 uppercase tracking-wider">🎛️ 50 Categories (कैटलॉग)</h3><p class="text-[9px] text-slate-400 mt-0.5">33 सेवाएँ + 17 खेल</p></div>
+      <button type="button" onclick="toggleDrawer(false)" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center font-bold text-sm cursor-pointer">✕</button>
     </div>
     <div class="p-3 border-b border-slate-800/80 bg-slate-950/80 space-y-2">
       <div class="grid grid-cols-2 gap-2">
-        <button type="button" onclick="setAllCategories(true)" class="bg-emerald-950 border border-emerald-700/60 hover:bg-emerald-900 text-emerald-300 text-[10px] font-bold py-1.5 rounded-lg active:scale-95 cursor-pointer">✅ Select All (50)</button>
-        <button type="button" onclick="setAllCategories(false)" class="bg-red-950 border border-red-700/60 hover:bg-red-900 text-red-300 text-[10px] font-bold py-1.5 rounded-lg active:scale-95 cursor-pointer">❌ Deselect All (0)</button>
+        <button type="button" onclick="setAllCategories(true)" class="bg-emerald-950 border border-emerald-700/60 text-emerald-300 text-[10px] font-bold py-1.5 rounded-lg cursor-pointer">✅ Select All (50)</button>
+        <button type="button" onclick="setAllCategories(false)" class="bg-red-950 border border-red-700/60 text-red-300 text-[10px] font-bold py-1.5 rounded-lg cursor-pointer">❌ Deselect All (0)</button>
       </div>
-      <input type="text" id="categoryFilterInput" oninput="filterCategoriesList()" placeholder="श्रेणी खोजें (Search)..." class="w-full bg-slate-900 text-xs text-slate-200 placeholder-slate-500 border border-slate-800 rounded-lg px-3 py-1.5 focus:outline-none focus:border-amber-400">
+      <input type="text" id="categoryFilterInput" oninput="filterCategoriesList()" placeholder="श्रेणी खोजें..." class="w-full bg-slate-900 text-xs text-slate-200 placeholder-slate-500 border border-slate-800 rounded-lg px-3 py-1.5 focus:outline-none focus:border-amber-400">
     </div>
-    <div id="categoryItemsContainer" class="flex-1 overflow-y-auto p-3 space-y-1.5 divide-y divide-slate-800/40 text-xs"></div>
+    <div id="categoryItemsContainer" class="flex-1 overflow-y-auto p-3 space-y-1.5 text-xs"></div>
     <div class="p-3 border-t border-slate-800 bg-slate-900/60">
-      <button type="button" onclick="saveAndPublishCategories()" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 text-slate-950 font-black py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all active:scale-95 shadow-md shadow-amber-500/20 cursor-pointer">💾 Save & Publish to Surface-A</button>
+      <button type="button" onclick="saveAndPublishCategories()" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 text-slate-950 font-black py-2.5 rounded-xl text-xs uppercase tracking-wider cursor-pointer">💾 Save & Publish to Surface-A</button>
     </div>
   </aside>
 
   <!-- 4. MODULAR RUNTIME CONTROLLER SCRIPTS -->
   <script src="js/owner-console.js?v=20261010"></script>
   <script src="js/revenue-monetization-engine.js?v=20261010"></script>
+  <script src="js/hyperlocal-gps-booking-engine.js?v=20261010"></script>
 </body>
 </html>
