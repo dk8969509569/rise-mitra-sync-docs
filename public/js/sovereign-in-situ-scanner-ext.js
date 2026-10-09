@@ -1,12 +1,12 @@
 /**
  * RISE MITRA — SOVEREIGN IN-SITU SCANNER EXTENSION (CHILD MODULE)
- * MODULE        : UI Shield, 50-Cat Touch Scroll, Deep Badge Purge & Category-16 Accordion
+ * MODULE        : UI Shield, 50-Cat Touch Scroll, Deep Badge Purge & Cat-16 Adapter Bridge
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/sovereign-in-situ-scanner-ext.js
  * DUAL-FOLDER REFS:
- *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
- *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
+ *   Folder A (Master Document SSOT)
+ *   Folder B (GitHub Mirror)
  */
 
 (function () {
@@ -81,7 +81,7 @@
       '  top: -11px !important;',
       '  right: 12px !important;',
       '  left: auto !important;',
-      '  z-index: 50 !important;',
+      '  z-index: 60 !important;',
       '  display: inline-flex !important;',
       '  visibility: visible !important;',
       '  opacity: 1 !important;',
@@ -92,24 +92,24 @@
       '  padding: 3px 10px !important;',
       '  font-size: 10.5px !important;',
       '}',
-      '/* Expanded invisible hit-box for reliable 1-tap thumb touches */',
       '.sivme-notch-pill::before {',
       '  content: "" !important;',
       '  position: absolute !important;',
-      '  top: -8px !important;',
-      '  bottom: -8px !important;',
-      '  left: -10px !important;',
-      '  right: -10px !important;',
+      '  top: -10px !important;',
+      '  bottom: -10px !important;',
+      '  left: -12px !important;',
+      '  right: -12px !important;',
       '  z-index: 1 !important;',
       '}',
       '',
-      '/* 4. Complete Isolation of Sub-Cards (Permanent Anti-Overlap Shield) */',
+      '/* 4. Complete Isolation of Category 16 (Permanent Anti-Overlap Shield) */',
       '#categoryModal [data-cat-id="c16"] {',
       '  outline: none !important;',
       '  position: relative !important;',
       '}',
       '#categoryModal [data-cat-id="c16"] > .sivme-notch-pill,',
-      '#categoryModal [data-cat-id="c16"] > .sivme-live-notch {',
+      '#categoryModal [data-cat-id="c16"] > .sivme-live-notch,',
+      '#categoryModal [data-cat-id="c16"] > .sivme-inline-badge {',
       '  display: none !important;',
       '}',
       '#sub-c16 {',
@@ -196,8 +196,13 @@
     { urn: 'rm:cat:16:sub:16-3:elem:submeter_checkbox', selector: '#rm-search-submeter, #submeterFilterGroup, input[type="checkbox"]', label: 'सब-मीटर फ़िल्टर' }
   ];
 
-  // Helper: Persist toggle across all storages
+  // Helper: Persist toggle across all storages with Cat-16 Adapter Bridge
   function persistToggle(urn, nextVis, label, core) {
+    if (window.RM_CAT16_ADAPTER && typeof window.RM_CAT16_ADAPTER.persistCat16Toggle === 'function' && urn.indexOf('rm:cat:16') === 0) {
+      window.RM_CAT16_ADAPTER.persistCat16Toggle(urn, nextVis, label, core);
+      return;
+    }
+
     if (core && typeof core.setUrnVisibility === 'function') {
       if (urn === 'rm:cat:16') {
         ['rm:cat:16:sub:16-1', 'rm:cat:16:sub:16-2', 'rm:cat:16:sub:16-3'].forEach(function (su) {
@@ -208,9 +213,7 @@
     }
 
     if (window.RM_SovereignRegistry && typeof window.RM_SovereignRegistry.toggleVisibility === 'function') {
-      try {
-        window.RM_SovereignRegistry.toggleVisibility(urn, nextVis, label);
-      } catch (_) {}
+      try { window.RM_SovereignRegistry.toggleVisibility(urn, nextVis, label); } catch (_) {}
     }
 
     try {
@@ -261,15 +264,12 @@
   }
 
   // ==============================================================================
-  // 3. MOUNT SINGLE TOP-RIGHT NOTCH PILL (DEEP PURGE & SINGLE ANCHOR)
+  // 3. MOUNT SINGLE TOP-RIGHT NOTCH PILL (TOUCH-ISOLATED 1-TAP TOGGLE)
   // ==============================================================================
   function mountInlineBadge(parentEl, urn, isVisible, label) {
     if (!parentEl) return;
-
-    // Never attach badge to Category 16 outer container
     if (parentEl.getAttribute('data-cat-id') === 'c16') return;
 
-    // Deep purge: Remove ALL existing badges anywhere inside parentEl
     parentEl.querySelectorAll('.sivme-notch-pill, .sivme-live-notch, .sivme-inline-badge').forEach(function (n) {
       n.remove();
     });
@@ -288,7 +288,7 @@
     badge.innerHTML = targetHtml;
 
     badge.style.cssText = [
-      'position: absolute !important', 'top: -11px !important', 'right: 12px !important', 'left: auto !important', 'z-index: 50 !important',
+      'position: absolute !important', 'top: -11px !important', 'right: 12px !important', 'left: auto !important', 'z-index: 60 !important',
       'background: ' + (isVisible ? '#064e3b' : '#7f1d1d') + ' !important',
       'border: 1.5px solid ' + (isVisible ? '#10b981' : '#ff4d4d') + ' !important',
       'color: ' + (isVisible ? '#34d399' : '#fca5a5') + ' !important',
@@ -302,8 +302,7 @@
       'line-height: 1 !important', 'white-space: nowrap !important'
     ].join(';');
 
-    // 1-Tap Instant Toggle Handler with Safe Debounce
-    badge.onclick = function (ev) {
+    var executeToggleAction = function (ev) {
       if (ev) {
         if (ev.cancelable) ev.preventDefault();
         ev.stopPropagation();
@@ -314,7 +313,7 @@
       if (!core.isConsoleAuthorized()) return;
 
       var now = Date.now();
-      if (now - (lastUrnActionTimes[urn] || 0) < 250) return;
+      if (now - (lastUrnActionTimes[urn] || 0) < 220) return;
       lastUrnActionTimes[urn] = now;
 
       var currentVis = isVisible;
@@ -359,6 +358,9 @@
       }
     };
 
+    badge.onclick = executeToggleAction;
+    badge.addEventListener('touchend', executeToggleAction, { passive: false });
+
     parentEl.style.setProperty('overflow', 'visible', 'important');
     if (window.getComputedStyle(parentEl).position === 'static') {
       parentEl.style.setProperty('position', 'relative', 'important');
@@ -371,7 +373,6 @@
   // ==============================================================================
   function isSystemShellElement(el) {
     if (!el || el.nodeType !== 1) return true;
-
     if (el.hasAttribute('data-cat-id') || el.classList.contains('sivme-cat-card') || el.classList.contains('sivme-subcat-card')) return false;
     if (el.classList.contains('wallet-card')) return false;
     if (el.closest('.wallet-card')) return true;
@@ -380,7 +381,6 @@
     if (txt.indexOf('12 CORE CASHFLOW VERTICALS') !== -1 && !el.closest('#verticalTilesGrid')) return true;
     if (txt.indexOf('जुड़ना मुफ़्त') !== -1) return true;
     if (el.id === 'rm-tier1-toggle' || el.id === 'rm-tier2-toggle' || el.closest('#rm-tier1-toggle') || el.closest('#rm-tier2-toggle')) return true;
-
     if (el.id === 'categoryModal') return true;
 
     return !!(
@@ -393,14 +393,19 @@
   }
 
   // ==============================================================================
-  // 5. CATEGORY 16 ACCORDION CONTROLLER (STRICT SINGLE ANCHOR ON HEADER ONLY)
+  // 5. CATEGORY 16 ACCORDION CONTROLLER (HYBRID ADAPTER DELEGATION & FALLBACK)
   // ==============================================================================
   function auditCategory16Accordion(isAuth, auditElementFn, applyAuditFn) {
+    if (window.RM_CAT16_ADAPTER && typeof window.RM_CAT16_ADAPTER.auditCat16Complete === 'function') {
+      window.RM_CAT16_ADAPTER.auditCat16Complete(isAuth, auditElementFn);
+      return;
+    }
+
+    // High-Reliability Fallback (Zero-Breakage Guarantee)
     var core = getCore();
     var c16 = document.querySelector('#categoryModal [data-cat-id="c16"]');
     if (!c16) return;
 
-    // Strict Rule: Outer c16 container NEVER gets a badge or outline
     c16.classList.remove('sivme-ghost-dormant', 'sivme-ghost-live', 'sivme-badge-anchor');
     c16.style.removeProperty('outline');
     c16.querySelectorAll(':scope > .sivme-notch-pill, :scope > .sivme-live-notch, :scope > .sivme-inline-badge').forEach(function (n) {
@@ -450,9 +455,14 @@
   }
 
   // ==============================================================================
-  // 6. CATEGORY 16 SUB-CARDS CONTROLLER (CONTAINED IN #SUB-C16)
+  // 6. CATEGORY 16 SUB-CARDS CONTROLLER (HYBRID ADAPTER DELEGATION & FALLBACK)
   // ==============================================================================
   function auditSub16Cards(isAuth, auditElementFn, applyAuditFn) {
+    if (window.RM_CAT16_ADAPTER && typeof window.RM_CAT16_ADAPTER.auditCat16Complete === 'function') {
+      // 100% Handled inside RM_CAT16_ADAPTER to guarantee Zero-Overlap
+      return;
+    }
+
     var core = getCore();
     var sub = document.getElementById('sub-c16');
     var isSubOpen = sub && !sub.classList.contains('hidden') && sub.style.display !== 'none';
