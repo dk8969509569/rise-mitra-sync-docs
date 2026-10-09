@@ -124,7 +124,7 @@
     }
   }
 
-  // 2. RENDER SUB-CARD (LEFT: 24PX SUB-NUMBER TOP + LOGO BELOW | RIGHT: 20PX TITLE | ZERO OVERLAP 3 BUTTONS)
+  // 2. RENDER SUB-CARD (ZERO TEXT CUTOFF + INTERACTIVE TAP HIGHLIGHT GLOW)
   function renderSubCard(subCardEl, catId, subId) {
     if (!subCardEl) return;
     var numId = String(catId).replace(/[^0-9]/g, '');
@@ -184,13 +184,24 @@
         'display: flex !important',
         'flex-direction: column !important',
         'gap: 10px !important',
-        'background: rgba(15, 23, 42, 0.75) !important',
-        'border: 1.5px solid rgba(56, 189, 248, 0.25) !important',
+        'background: rgba(15, 23, 42, 0.85) !important',
+        'border: 1.5px solid rgba(56, 189, 248, 0.28) !important',
         'border-radius: 14px !important',
         'padding: 14px !important',
         'box-sizing: border-box !important',
-        'text-align: left !important'
+        'text-align: left !important',
+        'transition: border-color 0.2s ease, box-shadow 0.2s ease !important'
       ].join(';');
+
+      // Sub-card active tap neon border highlight
+      container.addEventListener('pointerdown', function () {
+        this.style.setProperty('border-color', 'rgba(56, 189, 248, 0.8)', 'important');
+        this.style.setProperty('box-shadow', '0 0 16px rgba(56, 189, 248, 0.25)', 'important');
+      });
+      container.addEventListener('pointerup', function () {
+        this.style.setProperty('border-color', 'rgba(56, 189, 248, 0.28)', 'important');
+        this.style.setProperty('box-shadow', 'none', 'important');
+      });
 
       subCardEl.appendChild(container);
     }
@@ -234,15 +245,15 @@
       '<div style="display: flex; flex-wrap: wrap; gap: 6px; width: 100%;">' + servicesHtml + '</div>',
       '<!-- Highlights Feature Box -->',
       '<div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 10px 12px; margin-top: 4px; display: flex; flex-direction: column; gap: 5px;">' + highlightsHtml + '</div>',
-      '<!-- Row 5: 3 Action Buttons (Zero Overlap Guaranteed with min-width: 0) -->',
-      '<div style="display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 8px; width: 100%; margin-top: 6px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08); box-sizing: border-box;">',
-      '  <button type="button" class="rm-act-pin" style="min-width: 0 !important; background: rgba(30, 41, 59, 0.9); border: 1.2px solid rgba(248, 113, 113, 0.4); color: #fca5a5; border-radius: 10px; padding: 9px 4px; font-size: 12.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">',
-      '    <span>📌</span> <span>पिन करें</span>',
+      '<!-- Row 5: 3 Action Buttons (Zero Clipping Guaranteed + Responsive 0.8fr 0.8fr 1.7fr Grid + Active Tap Glow) -->',
+      '<div style="display: grid; grid-template-columns: 0.8fr 0.8fr 1.7fr; gap: 7px; width: 100%; margin-top: 6px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08); box-sizing: border-box;">',
+      '  <button type="button" class="rm-act-pin" style="min-width: 0 !important; background: rgba(30, 41, 59, 0.9); border: 1.2px solid rgba(248, 113, 113, 0.4); color: #fca5a5; border-radius: 10px; padding: 8px 3px; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 3px; cursor: pointer; transition: all 0.15s ease;" onpointerdown="this.style.borderColor=\'#f87171\';this.style.boxShadow=\'0 0 10px rgba(248,113,113,0.6)\'" onpointerup="this.style.borderColor=\'rgba(248,113,113,0.4)\';this.style.boxShadow=\'none\'">',
+      '    <span>📌</span> <span>पिन</span>',
       '  </button>',
-      '  <button type="button" class="rm-act-video" style="min-width: 0 !important; background: rgba(30, 41, 59, 0.9); border: 1.2px solid rgba(167, 139, 250, 0.4); color: #c4b5fd; border-radius: 10px; padding: 9px 4px; font-size: 12.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">',
+      '  <button type="button" class="rm-act-video" style="min-width: 0 !important; background: rgba(30, 41, 59, 0.9); border: 1.2px solid rgba(167, 139, 250, 0.4); color: #c4b5fd; border-radius: 10px; padding: 8px 3px; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 3px; cursor: pointer; transition: all 0.15s ease;" onpointerdown="this.style.borderColor=\'#a78bfa\';this.style.boxShadow=\'0 0 10px rgba(167,139,250,0.6)\'" onpointerup="this.style.borderColor=\'rgba(167,139,250,0.4)\';this.style.boxShadow=\'none\'">',
       '    <span>▶</span> <span>वीडियो</span>',
       '  </button>',
-      '  <button type="button" class="rm-act-open" style="min-width: 0 !important; background: #059669; border: 1.5px solid #10b981; color: #ffffff; border-radius: 10px; padding: 9px 6px; font-size: 13.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 3px 8px rgba(0,0,0,0.4); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">',
+      '  <button type="button" class="rm-act-open" style="min-width: 0 !important; background: #059669; border: 1.5px solid #10b981; color: #ffffff; border-radius: 10px; padding: 8px 6px; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 3px 8px rgba(0,0,0,0.4); cursor: pointer; text-align: center; line-height: 1.15; white-space: normal; word-break: break-word; transition: all 0.15s ease;" onpointerdown="this.style.borderColor=\'#38bdf8\';this.style.boxShadow=\'0 0 14px rgba(56,189,248,0.85)\';this.style.transform=\'scale(0.97)\'" onpointerup="this.style.borderColor=\'#10b981\';this.style.boxShadow=\'0 3px 8px rgba(0,0,0,0.4)\';this.style.transform=\'scale(1)\'">',
       '    <span>' + (info.btnText || 'खोलें ➔') + '</span>',
       '  </button>',
       '</div>'
