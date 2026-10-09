@@ -1,7 +1,7 @@
 /**
  * RISE MITRA — UNIVERSAL SEARCH & DEMAND INTELLIGENCE ENGINE (0.05s FUZZY)
- * MODULE        : Surface-A Vertical Dropdown History + Surface-B Ranked BI Demand Widget
- * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.4.2 ZEL)
+ * MODULE        : Surface-A Vertical History + Surface-B Fail-Safe Ranked BI Demand Widget
+ * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.4.3 ZEL)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/universal-catalog/universal-search-engine.js
  * DUAL-FOLDER REFS:
@@ -15,6 +15,19 @@
   var debounceTimer = null;
   var STORAGE_USER_HISTORY = 'rm_user_search_history_v1';
   var STORAGE_OWNER_ANALYTICS = 'rm_owner_search_analytics_v1';
+
+  // Helper for cross-environment safe object entries
+  function getSafeEntries(obj) {
+    if (!obj) return [];
+    if (Object.entries) return Object.entries(obj);
+    var entries = [];
+    for (var key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        entries.push([key, obj[key]]);
+      }
+    }
+    return entries;
+  }
 
   // 1. LOCAL STORAGE HELPERS (USER HISTORY & OWNER ANALYTICS)
   function getUserHistory() {
@@ -30,7 +43,7 @@
     var history = getUserHistory();
     history = history.filter(function (item) { return item.toLowerCase() !== query.toLowerCase(); });
     history.unshift(query);
-    if (history.length > 5) history = history.slice(0, 5); // Keep top 5 recent
+    if (history.length > 5) history = history.slice(0, 5);
     try {
       localStorage.setItem(STORAGE_USER_HISTORY, JSON.stringify(history));
     } catch (e) {}
@@ -115,7 +128,6 @@
     listContainer.innerHTML = html;
     listContainer.style.display = 'block';
 
-    // Click handlers for vertical items
     listContainer.querySelectorAll('.rm-history-row').forEach(function (row) {
       row.onclick = function (e) {
         if (e.target.classList.contains('rm-history-del')) {
@@ -179,7 +191,6 @@
         }, 50);
       });
 
-      // Close dropdown when clicking outside
       document.addEventListener('click', function (e) {
         var dropdown = document.getElementById('rm-search-history-dropdown');
         if (dropdown && !input.contains(e.target) && !dropdown.contains(e.target)) {
@@ -218,7 +229,6 @@
 
       var matchFound = false;
 
-      // Match Main Category Data
       if (regData) {
         var catHaystack = (
           regData.title + ' ' +
@@ -231,7 +241,6 @@
           matchFound = true;
         }
 
-        // Match Subcategory Data
         if (!matchFound && regData.subcategories) {
           Object.keys(regData.subcategories).forEach(function (k) {
             var sub = regData.subcategories[k];
@@ -250,7 +259,6 @@
         }
       }
 
-      // Match Fallback in DOM text
       if (!matchFound) {
         var domText = (catEl.textContent || '').toLowerCase();
         if (domText.indexOf(query) !== -1) {
@@ -272,7 +280,6 @@
       counterEl.style.color = matchCount > 0 ? '#34d399' : '#f87171';
     }
 
-    // Save User History & Owner Analytics
     clearTimeout(window._rmAnalyticsTimer);
     window._rmAnalyticsTimer = setTimeout(function () {
       saveUserQuery(rawQuery.trim());
@@ -280,44 +287,69 @@
     }, 800);
   }
 
-  // 5. AUTO-MOUNT SURFACE-B RANKED DEMAND BI WIDGET
+  // 5. FAIL-SAFE ANCHOR LOCATOR FOR SURFACE-B
+  function findSurfaceBAnchorCard() {
+    var terms = [
+      'SURFACE-A VISUAL IN-SITU CONTROLLER',
+      'KILL-SWITCH SUBSYSTEM',
+      '50-Category Staged Launch State'
+    ];
+
+    for (var t = 0; t < terms.length; t++) {
+      var term = terms[t];
+      var allNodes = document.querySelectorAll('*');
+      var leaf = null;
+
+      for (var i = allNodes.length - 1; i >= 0; i--) {
+        var node = allNodes[i];
+        if (node.children.length === 0 && (node.textContent || '').indexOf(term) !== -1) {
+          leaf = node;
+          break;
+        }
+      }
+
+      if (leaf) {
+        var curr = leaf;
+        while (curr && curr.parentElement && curr.parentElement !== document.body) {
+          var p = curr.parentElement;
+          var pText = p.textContent || '';
+          if (
+            (term !== 'KILL-SWITCH SUBSYSTEM' && pText.indexOf('KILL-SWITCH') !== -1) ||
+            (term !== '50-Category Staged Launch State' && pText.indexOf('50-Category') !== -1) ||
+            (term !== 'SURFACE-A VISUAL IN-SITU CONTROLLER' && pText.indexOf('IN-SITU') !== -1)
+          ) {
+            return curr;
+          }
+          curr = p;
+        }
+      }
+    }
+    return null;
+  }
+
+  // 6. AUTO-MOUNT & SELF-HEALING SURFACE-B RANKED DEMAND BI WIDGET
   function renderSurfaceBDemandWidget() {
     var bodyText = document.body ? document.body.textContent || '' : '';
     var isSurfaceB = bodyText.indexOf('SOVEREIGN CONSOLE') !== -1 || 
                      bodyText.indexOf('INVARIANT CONTROLS') !== -1 ||
-                     bodyText.indexOf('KILL-SWITCH') !== -1 ||
-                     Boolean(document.querySelector('.rm-sovereign-console'));
+                     bodyText.indexOf('KILL-SWITCH') !== -1;
 
-    if (!isSurfaceB) return; // Only execute when Surface-B is active
+    if (!isSurfaceB) return;
+
+    var targetAnchor = findSurfaceBAnchorCard();
+    if (!targetAnchor || !targetAnchor.parentNode) return;
 
     var surfaceBHost = document.getElementById('rm-surface-b-demand-widget-wrap');
 
     if (!surfaceBHost) {
       surfaceBHost = document.createElement('div');
       surfaceBHost.id = 'rm-surface-b-demand-widget-wrap';
-      surfaceBHost.style.cssText = 'margin: 16px 14px; box-sizing: border-box;';
+      surfaceBHost.style.cssText = 'width: 100%; box-sizing: border-box; margin: 14px 0; position: relative; z-index: 20;';
+    }
 
-      // Scan DOM for insertion anchor point (before Surface-A Visual In-Situ Controller)
-      var anchorCard = null;
-      var allDivs = document.querySelectorAll('div, section');
-      for (var i = 0; i < allDivs.length; i++) {
-        var text = allDivs[i].textContent || '';
-        if (text.indexOf('SURFACE-A VISUAL IN-SITU CONTROLLER') !== -1) {
-          anchorCard = allDivs[i];
-          break;
-        }
-      }
-
-      if (anchorCard && anchorCard.parentNode) {
-        anchorCard.parentNode.insertBefore(surfaceBHost, anchorCard);
-      } else {
-        var mainConsole = document.querySelector('.rm-sovereign-console') || document.body;
-        if (mainConsole.firstElementChild) {
-          mainConsole.insertBefore(surfaceBHost, mainConsole.firstElementChild.nextSibling);
-        } else {
-          mainConsole.appendChild(surfaceBHost);
-        }
-      }
+    // Self-healing: Ensure it is directly mounted before the anchor card inside the main column
+    if (surfaceBHost.parentNode !== targetAnchor.parentNode || surfaceBHost.nextSibling !== targetAnchor) {
+      targetAnchor.parentNode.insertBefore(surfaceBHost, targetAnchor);
     }
 
     var report = window.RM_SEARCH_ANALYTICS ? window.RM_SEARCH_ANALYTICS.getDemandReport() : { totalSearches: 0, topDemands: [], unmetDemands: [] };
@@ -325,7 +357,7 @@
     // Render Top 10 Demands with ranking and count on the right
     var topDemandsHtml = report.topDemands.length > 0 
       ? report.topDemands.map(function(item, idx) {
-          return '<div style="display: flex; align-items: center; justify-content: space-between; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; padding: 7px 12px; margin-bottom: 5px; font-size: 13px;">' +
+          return '<div style="display: flex; align-items: center; justify-content: space-between; background: rgba(30, 41, 59, 0.85); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; font-size: 13px;">' +
                  '  <div style="display: flex; align-items: center; gap: 10px; color: #f8fafc; font-weight: 600;">' +
                  '    <span style="color: #38bdf8; font-weight: 800; font-size: 11px; background: rgba(56, 189, 248, 0.15); padding: 2px 7px; border-radius: 4px;">#' + (idx + 1) + '</span>' +
                  '    <span>' + item[0] + '</span>' +
@@ -333,12 +365,12 @@
                  '  <span style="color: #38bdf8; font-weight: 800; background: rgba(56, 189, 248, 0.2); padding: 2px 9px; border-radius: 9999px; font-size: 11.5px;">' + item[1] + ' खोजें</span>' +
                  '</div>';
         }).join('')
-      : '<div style="color: #64748b; font-size: 12px; padding: 8px; text-align: center;">अभी तक कोई खोज दर्ज नहीं हुई है</div>';
+      : '<div style="color: #64748b; font-size: 12px; padding: 10px; text-align: center; background: rgba(30, 41, 59, 0.4); border-radius: 8px;">अभी तक कोई खोज दर्ज नहीं हुई है</div>';
 
     // Render Top 10 Unmet Demands with ranking and count on the right
     var unmetDemandsHtml = report.unmetDemands.length > 0 
       ? report.unmetDemands.map(function(item, idx) {
-          return '<div style="display: flex; align-items: center; justify-content: space-between; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(248, 113, 113, 0.25); border-radius: 8px; padding: 7px 12px; margin-bottom: 5px; font-size: 13px;">' +
+          return '<div style="display: flex; align-items: center; justify-content: space-between; background: rgba(30, 41, 59, 0.85); border: 1px solid rgba(248, 113, 113, 0.25); border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; font-size: 13px;">' +
                  '  <div style="display: flex; align-items: center; gap: 10px; color: #f8fafc; font-weight: 600;">' +
                  '    <span style="color: #f87171; font-weight: 800; font-size: 11px; background: rgba(248, 113, 113, 0.15); padding: 2px 7px; border-radius: 4px;">#' + (idx + 1) + '</span>' +
                  '    <span>⚠️ ' + item[0] + '</span>' +
@@ -346,15 +378,15 @@
                  '  <span style="color: #f87171; font-weight: 800; background: rgba(248, 113, 113, 0.2); padding: 2px 9px; border-radius: 9999px; font-size: 11.5px;">' + item[1] + ' बार नहीं मिला</span>' +
                  '</div>';
         }).join('')
-      : '<div style="color: #34d399; font-size: 12px; padding: 8px; text-align: center;">✓ सभी खोजी गई सेवाएं उपलब्ध थीं</div>';
+      : '<div style="color: #34d399; font-size: 12px; padding: 10px; text-align: center; background: rgba(30, 41, 59, 0.4); border-radius: 8px;">✓ सभी खोजी गई सेवाएं उपलब्ध थीं</div>';
 
     surfaceBHost.innerHTML = [
-      '<div style="background: #0f172a; border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 16px; padding: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); font-family: inherit;">',
+      '<div style="background: #0f172a; border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 16px; padding: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); font-family: inherit;">',
       '  <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px; margin-bottom: 14px;">',
       '    <div style="display: flex; align-items: center; gap: 8px;">',
       '      <span style="font-size: 20px;">📊</span>',
       '      <div>',
-      '        <div style="font-size: 14px; font-weight: 800; color: #f8fafc; letter-spacing: 0.5px;">SEARCH DEMAND INTELLIGENCE (SURFACE-B BI)</div>',
+      '        <div style="font-size: 13.5px; font-weight: 800; color: #f8fafc; letter-spacing: 0.5px;">SEARCH DEMAND INTELLIGENCE (SURFACE-B BI)</div>',
       '        <div style="font-size: 11px; color: #94a3b8; font-weight: 600;">ग्राहकों की वास्तविक मांग एवं अन-मैट बिज़नेस अवसर</div>',
       '      </div>',
       '    </div>',
@@ -378,13 +410,13 @@
     ].join('');
   }
 
-  // 6. OWNER SURFACE B ANALYTICS EXPOSURE
+  // 7. OWNER SURFACE B ANALYTICS EXPOSURE
   window.RM_SEARCH_ANALYTICS = {
     getDemandReport: function () {
       try {
         var raw = JSON.parse(localStorage.getItem(STORAGE_OWNER_ANALYTICS) || '{}');
-        var sortedKeywords = Object.entries(raw.keywords || {}).sort(function (a, b) { return b[1] - a[1]; });
-        var sortedZeroResults = Object.entries(raw.zeroResults || {}).sort(function (a, b) { return b[1] - a[1]; });
+        var sortedKeywords = getSafeEntries(raw.keywords || {}).sort(function (a, b) { return b[1] - a[1]; });
+        var sortedZeroResults = getSafeEntries(raw.zeroResults || {}).sort(function (a, b) { return b[1] - a[1]; });
 
         return {
           totalSearches: raw.totalSearches || 0,
@@ -401,7 +433,7 @@
     }
   };
 
-  // 7. ENGINE BOOTSTRAPPER WITH CONTINUOUS SURFACE-B POLLING
+  // 8. ENGINE BOOTSTRAPPER WITH RE-ANCHORING POLLING
   function bootSearch() {
     setupExistingSearchBar();
     renderSurfaceBDemandWidget();
@@ -413,7 +445,7 @@
     bootSearch();
   }
 
-  // Polling loop to ensure widget stays mounted when Surface-B view renders
+  // Continuous polling loop ensures it stays attached inside the console container
   setInterval(function () {
     setupExistingSearchBar();
     renderSurfaceBDemandWidget();
