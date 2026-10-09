@@ -1,7 +1,7 @@
 /**
  * RISE MITRA — UNIVERSAL SEARCH & DEMAND INTELLIGENCE ENGINE (0.05s FUZZY)
- * MODULE        : Surface-A Vertical History + Surface-B Fail-Safe Ranked BI Demand Widget
- * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.4.3 ZEL)
+ * MODULE        : Surface-A Vertical History + Surface-B 3-Tier Robust BI Demand Widget
+ * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.4.4 ZEL)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/universal-catalog/universal-search-engine.js
  * DUAL-FOLDER REFS:
@@ -16,7 +16,6 @@
   var STORAGE_USER_HISTORY = 'rm_user_search_history_v1';
   var STORAGE_OWNER_ANALYTICS = 'rm_owner_search_analytics_v1';
 
-  // Helper for cross-environment safe object entries
   function getSafeEntries(obj) {
     if (!obj) return [];
     if (Object.entries) return Object.entries(obj);
@@ -29,7 +28,7 @@
     return entries;
   }
 
-  // 1. LOCAL STORAGE HELPERS (USER HISTORY & OWNER ANALYTICS)
+  // 1. LOCAL STORAGE HELPERS
   function getUserHistory() {
     try {
       return JSON.parse(localStorage.getItem(STORAGE_USER_HISTORY) || '[]');
@@ -57,7 +56,6 @@
     renderVerticalHistoryList();
   }
 
-  // Record Search in Owner BI Database (Surface B Tracking)
   function logOwnerAnalytics(query, matchCount) {
     if (!query || query.length < 2) return;
     var cleanQ = query.trim().toLowerCase();
@@ -200,7 +198,7 @@
     }
   }
 
-  // 4. IN-MEMORY FUZZY SEARCH CORE (CROSS-CHECK 50 CATS & 150 SUB-SERVICES)
+  // 4. IN-MEMORY FUZZY SEARCH CORE
   function performSearch(rawQuery) {
     var query = rawQuery.toLowerCase().replace(/[^a-z0-9\u0900-\u097F]/g, '');
     var modal = document.getElementById('categoryModel') || document.body;
@@ -287,74 +285,85 @@
     }, 800);
   }
 
-  // 5. FAIL-SAFE ANCHOR LOCATOR FOR SURFACE-B
-  function findSurfaceBAnchorCard() {
-    var terms = [
-      'SURFACE-A VISUAL IN-SITU CONTROLLER',
-      'KILL-SWITCH SUBSYSTEM',
-      '50-Category Staged Launch State'
-    ];
+  // 5. 3-TIER BULLETPROOF DOM MOUNT ENGINE FOR SURFACE-B
+  function findSurfaceBTarget() {
+    var allDivs = document.querySelectorAll('div, section, main');
 
-    for (var t = 0; t < terms.length; t++) {
-      var term = terms[t];
-      var allNodes = document.querySelectorAll('*');
-      var leaf = null;
-
-      for (var i = allNodes.length - 1; i >= 0; i--) {
-        var node = allNodes[i];
-        if (node.children.length === 0 && (node.textContent || '').indexOf(term) !== -1) {
-          leaf = node;
-          break;
-        }
-      }
-
-      if (leaf) {
-        var curr = leaf;
-        while (curr && curr.parentElement && curr.parentElement !== document.body) {
-          var p = curr.parentElement;
-          var pText = p.textContent || '';
-          if (
-            (term !== 'KILL-SWITCH SUBSYSTEM' && pText.indexOf('KILL-SWITCH') !== -1) ||
-            (term !== '50-Category Staged Launch State' && pText.indexOf('50-Category') !== -1) ||
-            (term !== 'SURFACE-A VISUAL IN-SITU CONTROLLER' && pText.indexOf('IN-SITU') !== -1)
-          ) {
-            return curr;
+    // Tier 1: Look for In-Situ Controller card directly
+    for (var i = 0; i < allDivs.length; i++) {
+      var txt = (allDivs[i].innerText || allDivs[i].textContent || '');
+      if (txt.indexOf('IN-SITU CONTROLLER') !== -1 || txt.indexOf('SURFACE-A VISUAL') !== -1) {
+        var node = allDivs[i];
+        while (node.parentElement && node.parentElement !== document.body) {
+          var pText = (node.parentElement.innerText || node.parentElement.textContent || '');
+          if (pText.indexOf('KILL-SWITCH') !== -1 || pText.indexOf('INVARIANT CONTROLS') !== -1) {
+            return { target: node, insertBefore: true };
           }
-          curr = p;
+          node = node.parentElement;
         }
       }
     }
+
+    // Tier 2: Look for Kill-Switch Subsystem card
+    for (var j = 0; j < allDivs.length; j++) {
+      var kText = (allDivs[j].innerText || allDivs[j].textContent || '');
+      if (kText.indexOf('KILL-SWITCH SUBSYSTEM') !== -1) {
+        var kNode = allDivs[j];
+        while (kNode.parentElement && kNode.parentElement !== document.body) {
+          var kpText = (kNode.parentElement.innerText || kNode.parentElement.textContent || '');
+          if (kpText.indexOf('SOVEREIGN CONSOLE') !== -1 || kpText.indexOf('INVARIANT CONTROLS') !== -1) {
+            return { target: kNode, insertBefore: true };
+          }
+          kNode = kNode.parentElement;
+        }
+      }
+    }
+
+    // Tier 3: Direct Sovereign Console Main Container fallback
+    for (var m = 0; m < allDivs.length; m++) {
+      var cText = (allDivs[m].innerText || allDivs[m].textContent || '');
+      if (cText.indexOf('SOVEREIGN CONSOLE') !== -1 && cText.indexOf('ACTIVE INVARIANT CONTROLS') !== -1) {
+        return { target: allDivs[m], insertBefore: false };
+      }
+    }
+
     return null;
   }
 
-  // 6. AUTO-MOUNT & SELF-HEALING SURFACE-B RANKED DEMAND BI WIDGET
+  // 6. RENDER SURFACE-B RANKED DEMAND BI WIDGET
   function renderSurfaceBDemandWidget() {
-    var bodyText = document.body ? document.body.textContent || '' : '';
+    var bodyText = document.body ? (document.body.innerText || document.body.textContent || '') : '';
     var isSurfaceB = bodyText.indexOf('SOVEREIGN CONSOLE') !== -1 || 
                      bodyText.indexOf('INVARIANT CONTROLS') !== -1 ||
                      bodyText.indexOf('KILL-SWITCH') !== -1;
 
     if (!isSurfaceB) return;
 
-    var targetAnchor = findSurfaceBAnchorCard();
-    if (!targetAnchor || !targetAnchor.parentNode) return;
+    var mountPoint = findSurfaceBTarget();
+    if (!mountPoint || !mountPoint.target) return;
 
+    var targetEl = mountPoint.target;
     var surfaceBHost = document.getElementById('rm-surface-b-demand-widget-wrap');
 
     if (!surfaceBHost) {
       surfaceBHost = document.createElement('div');
       surfaceBHost.id = 'rm-surface-b-demand-widget-wrap';
-      surfaceBHost.style.cssText = 'width: 100%; box-sizing: border-box; margin: 14px 0; position: relative; z-index: 20;';
+      surfaceBHost.style.cssText = 'width: 100% !important; box-sizing: border-box !important; margin: 16px 0 !important; display: block !important; position: relative !important; z-index: 50 !important;';
     }
 
-    // Self-healing: Ensure it is directly mounted before the anchor card inside the main column
-    if (surfaceBHost.parentNode !== targetAnchor.parentNode || surfaceBHost.nextSibling !== targetAnchor) {
-      targetAnchor.parentNode.insertBefore(surfaceBHost, targetAnchor);
+    // Mount inside DOM tree
+    if (mountPoint.insertBefore) {
+      if (surfaceBHost.nextSibling !== targetEl || surfaceBHost.parentNode !== targetEl.parentNode) {
+        targetEl.parentNode.insertBefore(surfaceBHost, targetEl);
+      }
+    } else {
+      if (surfaceBHost.parentNode !== targetEl) {
+        targetEl.appendChild(surfaceBHost);
+      }
     }
 
     var report = window.RM_SEARCH_ANALYTICS ? window.RM_SEARCH_ANALYTICS.getDemandReport() : { totalSearches: 0, topDemands: [], unmetDemands: [] };
 
-    // Render Top 10 Demands with ranking and count on the right
     var topDemandsHtml = report.topDemands.length > 0 
       ? report.topDemands.map(function(item, idx) {
           return '<div style="display: flex; align-items: center; justify-content: space-between; background: rgba(30, 41, 59, 0.85); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; font-size: 13px;">' +
@@ -367,7 +376,6 @@
         }).join('')
       : '<div style="color: #64748b; font-size: 12px; padding: 10px; text-align: center; background: rgba(30, 41, 59, 0.4); border-radius: 8px;">अभी तक कोई खोज दर्ज नहीं हुई है</div>';
 
-    // Render Top 10 Unmet Demands with ranking and count on the right
     var unmetDemandsHtml = report.unmetDemands.length > 0 
       ? report.unmetDemands.map(function(item, idx) {
           return '<div style="display: flex; align-items: center; justify-content: space-between; background: rgba(30, 41, 59, 0.85); border: 1px solid rgba(248, 113, 113, 0.25); border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; font-size: 13px;">' +
@@ -445,11 +453,10 @@
     bootSearch();
   }
 
-  // Continuous polling loop ensures it stays attached inside the console container
   setInterval(function () {
     setupExistingSearchBar();
     renderSurfaceBDemandWidget();
-  }, 1000);
+  }, 800);
 
   window.RM_UNIVERSAL_SEARCH = {
     setupExistingSearchBar: setupExistingSearchBar,
