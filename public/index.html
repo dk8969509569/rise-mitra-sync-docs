@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi" class="dark" data-theme="dark">
 <!-- ============================================================================== -->
-<!-- RISE MITRA — SLIM MODULAR HTML SHELL                                           -->
+<!-- RISE MITRA — SLIM MODULAR HTML SHELL (PHASE 1 VISUAL SHIELD INGESTED)          -->
 <!-- GOVERNANCE : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0            -->
 <!-- SPEC SSOT  : FOLDER A (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)                       -->
 <!-- STATUS     : FULLY DECOUPLED (CSS -> app.css | JS -> shell-controller.js)     -->
@@ -36,6 +36,83 @@
       }
     }
   </script>
+
+  <!-- ========================================================================== -->
+  <!-- RISE MITRA — PHASE 1: MASTER GLOBAL CSS TOKENS & SIVME VISUAL SHIELD        -->
+  <!-- ========================================================================== -->
+  <style>
+    :root {
+      --rm-grid-unit: 8px;
+      --rm-glass-bg: rgba(11, 15, 25, 0.85);
+      --rm-glass-border: rgba(245, 158, 11, 0.25);
+      --rm-badge-live: #10b981;
+      --rm-badge-hidden: #ef4444;
+    }
+
+    /* 1. Universal Action Buttons: Prevent Text Split ("खोलें ›" stays 1-line) */
+    #categoryModal button,
+    .cat-action-btn,
+    [data-action="launch"],
+    [data-action="open-sub"] {
+      white-space: nowrap !important;
+      word-break: keep-all !important;
+      flex-shrink: 0 !important;
+    }
+
+    /* 2. Sub-Category Tree-Line Removal Rules (Zero-Artifact) */
+    #sub-c16::before,
+    #sub-c16::after,
+    .subcategory-tree::before,
+    .subcategory-tree::after,
+    [id^="sub-c"]::before,
+    [id^="sub-c"]::after {
+      display: none !important;
+      content: none !important;
+      border-left: none !important;
+    }
+
+    [id^="sub-c"],
+    #sub-c16 {
+      border-left: none !important;
+      box-shadow: none !important;
+    }
+
+    /* 3. SIVME Badge Containment Boundary */
+    #categoryModal [data-cat-id],
+    .category-card-wrapper,
+    .catalog-item-container {
+      position: relative !important;
+    }
+
+    /* 4. Category 16 Sub-Card Ergonomics (108px Lock) */
+    .c16-subcard-clean {
+      min-height: 108px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+      position: relative !important;
+    }
+
+    /* 5. Clean 2-Tier Bilingual Typography */
+    .cat-bilingual-title {
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      line-height: 1.3 !important;
+    }
+    .cat-bilingual-en {
+      font-size: 14px !important;
+      font-weight: 700 !important;
+      color: #f8fafc !important;
+      letter-spacing: -0.01em !important;
+    }
+    .cat-bilingual-hi {
+      font-size: 11.5px !important;
+      font-weight: 500 !important;
+      color: #94a3b8 !important;
+      margin-top: 1px !important;
+    }
+  </style>
 </head>
 
 <body class="bg-[#030712] text-slate-100 min-h-screen pb-36 antialiased select-none font-sans">
@@ -303,15 +380,15 @@
   <!-- Decoupled Shell Controller Engine & Viewport Dispatcher -->
   <script src="/js/shell-controller.js?v=20261007_01"></script>
 
-      <!-- Sovereign In-Situ Isolated Adapters & Scanners -->
-    <script src="/js/sivme-adapters/cat16-adapter.js"></script>
-    <script src="/js/sovereign-in-situ-scanner-ext.js"></script>
-    <script src="/js/sovereign-in-situ-scanner.js"></script>
+  <!-- Sovereign In-Situ Isolated Adapters & Scanners -->
+  <script src="/js/sivme-adapters/cat16-adapter.js"></script>
+  <script src="/js/sovereign-in-situ-scanner-ext.js"></script>
+  <script src="/js/sovereign-in-situ-scanner.js"></script>
 
   <!-- Universal Catalog & 0.05s Search Intelligence Engine -->
-<script src="/js/universal-catalog/catalog-metadata-registry.js"></script>
-<script src="/js/universal-catalog/universal-card-engine.js"></script>
-<script src="/js/universal-catalog/universal-search-engine.js"></script>
+  <script src="/js/universal-catalog/catalog-metadata-registry.js"></script>
+  <script src="/js/universal-catalog/universal-card-engine.js"></script>
+  <script src="/js/universal-catalog/universal-search-engine.js"></script>
 
 </body>
 </html>
