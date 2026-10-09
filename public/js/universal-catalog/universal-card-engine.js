@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — UNIVERSAL CATALOG CARD ENGINE (UI RENDERER)
- * MODULE        : 100% Future-Proof Universal Main Category & Play Store Subcard Engine (Decoupled SSOT)
+ * MODULE        : Pure Modular Google Play Store App-Card Renderer (Decoupled SSOT)
  * SPECIFICATION : ENTERPRISE ARCHITECTURAL SPECIFICATION & FUTURE-PROOF ROADMAP (v2.0)
  * GOVERNANCE    : GATE-23.5 | DEC-RM-BRANCH-GOV-20261004 | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/universal-catalog/universal-card-engine.js
@@ -14,11 +14,12 @@
 
   var isSweeping = false;
 
-  // 1. RENDER UNIVERSAL PARENT CARD (ZERO SUBCATEGORY COUPLING - FUTURE PROOF FOR 1 TO 100+ SUBS)
+  // 1. RENDER UNIVERSAL PARENT CARD (CLEAN PLAY STORE APP-CARD - ZERO OUTSIDE NUMBERS)
   function renderParentCard(headerEl, catId, isOpen, subCount) {
     if (!headerEl) return;
-    var numId = String(catId).replace(/^[c]/, '');
-    var displayNum = (parseInt(numId, 10) < 10 ? '0' : '') + numId + '.';
+    var numId = String(catId).replace(/[^0-9]/g, '');
+    var intNum = parseInt(numId, 10);
+    var displayNum = (intNum < 10 ? '0' : '') + intNum + '.';
 
     var targetState = numId + ':' + String(isOpen) + ':' + String(subCount || 0);
     if (headerEl.getAttribute('data-rm-parent-rendered') === targetState) {
@@ -27,26 +28,30 @@
 
     var regData = (window.RM_CATALOG_REGISTRY && window.RM_CATALOG_REGISTRY.getCategoryData(numId)) || null;
 
-    var title = regData?.title || headerEl.querySelector('.font-bold, h3, h4, .text-base')?.textContent?.trim() || ('Category ' + numId);
-    var subtitle = regData?.subtitle || headerEl.querySelector('.text-xs, .text-sm, p')?.textContent?.trim() || 'दैनिक जनसेवाएं व आधिकारिक सुविधा केंद्र';
-    var icon = regData?.icon || headerEl.querySelector('.text-2xl, .text-3xl, span')?.textContent?.trim() || '📂';
-    var rating = regData?.rating || '★ 4.9 (10k+ नागरिक)';
-    var trustBadge = regData?.trustBadge || 'Rise Verified Network';
-    var supportBadge = regData?.supportBadge || '24x7 जनसहायता केंद्र';
+    // Standard Google Play Store Authoritative Names (Folder A SSOT)
+    var title = regData ? regData.title : ('Category ' + displayNum);
+    var subtitle = regData ? regData.subtitle : 'दैनिक जनसेवाएं व आधिकारिक सुविधा केंद्र';
+    var icon = regData ? regData.icon : '📦';
+    var rating = regData ? regData.rating : '★ 4.9 (10k+ नागरिक)';
+    var trustBadge = regData ? regData.trustBadge : 'Rise Verified Network';
+    var supportBadge = regData ? regData.supportBadge : '24x7 जनसहायता केंद्र';
 
-    // Universal Future-Proof Domain Value Pillars (Decoupled from Subcategories)
+    // Universal Future-Proof Domain Value Pillars
     var universalPillars = [
-      { icon: '🛡️', text: '100% आधार व पुलिस सत्यापित सेवा प्रदाता नेटवर्क', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.14)' },
-      { icon: '⚡', text: 'पारदर्शी तय रेट कार्ड, डिजिटल बिलिंग व शून्य छुपा शुल्क', color: '#34d399', bg: 'rgba(52, 211, 153, 0.14)' },
-      { icon: '🔒', text: 'Rise Mitra कार्य संतुष्टि गारंटी व प्रत्यक्ष सहायता', color: '#facc15', bg: 'rgba(250, 204, 21, 0.14)' }
+      { icon: '🛡️', text: '100% आधार व पुलिस सत्यापित सेवा प्रदाता नेटवर्क', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.12)' },
+      { icon: '⚡', text: 'पारदर्शी तय रेट कार्ड, डिजिटल बिलिंग व शून्य छुपा शुल्क', color: '#34d399', bg: 'rgba(52, 211, 153, 0.12)' },
+      { icon: '🔒', text: 'Rise Mitra कार्य संतुष्टि गारंटी व प्रत्यक्ष सहायता', color: '#facc15', bg: 'rgba(250, 204, 21, 0.12)' }
     ];
 
-    // Purge any legacy/duplicate containers to prevent overwriting & ghosting
-    Array.from(headerEl.children).forEach(function (child) {
-      if (child.id && (child.id.indexOf('rm-c16-master-parent') !== -1 || child.id.indexOf('c16-playstore-layout') !== -1)) {
-        child.remove();
-      } else if (!child.id || (child.id.indexOf('authoritative-badge') === -1 && child.id.indexOf('rm-universal-parent') === -1)) {
-        child.style.display = 'none';
+    // Wipe and hide all legacy text nodes and outside duplicate numbers (kills 009. 09. ▼)
+    Array.from(headerEl.childNodes).forEach(function (node) {
+      if (node.nodeType === 1 && node.id && node.id.indexOf('rm-universal-parent-') !== -1) {
+        return;
+      }
+      if (node.nodeType === 1) {
+        node.style.display = 'none';
+      } else if (node.nodeType === 3) {
+        node.textContent = '';
       }
     });
 
@@ -59,7 +64,7 @@
         'display: flex !important',
         'flex-direction: column !important',
         'gap: 12px !important',
-        'padding: 16px 14px 12px 14px !important',
+        'padding: 16px 14px 14px 14px !important',
         'box-sizing: border-box !important',
         'text-align: left !important'
       ].join(';');
@@ -68,38 +73,36 @@
     }
 
     var pillarsHtml = universalPillars.map(function (p) {
-      return '<div style="font-size:13px;font-weight:700;padding:7px 12px;background:' + p.bg + ';color:' + p.color + ';border:1.2px solid ' + p.color + '44;border-radius:8px;display:flex;align-items:center;gap:8px;"><span style="font-size:15px;">' + p.icon + '</span><span>' + p.text + '</span></div>';
+      return '<div style="font-size:13px;font-weight:700;padding:8px 12px;background:' + p.bg + ';color:' + p.color + ';border:1px solid ' + p.color + '33;border-radius:9px;display:flex;align-items:center;gap:8px;"><span style="font-size:15px;">' + p.icon + '</span><span>' + p.text + '</span></div>';
     }).join('');
 
     var countText = (subCount && subCount > 0) ? (subCount + ' सेवाएं ') : 'सभी सेवाएं ';
 
     container.innerHTML = [
-      '<!-- Top Row: Left Column (28px Number Top, Logo Below) + Right Column (22px Bold Title, Zero Cutoff) -->',
+      '<!-- Top Row: Squircle Badge [Icon + Order Inside] + Right Column [Play Store Bold Title & Subtitle] -->',
       '<div style="display: flex; align-items: flex-start; gap: 14px; width: 100%;">',
-      '  <!-- Left Column Stack -->',
-      '  <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 6px; flex-shrink: 0; min-width: 54px;">',
-      '    <div style="font-size: 28px; font-weight: 900; color: #38bdf8; font-family: ui-monospace, monospace; line-height: 1; text-align: center; letter-spacing: -0.5px;">' + displayNum + '</div>',
-      '    <div style="width: 52px; height: 52px; border-radius: 14px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid rgba(56, 189, 248, 0.45); box-shadow: 0 4px 12px rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">',
-      '      <span style="font-size: 28px; line-height: 1;">' + icon + '</span>',
+      '  <!-- Squircle Badge: Order & Icon strictly INSIDE, zero numbers outside -->',
+      '  <div style="width: 58px; height: 58px; min-width: 58px; border-radius: 16px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 1.5px solid rgba(56, 189, 248, 0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.45); flex-shrink: 0;">',
+      '    <span style="font-size: 24px; line-height: 1;">' + icon + '</span>',
+      '    <span style="font-size: 11px; font-weight: 800; color: #38bdf8; font-family: ui-monospace, monospace; margin-top: 3px; line-height: 1;">' + displayNum + '</span>',
+      '  </div>',
+      '  <!-- Right Column: Standard Play Store Bold Title & Clean Subtitle -->',
+      '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0;">',
+      '    <div style="font-size: 21px; font-weight: 900; color: #ffffff; letter-spacing: -0.3px; line-height: 1.25; margin-bottom: 4px; word-break: break-word;">' + title + '</div>',
+      '    <div style="font-size: 13.5px; font-weight: 600; color: #34d399; line-height: 1.35; margin-bottom: 6px; word-break: break-word;">' + subtitle + '</div>',
+      '    <!-- Badges Row -->',
+      '    <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">',
+      '      <span style="font-size: 11.5px; font-weight: 800; color: #facc15; background: rgba(250, 204, 21, 0.12); border: 1px solid rgba(250, 204, 21, 0.3); padding: 2px 7px; border-radius: 5px;">' + rating + '</span>',
+      '      <span style="font-size: 11.5px; font-weight: 700; color: #38bdf8; background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3); padding: 2px 7px; border-radius: 5px;">✓ ' + trustBadge + '</span>',
+      '      <span style="font-size: 11.5px; font-weight: 700; color: #94a3b8; background: rgba(255, 255, 255, 0.06); padding: 2px 7px; border-radius: 5px;">' + supportBadge + '</span>',
       '    </div>',
       '  </div>',
-      '  <!-- Right Column: 22px Extra Bold Title & Subtitle (Full Horizontal Space) -->',
-      '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0; padding-top: 1px;">',
-      '    <div style="font-size: 22px; font-weight: 900; color: #ffffff; letter-spacing: -0.4px; line-height: 1.25; white-space: normal; word-break: break-word;">' + title + '</div>',
-      '    <div style="font-size: 14.5px; font-weight: 700; color: #34d399; line-height: 1.35; margin-top: 4px; white-space: normal; word-break: break-word;">' + subtitle + '</div>',
-      '  </div>',
       '</div>',
-      '<!-- Row 2: Credibility Badges -->',
-      '<div style="display: flex; align-items: center; gap: 8px; width: 100%; margin-top: 2px; flex-wrap: wrap;">',
-      '  <span style="font-size: 13px; font-weight: 800; color: #facc15; background: rgba(250, 204, 21, 0.12); border: 1px solid rgba(250, 204, 21, 0.3); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">' + rating + '</span>',
-      '  <span style="font-size: 12.5px; font-weight: 700; color: #38bdf8; background: rgba(56, 189, 248, 0.14); border: 1px solid rgba(56, 189, 248, 0.35); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">✓ ' + trustBadge + '</span>',
-      '  <span style="font-size: 12.5px; font-weight: 700; color: #e2e8f0; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.12); padding: 3px 8px; border-radius: 6px;">' + supportBadge + '</span>',
-      '</div>',
-      '<!-- Row 3: Universal Domain Value Pillars -->',
-      '<div style="display: flex; flex-direction: column; gap: 6px; width: 100%; margin-top: 4px;">' + pillarsHtml + '</div>',
-      '<!-- Row 4: Clean Dynamic Action Button -->',
-      '<div style="display: flex; justify-content: flex-end; align-items: center; width: 100%; margin-top: 4px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08);">',
-      '  <div style="font-size: 13.5px; font-weight: 800; color: #10b981; background: rgba(16, 185, 129, 0.15); border: 1.5px solid rgba(16, 185, 129, 0.5); padding: 6px 16px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">',
+      '<!-- Row 2: Universal Domain Value Pillars -->',
+      '<div style="display: flex; flex-direction: column; gap: 7px; width: 100%; margin-top: 4px;">' + pillarsHtml + '</div>',
+      '<!-- Row 3: Dropdown Toggle Button -->',
+      '<div style="display: flex; justify-content: flex-end; align-items: center; width: 100%; margin-top: 2px;">',
+      '  <div style="font-size: 13px; font-weight: 800; color: ' + (isOpen ? '#f87171' : '#34d399') + '; background: ' + (isOpen ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)') + '; border: 1px solid ' + (isOpen ? '#ef4444' : '#10b981') + '; padding: 6px 14px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 6px;">',
       '    <span>' + countText + (isOpen ? 'छुपाएं' : 'देखें') + '</span>',
       '    <span style="font-size: 11px;">' + (isOpen ? '▲' : '▼') + '</span>',
       '  </div>',
@@ -125,7 +128,7 @@
   // 2. RENDER SUB-CARD (LEFT: 24PX SUB-NUMBER TOP + LOGO BELOW | RIGHT: 20PX TITLE | ZERO OVERLAP 3 BUTTONS)
   function renderSubCard(subCardEl, catId, subId) {
     if (!subCardEl) return;
-    var numId = String(catId).replace(/^[c]/, '');
+    var numId = String(catId).replace(/[^0-9]/g, '');
     var cleanSub = String(subId).replace(/^[c]/, '');
 
     if (subCardEl.getAttribute('data-rm-sub-rendered') === cleanSub) {
@@ -134,9 +137,9 @@
 
     var info = (window.RM_CATALOG_REGISTRY && window.RM_CATALOG_REGISTRY.getSubcategoryData(numId, cleanSub)) || {
       code: '[' + cleanSub + ']',
-      icon: subCardEl.querySelector('.text-xl, .text-2xl, span')?.textContent?.trim() || '🛠️',
-      title: subCardEl.querySelector('.font-bold, h4, h3, .text-sm')?.textContent?.trim() || ('सेवा ' + cleanSub),
-      hindiTitle: subCardEl.querySelector('.text-xs, p')?.textContent?.trim() || 'प्रमाणित व विश्वसनीय सेवा',
+      icon: '🛠️',
+      title: 'सेवा ' + cleanSub,
+      hindiTitle: 'प्रमाणित व विश्वसनीय सेवा',
       categoryTag: 'जनसुविधा नेटवर्क',
       rating: '★ 4.8',
       reviewCount: '1,500+ समीक्षाएं',
@@ -150,9 +153,9 @@
       highlights: [
         'सत्यापित और प्रशिक्षित विशेषज्ञों द्वारा विश्वसनीय सेवा।',
         'तय रेट कार्ड और पारदर्शी ऑनलाइन रसीद।',
-        'Rise Mitra संतुष्टि वारंटी व बीमा सुरक्षा।'
+        'Rise Mitra संतुष्टि वारंटी व प्रत्यक्ष सहायता।'
       ],
-      btnText: 'खोलें'
+      btnText: 'खोलें ➔'
     };
 
     // Hard-collapse outer container: Eliminate vertical void completely
@@ -164,7 +167,7 @@
     subCardEl.style.setProperty('gap', '0px', 'important');
     subCardEl.style.setProperty('padding', '12px !important', 'important');
 
-    // Purge any conflicting legacy containers from cat16-adapter to stop overwriting/ghosting
+    // Purge conflicting legacy containers
     Array.from(subCardEl.children).forEach(function (child) {
       if (child.id && (child.id.indexOf('rm-master-subcard-') !== -1 || child.id.indexOf('subcard-enrich-') !== -1)) {
         child.remove();
@@ -218,7 +221,7 @@
       '      <span style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 4px;">' + (info.categoryTag || 'Rise Mitra Official') + '</span>',
       '    </div>',
       '    <div style="font-size: 20px; font-weight: 900; color: #ffffff; letter-spacing: -0.3px; line-height: 1.25; margin-top: 3px; white-space: normal; word-break: break-word;">' + info.title + '</div>',
-      '    <div style="font-size: 14px; font-weight: 700; color: #34d399; line-height: 1.35; margin-top: 3px; white-space: normal; word-break: break-word;">' + (info.hindiTitle || info.hindi) + '</div>',
+      '    <div style="font-size: 14px; font-weight: 700; color: #34d399; line-height: 1.35; margin-top: 3px; white-space: normal; word-break: break-word;">' + (info.hindiTitle || info.hindi || '') + '</div>',
       '  </div>',
       '</div>',
       '<!-- Play Store Rating & Stats Strip -->',
@@ -241,7 +244,7 @@
       '    <span>▶</span> <span>वीडियो</span>',
       '  </button>',
       '  <button type="button" class="rm-act-open" style="min-width: 0 !important; background: #059669; border: 1.5px solid #10b981; color: #ffffff; border-radius: 10px; padding: 9px 6px; font-size: 13.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 3px 8px rgba(0,0,0,0.4); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">',
-      '    <span>खोलें</span> <span style="font-size: 11px;">➔</span>',
+      '    <span>' + (info.btnText || 'खोलें ➔') + '</span>',
       '  </button>',
       '</div>'
     ].join('');
@@ -278,12 +281,12 @@
     if (isSweeping) return;
     isSweeping = true;
     try {
-      var modal = document.getElementById('categoryModal') || document.body;
+      var modal = document.getElementById('categoryModel') || document.body;
       var cats = modal.querySelectorAll('[data-cat-id]');
       cats.forEach(function (catEl) {
         var rawId = catEl.getAttribute('data-cat-id');
         if (!rawId) return;
-        var cleanNum = rawId.replace(/^[c]/, '');
+        var cleanNum = rawId.replace(/[^0-9]/g, '');
 
         var header = catEl.querySelector(':scope > div:first-child');
         var sub = document.getElementById('sub-c' + cleanNum) || document.getElementById('sub-' + cleanNum);
@@ -314,7 +317,7 @@
     setTimeout(sweepCatalog, 1500);
 
     document.addEventListener('click', function (e) {
-      if (e.target.closest('[data-cat-id], #categoryModal, button')) {
+      if (e.target.closest('[data-cat-id], #categoryModel, button')) {
         setTimeout(sweepCatalog, 40);
         setTimeout(sweepCatalog, 250);
       }
