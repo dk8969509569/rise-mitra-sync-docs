@@ -14,7 +14,7 @@
 
   var isSweeping = false;
 
-  // 1. RENDER UNIVERSAL PARENT CARD (CLEAN PLAY STORE APP-CARD - ZERO OUTSIDE NUMBERS)
+  // 1. RENDER UNIVERSAL PARENT CARD (TOP-LEFT: NUMBER ON TOP, LOGO BELOW | RIGHT: PLAY STORE TITLE)
   function renderParentCard(headerEl, catId, isOpen, subCount) {
     if (!headerEl) return;
     var numId = String(catId).replace(/[^0-9]/g, '');
@@ -43,7 +43,7 @@
       { icon: '🔒', text: 'Rise Mitra कार्य संतुष्टि गारंटी व प्रत्यक्ष सहायता', color: '#facc15', bg: 'rgba(250, 204, 21, 0.12)' }
     ];
 
-    // Wipe and hide all legacy text nodes and outside duplicate numbers (kills 009. 09. ▼)
+    // Wipe and hide all legacy text nodes and outside stray duplicate numbers (kills 009. 09. ▼)
     Array.from(headerEl.childNodes).forEach(function (node) {
       if (node.nodeType === 1 && node.id && node.id.indexOf('rm-universal-parent-') !== -1) {
         return;
@@ -79,17 +79,19 @@
     var countText = (subCount && subCount > 0) ? (subCount + ' सेवाएं ') : 'सभी सेवाएं ';
 
     container.innerHTML = [
-      '<!-- Top Row: Squircle Badge [Icon + Order Inside] + Right Column [Play Store Bold Title & Subtitle] -->',
+      '<!-- Top Row: Left Column (Number Top, Logo Below) + Right Column (Play Store Title, Subtitle, Badges) -->',
       '<div style="display: flex; align-items: flex-start; gap: 14px; width: 100%;">',
-      '  <!-- Squircle Badge: Order & Icon strictly INSIDE, zero numbers outside -->',
-      '  <div style="width: 58px; height: 58px; min-width: 58px; border-radius: 16px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 1.5px solid rgba(56, 189, 248, 0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.45); flex-shrink: 0;">',
-      '    <span style="font-size: 24px; line-height: 1;">' + icon + '</span>',
-      '    <span style="font-size: 11px; font-weight: 800; color: #38bdf8; font-family: ui-monospace, monospace; margin-top: 3px; line-height: 1;">' + displayNum + '</span>',
+      '  <!-- Left Column Stack: Top Big Monospace Number + Bottom Squircle Logo -->',
+      '  <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 6px; flex-shrink: 0; min-width: 58px;">',
+      '    <div style="font-size: 28px; font-weight: 900; color: #38bdf8; font-family: ui-monospace, monospace; line-height: 1; text-align: center; letter-spacing: -0.5px;">' + displayNum + '</div>',
+      '    <div style="width: 54px; height: 54px; border-radius: 16px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid rgba(56, 189, 248, 0.45); box-shadow: 0 4px 12px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">',
+      '      <span style="font-size: 28px; line-height: 1;">' + icon + '</span>',
+      '    </div>',
       '  </div>',
-      '  <!-- Right Column: Standard Play Store Bold Title & Clean Subtitle -->',
-      '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0;">',
-      '    <div style="font-size: 21px; font-weight: 900; color: #ffffff; letter-spacing: -0.3px; line-height: 1.25; margin-bottom: 4px; word-break: break-word;">' + title + '</div>',
-      '    <div style="font-size: 13.5px; font-weight: 600; color: #34d399; line-height: 1.35; margin-bottom: 6px; word-break: break-word;">' + subtitle + '</div>',
+      '  <!-- Right Column Stack: Google Play Store Bold Title, Subtitle & Badges -->',
+      '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0; padding-top: 1px;">',
+      '    <div style="font-size: 22px; font-weight: 900; color: #ffffff; letter-spacing: -0.3px; line-height: 1.25; margin-bottom: 4px; word-break: break-word;">' + title + '</div>',
+      '    <div style="font-size: 14px; font-weight: 600; color: #34d399; line-height: 1.35; margin-bottom: 6px; word-break: break-word;">' + subtitle + '</div>',
       '    <!-- Badges Row -->',
       '    <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">',
       '      <span style="font-size: 11.5px; font-weight: 800; color: #facc15; background: rgba(250, 204, 21, 0.12); border: 1px solid rgba(250, 204, 21, 0.3); padding: 2px 7px; border-radius: 5px;">' + rating + '</span>',
