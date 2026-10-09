@@ -1,9 +1,8 @@
 /**
- * RISE MITRA — REVENUE & VENDOR MONETIZATION ENGINE (STEP 2)
+ * RISE MITRA — REVENUE & VENDOR MONETIZATION ENGINE (STEP 2 + VISUAL BI CHART)
  * MODULE        : public/js/revenue-monetization-engine.js
  * SPECIFICATION : Folder A (SSOT: 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW | File-07 of 18)
- * GOVERNANCE    : GATE-23.5 | DEC-RM-SOV-ARCH-20260930-MODULAR-ZEL-001
- * INVARIANTS    : 28.00% NCR Hard-Cap | Zero Forced Purchases (₹0) | Owner Price Corridor
+ * GOVERNANCE    : GATE-23.5 | 28.00% SOLVENCY HARD-CAP | ZERO FORCED PURCHASE (₹0)
  */
 
 (function (root, factory) {
@@ -18,19 +17,16 @@
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  // Storage Keys & SSOT Identifiers
   var STORAGE_REVENUE_METRICS = 'rm_owner_revenue_metrics_v1';
   var STORAGE_SEARCH_ANALYTICS = 'rm_owner_search_analytics_v1';
-  var MODULE_VERSION = '1.0.0';
+  var MODULE_VERSION = '1.1.0';
 
-  // Canonical Owner Corridor Boundaries (File-07 Section Q.2 & Q.3)
   var CORRIDOR_LIMITS = {
-    P_FLOOR_MIN: 1.50,     // Cost Security Guard (₹1.50 minimum cost floor)
-    P_CEILING_MAX: 10.00,  // Consumer Protection Guard (₹10.00 maximum ceiling)
-    NCR_SOLVENCY_CAP: 28.00 // Maximum 28.00% NCR PartnerEnvelope Cap
+    P_FLOOR_MIN: 1.50,
+    P_CEILING_MAX: 10.00,
+    NCR_SOLVENCY_CAP: 28.00
   };
 
-  // Default Baseline Financial State
   var DEFAULT_REVENUE_STATE = {
     totalCommercialGMV: 18450.00,
     escrowLockedPool: 5166.00,
@@ -38,13 +34,44 @@
     monetizedLeadsCount: 14,
     unmetBroadcastActive: true,
     sponsoredListingAllowed: false,
+    selectedTimeframe: '1M',
     version: MODULE_VERSION,
     lastUpdated: new Date().toISOString()
   };
 
-  /**
-   * 1. Get current revenue state from LocalStorage
-   */
+  // Mock historical timeseries datasets for stock-market style visualization
+  var TIMEFRAME_DATASETS = {
+    '1D': [
+      { label: '08:00', gmv: 1200, rev: 336 },
+      { label: '11:00', gmv: 3400, rev: 952 },
+      { label: '14:00', gmv: 6800, rev: 1904 },
+      { label: '17:00', gmv: 11500, rev: 3220 },
+      { label: '20:00', gmv: 15200, rev: 4256 },
+      { label: '23:00', gmv: 18450, rev: 5166 }
+    ],
+    '1W': [
+      { label: 'Som', gmv: 8500, rev: 2380 },
+      { label: 'Mangal', gmv: 10200, rev: 2856 },
+      { label: 'Budh', gmv: 11800, rev: 3304 },
+      { label: 'Guru', gmv: 13900, rev: 3892 },
+      { label: 'Shukra', gmv: 15600, rev: 4368 },
+      { label: 'Shani', gmv: 17100, rev: 4788 },
+      { label: 'Ravi', gmv: 18450, rev: 5166 }
+    ],
+    '1M': [
+      { label: 'Wk 1', gmv: 4200, rev: 1176 },
+      { label: 'Wk 2', gmv: 8900, rev: 2492 },
+      { label: 'Wk 3', gmv: 13400, rev: 3752 },
+      { label: 'Wk 4', gmv: 18450, rev: 5166 }
+    ],
+    '1Y': [
+      { label: 'Q1', gmv: 38000, rev: 10640 },
+      { label: 'Q2', gmv: 62000, rev: 17360 },
+      { label: 'Q3', gmv: 94000, rev: 26320 },
+      { label: 'Q4', gmv: 145000, rev: 40600 }
+    ]
+  };
+
   function getRevenueState() {
     try {
       var saved = localStorage.getItem(STORAGE_REVENUE_METRICS);
@@ -52,29 +79,20 @@
       var parsed = JSON.parse(saved);
       return Object.assign({}, DEFAULT_REVENUE_STATE, parsed);
     } catch (e) {
-      console.warn('[RM-RevenueEngine] State read error, using fallback:', e);
       return JSON.parse(JSON.stringify(DEFAULT_REVENUE_STATE));
     }
   }
 
-  /**
-   * 2. Save current revenue state to LocalStorage
-   */
   function saveRevenueState(state) {
     try {
       state.lastUpdated = new Date().toISOString();
       localStorage.setItem(STORAGE_REVENUE_METRICS, JSON.stringify(state));
       return true;
     } catch (e) {
-      console.error('[RM-RevenueEngine] Storage write failed:', e);
       return false;
     }
   }
 
-  /**
-   * 3. Net Commissionable Revenue (NCR) Calculator (File-07 Section H & Q.4)
-   * Formula: NCR = MAX(0, ClearedConsumerFee - GatewayMDR - OperationalCost - Taxes)
-   */
   function calculateNCR(clearedFee, gatewayMdr, opexCost, taxes) {
     var fee = parseFloat(clearedFee) || 0;
     var mdr = parseFloat(gatewayMdr) || 0;
@@ -89,9 +107,6 @@
     };
   }
 
-  /**
-   * 4. Broadcast Demand to Unregistered Vendors (Zero-Cost Lead Conversion)
-   */
   function triggerUnmetDemandBroadcast(keyword) {
     if (!keyword || typeof keyword !== 'string') return;
     var sanitizedKeyword = keyword.trim();
@@ -99,7 +114,6 @@
 
     var state = getRevenueState();
     state.monetizedLeadsCount = (state.monetizedLeadsCount || 0) + 1;
-    // Simulated increment of commercial GMV per actionable broadcast conversion
     state.totalCommercialGMV += 450.00;
     saveRevenueState(state);
 
@@ -109,9 +123,6 @@
     hydrateRevenueCockpit();
   }
 
-  /**
-   * 5. Toggle Sponsored / Fair-Share Mode (Organic First Guard)
-   */
   function setSponsoredMode(enabled) {
     var state = getRevenueState();
     state.sponsoredListingAllowed = Boolean(enabled);
@@ -119,39 +130,134 @@
     hydrateRevenueCockpit();
   }
 
-  /**
-   * 6. Hydrate Revenue & Commercial Cockpit on Surface-B DOM
-   */
+  function setChartTimeframe(tf) {
+    if (!TIMEFRAME_DATASETS[tf]) return;
+    var state = getRevenueState();
+    state.selectedTimeframe = tf;
+    saveRevenueState(state);
+    renderVisualChart(tf);
+    updateTimeframeButtons(tf);
+  }
+
+  function updateTimeframeButtons(activeTf) {
+    ['1D', '1W', '1M', '1Y'].forEach(function(tf) {
+      var btn = document.getElementById('rm-chart-btn-' + tf);
+      if (btn) {
+        if (tf === activeTf) {
+          btn.style.background = '#38bdf8';
+          btn.style.color = '#030712';
+          btn.style.fontWeight = '800';
+        } else {
+          btn.style.background = 'rgba(15, 23, 42, 0.8)';
+          btn.style.color = '#94a3b8';
+          btn.style.fontWeight = '600';
+        }
+      }
+    });
+  }
+
+  // Pure SVG Stock-Market Style Visual Growth Chart Generator (Zero Bloat)
+  function renderVisualChart(timeframe) {
+    var container = document.getElementById('rm-rev-chart-svg-container');
+    if (!container) return;
+
+    var tf = timeframe || getRevenueState().selectedTimeframe || '1M';
+    var series = TIMEFRAME_DATASETS[tf] || TIMEFRAME_DATASETS['1M'];
+    var width = 320;
+    var height = 120;
+    var padLeft = 32;
+    var padRight = 16;
+    var padTop = 14;
+    var padBottom = 22;
+
+    var maxGmv = Math.max.apply(Math, series.map(function(d) { return d.gmv; })) * 1.15;
+    var chartW = width - padLeft - padRight;
+    var chartH = height - padTop - padBottom;
+
+    var gmvPoints = [];
+    var revPoints = [];
+
+    series.forEach(function(d, idx) {
+      var x = padLeft + (idx / (series.length - 1)) * chartW;
+      var yGmv = padTop + chartH - (d.gmv / maxGmv) * chartH;
+      var yRev = padTop + chartH - (d.rev / maxGmv) * chartH;
+      gmvPoints.push({ x: x, y: yGmv, label: d.label, val: d.gmv });
+      revPoints.push({ x: x, y: yRev, val: d.rev });
+    });
+
+    var gmvPathD = gmvPoints.map(function(p, i) { return (i === 0 ? 'M' : 'L') + p.x.toFixed(1) + ',' + p.y.toFixed(1); }).join(' ');
+    var gmvAreaD = gmvPathD + ' L' + gmvPoints[gmvPoints.length - 1].x.toFixed(1) + ',' + (padTop + chartH) + ' L' + gmvPoints[0].x.toFixed(1) + ',' + (padTop + chartH) + ' Z';
+
+    var revPathD = revPoints.map(function(p, i) { return (i === 0 ? 'M' : 'L') + p.x.toFixed(1) + ',' + p.y.toFixed(1); }).join(' ');
+
+    var xLabelsSvg = gmvPoints.map(function(p) {
+      return '<text x="' + p.x.toFixed(1) + '" y="' + (height - 4) + '" fill="#94a3b8" font-size="9" text-anchor="middle" font-family="monospace">' + p.label + '</text>';
+    }).join('');
+
+    var dotsSvg = gmvPoints.map(function(p, i) {
+      return '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="3" fill="#10b981" stroke="#0f172a" stroke-width="1.5" />' +
+             '<circle cx="' + revPoints[i].x.toFixed(1) + '" cy="' + revPoints[i].y.toFixed(1) + '" r="2.5" fill="#38bdf8" stroke="#0f172a" stroke-width="1" />';
+    }).join('');
+
+    var corridorY = (padTop + chartH * 0.72).toFixed(1);
+
+    var svg = '<svg viewBox="0 0 ' + width + ' ' + height + '" style="width: 100%; height: auto; display: block; overflow: visible;">' +
+              '  <defs>' +
+              '    <linearGradient id="rmGmvGrad" x1="0" y1="0" x2="0" y2="1">' +
+              '      <stop offset="0%" stop-color="#10b981" stop-opacity="0.35"/>' +
+              '      <stop offset="100%" stop-color="#10b981" stop-opacity="0.0"/>' +
+              '    </linearGradient>' +
+              '  </defs>' +
+              '  <!-- Grid Lines -->' +
+              '  <line x1="' + padLeft + '" y1="' + padTop + '" x2="' + (width - padRight) + '" y2="' + padTop + '" stroke="rgba(255,255,255,0.06)" stroke-dasharray="2,3"/>' +
+              '  <line x1="' + padLeft + '" y1="' + (padTop + chartH / 2) + '" x2="' + (width - padRight) + '" y2="' + (padTop + chartH / 2) + '" stroke="rgba(255,255,255,0.06)" stroke-dasharray="2,3"/>' +
+              '  <line x1="' + padLeft + '" y1="' + (padTop + chartH) + '" x2="' + (width - padRight) + '" y2="' + (padTop + chartH) + '" stroke="rgba(255,255,255,0.12)"/>' +
+              '  <!-- 28% Solvency Reference Line -->' +
+              '  <line x1="' + padLeft + '" y1="' + corridorY + '" x2="' + (width - padRight) + '" y2="' + corridorY + '" stroke="#f59e0b" stroke-width="1" stroke-dasharray="3,3" opacity="0.6"/>' +
+              '  <text x="' + (width - padRight) + '" y="' + (corridorY - 3) + '" fill="#f59e0b" font-size="7.5" font-weight="bold" text-anchor="end">28% NCR Corridor</text>' +
+              '  <!-- Area Under GMV Curve -->' +
+              '  <path d="' + gmvAreaD + '" fill="url(#rmGmvGrad)" />' +
+              '  <!-- GMV Trendline (Bullish Emerald) -->' +
+              '  <path d="' + gmvPathD + '" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />' +
+              '  <!-- Net Rev Trendline (Cyan) -->' +
+              '  <path d="' + revPathD + '" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />' +
+              '  <!-- Data Dots -->' +
+              dotsSvg +
+              '  <!-- Axis Labels -->' +
+              xLabelsSvg +
+              '</svg>';
+
+    container.innerHTML = svg;
+  }
+
   function hydrateRevenueCockpit() {
     if (typeof document === 'undefined') return;
 
     var state = getRevenueState();
 
-    // GMV Metric
     var gmvEl = document.getElementById('rm-rev-gmv-val');
     if (gmvEl) {
       gmvEl.textContent = '₹' + Number(state.totalCommercialGMV).toLocaleString('en-IN', { minimumFractionDigits: 2 });
     }
 
-    // Escrow Pool Metric
     var escrowEl = document.getElementById('rm-rev-escrow-val');
     if (escrowEl) {
       escrowEl.textContent = '₹' + Number(state.escrowLockedPool).toLocaleString('en-IN', { minimumFractionDigits: 2 });
     }
 
-    // Leads Badge
     var leadsEl = document.getElementById('rm-rev-leads-badge');
     if (leadsEl) {
       leadsEl.textContent = state.monetizedLeadsCount + ' मुद्रीकृत अवसर';
     }
 
-    // Sponsored Toggle Checkbox
     var sponsorToggle = document.getElementById('cfg_sponsoredRanking');
     if (sponsorToggle) {
       sponsorToggle.checked = Boolean(state.sponsoredListingAllowed);
     }
 
-    // Populate Dynamic Actionable Unmet Demands from Search BI Storage
+    renderVisualChart(state.selectedTimeframe || '1M');
+    updateTimeframeButtons(state.selectedTimeframe || '1M');
+
     var unmetActionContainer = document.getElementById('rm-rev-unmet-actions-container');
     if (unmetActionContainer) {
       try {
@@ -174,13 +280,10 @@
                    '</div>';
           }).join('');
         }
-      } catch (e) {
-        console.warn('[RM-RevenueEngine] BI demands hydration warning:', e);
-      }
+      } catch (e) {}
     }
   }
 
-  // Automatic Lifecycle Bootstrap
   if (typeof document !== 'undefined') {
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', hydrateRevenueCockpit);
@@ -197,6 +300,8 @@
     calculateNCR: calculateNCR,
     triggerUnmetDemandBroadcast: triggerUnmetDemandBroadcast,
     setSponsoredMode: setSponsoredMode,
+    setChartTimeframe: setChartTimeframe,
+    renderVisualChart: renderVisualChart,
     hydrateRevenueCockpit: hydrateRevenueCockpit
   };
 });
