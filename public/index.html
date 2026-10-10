@@ -140,6 +140,31 @@
       outline: none !important;
       border-color: #06b6d4 !important;
     }
+
+    /* 8. UNIVERSAL ANTI-OVERLAP & RADAR SUPPRESSION SHIELD */
+    #sivme-hud-bar,
+    .sivme-radar-ring,
+    .sivme-ripple,
+    .sivme-radar-layer,
+    [class*="radar"],
+    [class*="ripple"] {
+      display: none !important;
+    }
+    #categoryModal [data-cat-id],
+    #categoryModal .category-card,
+    .category-card-wrapper,
+    .catalog-item-container,
+    .c16-subcard-clean {
+      position: relative !important;
+      margin-top: 10px !important;
+      margin-bottom: 10px !important;
+      border-radius: 16px !important;
+      clear: both !important;
+      float: none !important;
+      clip-path: none !important;
+      transform: none !important;
+      z-index: 1 !important;
+    }
   </style>
 </head>
 
@@ -411,10 +436,8 @@
   <!-- Decoupled Shell Controller Engine & Viewport Dispatcher -->
   <script src="/js/shell-controller.js?v=20261007_01"></script>
 
-  <!-- Sovereign In-Situ Isolated Adapters & Scanners (DEACTIVATED FOR CLEAN PUBLIC SOLID UI) -->
+  <!-- Sovereign In-Situ Isolated Adapters & Scanners (Clean Public Mode) -->
   <script src="/js/sivme-adapters/cat16-adapter.js"></script>
-  <!-- <script src="/js/sovereign-in-situ-scanner-ext.js"></script> -->
-  <!-- <script src="/js/sovereign-in-situ-scanner.js"></script> -->
 
   <!-- Universal Catalog & 0.05s Search Intelligence Engine -->
   <script src="/js/universal-catalog/catalog-metadata-registry.js"></script>
