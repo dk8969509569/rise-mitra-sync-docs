@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="hi" class="dark" data-theme="dark">
 <!-- ============================================================================== -->
-<!-- RISE MITRA — SLIM MODULAR HTML SHELL                                           -->
+<!-- RISE MITRA — SLIM MODULAR HTML SHELL (DEFAULT PUBLIC LOCK & PHASE 5 FAVORITES) -->
 <!-- GOVERNANCE : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0            -->
 <!-- SPEC SSOT  : FOLDER A (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)                       -->
-<!-- STATUS     : FULLY DECOUPLED (CSS -> app.css | JS -> shell-controller.js)     -->
+<!-- STATUS     : FULLY DECOUPLED (CSS -> app.css | JS -> modular engines)          -->
 <!-- ============================================================================== -->
 <head>
   <meta charset="UTF-8">
@@ -35,6 +35,154 @@
         }
       }
     }
+  </script>
+
+  <!-- ========================================================================== -->
+  <!-- RISE MITRA — MASTER GLOBAL CSS TOKENS, SOLID BORDERS & CONTRAST SHIELD    -->
+  <!-- ========================================================================== -->
+  <style>
+    :root {
+      --rm-grid-unit: 8px;
+      --rm-glass-bg: rgba(11, 15, 25, 0.85);
+      --rm-glass-border: rgba(51, 65, 85, 0.85);
+      --rm-badge-live: #10b981;
+      --rm-badge-hidden: #ef4444;
+    }
+
+    /* 1. Universal Action Buttons: Prevent Text Split ("खोलें ›" stays 1-line) */
+    #categoryModal button,
+    .cat-action-btn,
+    [data-action="launch"],
+    [data-action="open-sub"] {
+      white-space: nowrap !important;
+      word-break: keep-all !important;
+      flex-shrink: 0 !important;
+    }
+
+    /* 2. Sub-Category Tree-Line Removal Rules (Zero-Artifact) */
+    #sub-c16::before,
+    #sub-c16::after,
+    .subcategory-tree::before,
+    .subcategory-tree::after,
+    [id^="sub-c"]::before,
+    [id^="sub-c"]::after {
+      display: none !important;
+      content: none !important;
+      border-left: none !important;
+    }
+
+    [id^="sub-c"],
+    #sub-c16 {
+      border-left: none !important;
+      box-shadow: none !important;
+    }
+
+    /* 3. SIVME Badge Containment Boundary */
+    #categoryModal [data-cat-id],
+    .category-card-wrapper,
+    .catalog-item-container {
+      position: relative !important;
+    }
+
+    /* 4. Category 16 Sub-Card Ergonomics (108px Lock) */
+    .c16-subcard-clean {
+      min-height: 108px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+      position: relative !important;
+    }
+
+    /* 5. Clean 2-Tier Bilingual Typography */
+    .cat-bilingual-title {
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      line-height: 1.3 !important;
+    }
+    .cat-bilingual-en {
+      font-size: 14px !important;
+      font-weight: 700 !important;
+      color: #f8fafc !important;
+      letter-spacing: -0.01em !important;
+    }
+    .cat-bilingual-hi {
+      font-size: 11.5px !important;
+      font-weight: 500 !important;
+      color: #94a3b8 !important;
+      margin-top: 1px !important;
+    }
+
+    /* 6. Universal Solid 2.5D Elevation & Button Contrast Standards */
+    .rm-solid-panel {
+      border: 1px solid rgba(51, 65, 85, 0.85) !important;
+      border-radius: 16px !important;
+      box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.45) !important;
+    }
+
+    /* 7. UNIVERSAL ANTI-DASHED BAN: 100% Elimination of Dashed Outlines */
+    *, *::before, *::after {
+      outline: none !important;
+    }
+    [style*="dashed"],
+    [class*="dashed"],
+    .sivme-tracked-live,
+    .sivme-tracked-hidden,
+    [data-sivme-status],
+    [data-sivme-id] {
+      border-style: solid !important;
+      outline: none !important;
+      box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.45) !important;
+    }
+    input:focus,
+    input:focus-visible,
+    button:focus-visible {
+      outline: none !important;
+      border-color: #06b6d4 !important;
+    }
+
+    /* 8. UNIVERSAL RADAR & OVERLAP SUPPRESSION (Clean Public Layout) */
+    [class*="radar"],
+    [class*="ripple"],
+    [id*="sivme-hud"],
+    .sivme-radar-ring,
+    .sivme-ripple,
+    .sivme-radar-layer,
+    div[style*="border-radius: 50%"][style*="border:"] {
+      display: none !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+    #categoryModal [data-cat-id],
+    #categoryModal .category-card,
+    .category-card-wrapper,
+    .catalog-item-container,
+    .c16-subcard-clean {
+      position: relative !important;
+      margin-top: 10px !important;
+      margin-bottom: 10px !important;
+      border-radius: 16px !important;
+      clear: both !important;
+      float: none !important;
+      transform: none !important;
+      z-index: 1 !important;
+    }
+  </style>
+
+  <!-- Auto-Purge Stale SIVME Flags on Normal Public Launch -->
+  <script>
+    (function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const isOwnerLaunch = urlParams.get('sivme') === 'owner';
+      if (!isOwnerLaunch) {
+        try {
+          localStorage.removeItem('sivme_active');
+          localStorage.removeItem('sivme_mode');
+          localStorage.removeItem('rm_sivme_state');
+          sessionStorage.removeItem('sivme_active');
+        } catch(e) {}
+      }
+    })();
   </script>
 </head>
 
@@ -86,12 +234,13 @@
   </header>
 
   <!-- ============================================================================ -->
-  <!-- MAIN CONTENT: DIRECTORY BUTTON, WALLET & 12 CORE CASHFLOW VERTICALS          -->
+  <!-- MAIN CONTENT: DIRECTORY BUTTON, WALLET, FAVORITES & 12 CORE VERTICALS        -->
   <!-- ============================================================================ -->
   <main class="max-w-md mx-auto px-4 py-4 space-y-4">
-    <button type="button" id="cat-menu-btn" onclick="toggleMenuDrawer(true)" class="w-full tactile-25d bg-slate-900 p-3.5 rounded-2xl flex items-center justify-between cursor-pointer group shadow-lg min-h-[56px]">
+    <!-- Block 1: RM World Directory (Solid 2.5D Slate Border + High-Contrast Button) -->
+    <button type="button" id="cat-menu-btn" onclick="toggleMenuDrawer(true)" class="w-full tactile-25d bg-gradient-to-r from-slate-900 via-[#0d1527] to-slate-900 border border-slate-700/80 hover:border-cyan-500/60 p-3.5 rounded-2xl flex items-center justify-between cursor-pointer group shadow-xl transition-all min-h-[56px]">
       <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-slate-950 border border-slate-700/80 flex items-center justify-center text-lg text-slate-200 shadow-inner group-hover:scale-105 transition-transform">
+        <div class="w-10 h-10 rounded-xl bg-slate-950 border border-slate-700/80 flex items-center justify-center text-lg text-slate-200 shadow-inner group-hover:scale-105 group-hover:border-cyan-400/80 transition-all">
           ☰
         </div>
         <div class="text-left">
@@ -103,21 +252,22 @@
           </div>
         </div>
       </div>
-      <span class="bg-slate-800 text-slate-200 border border-slate-700 px-3 py-1 rounded-full text-xs font-bold">
+      <span class="bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/40 px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-md tracking-wide transition-colors">
         खोलें ›
       </span>
     </button>
 
+    <!-- Block 2: Live Search Input (Solid Slate-700 Border + High Focus Contrast) -->
     <div class="relative">
-      <input type="text" id="liveSearchInput" oninput="filterQuickTiles()" placeholder="श्रेणी, दुकान या सेवा खोजें..." class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition-colors min-h-[48px]">
-      <span class="absolute right-3 top-3.5 text-slate-500 text-sm">🔍</span>
+      <input type="text" id="liveSearchInput" oninput="filterQuickTiles()" placeholder="श्रेणी, दुकान या सेवा खोजें..." class="w-full bg-[#0b0f19] border border-slate-700/80 rounded-xl px-4 py-2.5 text-xs text-slate-200 placeholder-slate-400 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40 transition-all min-h-[48px] shadow-md">
+      <span class="absolute right-3.5 top-3.5 text-slate-400 text-sm">🔍</span>
     </div>
 
-    <!-- Hero Wallet Card: Dark Fintech Theme Contrast (White Clash Resolved) -->
-    <section class="wallet-card bg-gradient-to-b from-[#111a30] to-[#0d1424] border border-slate-800/80 p-4 rounded-2xl space-y-3 shadow-xl">
+    <!-- Block 3: Hero Wallet Card (Solid 2.5D Border + Ultra-High Button Contrast) -->
+    <section class="wallet-card bg-gradient-to-b from-[#111a30] via-[#0d1424] to-[#090d18] border border-slate-700/80 p-4 rounded-2xl space-y-3.5 shadow-2xl">
       <div class="flex justify-between items-center text-xs">
-        <span class="text-slate-300 font-medium">उपलब्ध शेष राशि (RM CASH)</span>
-        <span class="bg-emerald-950/90 border border-emerald-700/60 text-emerald-300 px-2 py-0.5 rounded text-[10px] font-bold">
+        <span class="text-slate-300 font-semibold tracking-wide">उपलब्ध शेष राशि (RM CASH)</span>
+        <span class="bg-emerald-950/90 border border-emerald-600/60 text-emerald-300 px-2.5 py-0.5 rounded-md text-[10px] font-bold shadow-sm">
           सुरक्षित बहीखाता
         </span>
       </div>
@@ -132,19 +282,32 @@
         <span>लेन-देन स्थिति: <span class="text-emerald-400 font-bold">सत्यापित</span></span>
         <span class="text-emerald-300 font-mono text-[11px] font-bold">ऑफलाइन-फर्स्ट सिंक</span>
       </div>
-      <div class="grid grid-cols-2 gap-2 pt-1">
-        <button type="button" onclick="alert('नया लेन-देन खुला')" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1 shadow-md tactile-25d cursor-pointer min-h-[48px]">
-          <span>+</span>
+      <!-- Action Buttons with High-Contrast Elevation -->
+      <div class="grid grid-cols-2 gap-2.5 pt-1">
+        <button type="button" onclick="alert('नया लेन-देन खुला')" class="w-full bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-black py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-lg shadow-emerald-950/50 cursor-pointer min-h-[48px] transition-all">
+          <span class="text-base font-black leading-none">+</span>
           <span>नया लेन-देन</span>
         </button>
-        <button type="button" onclick="alert('खाता विवरणी लोड हो रही है...')" class="w-full bg-slate-900/90 border border-slate-700/80 hover:bg-slate-800 text-slate-200 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1 shadow-md tactile-25d cursor-pointer min-h-[48px]">
+        <button type="button" onclick="alert('खाता विवरणी लोड हो रही है...')" class="w-full bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-600/80 text-slate-100 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-md cursor-pointer min-h-[48px] transition-all">
           <span>📜</span>
           <span>खाता विवरणी</span>
         </button>
       </div>
     </section>
 
-    <!-- 12 Core Cashflow Verticals Grid Target -->
+    <!-- Block 4: User Pinned Favorites (Phase 5 Play Store Styled Favorites Grid) -->
+    <section id="userPinnedFavoritesSection" class="space-y-2 hidden">
+      <div class="flex justify-between items-center px-1">
+        <h2 class="text-xs font-black uppercase tracking-wider text-amber-400 flex items-center space-x-1.5">
+          <span>⭐</span>
+          <span>पसंदीदा (My Favorites)</span>
+        </h2>
+        <span id="pinnedCountBadge" class="text-[10px] text-amber-400 font-bold bg-amber-950/60 border border-amber-800/40 px-2 py-0.5 rounded-full">0 सेव</span>
+      </div>
+      <div id="userPinnedFavoritesGrid" class="grid grid-cols-2 gap-2.5 w-full"></div>
+    </section>
+
+    <!-- Block 5: 12 Core Cashflow Verticals Grid Target -->
     <section class="space-y-2">
       <div class="flex justify-between items-center px-1">
         <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">12 Core Cashflow Verticals</h2>
@@ -281,14 +444,10 @@
   </nav>
 
   <!-- ============================================================================ -->
-  <!-- MODULAR ENGINES & DECOUPLED CONTROLLERS (100% ZEL)                           -->
+  <!-- MODULAR ENGINES & DECOUPLED CONTROLLERS (100% CLEAN PUBLIC RUNTIME)          -->
   <!-- ============================================================================ -->
   <!-- Pan-India Master Geographic Dataset -->
   <script src="/js/data/india-geo-data.js"></script>
-
-  <!-- Sovereign In-Situ Visual Management Engine (SIVME) Core Registry & Floating HUD -->
-  <script src="/js/sovereign-in-situ-registry.js"></script>
-  <script src="/js/sovereign-in-situ-hud.js"></script>
 
   <!-- Modular Home Grid Engine (12 Play Store Standard Verticals) -->
   <script src="/js/home-grid-engine.js?v=20261007_01"></script>
@@ -303,15 +462,35 @@
   <!-- Decoupled Shell Controller Engine & Viewport Dispatcher -->
   <script src="/js/shell-controller.js?v=20261007_01"></script>
 
-      <!-- Sovereign In-Situ Isolated Adapters & Scanners -->
-    <script src="/js/sivme-adapters/cat16-adapter.js"></script>
-    <script src="/js/sovereign-in-situ-scanner-ext.js"></script>
-    <script src="/js/sovereign-in-situ-scanner.js"></script>
+  <!-- Sovereign In-Situ Isolated Adapters -->
+  <script src="/js/sivme-adapters/cat16-adapter.js"></script>
 
-  <!-- Universal Catalog & 0.05s Search Intelligence Engine -->
-<script src="/js/universal-catalog/catalog-metadata-registry.js"></script>
-<script src="/js/universal-catalog/universal-card-engine.js"></script>
-<script src="/js/universal-catalog/universal-search-engine.js"></script>
+  <!-- Universal Production Catalog & 0.05s Search Intelligence Engine -->
+  <script src="/js/universal-catalog/catalog-metadata-registry.js"></script>
+  <script src="/js/universal-catalog/universal-card-engine.js"></script>
+  <script src="/js/universal-catalog/universal-search-engine.js"></script>
+
+  <!-- MODULAR PHASE 5 FAVORITES ENGINE (DECOUPLED & PLAY STORE STYLED) -->
+  <script src="/js/favorites-engine.js?v=20261010_01"></script>
+
+  <!-- CONDITIONAL SIVME DEBUG ENGINE (ONLY RUNS WHEN LAUNCHED FROM SURFACE-B) -->
+  <script>
+    (function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('sivme') === 'owner') {
+        const scripts = [
+          '/js/sovereign-in-situ-registry.js',
+          '/js/sovereign-in-situ-hud.js'
+        ];
+        scripts.forEach(src => {
+          const s = document.createElement('script');
+          s.src = src;
+          s.async = false;
+          document.body.appendChild(s);
+        });
+      }
+    })();
+  </script>
 
 </body>
 </html>

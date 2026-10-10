@@ -1,9 +1,9 @@
 /**
- * RISE MITRA — HYPERLOCAL GPS & LIVE BOOKING ENGINE (PHASE 3)
+ * RISE MITRA — HYPERLOCAL GPS & LIVE BOOKING ENGINE (PHASE 3 + VARIABLE B2B2C)
  * MODULE        : public/js/hyperlocal-gps-booking-engine.js
- * SPECIFICATION : Folder A (SSOT: 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)
+ * SPECIFICATION : Folder A (SSOT: 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW | File-07 Section Q)
  * ARCHITECTURE  : DECOUPLED SELF-MOUNTING COMPONENT (ZERO-ELEMENT-LOSS)
- * GOVERNANCE    : GATE-23.5 | ZERO FORCED PURCHASE (₹0) | ZERO BATTERY DRAIN
+ * GOVERNANCE    : GATE-23.5 | VARIABLE CORRIDOR (₹2.00 - ₹10.00) | ZERO FORCED PURCHASE (₹0)
  */
 
 (function (root, factory) {
@@ -19,7 +19,7 @@
   'use strict';
 
   var STORAGE_BOOKING_METRICS = 'rm_owner_booking_metrics_v1';
-  var MODULE_VERSION = '1.1.0';
+  var MODULE_VERSION = '1.3.0';
 
   var DEFAULT_BOOKING_STATE = {
     activeBookingsCount: 8,
@@ -61,14 +61,22 @@
     return Math.round((R * c) * 10) / 10;
   }
 
-  // 1-Click Instant Dispatch Trigger
-  function triggerInstantDispatch(serviceName, vendorName, distanceKm) {
+  // 1-Click Instant Dispatch Trigger with Sector-Based Dynamic B2B2C Fee
+  function triggerInstantDispatch(serviceName, vendorName, distanceKm, feeAmount, gmvAmount) {
+    var fee = parseFloat(feeAmount) || 5.00;
+    var gmv = parseFloat(gmvAmount) || 450.00;
+
     var state = getBookingState();
     state.activeBookingsCount += 1;
     saveBookingState(state);
 
+    // Dynamic Intake into B2B2C Revenue Ledger
+    if (typeof window !== 'undefined' && window.RM_RevenueEngine && typeof window.RM_RevenueEngine.recordB2B2CTransaction === 'function') {
+      window.RM_RevenueEngine.recordB2B2CTransaction(serviceName, fee, gmv);
+    }
+
     if (typeof window !== 'undefined' && typeof window.alert === 'function') {
-      window.alert("🚀 लाइव डिस्पैच सक्रिय: " + serviceName + " (" + vendorName + " - " + distanceKm + " km) को ग्राहक अनुरोध भेजा गया। (SLA: < 15 Min)");
+      window.alert("🚀 लाइव डिस्पैच: " + serviceName + " (" + vendorName + " - " + distanceKm + " km)!\n💰 B2B2C सुविधा शुल्क (+₹" + fee.toFixed(2) + ") दर्ज हुआ। (SLA: < 15 Min)");
     }
     hydrateBookingCockpit();
   }
@@ -86,7 +94,7 @@
               <span class="text-sm">📡</span>
               <div>
                 <div class="text-xs font-black text-emerald-400 uppercase tracking-wide">Hyperlocal GPS & Live Booking Radar</div>
-                <div class="text-[9px] text-slate-400">वास्तविक समय दूरी गणना (&lt;5 km) एवं 1-क्लिक डिस्पैच टेलीमेट्री</div>
+                <div class="text-[9px] text-slate-400">वास्तविक समय दूरी गणना (&lt;5 km) एवं 1-क्लिक B2B2C डिस्पैच</div>
               </div>
             </div>
             <span id="rm-gps-active-count" class="text-[9px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-600 px-2 py-0.5 rounded-full">
@@ -111,8 +119,8 @@
 
           <div class="space-y-1.5 pt-1">
             <div class="flex justify-between text-[10px] font-bold text-emerald-400 px-1">
-              <span>⚡ लाइव निकटतम वेंडर्स (Instant Dispatch Test)</span>
-              <span>दूरी / SLA</span>
+              <span>⚡ लाइव निकटतम वेंडर्स (Variable B2B2C Fee)</span>
+              <span>दूरी / शुल्क</span>
             </div>
             <div class="space-y-1 text-xs">
               <div class="flex items-center justify-between p-2 bg-slate-950/70 rounded-xl border border-slate-800">
@@ -120,11 +128,11 @@
                   <span class="text-sm">🔨</span>
                   <div>
                     <div class="font-bold text-slate-200 text-xs">रमेश कुमार (मिस्त्री)</div>
-                    <div class="text-[9px] text-slate-400">दूरी: 1.2 km • रेटिंग: 4.9 ★</div>
+                    <div class="text-[9px] text-slate-400">दूरी: 1.2 km • सुविधा शुल्क: ₹7.00</div>
                   </div>
                 </div>
-                <button type="button" onclick="window.RM_HyperlocalEngine.triggerInstantDispatch('मिस्त्री सेवा', 'रमेश कुमार', 1.2)" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-slate-950 font-black text-[10px] py-1.5 px-2.5 rounded-lg active:scale-95 cursor-pointer shadow-md">
-                  डिस्पैच करें
+                <button type="button" onclick="window.RM_HyperlocalEngine.triggerInstantDispatch('मिस्त्री सेवा', 'रमेश कुमार', 1.2, 7.00, 450.00)" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-slate-950 font-black text-[10px] py-1.5 px-2.5 rounded-lg active:scale-95 cursor-pointer shadow-md">
+                  डिस्पैच (₹7)
                 </button>
               </div>
 
@@ -133,11 +141,11 @@
                   <span class="text-sm">🛒</span>
                   <div>
                     <div class="font-bold text-slate-200 text-xs">वर्मा प्रोविजन स्टोर (किराना)</div>
-                    <div class="text-[9px] text-slate-400">दूरी: 0.8 km • रेटिंग: 4.8 ★</div>
+                    <div class="text-[9px] text-slate-400">दूरी: 0.8 km • सुविधा शुल्क: ₹3.00</div>
                   </div>
                 </div>
-                <button type="button" onclick="window.RM_HyperlocalEngine.triggerInstantDispatch('किराना डिलीवरी', 'वर्मा स्टोर', 0.8)" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-slate-950 font-black text-[10px] py-1.5 px-2.5 rounded-lg active:scale-95 cursor-pointer shadow-md">
-                  डिस्पैच करें
+                <button type="button" onclick="window.RM_HyperlocalEngine.triggerInstantDispatch('किराना डिलीवरी', 'वर्मा स्टोर', 0.8, 3.00, 250.00)" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-slate-950 font-black text-[10px] py-1.5 px-2.5 rounded-lg active:scale-95 cursor-pointer shadow-md">
+                  डिस्पैच (₹3)
                 </button>
               </div>
             </div>

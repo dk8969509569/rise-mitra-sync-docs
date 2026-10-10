@@ -3,6 +3,7 @@
  * SPECIFICATION : FOLDER A (SSOT: 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)
  * REPO TARGET   : public/js/shell-controller.js
  * GOVERNANCE    : GATE-24.5 | 100% ZEL MODULAR CONTROLLER DECOUPLING
+ * ENHANCEMENT   : AUTONOMOUS ZERO-CLICK SCROLL RESET & INSTANT CARD HYDRATION
  */
 
 (function (window, document) {
@@ -67,24 +68,43 @@
     if (arrow) arrow.textContent = isHidden ? '▼' : '▶';
   };
 
-  // Catalog Drawer Modal Toggle
+  // Autonomous Zero-Click Catalog Drawer Modal Toggle & Instant Card Hydration
   window.toggleMenuDrawer = function (show) {
     var modal = document.getElementById('categoryModal');
     if (!modal) return;
     if (show) {
       window.triggerCatalogRender();
       modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+
+      // 1. Auto-Reset Scroll to Top (Ensures Opening from Category 01)
+      var scrollContainer = modal.querySelector('.overflow-y-auto') || modal;
+      if (scrollContainer) {
+        scrollContainer.scrollTop = 0;
+      }
+
+      // 2. Auto-Hydrate Premium Card Engine Instantly (Eliminates Manual Refresh)
+      if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
+        window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog();
+        setTimeout(window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog, 60);
+        setTimeout(window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog, 180);
+      }
     } else {
       modal.classList.add('hidden');
+      document.body.style.overflow = '';
     }
   };
 
-  // Dynamic Catalog Trigger
+  // Dynamic Catalog Trigger with Card Engine Sweep Pipeline
   window.triggerCatalogRender = function () {
     if (window.RM_CatalogRenderer && typeof window.RM_CatalogRenderer.render === 'function') {
       window.RM_CatalogRenderer.render();
     } else if (typeof window.renderCatalogItems === 'function') {
       window.renderCatalogItems();
+    }
+
+    if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
+      window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog();
     }
   };
 
