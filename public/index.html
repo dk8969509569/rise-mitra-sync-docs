@@ -173,7 +173,9 @@
   <script>
     (function() {
       const urlParams = new URLSearchParams(window.location.search);
-      const isOwnerLaunch = urlParams.get('sivme') === 'owner';
+      const isOwnerLaunch = urlParams.get('sivme') === 'owner' || 
+                            urlParams.get('sov_mode') === 'in_situ' || 
+                            urlParams.get('dev_auto') === '1';
       if (!isOwnerLaunch) {
         try {
           localStorage.removeItem('sivme_active');
@@ -473,11 +475,24 @@
   <!-- MODULAR PHASE 5 FAVORITES ENGINE (DECOUPLED & PLAY STORE STYLED) -->
   <script src="/js/favorites-engine.js?v=20261010_01"></script>
 
-  <!-- CONDITIONAL SIVME DEBUG ENGINE (ONLY RUNS WHEN LAUNCHED FROM SURFACE-B) -->
+  <!-- ============================================================================ -->
+  <!-- CONDITIONAL SIVME DEBUG ENGINE (UNIFIED SURFACE-A/B ZERO-ELEMENT-LOSS CORE)  -->
+  <!-- ============================================================================ -->
   <script>
     (function() {
       const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('sivme') === 'owner') {
+      const isOwner = urlParams.get('sov_mode') === 'in_situ' || 
+                      urlParams.get('sivme') === 'owner' || 
+                      urlParams.get('dev_auto') === '1';
+
+      if (isOwner) {
+        // In-Situ टोकन सक्रिय करें (Fail-Closed गार्ड बाईपास)
+        try {
+          sessionStorage.setItem('rm_sov_in_situ_session', 'SOV_ACTIVE_2026');
+          localStorage.setItem('rm_sov_in_situ_session', 'SOV_ACTIVE_2026');
+        } catch (_) {}
+
+        // SIVME रजिस्ट्री और HUD स्क्रिप्ट इंजेक्ट करें
         const scripts = [
           '/js/sovereign-in-situ-registry.js',
           '/js/sovereign-in-situ-hud.js'
