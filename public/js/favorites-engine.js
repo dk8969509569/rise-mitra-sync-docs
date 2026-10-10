@@ -1,7 +1,6 @@
 /**
  * RISE MITRA — UNIVERSAL FAVORITES SHORTCUTS ENGINE (PHASE 5 ARCHITECTURE)
- * Standardized 1:1 Sub-Category Mirror (Top-Left Cyan Seq + Right Squircle Icon + Uncut Bilingual)
- * Natural Sequence Auto-Sort: 01-1 -> 01-2 -> 06-1 -> 06-2 -> 33-2 -> 33-3
+ * Bulletproof Offline Persistence + Natural Sequence Sort + Tap-Safe Surface
  * SSOT Authority: Folder A (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)
  */
 (function initUniversalFavoritesEngine() {
@@ -24,9 +23,17 @@
     '03-2': { seq: '03-2', icon: '💅', title: "Women's Parlour", hiTitle: 'महिला ब्यूटी पार्लर व ब्राइडल मेकअप' },
     '03-3': { seq: '03-3', icon: '🌿', title: 'Ayurvedic Spa & Wellness', hiTitle: 'आयुर्वेदिक स्पा व थेरेपी' },
 
+    // 04. Education & Study
+    '04-1': { seq: '04-1', icon: '🔔', title: 'Study Library & Reading Rooms', hiTitle: 'वाचनालय व शांत अध्ययन कक्ष' },
+    '04-2': { seq: '04-2', icon: '📚', title: 'Competitive Books & Notes', hiTitle: 'प्रतियोगी पुस्तकें व स्टडी नोट्स' },
+
     // 06. Comics & Entertainment
     '06-1': { seq: '06-1', icon: '🦸', title: 'Classic Indian Comics', hiTitle: 'अमर चित्र कथा, चाचा चौधरी व सुपरहीरो' },
     '06-2': { seq: '06-2', icon: '📱', title: 'Manga & Webtoons', hiTitle: 'डिजिटल मांगा व रंगीन वेबटून' },
+
+    // 07. Government & Form Services
+    '07-1': { seq: '07-1', icon: '📄', title: 'CSC & Digital Seva Kendra', hiTitle: 'डिजिटल सेवा व सरकारी प्रमाण पत्र' },
+    '07-2': { seq: '07-2', icon: '📝', title: 'Online Forms & Admissions', hiTitle: 'ऑनलाइन आवेदन व प्रवेश फॉर्म' },
 
     // 08. Electronics & Appliances
     '08-1': { seq: '08-1', icon: '📱', title: 'Smartphone & Gadget Care', hiTitle: 'स्मार्टफोन, लैपटॉप व स्क्रीन रिपेयर' },
@@ -47,16 +54,23 @@
 
     // 27. Shopping & Retail
     '27-1': { seq: '27-1', icon: '🛒', title: 'Kirana & Daily Grocery', hiTitle: 'किराना दुकान व दैनिक घरेलू राशन' },
-    '27-2': { seq: '27-2', icon: '👔', title: 'Clothing & Local Fashion', hiTitle: 'कपड़े, रेडीमेड गारमेंट्स व परिधान' }
+    '27-2': { seq: '27-2', icon: '👔', title: 'Clothing & Local Fashion', hiTitle: 'कपड़े, रेडीमेड गारमेंट्स व परिधान' },
+
+    // 33. Revenue & Social Welfare
+    '33-1': { seq: '33-1', icon: '🏛️', title: 'Panchayat & Block Office', hiTitle: 'पंचायत व प्रखंड जनसुविधा' },
+    '33-2': { seq: '33-2', icon: '👵', title: 'Pensions & Women Welfare', hiTitle: 'सामाजिक सुरक्षा व पेंशन योजनाएं' },
+    '33-3': { seq: '33-3', icon: '📜', title: 'Land Revenue & Khatiyan', hiTitle: 'राजस्व सेवाएं व भू-अभिलेख' }
   };
 
-  // 2. STATE REPOSITORY & AUTO-HEALING
+  // 2. BULLETPROOF PERSISTENCE STORAGE REPOSITORY
   function getPinned() {
     try {
-      let raw = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-      let updated = false;
+      const dataStr = localStorage.getItem(STORAGE_KEY);
+      if (!dataStr) return [];
+      let raw = JSON.parse(dataStr);
+      if (!Array.isArray(raw)) return [];
 
-      // Auto-Heal: Corrupted/legacy data ko canonical metadata se sync karein
+      let updated = false;
       raw = raw.map(item => {
         if (!item || !item.seq) return null;
         const c = CANONICAL_SUBCATS[item.seq];
@@ -71,13 +85,18 @@
         localStorage.setItem(STORAGE_KEY, JSON.stringify(raw));
       }
       return raw;
-    } catch(e) { return []; }
+    } catch(e) {
+      console.warn('RM Favorites Storage Read Warning:', e);
+      return [];
+    }
   }
 
   function savePinned(list) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    } catch(e) {}
+    } catch(e) {
+      console.warn('RM Favorites Storage Write Warning:', e);
+    }
     renderFavorites();
     updatePinButtonsUI();
   }
@@ -86,8 +105,10 @@
     let list = getPinned();
     const existingIndex = list.findIndex(item => item.id === id || item.seq === seq);
     if (existingIndex > -1) {
+      // User explicitly unpinned from catalog
       list.splice(existingIndex, 1);
     } else {
+      // User pinned new item
       list.push({
         id: id || `fav-${seq}`,
         seq: seq || '⭐',
@@ -123,7 +144,7 @@
     });
   }
 
-  // 4. UNIVERSAL GRID RENDER ENGINE (Natural Sequence Sort & 100% Tap-Safe Surface)
+  // 4. NATURAL SEQUENCE AUTO-SORT & RENDER ENGINE
   function renderFavorites() {
     const section = document.getElementById('userPinnedFavoritesSection');
     const grid = document.getElementById('userPinnedFavoritesGrid');
@@ -139,7 +160,7 @@
     section.classList.remove('hidden');
     if (badge) badge.textContent = `${list.length} सेव`;
 
-    // Natural Sequence Sorting (01-1 < 01-2 < 06-1 < 06-2 < 33-2 < 33-3)
+    // Natural Sequence Sorting (01-1 < 01-2 < 03-1 < 04-1 < 06-1 < 33-3)
     list.sort((a, b) => {
       const parseSeq = (s) => {
         const parts = (s || '').replace('.', '').split('-').map(n => parseInt(n, 10) || 0);
@@ -194,13 +215,11 @@
     const seqMatch = card.textContent.match(/\b\d{1,2}-\d{1,2}\b/);
     const seq = seqMatch ? seqMatch[0] : '';
 
-    // Fast SSOT Path: Always prefer canonical database
     if (seq && CANONICAL_SUBCATS[seq]) {
       const c = CANONICAL_SUBCATS[seq];
       return { id: `fav-${seq}`, seq: c.seq, icon: c.icon, title: c.title, hiTitle: c.hiTitle };
     }
 
-    // Dynamic Generic Fallback for Remaining Subcategories
     let title = '';
     const textEls = Array.from(card.querySelectorAll('div, h3, h4, h5, p, span'))
       .filter(el => !el.closest('button') && el.children.length === 0);
@@ -281,11 +300,20 @@
     }
   }, true);
 
-  // 8. LIFECYCLE MOUNT
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => { renderFavorites(); updatePinButtonsUI(); });
-  } else {
+  // 8. LIFECYCLE REHYDRATION (SURVIVES APP CLOSE & BACKGROUND RESUME)
+  function rehydrateEngine() {
     renderFavorites();
     updatePinButtonsUI();
   }
-})();
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', rehydrateEngine);
+  } else {
+    rehydrateEngine();
+  }
+
+  // Mobile bfcache / app-resume handlers: Always reload favorites when app is reopened
+  window.addEventListener('pageshow', rehydrateEngine);
+  window.addEventListener('focus', rehydrateEngine);
+  document.addEventListener('visibilitychange', function() {
+    if (!document
