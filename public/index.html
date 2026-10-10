@@ -445,25 +445,27 @@
 
   <!-- Canonical Decoupled Catalog Engine & Data Registry -->
   <script src="/js/categories-data.js?v=20261007_01"></script>
+  <script src="/js/catalog-sivme-engine.js?v=20261007_01"></script>
 
   <!-- Decoupled Shell Controller Engine & Viewport Dispatcher -->
   <script src="/js/shell-controller.js?v=20261007_01"></script>
+
+  <!-- Sovereign In-Situ Isolated Adapters -->
+  <script src="/js/sivme-adapters/cat16-adapter.js"></script>
 
   <!-- Universal Production Catalog & 0.05s Search Intelligence Engine -->
   <script src="/js/universal-catalog/catalog-metadata-registry.js"></script>
   <script src="/js/universal-catalog/universal-card-engine.js"></script>
   <script src="/js/universal-catalog/universal-search-engine.js"></script>
 
-  <!-- CONDITIONAL SIVME ENGINE (ONLY RUNS WHEN LAUNCHED FROM SURFACE-B) -->
+  <!-- CONDITIONAL SIVME DEBUG ENGINE (ONLY RUNS WHEN LAUNCHED FROM SURFACE-B) -->
   <script>
     (function() {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('sivme') === 'owner') {
         const scripts = [
           '/js/sovereign-in-situ-registry.js',
-          '/js/sovereign-in-situ-hud.js',
-          '/js/catalog-sivme-engine.js?v=20261007_01',
-          '/js/sivme-adapters/cat16-adapter.js'
+          '/js/sovereign-in-situ-hud.js'
         ];
         scripts.forEach(src => {
           const s = document.createElement('script');
