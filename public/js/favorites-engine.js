@@ -1,6 +1,7 @@
 /**
  * RISE MITRA — MODULAR FAVORITES SHORTCUTS ENGINE (PHASE 5)
- * Play Store Standard: 2.5D Elevation, Big Icons & Bilingual Titles
+ * Play Store Ergonomics: Large Numbering + 32px Real Icon + Tap-Safe Surface (No Cross Button)
+ * SSOT Authority: Folder A (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)
  */
 (function initFavoritesEngine() {
   const STORAGE_KEY = 'rm_user_pinned_shortcuts_v1';
@@ -35,7 +36,7 @@
         title: title || 'पसंदीदा आइटम',
         hiTitle: hiTitle || 'त्वरित शॉर्टकट',
         seq: seq || '⭐',
-        icon: icon || '⭐',
+        icon: icon || '🏷️',
         pinnedAt: Date.now()
       });
     }
@@ -79,23 +80,33 @@
     section.classList.remove('hidden');
     if (badge) badge.textContent = `${list.length} सेव`;
 
+    // 100% Tap-Safe Play Store Card (No Unpin Cross, Big Numbering, Large Real Icon)
     grid.innerHTML = list.map(item => `
-      <div onclick="toggleMenuDrawer(true)" class="rm-solid-panel bg-gradient-to-b from-[#111a30] via-[#0d1527] to-[#090d18] border border-slate-700/80 p-3 rounded-2xl flex flex-col justify-between relative group shadow-xl active:scale-95 transition-all min-h-[110px] cursor-pointer">
-        <div class="flex items-center justify-between w-full">
-          <span class="text-[10px] font-black text-amber-400 bg-amber-950/80 border border-amber-700/60 px-2 py-0.5 rounded-md font-mono">${item.seq || '⭐'}</span>
-          <button type="button" onclick="event.stopPropagation(); window.toggleServicePin('${item.id}');" title="पसंदीदा से हटाएं" class="w-6 h-6 rounded-full bg-slate-900/90 border border-slate-700/60 text-slate-400 hover:text-red-400 text-xs flex items-center justify-center cursor-pointer active:scale-90">✕</button>
+      <div onclick="toggleMenuDrawer(true)" class="rm-solid-panel bg-gradient-to-b from-[#111a30] via-[#0d1527] to-[#090d18] border border-slate-700/80 hover:border-amber-500/50 p-3.5 rounded-2xl flex flex-col justify-between relative shadow-xl active:scale-95 transition-all min-h-[114px] cursor-pointer group">
+        <!-- Top Row: Prominent Numbering Badge + Large 32px Sub-Category Icon -->
+        <div class="flex items-center space-x-2.5 w-full">
+          <span class="text-xs font-black text-amber-300 bg-amber-950/90 border border-amber-600/80 px-2.5 py-1 rounded-lg font-mono shadow-sm leading-none">
+            ${item.seq || '⭐'}
+          </span>
+          <span class="text-3xl filter drop-shadow-md leading-none group-hover:scale-110 transition-transform">
+            ${item.icon || '🏷️'}
+          </span>
         </div>
-        <div class="flex justify-center my-1">
-          <span class="text-3xl filter drop-shadow-md">${item.icon || '⭐'}</span>
-        </div>
-        <div class="text-center w-full">
-          <div class="text-xs sm:text-sm font-black text-slate-100 truncate tracking-tight leading-tight">${item.title}</div>
-          <div class="text-[10.5px] text-slate-400 font-medium truncate mt-0.5">${item.hiTitle}</div>
+        
+        <!-- Bottom Area: Clean Bilingual Play Store Typography -->
+        <div class="mt-2.5 text-left w-full">
+          <div class="text-xs sm:text-sm font-black text-slate-100 truncate tracking-tight leading-snug group-hover:text-amber-300 transition-colors">
+            ${item.title}
+          </div>
+          <div class="text-[11px] text-slate-400 font-medium truncate mt-0.5">
+            ${item.hiTitle}
+          </div>
         </div>
       </div>
     `).join('');
   }
 
+  // Smart Subcategory Metadata & Real Icon Extraction (Capture Phase)
   document.addEventListener('click', function(e) {
     const btn = e.target.closest('button');
     if (!btn) return;
@@ -107,15 +118,31 @@
       const card = btn.closest('[data-cat-id], .c16-subcard-clean, [id^="sub-c"], div[class*="rounded-2xl"], div[class*="rounded-xl"]') || btn.parentElement;
       if (!card) return;
 
+      // 1. Sequence Match (e.g. 01-1, 01-2, 16-1)
       const seqMatch = card.textContent.match(/\b\d{1,2}(?:-\d{1,2})?\b/);
       const seq = seqMatch ? seqMatch[0] : '⭐';
 
-      const iconEl = card.querySelector('.text-3xl, .text-2xl, img, [class*="icon"]');
-      let icon = '⭐';
-      if (iconEl) {
-        icon = iconEl.tagName === 'IMG' ? '⭐' : (iconEl.textContent.trim() || '⭐');
+      // 2. Real Category Icon Extraction
+      let icon = '';
+      const img = card.querySelector('img');
+      if (img && img.src) {
+        icon = `<img src="${img.src}" class="w-7 h-7 object-contain inline-block">`;
+      } else {
+        const emojiRegex = /\p{Extended_Pictographic}/u;
+        const candidateElements = Array.from(card.querySelectorAll('div, span, p'))
+          .filter(el => !el.closest('button') && el.children.length === 0);
+        
+        for (let el of candidateElements) {
+          const t = el.textContent.trim();
+          if (emojiRegex.test(t) && !['📌', '★', '✓', '▶', '⚡', '⭐'].includes(t)) {
+            const m = t.match(emojiRegex);
+            if (m) { icon = m[0]; break; }
+          }
+        }
       }
+      if (!icon) icon = '🏷️';
 
+      // 3. Bilingual Title Extraction
       let title = '';
       let hiTitle = '';
       const enEl = card.querySelector('.cat-bilingual-en, [class*="bilingual-en"]');
