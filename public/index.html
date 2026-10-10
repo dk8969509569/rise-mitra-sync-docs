@@ -119,6 +119,27 @@
       border-radius: 16px !important;
       box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.45) !important;
     }
+
+    /* 7. UNIVERSAL ANTI-DASHED BAN: 100% Elimination of Dashed Outlines */
+    *, *::before, *::after {
+      outline: none !important;
+    }
+    [style*="dashed"],
+    [class*="dashed"],
+    .sivme-tracked-live,
+    .sivme-tracked-hidden,
+    [data-sivme-status],
+    [data-sivme-id] {
+      border-style: solid !important;
+      outline: none !important;
+      box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.45) !important;
+    }
+    input:focus,
+    input:focus-visible,
+    button:focus-visible {
+      outline: none !important;
+      border-color: #06b6d4 !important;
+    }
   </style>
 </head>
 
@@ -390,10 +411,10 @@
   <!-- Decoupled Shell Controller Engine & Viewport Dispatcher -->
   <script src="/js/shell-controller.js?v=20261007_01"></script>
 
-  <!-- Sovereign In-Situ Isolated Adapters & Scanners -->
+  <!-- Sovereign In-Situ Isolated Adapters & Scanners (DASHED SCANNERS DEACTIVATED FOR CLEAN PUBLIC UI) -->
   <script src="/js/sivme-adapters/cat16-adapter.js"></script>
-  <script src="/js/sovereign-in-situ-scanner-ext.js"></script>
-  <script src="/js/sovereign-in-situ-scanner.js"></script>
+  <!-- <script src="/js/sovereign-in-situ-scanner-ext.js"></script> -->
+  <!-- <script src="/js/sovereign-in-situ-scanner.js"></script> -->
 
   <!-- Universal Catalog & 0.05s Search Intelligence Engine -->
   <script src="/js/universal-catalog/catalog-metadata-registry.js"></script>
