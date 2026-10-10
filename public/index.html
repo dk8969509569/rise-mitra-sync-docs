@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi" class="dark" data-theme="dark">
 <!-- ============================================================================== -->
-<!-- RISE MITRA — SLIM MODULAR HTML SHELL (PHASE 1 VISUAL SHIELD INGESTED)          -->
+<!-- RISE MITRA — SLIM MODULAR HTML SHELL (UNIVERSAL SOLID 2.5D BORDERS & CONTRAST) -->
 <!-- GOVERNANCE : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0            -->
 <!-- SPEC SSOT  : FOLDER A (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)                       -->
 <!-- STATUS     : FULLY DECOUPLED (CSS -> app.css | JS -> shell-controller.js)     -->
@@ -38,13 +38,13 @@
   </script>
 
   <!-- ========================================================================== -->
-  <!-- RISE MITRA — PHASE 1: MASTER GLOBAL CSS TOKENS & SIVME VISUAL SHIELD        -->
+  <!-- RISE MITRA — MASTER GLOBAL CSS TOKENS, SOLID BORDERS & CONTRAST SHIELD    -->
   <!-- ========================================================================== -->
   <style>
     :root {
       --rm-grid-unit: 8px;
       --rm-glass-bg: rgba(11, 15, 25, 0.85);
-      --rm-glass-border: rgba(245, 158, 11, 0.25);
+      --rm-glass-border: rgba(51, 65, 85, 0.85);
       --rm-badge-live: #10b981;
       --rm-badge-hidden: #ef4444;
     }
@@ -112,6 +112,13 @@
       color: #94a3b8 !important;
       margin-top: 1px !important;
     }
+
+    /* 6. Universal Solid 2.5D Elevation & Button Contrast Standards */
+    .rm-solid-panel {
+      border: 1px solid rgba(51, 65, 85, 0.85) !important;
+      border-radius: 16px !important;
+      box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.45) !important;
+    }
   </style>
 </head>
 
@@ -166,9 +173,10 @@
   <!-- MAIN CONTENT: DIRECTORY BUTTON, WALLET & 12 CORE CASHFLOW VERTICALS          -->
   <!-- ============================================================================ -->
   <main class="max-w-md mx-auto px-4 py-4 space-y-4">
-    <button type="button" id="cat-menu-btn" onclick="toggleMenuDrawer(true)" class="w-full tactile-25d bg-slate-900 p-3.5 rounded-2xl flex items-center justify-between cursor-pointer group shadow-lg min-h-[56px]">
+    <!-- Block 1: RM World Directory (Solid 2.5D Slate Border + High-Contrast Button) -->
+    <button type="button" id="cat-menu-btn" onclick="toggleMenuDrawer(true)" class="w-full tactile-25d bg-gradient-to-r from-slate-900 via-[#0d1527] to-slate-900 border border-slate-700/80 hover:border-cyan-500/60 p-3.5 rounded-2xl flex items-center justify-between cursor-pointer group shadow-xl transition-all min-h-[56px]">
       <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-slate-950 border border-slate-700/80 flex items-center justify-center text-lg text-slate-200 shadow-inner group-hover:scale-105 transition-transform">
+        <div class="w-10 h-10 rounded-xl bg-slate-950 border border-slate-700/80 flex items-center justify-center text-lg text-slate-200 shadow-inner group-hover:scale-105 group-hover:border-cyan-400/80 transition-all">
           ☰
         </div>
         <div class="text-left">
@@ -180,21 +188,22 @@
           </div>
         </div>
       </div>
-      <span class="bg-slate-800 text-slate-200 border border-slate-700 px-3 py-1 rounded-full text-xs font-bold">
+      <span class="bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/40 px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-md tracking-wide transition-colors">
         खोलें ›
       </span>
     </button>
 
+    <!-- Block 2: Live Search Input (Solid Slate-700 Border + High Focus Contrast) -->
     <div class="relative">
-      <input type="text" id="liveSearchInput" oninput="filterQuickTiles()" placeholder="श्रेणी, दुकान या सेवा खोजें..." class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400 transition-colors min-h-[48px]">
-      <span class="absolute right-3 top-3.5 text-slate-500 text-sm">🔍</span>
+      <input type="text" id="liveSearchInput" oninput="filterQuickTiles()" placeholder="श्रेणी, दुकान या सेवा खोजें..." class="w-full bg-[#0b0f19] border border-slate-700/80 rounded-xl px-4 py-2.5 text-xs text-slate-200 placeholder-slate-400 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40 transition-all min-h-[48px] shadow-md">
+      <span class="absolute right-3.5 top-3.5 text-slate-400 text-sm">🔍</span>
     </div>
 
-    <!-- Hero Wallet Card: Dark Fintech Theme Contrast (White Clash Resolved) -->
-    <section class="wallet-card bg-gradient-to-b from-[#111a30] to-[#0d1424] border border-slate-800/80 p-4 rounded-2xl space-y-3 shadow-xl">
+    <!-- Block 3: Hero Wallet Card (Solid 2.5D Border + Ultra-High Button Contrast) -->
+    <section class="wallet-card bg-gradient-to-b from-[#111a30] via-[#0d1424] to-[#090d18] border border-slate-700/80 p-4 rounded-2xl space-y-3.5 shadow-2xl">
       <div class="flex justify-between items-center text-xs">
-        <span class="text-slate-300 font-medium">उपलब्ध शेष राशि (RM CASH)</span>
-        <span class="bg-emerald-950/90 border border-emerald-700/60 text-emerald-300 px-2 py-0.5 rounded text-[10px] font-bold">
+        <span class="text-slate-300 font-semibold tracking-wide">उपलब्ध शेष राशि (RM CASH)</span>
+        <span class="bg-emerald-950/90 border border-emerald-600/60 text-emerald-300 px-2.5 py-0.5 rounded-md text-[10px] font-bold shadow-sm">
           सुरक्षित बहीखाता
         </span>
       </div>
@@ -209,12 +218,13 @@
         <span>लेन-देन स्थिति: <span class="text-emerald-400 font-bold">सत्यापित</span></span>
         <span class="text-emerald-300 font-mono text-[11px] font-bold">ऑफलाइन-फर्स्ट सिंक</span>
       </div>
-      <div class="grid grid-cols-2 gap-2 pt-1">
-        <button type="button" onclick="alert('नया लेन-देन खुला')" class="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1 shadow-md tactile-25d cursor-pointer min-h-[48px]">
-          <span>+</span>
+      <!-- Action Buttons with High-Contrast Elevation -->
+      <div class="grid grid-cols-2 gap-2.5 pt-1">
+        <button type="button" onclick="alert('नया लेन-देन खुला')" class="w-full bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-black py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-lg shadow-emerald-950/50 cursor-pointer min-h-[48px] transition-all">
+          <span class="text-base font-black leading-none">+</span>
           <span>नया लेन-देन</span>
         </button>
-        <button type="button" onclick="alert('खाता विवरणी लोड हो रही है...')" class="w-full bg-slate-900/90 border border-slate-700/80 hover:bg-slate-800 text-slate-200 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1 shadow-md tactile-25d cursor-pointer min-h-[48px]">
+        <button type="button" onclick="alert('खाता विवरणी लोड हो रही है...')" class="w-full bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-600/80 text-slate-100 font-bold py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-md cursor-pointer min-h-[48px] transition-all">
           <span>📜</span>
           <span>खाता विवरणी</span>
         </button>
