@@ -1,5 +1,5 @@
 /**
- * RISE MITRA — SOVEREIGN IN-SITU MASTER DOCK ENGINE (Z-INDEX SHIELD & AUDIT)
+ * RISE MITRA — SOVEREIGN IN-SITU MASTER DOCK & PUBLIC CLOAKING ENGINE
  * SPECIFICATION : FOLDER A (MASTER DOCUMENT SSOT)
  * GOVERNANCE    : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0
  * REPO TARGET   : public/js/insitu-dock-engine.js
@@ -16,7 +16,145 @@
                   urlParams.get('sivme') === 'owner' || 
                   urlParams.get('dev_auto') === '1';
 
-  if (!isOwner) return;
+  // Helper: Extract all hidden items from Sovereign Visibility Registry
+  function getHiddenKeys() {
+    try {
+      const raw = localStorage.getItem('rm_sovereign_visibility_registry_v1');
+      if (!raw) return [];
+      const reg = JSON.parse(raw);
+      const map = reg.items || reg.registry || reg || {};
+      return Object.keys(map).filter(k => {
+        const v = map[k];
+        return v === false || v?.visible === false || v?.status === 'hidden';
+      });
+    } catch (_) {
+      return [];
+    }
+  }
+
+  // =========================================================================
+  // 1. PUBLIC MODE CLOAKING ENFORCER (Executes when isOwner is FALSE)
+  // =========================================================================
+  if (!isOwner) {
+    const hiddenKeys = getHiddenKeys();
+    if (hiddenKeys.length > 0) {
+      const selectors = [];
+
+      hiddenKeys.forEach(urn => {
+        // Direct attribute hooks
+        selectors.push(`[data-sov-urn="${urn}"]`);
+        selectors.push(`[data-target-urn="${urn}"]`);
+        selectors.push(`[data-badge-urn="${urn}"]`);
+
+        // Known canonical element bindings
+        if (urn === 'rm:elem:dir-menu-btn') {
+          selectors.push('#cat-menu-btn');
+        }
+        if (urn === 'rm:card:rm-cash') {
+          selectors.push('.wallet-card');
+        }
+        if (urn === 'rm:elem:home-search') {
+          selectors.push('.sivme-search-container');
+        }
+
+        // Category card mappings (e.g., rm:cat:03, rm:cat:16)
+        const catMatch = urn.match(/^rm:cat:(\d+)$/);
+        if (catMatch) {
+          const num = catMatch[1];
+          const intNum = parseInt(num, 10);
+          selectors.push(`[data-cat-id="${num}"]`);
+          selectors.push(`[data-cat-id="${intNum}"]`);
+          selectors.push(`[data-cat-id="c${num}"]`);
+          selectors.push(`[data-cat-id="c${intNum}"]`);
+          selectors.push(`[onclick*="'c${num}'"]`);
+          selectors.push(`[onclick*="'${num}'"]`);
+          selectors.push(`[onclick*="'c${intNum}'"]`);
+          selectors.push(`[onclick*="'${intNum}'"]`);
+        }
+
+        // Sub-category card mappings (e.g., rm:cat:16:sub:16-1)
+        const subMatch = urn.match(/^rm:cat:(\d+):sub:(\d+)-(\d+)$/);
+        if (subMatch) {
+          const catNum = subMatch[1];
+          const subIdx = subMatch[3];
+          selectors.push(`#sub-c${catNum} > div:nth-child(${subIdx})`);
+        }
+
+        // Generic safe selector fallback
+        const safeKey = urn.replace(/[^a-zA-Z0-9_-]/g, '\\$&');
+        selectors.push(`#${safeKey}`);
+        selectors.push(`[data-id="${urn}"]`);
+      });
+
+      // Inject 0ms CSS Shield to prevent element flash in public mode
+      let cloakStyle = document.getElementById('rm-public-cloaking-shield');
+      if (!cloakStyle) {
+        cloakStyle = document.createElement('style');
+        cloakStyle.id = 'rm-public-cloaking-shield';
+        (document.head || document.documentElement).appendChild(cloakStyle);
+      }
+      cloakStyle.textContent = `
+        ${selectors.join(',\n        ')} {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
+          height: 0 !important;
+          min-height: 0 !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          border: none !important;
+          overflow: hidden !important;
+        }
+      `;
+
+      // DOM sweeper for late-hydrated micro-apps and dynamic grids
+      function sweepDOM() {
+        hiddenKeys.forEach(urn => {
+          if (urn === 'rm:elem:dir-menu-btn') {
+            const el = document.getElementById('cat-menu-btn');
+            if (el) el.style.setProperty('display', 'none', 'important');
+          }
+          if (urn === 'rm:card:rm-cash') {
+            const el = document.querySelector('.wallet-card');
+            if (el) el.style.setProperty('display', 'none', 'important');
+          }
+          if (urn === 'rm:elem:home-search') {
+            const inp = document.getElementById('liveSearchInput');
+            if (inp && inp.parentElement) inp.parentElement.style.setProperty('display', 'none', 'important');
+          }
+
+          const catMatch = urn.match(/^rm:cat:(\d+)$/);
+          if (catMatch) {
+            const num = catMatch[1];
+            const intNum = parseInt(num, 10);
+            document.querySelectorAll(
+              `[data-cat-id="${num}"], [data-cat-id="${intNum}"], [data-cat-id="c${num}"], [data-cat-id="c${intNum}"], [onclick*="'c${num}'"], [onclick*="'${num}'"]`
+            ).forEach(node => node.style.setProperty('display', 'none', 'important'));
+          }
+
+          document.querySelectorAll(`[data-sov-urn="${urn}"], [data-target-urn="${urn}"]`).forEach(node => {
+            node.style.setProperty('display', 'none', 'important');
+          });
+        });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', sweepDOM);
+      } else {
+        sweepDOM();
+      }
+      setTimeout(sweepDOM, 250);
+
+      const observer = new MutationObserver(sweepDOM);
+      observer.observe(document.documentElement, { childList: true, subtree: true });
+    }
+    return; // Exit cleanly so owner HUD is never loaded for public users
+  }
+
+  // =========================================================================
+  // 2. OWNER IN-SITU MODE (Executes when isOwner is TRUE)
+  // =========================================================================
 
   // 1. Force activate authorization tokens for fail-closed bypass
   try {
@@ -95,26 +233,12 @@
 
   // 5. Accurate Ground-Truth Hidden Count (Direct DOM + LocalStorage Sync)
   function getHiddenCount() {
-    // A. Real-time DOM inspection
     const domCount = document.querySelectorAll(
       '[data-badge-vis="false"], .sivme-tracked-hidden, [data-sivme-status="hidden"], .sivme-ghost-dormant'
     ).length;
     if (domCount > 0) return domCount;
 
-    // B. Deep registry inspection
-    try {
-      const raw = localStorage.getItem('rm_sovereign_visibility_registry_v1');
-      if (raw) {
-        const reg = JSON.parse(raw);
-        const map = reg.items || reg.registry || reg;
-        const count = Object.values(map).filter(v => 
-          v === false || v?.visible === false || v?.status === 'hidden'
-        ).length;
-        if (count > 0) return count;
-      }
-    } catch (_) {}
-
-    return 0;
+    return getHiddenKeys().length;
   }
 
   // 6. Real-time counter updater
