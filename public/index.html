@@ -120,7 +120,7 @@
       box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.45) !important;
     }
 
-    /* 7. UNIVERSAL ANTI-DASHED BAN: 100% Elimination of Dashed Outlines */
+    /* 7. UNIVERSAL ANTI-DASHED BAN: 100% Elimination of Dashed Outlines in Public Mode */
     *, *::before, *::after {
       outline: none !important;
     }
@@ -141,10 +141,9 @@
       border-color: #06b6d4 !important;
     }
 
-    /* 8. UNIVERSAL RADAR & OVERLAP SUPPRESSION (Clean Public Layout) */
+    /* 8. UNIVERSAL RADAR & OVERLAP SUPPRESSION (Clean Layout) */
     [class*="radar"],
     [class*="ripple"],
-    [id*="sivme-hud"],
     .sivme-radar-ring,
     .sivme-ripple,
     .sivme-radar-layer,
@@ -166,6 +165,21 @@
       float: none !important;
       transform: none !important;
       z-index: 1 !important;
+    }
+
+    /* 9. MASTER IN-SITU DOCK: FLOATING SECURELY ABOVE BOTTOM NAVIGATION */
+    #rm-master-insitu-dock,
+    #sivmeFloatingDock,
+    [id*="sivme-hud"],
+    .sivme-hud-dock {
+      position: fixed !important;
+      bottom: 68px !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      z-index: 50 !important;
+      display: flex !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
     }
   </style>
 
@@ -476,7 +490,7 @@
   <script src="/js/favorites-engine.js?v=20261010_01"></script>
 
   <!-- ============================================================================ -->
-  <!-- CONDITIONAL SIVME DEBUG ENGINE (UNIFIED SURFACE-A/B ZERO-ELEMENT-LOSS CORE)  -->
+  <!-- CONDITIONAL SIVME DEBUG ENGINE & MASTER IN-SITU DOCK (FAIL-SAFE ELEVATED)    -->
   <!-- ============================================================================ -->
   <script>
     (function() {
@@ -486,13 +500,13 @@
                       urlParams.get('dev_auto') === '1';
 
       if (isOwner) {
-        // In-Situ टोकन सक्रिय करें (Fail-Closed गार्ड बाईपास)
+        // 1. In-Situ Session Token Active karein
         try {
           sessionStorage.setItem('rm_sov_in_situ_session', 'SOV_ACTIVE_2026');
           localStorage.setItem('rm_sov_in_situ_session', 'SOV_ACTIVE_2026');
         } catch (_) {}
 
-        // SIVME रजिस्ट्री और HUD स्क्रिप्ट इंजेक्ट करें
+        // 2. Registry aur HUD Script Inject karein
         const scripts = [
           '/js/sovereign-in-situ-registry.js',
           '/js/sovereign-in-situ-hud.js'
@@ -503,6 +517,51 @@
           s.async = false;
           document.body.appendChild(s);
         });
+
+        // 3. Elevated Dock: Bottom Nav ke theek upar render karein
+        function renderInSituDock() {
+          if (document.getElementById('rm-master-insitu-dock')) return;
+          const dock = document.createElement('div');
+          dock.id = 'rm-master-insitu-dock';
+          dock.className = 'fixed bottom-[68px] left-1/2 -translate-x-1/2 z-50 flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-[#06121f]/95 border border-emerald-500/80 shadow-2xl backdrop-blur-md select-none';
+          
+          let hiddenCount = 0;
+          try {
+            const reg = JSON.parse(localStorage.getItem('rm_sovereign_visibility_registry_v1') || '{}');
+            hiddenCount = Object.values(reg).filter(v => v === false || v?.visible === false).length;
+          } catch(e) {}
+
+          dock.innerHTML = `
+            <div class="flex items-center space-x-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="text-[10px] font-black tracking-wider text-emerald-300 uppercase">OWNER IN-SITU</span>
+            </div>
+            <span class="text-slate-600 text-xs">|</span>
+            <span class="text-[10px] font-bold text-red-400">Hidden: <span id="rm-dock-hidden-count">${hiddenCount}</span></span>
+            <button type="button" onclick="disableOwnerInSitu()" class="px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 text-[9px] font-bold border border-slate-700 active:scale-95 cursor-pointer">Disable</button>
+            <button type="button" onclick="window.location.reload()" class="px-2.5 py-0.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black text-[10px] flex items-center space-x-1 active:scale-95 cursor-pointer">
+              <span>⚡</span><span>Reload</span>
+            </button>
+          `;
+          document.body.appendChild(dock);
+        }
+
+        window.disableOwnerInSitu = function() {
+          try {
+            sessionStorage.removeItem('rm_sov_in_situ_session');
+            localStorage.removeItem('rm_sov_in_situ_session');
+            localStorage.removeItem('sivme_active');
+            localStorage.removeItem('sivme_mode');
+          } catch(e) {}
+          window.location.href = window.location.pathname;
+        };
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', renderInSituDock);
+        } else {
+          renderInSituDock();
+        }
+        setTimeout(renderInSituDock, 400);
       }
     })();
   </script>
