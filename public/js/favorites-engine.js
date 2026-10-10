@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — UNIVERSAL FAVORITES SHORTCUTS ENGINE (PHASE 5 ARCHITECTURE)
- * Bulletproof Offline Persistence + Natural Sequence Sort + Tap-Safe Surface
+ * Space-Tolerant Sequence Matcher + Bulletproof Offline Persistence + Natural Sort
  * SSOT Authority: Folder A (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)
  */
 (function initUniversalFavoritesEngine() {
@@ -62,6 +62,19 @@
     '33-3': { seq: '33-3', icon: '📜', title: 'Land Revenue & Khatiyan', hiTitle: 'राजस्व सेवाएं व भू-अभिलेख' }
   };
 
+  // Helper: Extract clean normalized sequence (handles spaces like "01 - 1" -> "01-1")
+  function getSeqFromElement(el) {
+    if (!el) return '';
+    const text = el.textContent || '';
+    const m = text.match(/\b(\d{1,2})\s*-\s*(\d{1,2})\b/);
+    if (m) {
+      const major = m[1].padStart(2, '0');
+      const minor = m[2];
+      return `${major}-${minor}`;
+    }
+    return '';
+  }
+
   // 2. BULLETPROOF PERSISTENCE STORAGE REPOSITORY
   function getPinned() {
     try {
@@ -74,7 +87,10 @@
       raw = raw.map(item => {
         if (!item || !item.seq) return null;
         const c = CANONICAL_SUBCATS[item.seq];
-        if (c && (item.title.includes('सेवा #') || item.title.includes('आइटम #') || !item.hiTitle || item.icon === '🏷️' || item.icon === '🪧')) {
+        const titleStr = typeof item.title === 'string' ? item.title : '';
+        const hiTitleStr = typeof item.hiTitle === 'string' ? item.hiTitle : '';
+
+        if (c && (titleStr.includes('सेवा #') || titleStr.includes('आइटम #') || !hiTitleStr || item.icon === '🏷️' || item.icon === '🪧')) {
           updated = true;
           return { ...item, icon: c.icon, title: c.title, hiTitle: c.hiTitle };
         }
@@ -86,7 +102,6 @@
       }
       return raw;
     } catch(e) {
-      console.warn('RM Favorites Storage Read Warning:', e);
       return [];
     }
   }
@@ -94,21 +109,17 @@
   function savePinned(list) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    } catch(e) {
-      console.warn('RM Favorites Storage Write Warning:', e);
-    }
+    } catch(e) {}
     renderFavorites();
     updatePinButtonsUI();
   }
 
   window.toggleServicePin = function(id, title, hiTitle, seq, icon) {
     let list = getPinned();
-    const existingIndex = list.findIndex(item => item.id === id || item.seq === seq);
+    const existingIndex = list.findIndex(item => (seq && item.seq === seq) || item.id === id);
     if (existingIndex > -1) {
-      // User explicitly unpinned from catalog
       list.splice(existingIndex, 1);
     } else {
-      // User pinned new item
       list.push({
         id: id || `fav-${seq}`,
         seq: seq || '⭐',
@@ -128,9 +139,8 @@
       const text = btn.textContent.trim();
       if (text.includes('पिन') || text.includes('Pin')) {
         const card = findSubcardElement(btn);
-        const seqMatch = card ? card.textContent.match(/\b\d{1,2}-\d{1,2}\b/) : null;
-        const seq = seqMatch ? seqMatch[0] : '';
-        const isPinned = list.some(item => (card && (item.id === card.id || item.id === card.getAttribute('data-cat-id'))) || (seq && item.seq === seq));
+        const seq = getSeqFromElement(card);
+        const isPinned = list.some(item => (seq && item.seq === seq) || (card && (item.id === card.id || item.id === card.getAttribute('data-cat-id'))));
         if (isPinned) {
           btn.innerHTML = '✓ पिन किया';
           btn.classList.add('bg-emerald-600', 'text-white');
@@ -194,17 +204,19 @@
     `).join('');
   }
 
-  // 5. DEEP HIERARCHY TRAVERSAL HELPER
+  // 5. SPACE-TOLERANT DEEP CONTAINER FINDER
   function findSubcardElement(btn) {
-    let el = btn;
-    while (el && el !== document.body && el.id !== 'categoryModal') {
-      el = el.parentElement;
-      if (!el) break;
-      const m = (el.textContent || '').match(/\b\d{1,2}-\d{1,2}\b/g) || [];
-      const unique = [...new Set(m)];
-      if (unique.length === 1) {
-        return el;
+    let curr = btn.parentElement;
+    while (curr && curr !== document.body && curr.id !== 'categoryModal') {
+      const seq = getSeqFromElement(curr);
+      if (seq) {
+        const allMatches = (curr.textContent || '').match(/\b\d{1,2}\s*-\s*\d{1,2}\b/g) || [];
+        const unique = [...new Set(allMatches.map(s => s.replace(/\s+/g, '')))];
+        if (unique.length === 1) {
+          return curr;
+        }
       }
+      curr = curr.parentElement;
     }
     return btn.closest('[data-cat-id], .c16-subcard-clean, [id^="sub-c"]') || btn.parentElement;
   }
@@ -212,14 +224,16 @@
   // 6. CANONICAL-FIRST DATA EXTRACTOR
   function extractSubcardData(card) {
     if (!card) return null;
-    const seqMatch = card.textContent.match(/\b\d{1,2}-\d{1,2}\b/);
-    const seq = seqMatch ? seqMatch[0] : '';
+    const seq = getSeqFromElement(card);
+    if (!seq) return null;
 
-    if (seq && CANONICAL_SUBCATS[seq]) {
+    // Fast SSOT Path
+    if (CANONICAL_SUBCATS[seq]) {
       const c = CANONICAL_SUBCATS[seq];
       return { id: `fav-${seq}`, seq: c.seq, icon: c.icon, title: c.title, hiTitle: c.hiTitle };
     }
 
+    // Dynamic Fallback
     let title = '';
     const textEls = Array.from(card.querySelectorAll('div, h3, h4, h5, p, span'))
       .filter(el => !el.closest('button') && el.children.length === 0);
@@ -230,7 +244,7 @@
           !txt.includes('Live') && !txt.includes('Verified') && 
           !txt.includes('Protect') && !txt.includes('Play') &&
           !txt.includes('Reviews') && !txt.includes('Min')) {
-        title = txt.replace(/^\d{1,2}-\d{1,2}\.?\s*/, '').trim();
+        title = txt.replace(/^\d{1,2}\s*-\s*\d{1,2}\.?\s*/, '').trim();
         break;
       }
     }
@@ -258,7 +272,8 @@
       .find(d => {
         if (d.closest('button')) return false;
         const cls = d.className || '';
-        return (cls.includes('rounded-2xl') || cls.includes('rounded-xl') || cls.includes('cat-icon')) &&
+        return typeof cls === 'string' &&
+               (cls.includes('rounded-2xl') || cls.includes('rounded-xl') || cls.includes('cat-icon')) &&
                d.children.length <= 2 &&
                /\p{Extended_Pictographic}/u.test(d.textContent);
       });
@@ -276,11 +291,11 @@
       if (ems.length > 0) icon = ems[0];
     }
 
-    if (!title || title === 'undefined') title = seq ? `सेवा #${seq}` : 'पसंदीदा सेवा';
-    if (!hiTitle || hiTitle === 'undefined') hiTitle = 'उत्पाद व सेवा';
+    if (!title) title = `सेवा #${seq}`;
+    if (!hiTitle) hiTitle = 'विशेष सेवा';
     if (!icon) icon = '⭐';
 
-    return { id: card.id || `fav-${seq}`, seq, icon, title, hiTitle };
+    return { id: `fav-${seq}`, seq, icon, title, hiTitle };
   }
 
   // 7. EVENT LISTENER BINDING
@@ -300,7 +315,7 @@
     }
   }, true);
 
-  // 8. LIFECYCLE REHYDRATION (SURVIVES APP CLOSE & BACKGROUND RESUME)
+  // 8. LIFECYCLE REHYDRATION (SURVIVES APP CLOSE & RESUME)
   function rehydrateEngine() {
     renderFavorites();
     updatePinButtonsUI();
@@ -312,8 +327,19 @@
     rehydrateEngine();
   }
 
-  // Mobile bfcache / app-resume handlers: Always reload favorites when app is reopened
   window.addEventListener('pageshow', rehydrateEngine);
   window.addEventListener('focus', rehydrateEngine);
   document.addEventListener('visibilitychange', function() {
-    if (!document
+    if (!document.hidden) rehydrateEngine();
+  });
+
+  // Modal / Accordion toggle synchronizer
+  document.addEventListener('click', function(e) {
+    const target = e.target.closest('button, [onclick*="toggle"], [id*="toggle"], #cat-menu-btn');
+    if (target) {
+      setTimeout(updatePinButtonsUI, 150);
+      setTimeout(updatePinButtonsUI, 400);
+    }
+  });
+
+})();
