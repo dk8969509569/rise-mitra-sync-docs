@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi" class="dark" data-theme="dark">
 <!-- ============================================================================== -->
-<!-- RISE MITRA — SLIM MODULAR HTML SHELL (UNIVERSAL SOLID 2.5D BORDERS & CONTRAST) -->
+<!-- RISE MITRA — SLIM MODULAR HTML SHELL (DEFAULT PUBLIC LOCK & CONDITIONAL SIVME) -->
 <!-- GOVERNANCE : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0            -->
 <!-- SPEC SSOT  : FOLDER A (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)                       -->
 <!-- STATUS     : FULLY DECOUPLED (CSS -> app.css | JS -> shell-controller.js)     -->
@@ -141,14 +141,17 @@
       border-color: #06b6d4 !important;
     }
 
-    /* 8. UNIVERSAL ANTI-OVERLAP & RADAR SUPPRESSION SHIELD */
-    #sivme-hud-bar,
+    /* 8. UNIVERSAL RADAR & OVERLAP SUPPRESSION (Clean Public Layout) */
+    [class*="radar"],
+    [class*="ripple"],
+    [id*="sivme-hud"],
     .sivme-radar-ring,
     .sivme-ripple,
     .sivme-radar-layer,
-    [class*="radar"],
-    [class*="ripple"] {
+    div[style*="border-radius: 50%"][style*="border:"] {
       display: none !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
     }
     #categoryModal [data-cat-id],
     #categoryModal .category-card,
@@ -161,11 +164,26 @@
       border-radius: 16px !important;
       clear: both !important;
       float: none !important;
-      clip-path: none !important;
       transform: none !important;
       z-index: 1 !important;
     }
   </style>
+
+  <!-- Auto-Purge Stale SIVME Flags on Normal Public Launch -->
+  <script>
+    (function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const isOwnerLaunch = urlParams.get('sivme') === 'owner';
+      if (!isOwnerLaunch) {
+        try {
+          localStorage.removeItem('sivme_active');
+          localStorage.removeItem('sivme_mode');
+          localStorage.removeItem('rm_sivme_state');
+          sessionStorage.removeItem('sivme_active');
+        } catch(e) {}
+      }
+    })();
+  </script>
 </head>
 
 <body class="bg-[#030712] text-slate-100 min-h-screen pb-36 antialiased select-none font-sans">
@@ -414,14 +432,10 @@
   </nav>
 
   <!-- ============================================================================ -->
-  <!-- MODULAR ENGINES & DECOUPLED CONTROLLERS (100% ZEL)                           -->
+  <!-- MODULAR ENGINES & DECOUPLED CONTROLLERS (100% CLEAN PUBLIC RUNTIME)          -->
   <!-- ============================================================================ -->
   <!-- Pan-India Master Geographic Dataset -->
   <script src="/js/data/india-geo-data.js"></script>
-
-  <!-- Sovereign In-Situ Visual Management Engine (SIVME) Core Registry -->
-  <script src="/js/sovereign-in-situ-registry.js"></script>
-  <!-- <script src="/js/sovereign-in-situ-hud.js"></script> -->
 
   <!-- Modular Home Grid Engine (12 Play Store Standard Verticals) -->
   <script src="/js/home-grid-engine.js?v=20261007_01"></script>
@@ -431,18 +445,35 @@
 
   <!-- Canonical Decoupled Catalog Engine & Data Registry -->
   <script src="/js/categories-data.js?v=20261007_01"></script>
-  <script src="/js/catalog-sivme-engine.js?v=20261007_01"></script>
 
   <!-- Decoupled Shell Controller Engine & Viewport Dispatcher -->
   <script src="/js/shell-controller.js?v=20261007_01"></script>
 
-  <!-- Sovereign In-Situ Isolated Adapters & Scanners (Clean Public Mode) -->
-  <script src="/js/sivme-adapters/cat16-adapter.js"></script>
-
-  <!-- Universal Catalog & 0.05s Search Intelligence Engine -->
+  <!-- Universal Production Catalog & 0.05s Search Intelligence Engine -->
   <script src="/js/universal-catalog/catalog-metadata-registry.js"></script>
   <script src="/js/universal-catalog/universal-card-engine.js"></script>
   <script src="/js/universal-catalog/universal-search-engine.js"></script>
+
+  <!-- CONDITIONAL SIVME ENGINE (ONLY RUNS WHEN LAUNCHED FROM SURFACE-B) -->
+  <script>
+    (function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('sivme') === 'owner') {
+        const scripts = [
+          '/js/sovereign-in-situ-registry.js',
+          '/js/sovereign-in-situ-hud.js',
+          '/js/catalog-sivme-engine.js?v=20261007_01',
+          '/js/sivme-adapters/cat16-adapter.js'
+        ];
+        scripts.forEach(src => {
+          const s = document.createElement('script');
+          s.src = src;
+          s.async = false;
+          document.body.appendChild(s);
+        });
+      }
+    })();
+  </script>
 
 </body>
 </html>
