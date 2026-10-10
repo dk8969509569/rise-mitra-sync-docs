@@ -4,7 +4,7 @@
 <!-- RISE MITRA — SLIM MODULAR HTML SHELL (DEFAULT PUBLIC LOCK & PHASE 5 FAVORITES) -->
 <!-- GOVERNANCE : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0            -->
 <!-- SPEC SSOT  : FOLDER A (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)                       -->
-<!-- STATUS     : FULLY DECOUPLED (CSS -> app.css | JS -> shell-controller.js)     -->
+<!-- STATUS     : FULLY DECOUPLED (CSS -> app.css | JS -> modular engines)          -->
 <!-- ============================================================================== -->
 <head>
   <meta charset="UTF-8">
@@ -234,7 +234,7 @@
   </header>
 
   <!-- ============================================================================ -->
-  <!-- MAIN CONTENT: DIRECTORY BUTTON, WALLET & 12 CORE CASHFLOW VERTICALS          -->
+  <!-- MAIN CONTENT: DIRECTORY BUTTON, WALLET, FAVORITES & 12 CORE VERTICALS        -->
   <!-- ============================================================================ -->
   <main class="max-w-md mx-auto px-4 py-4 space-y-4">
     <!-- Block 1: RM World Directory (Solid 2.5D Slate Border + High-Contrast Button) -->
@@ -295,14 +295,14 @@
       </div>
     </section>
 
-    <!-- Block 4: User Pinned Favorites (Phase 5 Live Mount Target) -->
+    <!-- Block 4: User Pinned Favorites (Phase 5 Play Store Styled Favorites Grid) -->
     <section id="userPinnedFavoritesSection" class="space-y-2 hidden">
       <div class="flex justify-between items-center px-1">
         <h2 class="text-xs font-black uppercase tracking-wider text-amber-400 flex items-center space-x-1.5">
           <span>⭐</span>
-          <span>मेरी पसंदीदा सेवाएं</span>
+          <span>पसंदीदा (My Favorites)</span>
         </h2>
-        <span id="pinnedCountBadge" class="text-[10px] text-amber-400 font-bold bg-amber-950/60 border border-amber-800/40 px-2 py-0.5 rounded-full">0 सेवाएं</span>
+        <span id="pinnedCountBadge" class="text-[10px] text-amber-400 font-bold bg-amber-950/60 border border-amber-800/40 px-2 py-0.5 rounded-full">0 सेव</span>
       </div>
       <div id="userPinnedFavoritesGrid" class="grid grid-cols-2 gap-2.5 w-full"></div>
     </section>
@@ -464,118 +464,14 @@
 
   <!-- Sovereign In-Situ Isolated Adapters -->
   <script src="/js/sivme-adapters/cat16-adapter.js"></script>
-  <script src="/js/sivme-adapters/user-pinned-shortcuts.js"></script>
 
   <!-- Universal Production Catalog & 0.05s Search Intelligence Engine -->
   <script src="/js/universal-catalog/catalog-metadata-registry.js"></script>
   <script src="/js/universal-catalog/universal-card-engine.js"></script>
   <script src="/js/universal-catalog/universal-search-engine.js"></script>
 
-  <!-- ============================================================================ -->
-  <!-- PHASE 5: USER PINNED FAVORITES REAL-TIME ENGINE FALLBACK                      -->
-  <!-- ============================================================================ -->
-  <script>
-    (function initFavoritesEngine() {
-      const STORAGE_KEY = 'rm_user_pinned_shortcuts_v1';
-
-      function getPinned() {
-        try {
-          return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-        } catch(e) { return []; }
-      }
-
-      function savePinned(list) {
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-        } catch(e) {}
-        renderFavorites();
-      }
-
-      window.toggleServicePin = function(id, title, icon) {
-        let list = getPinned();
-        const existingIndex = list.findIndex(item => item.id === id);
-        if (existingIndex > -1) {
-          list.splice(existingIndex, 1);
-        } else {
-          list.push({ id, title, icon: icon || '⭐', pinnedAt: Date.now() });
-        }
-        savePinned(list);
-        updatePinButtonsUI();
-      };
-
-      function updatePinButtonsUI() {
-        const list = getPinned();
-        document.querySelectorAll('button').forEach(btn => {
-          const text = btn.textContent.trim();
-          if (text.includes('पिन') || text.includes('Pin')) {
-            const card = btn.closest('[data-cat-id], .c16-subcard-clean, [id^="sub-c"]') || btn.parentElement;
-            const title = card ? (card.querySelector('h3, h4, .cat-bilingual-en, strong')?.textContent?.trim() || 'सेवा') : 'सेवा';
-            const id = card ? (card.id || card.getAttribute('data-cat-id') || title) : title;
-            const isPinned = list.some(item => item.id === id);
-            if (isPinned) {
-              btn.innerHTML = '✓ पिन किया';
-              btn.classList.add('bg-amber-600', 'text-white');
-              btn.classList.remove('bg-slate-800', 'text-slate-300');
-            } else {
-              btn.innerHTML = '📌 पिन';
-              btn.classList.remove('bg-amber-600', 'text-white');
-              btn.classList.add('bg-slate-800', 'text-slate-300');
-            }
-          }
-        });
-      }
-
-      function renderFavorites() {
-        const section = document.getElementById('userPinnedFavoritesSection');
-        const grid = document.getElementById('userPinnedFavoritesGrid');
-        const badge = document.getElementById('pinnedCountBadge');
-        if (!section || !grid) return;
-
-        const list = getPinned();
-        if (list.length === 0) {
-          section.classList.add('hidden');
-          return;
-        }
-
-        section.classList.remove('hidden');
-        if (badge) badge.textContent = `${list.length} सेवाएं`;
-
-        grid.innerHTML = list.map(item => `
-          <div class="rm-solid-panel bg-gradient-to-b from-[#111a30] to-[#090d18] border border-slate-700/80 p-3 rounded-2xl flex flex-col justify-between min-h-[92px] relative group shadow-lg">
-            <div class="flex items-start justify-between">
-              <span class="text-2xl">${item.icon}</span>
-              <button onclick="window.toggleServicePin('${item.id}'); event.stopPropagation();" title="हटाएं" class="text-slate-500 hover:text-red-400 text-xs px-1.5 py-0.5 rounded-lg bg-slate-900 border border-slate-800">✕</button>
-            </div>
-            <div class="mt-2">
-              <div class="text-xs font-bold text-slate-100 truncate">${item.title}</div>
-              <div class="text-[10px] text-amber-400 font-medium">पसंदीदा शॉर्टकट</div>
-            </div>
-          </div>
-        `).join('');
-      }
-
-      // Catalog me Pin buttons par auto-binding
-      document.addEventListener('click', function(e) {
-        const btn = e.target.closest('button');
-        if (!btn) return;
-        const text = btn.textContent.trim();
-        if (text.includes('पिन') || text.includes('Pin')) {
-          const card = btn.closest('[data-cat-id], .c16-subcard-clean, [id^="sub-c"]') || btn.parentElement;
-          const title = card ? (card.querySelector('h3, h4, .cat-bilingual-en, strong')?.textContent?.trim() || 'सेवा') : 'सेवा';
-          const id = card ? (card.id || card.getAttribute('data-cat-id') || title) : title;
-          window.toggleServicePin(id, title, '⭐');
-        }
-      });
-
-      // DOM Load par render
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => { renderFavorites(); updatePinButtonsUI(); });
-      } else {
-        renderFavorites();
-        updatePinButtonsUI();
-      }
-    })();
-  </script>
+  <!-- MODULAR PHASE 5 FAVORITES ENGINE (DECOUPLED & PLAY STORE STYLED) -->
+  <script src="/js/favorites-engine.js?v=20261010_01"></script>
 
   <!-- CONDITIONAL SIVME DEBUG ENGINE (ONLY RUNS WHEN LAUNCHED FROM SURFACE-B) -->
   <script>
