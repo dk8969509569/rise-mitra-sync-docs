@@ -3,7 +3,7 @@
 <!-- ============================================================================== -->
 <!-- RISE MITRA — SLIM MODULAR HTML SHELL (DEFAULT PUBLIC LOCK & PHASE 5 FAVORITES) -->
 <!-- GOVERNANCE : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0            -->
-<!-- SPEC SSOT  : FOLDER A (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)                       -->
+<!-- SPEC SSOT  : FOLDER A (MASTER DOCUMENT SSOT)                                   -->
 <!-- STATUS     : FULLY DECOUPLED (CSS -> app.css | JS -> modular engines)          -->
 <!-- ============================================================================== -->
 <head>
@@ -167,7 +167,7 @@
       z-index: 1 !important;
     }
 
-    /* 9. ELIMINATE DUPLICATE DOCK (Kill Legacy sivmeFloatingDock) */
+    /* 9. ELIMINATE DUPLICATE DOCK */
     #sivmeFloatingDock {
       display: none !important;
       visibility: hidden !important;
@@ -494,95 +494,8 @@
   <!-- MODULAR PHASE 5 FAVORITES ENGINE (DECOUPLED & PLAY STORE STYLED) -->
   <script src="/js/favorites-engine.js?v=20261010_01"></script>
 
-  <!-- ============================================================================ -->
-  <!-- CONDITIONAL SIVME DEBUG ENGINE & MASTER IN-SITU DOCK (FAIL-SAFE ELEVATED)    -->
-  <!-- ============================================================================ -->
-  <script>
-    (function() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const isOwner = urlParams.get('sov_mode') === 'in_situ' || 
-                      urlParams.get('sivme') === 'owner' || 
-                      urlParams.get('dev_auto') === '1';
-
-      if (isOwner) {
-        // 1. In-Situ Session Token Active karein
-        try {
-          sessionStorage.setItem('rm_sov_in_situ_session', 'SOV_ACTIVE_2026');
-          localStorage.setItem('rm_sov_in_situ_session', 'SOV_ACTIVE_2026');
-        } catch (_) {}
-
-        // 2. Registry aur HUD Script Inject karein
-        const scripts = [
-          '/js/sovereign-in-situ-registry.js',
-          '/js/sovereign-in-situ-hud.js'
-        ];
-        scripts.forEach(src => {
-          const s = document.createElement('script');
-          s.src = src;
-          s.async = false;
-          document.body.appendChild(s);
-        });
-
-        // 3. Purge Duplicate Legacy Dock Function
-        function purgeDuplicateDocks() {
-          const legacyDock = document.getElementById('sivmeFloatingDock');
-          if (legacyDock) {
-            legacyDock.remove();
-          }
-        }
-
-        // 4. Single Authoritative Master Dock
-        function renderInSituDock() {
-          purgeDuplicateDocks();
-          if (document.getElementById('rm-master-insitu-dock')) return;
-
-          const dock = document.createElement('div');
-          dock.id = 'rm-master-insitu-dock';
-          dock.className = 'fixed bottom-[68px] left-1/2 -translate-x-1/2 z-50 flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-[#06121f]/95 border border-emerald-500/80 shadow-2xl backdrop-blur-md select-none';
-          
-          let hiddenCount = 0;
-          try {
-            const reg = JSON.parse(localStorage.getItem('rm_sovereign_visibility_registry_v1') || '{}');
-            hiddenCount = Object.values(reg).filter(v => v === false || v?.visible === false).length;
-          } catch(e) {}
-
-          dock.innerHTML = `
-            <div class="flex items-center space-x-1.5">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span class="text-[10px] font-black tracking-wider text-emerald-300 uppercase">OWNER IN-SITU</span>
-            </div>
-            <span class="text-slate-600 text-xs">|</span>
-            <span class="text-[10px] font-bold text-red-400">Hidden: <span id="rm-dock-hidden-count">${hiddenCount}</span></span>
-            <button type="button" onclick="disableOwnerInSitu()" class="px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 text-[9px] font-bold border border-slate-700 active:scale-95 cursor-pointer">Disable</button>
-            <button type="button" onclick="window.location.reload()" class="px-2.5 py-0.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black text-[10px] flex items-center space-x-1 active:scale-95 cursor-pointer">
-              <span>⚡</span><span>Reload</span>
-            </button>
-          `;
-          document.body.appendChild(dock);
-        }
-
-        window.disableOwnerInSitu = function() {
-          try {
-            sessionStorage.removeItem('rm_sov_in_situ_session');
-            localStorage.removeItem('rm_sov_in_situ_session');
-            localStorage.removeItem('sivme_active');
-            localStorage.removeItem('sivme_mode');
-          } catch(e) {}
-          window.location.href = window.location.pathname;
-        };
-
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', renderInSituDock);
-        } else {
-          renderInSituDock();
-        }
-        setTimeout(renderInSituDock, 400);
-
-        // Continuous Purge Interval to eliminate re-spawned duplicate dock
-        setInterval(purgeDuplicateDocks, 300);
-      }
-    })();
-  </script>
+  <!-- MODULAR IN-SITU MASTER DOCK ENGINE (ISOLATED RUNTIME) -->
+  <script src="/js/insitu-dock-engine.js"></script>
 
 </body>
 </html>
