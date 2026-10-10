@@ -1,6 +1,7 @@
 /**
  * RISE MITRA — UNIVERSAL FAVORITES SHORTCUTS ENGINE (PHASE 5 ARCHITECTURE)
  * Standardized 1:1 Sub-Category Mirror (Top-Left Cyan Seq + Right Squircle Icon + Uncut Bilingual)
+ * Natural Sequence Auto-Sort: 01-1 -> 01-2 -> 06-1 -> 06-2 -> 33-2 -> 33-3
  * SSOT Authority: Folder A (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)
  */
 (function initUniversalFavoritesEngine() {
@@ -122,7 +123,7 @@
     });
   }
 
-  // 4. UNIVERSAL GRID RENDER ENGINE (100% Tap-Safe, Uncut Typography)
+  // 4. UNIVERSAL GRID RENDER ENGINE (Natural Sequence Sort & 100% Tap-Safe Surface)
   function renderFavorites() {
     const section = document.getElementById('userPinnedFavoritesSection');
     const grid = document.getElementById('userPinnedFavoritesGrid');
@@ -137,6 +138,15 @@
 
     section.classList.remove('hidden');
     if (badge) badge.textContent = `${list.length} सेव`;
+
+    // Natural Sequence Sorting (01-1 < 01-2 < 06-1 < 06-2 < 33-2 < 33-3)
+    list.sort((a, b) => {
+      const parseSeq = (s) => {
+        const parts = (s || '').replace('.', '').split('-').map(n => parseInt(n, 10) || 0);
+        return (parts[0] || 0) * 1000 + (parts[1] || 0);
+      };
+      return parseSeq(a.seq) - parseSeq(b.seq);
+    });
 
     grid.innerHTML = list.map(item => `
       <div onclick="toggleMenuDrawer(true)" class="rm-solid-panel bg-[#0b1329]/95 border border-slate-700/80 hover:border-cyan-500/60 p-3.5 rounded-2xl flex flex-col justify-between relative shadow-xl active:scale-95 transition-all min-h-[142px] cursor-pointer group">
