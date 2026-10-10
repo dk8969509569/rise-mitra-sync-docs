@@ -167,11 +167,16 @@
       z-index: 1 !important;
     }
 
-    /* 9. MASTER IN-SITU DOCK: FLOATING SECURELY ABOVE BOTTOM NAVIGATION */
-    #rm-master-insitu-dock,
-    #sivmeFloatingDock,
-    [id*="sivme-hud"],
-    .sivme-hud-dock {
+    /* 9. ELIMINATE DUPLICATE DOCK (Kill Legacy sivmeFloatingDock) */
+    #sivmeFloatingDock {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    /* 10. SINGLE AUTHORITATIVE IN-SITU MASTER DOCK */
+    #rm-master-insitu-dock {
       position: fixed !important;
       bottom: 68px !important;
       left: 50% !important;
@@ -518,9 +523,19 @@
           document.body.appendChild(s);
         });
 
-        // 3. Elevated Dock: Bottom Nav ke theek upar render karein
+        // 3. Purge Duplicate Legacy Dock Function
+        function purgeDuplicateDocks() {
+          const legacyDock = document.getElementById('sivmeFloatingDock');
+          if (legacyDock) {
+            legacyDock.remove();
+          }
+        }
+
+        // 4. Single Authoritative Master Dock
         function renderInSituDock() {
+          purgeDuplicateDocks();
           if (document.getElementById('rm-master-insitu-dock')) return;
+
           const dock = document.createElement('div');
           dock.id = 'rm-master-insitu-dock';
           dock.className = 'fixed bottom-[68px] left-1/2 -translate-x-1/2 z-50 flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-[#06121f]/95 border border-emerald-500/80 shadow-2xl backdrop-blur-md select-none';
@@ -562,6 +577,9 @@
           renderInSituDock();
         }
         setTimeout(renderInSituDock, 400);
+
+        // Continuous Purge Interval to eliminate re-spawned duplicate dock
+        setInterval(purgeDuplicateDocks, 300);
       }
     })();
   </script>
