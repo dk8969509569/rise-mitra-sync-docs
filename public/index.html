@@ -473,13 +473,15 @@
   <!-- MODULAR PHASE 5 FAVORITES ENGINE (DECOUPLED & PLAY STORE STYLED) -->
   <script src="/js/favorites-engine.js?v=20261010_01"></script>
 
+  <!-- SIVME v2.0 Phase 1: Core Visibility Registry Engine (ZEL Isolated) -->
+  <script src="/js/core/sovereign-in-situ-registry.js"></script>
+
   <!-- CONDITIONAL SIVME DEBUG ENGINE (ONLY RUNS WHEN LAUNCHED FROM SURFACE-B) -->
   <script>
     (function() {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('sivme') === 'owner') {
         const scripts = [
-          '/js/sovereign-in-situ-registry.js',
           '/js/sovereign-in-situ-hud.js'
         ];
         scripts.forEach(src => {
