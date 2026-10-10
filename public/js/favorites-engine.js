@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — MODULAR FAVORITES SHORTCUTS ENGINE (PHASE 5)
- * Clean Minimalist Ergonomics: 18px Cyan Number + Center 48px Squircle Icon + Uncut Bilingual Title
+ * Ergonomic Top Row (Cyan Number + Right Squircle Icon) + Full Width Large Bilingual Title
  * SSOT Authority: Folder A (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)
  */
 (function initFavoritesEngine() {
@@ -107,29 +107,25 @@
     section.classList.remove('hidden');
     if (badge) badge.textContent = `${list.length} सेव`;
 
-    // CLEAN, UNCLUTTERED, COMPACT FAVORITES CARD (No Tags, No Cross, 100% Uncut Text)
+    // TOP ROW: NUMBERING (LEFT) + SQUIRCLE ICON (RIGHT) | BOTTOM: LARGE BILINGUAL TITLES
     grid.innerHTML = list.map(item => `
-      <div onclick="toggleMenuDrawer(true)" class="rm-solid-panel bg-[#0b1329]/95 border border-slate-700/80 hover:border-cyan-500/60 p-3.5 rounded-2xl flex flex-col items-center justify-between relative shadow-xl active:scale-95 transition-all min-h-[142px] cursor-pointer group text-center">
-        <!-- Top: Clean Cyan Sequence Number (18px Bold) -->
-        <div class="w-full flex justify-start items-center">
-          <span class="text-cyan-400 font-black text-lg font-sans leading-none tracking-tight">
+      <div onclick="toggleMenuDrawer(true)" class="rm-solid-panel bg-[#0b1329]/95 border border-slate-700/80 hover:border-cyan-500/60 p-3.5 rounded-2xl flex flex-col justify-between relative shadow-xl active:scale-95 transition-all min-h-[138px] cursor-pointer group">
+        <!-- Top Row: Bada Cyan Number (Left) + Squircle Icon Container (Right) -->
+        <div class="flex items-center justify-between w-full">
+          <span class="text-cyan-400 font-black text-xl font-sans tracking-tight leading-none">
             ${item.seq}.
           </span>
-        </div>
-        
-        <!-- Center: Bada 48px Squircle Icon Box -->
-        <div class="my-1.5 flex items-center justify-center">
-          <div class="w-12 h-12 rounded-2xl bg-[#02091d] border border-cyan-500/40 flex items-center justify-center text-2xl shadow-inner group-hover:scale-105 transition-transform overflow-hidden">
+          <div class="w-11 h-11 rounded-2xl bg-[#02091d] border border-cyan-500/40 flex items-center justify-center text-2xl shadow-inner group-hover:scale-105 transition-transform overflow-hidden shrink-0">
             ${item.icon}
           </div>
         </div>
         
-        <!-- Bottom: Clean Bilingual Titles (ZERO TRUNCATION / NO CUTTING) -->
-        <div class="w-full">
-          <div class="text-[13px] font-black text-slate-100 leading-snug break-words group-hover:text-cyan-300 transition-colors">
+        <!-- Bottom Row: Bada Bada Font me Bilingual Sub-Title (Zero Truncation / No Cut) -->
+        <div class="w-full text-left mt-2">
+          <div class="text-[13.5px] font-black text-slate-100 leading-tight group-hover:text-cyan-300 transition-colors">
             ${item.title}
           </div>
-          <div class="text-[11px] text-emerald-400 font-semibold leading-snug mt-1 break-words">
+          <div class="text-[11.5px] text-emerald-400 font-bold leading-tight mt-1">
             ${item.hiTitle}
           </div>
         </div>
