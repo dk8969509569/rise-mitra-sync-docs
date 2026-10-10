@@ -1,35 +1,61 @@
 /**
- * RISE MITRA — MODULAR FAVORITES SHORTCUTS ENGINE (PHASE 5)
- * Universal Deep Extractor: Top-Left Cyan Number + Top-Right Squircle Icon + Uncut Bilingual Subtitle
+ * RISE MITRA — UNIVERSAL FAVORITES SHORTCUTS ENGINE (PHASE 5 ARCHITECTURE)
+ * Standardized 1:1 Sub-Category Mirror (Top-Left Cyan Seq + Right Squircle Icon + Uncut Bilingual)
  * SSOT Authority: Folder A (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)
  */
-(function initFavoritesEngine() {
+(function initUniversalFavoritesEngine() {
   const STORAGE_KEY = 'rm_user_pinned_shortcuts_v1';
 
-  // Canonical Sub-Category Fallback Registry (Covers Core Verticals)
+  // 1. UNIVERSAL CANONICAL SUB-CATEGORY REGISTRY (SSOT)
   const CANONICAL_SUBCATS = {
+    // 01. Tribal Arts & Handloom
     '01-1': { seq: '01-1', icon: '🥻', title: 'Tussar Silk & Handloom', hiTitle: 'तसर सिल्क, खादी व हथकरघा वस्त्र' },
     '01-2': { seq: '01-2', icon: '🏺', title: 'Dokra & Tribal Artifacts', hiTitle: 'डोकरा धातु कला व जनजातीय हस्तशिल्प' },
     '01-3': { seq: '01-3', icon: '🧱', title: 'Terracotta & Pottery', hiTitle: 'टेराकोटा, मूर्तिकला व मिट्टी बर्तन' },
+    
+    // 02. Auto & Vehicles
     '02-1': { seq: '02-1', icon: '🛵', title: 'Bike & Scooter Service', hiTitle: 'बाइक व स्कूटर सर्विस' },
     '02-2': { seq: '02-2', icon: '🚗', title: 'Car Repair & Washing', hiTitle: 'कार रिपेयर व वाशिंग' },
+    '02-3': { seq: '02-3', icon: '🛺', title: 'Auto & Commercial Transport', hiTitle: 'ऑटो, टैक्सी व कमर्शियल वाहन' },
+
+    // 03. Beauty & Salon
     '03-1': { seq: '03-1', icon: '💇‍♂️', title: "Men's Grooming", hiTitle: 'मेंस सैलून व हेयर स्टाइलिंग' },
     '03-2': { seq: '03-2', icon: '💅', title: "Women's Parlour", hiTitle: 'महिला ब्यूटी पार्लर व ब्राइडल मेकअप' },
+    '03-3': { seq: '03-3', icon: '🌿', title: 'Ayurvedic Spa & Wellness', hiTitle: 'आयुर्वेदिक स्पा व थेरेपी' },
+
+    // 06. Comics & Entertainment
     '06-1': { seq: '06-1', icon: '🦸', title: 'Classic Indian Comics', hiTitle: 'अमर चित्र कथा, चाचा चौधरी व सुपरहीरो' },
     '06-2': { seq: '06-2', icon: '📱', title: 'Manga & Webtoons', hiTitle: 'डिजिटल मांगा व रंगीन वेबटून' },
+
+    // 08. Electronics & Appliances
     '08-1': { seq: '08-1', icon: '📱', title: 'Smartphone & Gadget Care', hiTitle: 'स्मार्टफोन, लैपटॉप व स्क्रीन रिपेयर' },
     '08-2': { seq: '08-2', icon: '⚡', title: 'Electrical & Appliances', hiTitle: 'घरेलू बिजली उपकरण व वायरिंग' },
+
+    // 14. Food & Daily Dining
+    '14-1': { seq: '14-1', icon: '🍲', title: 'Local Dhaba & Tiffin', hiTitle: 'पारंपरिक भोजन व टिफिन सेवा' },
+    '14-2': { seq: '14-2', icon: '☕', title: 'Tea, Snacks & Street Food', hiTitle: 'चाय, नाश्ता व स्ट्रीट फूड' },
+
+    // 16. House & Home Care
     '16-1': { seq: '16-1', icon: '🛠️', title: 'Mistry & Home Repair', hiTitle: 'मिस्त्री व दैनिक घरेलू मरम्मत सेवाएं' },
     '16-2': { seq: '16-2', icon: '📋', title: 'Rental Ledger', hiTitle: 'किराया बहीखाता व किरायेदार प्रबंधन' },
-    '16-3': { seq: '16-3', icon: '🏠', title: 'Room & Flat Search', hiTitle: 'कमरा, फ्लैट व पीजी खोज (0% दलाली)' }
+    '16-3': { seq: '16-3', icon: '🏠', title: 'Room & Flat Search', hiTitle: 'कमरा, फ्लैट व पीजी खोज (0% दलाली)' },
+
+    // 20. Medical & Health
+    '20-1': { seq: '20-1', icon: '💊', title: 'Pharmacy & Medicines', hiTitle: 'दवाइयां व जेनेरिक मेडिकल स्टोर' },
+    '20-2': { seq: '20-2', icon: '🩺', title: 'Doctor Consultation & Clinic', hiTitle: 'डॉक्टर परामर्श व प्राथमिक क्लिनिक' },
+
+    // 27. Shopping & Retail
+    '27-1': { seq: '27-1', icon: '🛒', title: 'Kirana & Daily Grocery', hiTitle: 'किराना दुकान व दैनिक घरेलू राशन' },
+    '27-2': { seq: '27-2', icon: '👔', title: 'Clothing & Local Fashion', hiTitle: 'कपड़े, रेडीमेड गारमेंट्स व परिधान' }
   };
 
+  // 2. STATE REPOSITORY & AUTO-HEALING
   function getPinned() {
     try {
       let raw = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
       let updated = false;
 
-      // Auto-Heal: Purge/Replace corrupted "सेवा #08-1" and "🏷️" entries
+      // Auto-Heal: Corrupted/legacy data ko canonical metadata se sync karein
       raw = raw.map(item => {
         if (!item || !item.seq) return null;
         const c = CANONICAL_SUBCATS[item.seq];
@@ -73,6 +99,7 @@
     savePinned(list);
   };
 
+  // 3. CATALOG PIN BUTTONS SYNCHRONIZER
   function updatePinButtonsUI() {
     const list = getPinned();
     document.querySelectorAll('button').forEach(btn => {
@@ -95,6 +122,7 @@
     });
   }
 
+  // 4. UNIVERSAL GRID RENDER ENGINE (100% Tap-Safe, Uncut Typography)
   function renderFavorites() {
     const section = document.getElementById('userPinnedFavoritesSection');
     const grid = document.getElementById('userPinnedFavoritesGrid');
@@ -110,10 +138,9 @@
     section.classList.remove('hidden');
     if (badge) badge.textContent = `${list.length} सेव`;
 
-    // 100% BALANCED CARD: Top-Left Cyan Number + Top-Right Squircle Icon + Uncut 2-Tier Bilingual Text
     grid.innerHTML = list.map(item => `
       <div onclick="toggleMenuDrawer(true)" class="rm-solid-panel bg-[#0b1329]/95 border border-slate-700/80 hover:border-cyan-500/60 p-3.5 rounded-2xl flex flex-col justify-between relative shadow-xl active:scale-95 transition-all min-h-[142px] cursor-pointer group">
-        <!-- Top Row: Bada Cyan Sequence Number (Left) + Squircle Icon Container (Right) -->
+        <!-- Top Row: Cyan Sequence Number (Left) + Squircle Icon Container (Right) -->
         <div class="flex items-center justify-between w-full">
           <span class="text-cyan-400 font-black text-xl font-sans tracking-tight leading-none">
             ${item.seq}.
@@ -123,7 +150,7 @@
           </div>
         </div>
         
-        <!-- Bottom Row: Uncut Large Font 2-Tier Bilingual Title -->
+        <!-- Bottom Row: Uncut Bilingual Typography -->
         <div class="w-full text-left mt-2">
           <div class="text-[13.5px] font-black text-slate-100 leading-tight group-hover:text-cyan-300 transition-colors break-words">
             ${item.title}
@@ -136,7 +163,7 @@
     `).join('');
   }
 
-  // Universal Subcard Container Traversal (Stops exactly at the individual card box)
+  // 5. DEEP HIERARCHY TRAVERSAL HELPER
   function findSubcardElement(btn) {
     let el = btn;
     while (el && el !== document.body && el.id !== 'categoryModal') {
@@ -151,20 +178,19 @@
     return btn.closest('[data-cat-id], .c16-subcard-clean, [id^="sub-c"]') || btn.parentElement;
   }
 
-  // Universal Deep Subcard Data Extractor (Works across all 50 categories)
+  // 6. CANONICAL-FIRST DATA EXTRACTOR
   function extractSubcardData(card) {
     if (!card) return null;
     const seqMatch = card.textContent.match(/\b\d{1,2}-\d{1,2}\b/);
     const seq = seqMatch ? seqMatch[0] : '';
 
-    // Fast Path: Check canonical registry
+    // Fast SSOT Path: Always prefer canonical database
     if (seq && CANONICAL_SUBCATS[seq]) {
       const c = CANONICAL_SUBCATS[seq];
       return { id: `fav-${seq}`, seq: c.seq, icon: c.icon, title: c.title, hiTitle: c.hiTitle };
     }
 
-    // Dynamic Deep Path:
-    // 1. English Title (Targets font-black, font-bold, text-base, headings)
+    // Dynamic Generic Fallback for Remaining Subcategories
     let title = '';
     const textEls = Array.from(card.querySelectorAll('div, h3, h4, h5, p, span'))
       .filter(el => !el.closest('button') && el.children.length === 0);
@@ -180,7 +206,6 @@
       }
     }
 
-    // 2. Hindi Subtitle (Targets emerald/green text or Devanagari text under the title)
     let hiTitle = '';
     const greenEl = card.querySelector('[class*="emerald"], [class*="green"], .cat-bilingual-hi');
     if (greenEl && /[\u0900-\u097F]/.test(greenEl.textContent)) {
@@ -199,7 +224,6 @@
       }
     }
 
-    // 3. Real Icon (Extracts from squircle container or first emoji in the card header)
     let icon = '';
     const squircle = Array.from(card.querySelectorAll('div'))
       .find(d => {
@@ -230,7 +254,7 @@
     return { id: card.id || `fav-${seq}`, seq, icon, title, hiTitle };
   }
 
-  // Global Click Interception (Capture Phase)
+  // 7. EVENT LISTENER BINDING
   document.addEventListener('click', function(e) {
     const btn = e.target.closest('button');
     if (!btn) return;
@@ -247,6 +271,7 @@
     }
   }, true);
 
+  // 8. LIFECYCLE MOUNT
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => { renderFavorites(); updatePinButtonsUI(); });
   } else {
