@@ -1,12 +1,12 @@
 /**
  * RISE MITRA — MODULAR FAVORITES SHORTCUTS ENGINE (PHASE 5)
- * Ergonomic Top Row (Cyan Number + Right Squircle Icon) + Full Width Large Bilingual Title
+ * Universal Deep Extractor: Top-Left Cyan Number + Top-Right Squircle Icon + Uncut Bilingual Subtitle
  * SSOT Authority: Folder A (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)
  */
 (function initFavoritesEngine() {
   const STORAGE_KEY = 'rm_user_pinned_shortcuts_v1';
 
-  // Canonical Sub-Category Registry (Guarantees 100% Precision Zero-Loss)
+  // Canonical Sub-Category Fallback Registry (Covers Core Verticals)
   const CANONICAL_SUBCATS = {
     '01-1': { seq: '01-1', icon: '🥻', title: 'Tussar Silk & Handloom', hiTitle: 'तसर सिल्क, खादी व हथकरघा वस्त्र' },
     '01-2': { seq: '01-2', icon: '🏺', title: 'Dokra & Tribal Artifacts', hiTitle: 'डोकरा धातु कला व जनजातीय हस्तशिल्प' },
@@ -17,6 +17,8 @@
     '03-2': { seq: '03-2', icon: '💅', title: "Women's Parlour", hiTitle: 'महिला ब्यूटी पार्लर व ब्राइडल मेकअप' },
     '06-1': { seq: '06-1', icon: '🦸', title: 'Classic Indian Comics', hiTitle: 'अमर चित्र कथा, चाचा चौधरी व सुपरहीरो' },
     '06-2': { seq: '06-2', icon: '📱', title: 'Manga & Webtoons', hiTitle: 'डिजिटल मांगा व रंगीन वेबटून' },
+    '08-1': { seq: '08-1', icon: '📱', title: 'Smartphone & Gadget Care', hiTitle: 'स्मार्टफोन, लैपटॉप व स्क्रीन रिपेयर' },
+    '08-2': { seq: '08-2', icon: '⚡', title: 'Electrical & Appliances', hiTitle: 'घरेलू बिजली उपकरण व वायरिंग' },
     '16-1': { seq: '16-1', icon: '🛠️', title: 'Mistry & Home Repair', hiTitle: 'मिस्त्री व दैनिक घरेलू मरम्मत सेवाएं' },
     '16-2': { seq: '16-2', icon: '📋', title: 'Rental Ledger', hiTitle: 'किराया बहीखाता व किरायेदार प्रबंधन' },
     '16-3': { seq: '16-3', icon: '🏠', title: 'Room & Flat Search', hiTitle: 'कमरा, फ्लैट व पीजी खोज (0% दलाली)' }
@@ -27,10 +29,11 @@
       let raw = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
       let updated = false;
 
+      // Auto-Heal: Purge/Replace corrupted "सेवा #08-1" and "🏷️" entries
       raw = raw.map(item => {
         if (!item || !item.seq) return null;
         const c = CANONICAL_SUBCATS[item.seq];
-        if (c && (item.title.includes('आइटम #') || item.hiTitle === 'उत्पाद व सेवा' || item.icon === '🪧' || item.icon === '🖌️')) {
+        if (c && (item.title.includes('सेवा #') || item.title.includes('आइटम #') || !item.hiTitle || item.icon === '🏷️' || item.icon === '🪧')) {
           updated = true;
           return { ...item, icon: c.icon, title: c.title, hiTitle: c.hiTitle };
         }
@@ -61,8 +64,8 @@
       list.push({
         id: id || `fav-${seq}`,
         seq: seq || '⭐',
-        icon: icon || '🏷️',
-        title: title || 'सेवा',
+        icon: icon || '⭐',
+        title: title || 'पसंदीदा सेवा',
         hiTitle: hiTitle || '',
         pinnedAt: Date.now()
       });
@@ -107,10 +110,10 @@
     section.classList.remove('hidden');
     if (badge) badge.textContent = `${list.length} सेव`;
 
-    // TOP ROW: NUMBERING (LEFT) + SQUIRCLE ICON (RIGHT) | BOTTOM: LARGE BILINGUAL TITLES
+    // 100% BALANCED CARD: Top-Left Cyan Number + Top-Right Squircle Icon + Uncut 2-Tier Bilingual Text
     grid.innerHTML = list.map(item => `
-      <div onclick="toggleMenuDrawer(true)" class="rm-solid-panel bg-[#0b1329]/95 border border-slate-700/80 hover:border-cyan-500/60 p-3.5 rounded-2xl flex flex-col justify-between relative shadow-xl active:scale-95 transition-all min-h-[138px] cursor-pointer group">
-        <!-- Top Row: Bada Cyan Number (Left) + Squircle Icon Container (Right) -->
+      <div onclick="toggleMenuDrawer(true)" class="rm-solid-panel bg-[#0b1329]/95 border border-slate-700/80 hover:border-cyan-500/60 p-3.5 rounded-2xl flex flex-col justify-between relative shadow-xl active:scale-95 transition-all min-h-[142px] cursor-pointer group">
+        <!-- Top Row: Bada Cyan Sequence Number (Left) + Squircle Icon Container (Right) -->
         <div class="flex items-center justify-between w-full">
           <span class="text-cyan-400 font-black text-xl font-sans tracking-tight leading-none">
             ${item.seq}.
@@ -120,57 +123,109 @@
           </div>
         </div>
         
-        <!-- Bottom Row: Bada Bada Font me Bilingual Sub-Title (Zero Truncation / No Cut) -->
+        <!-- Bottom Row: Uncut Large Font 2-Tier Bilingual Title -->
         <div class="w-full text-left mt-2">
-          <div class="text-[13.5px] font-black text-slate-100 leading-tight group-hover:text-cyan-300 transition-colors">
+          <div class="text-[13.5px] font-black text-slate-100 leading-tight group-hover:text-cyan-300 transition-colors break-words">
             ${item.title}
           </div>
-          <div class="text-[11.5px] text-emerald-400 font-bold leading-tight mt-1">
-            ${item.hiTitle}
+          <div class="text-[11.5px] text-emerald-400 font-bold leading-tight mt-1 break-words">
+            ${item.hiTitle || 'विशेष सेवा'}
           </div>
         </div>
       </div>
     `).join('');
   }
 
-  // Precision Sub-Card Container Finder
+  // Universal Subcard Container Traversal (Stops exactly at the individual card box)
   function findSubcardElement(btn) {
-    let curr = btn.parentElement;
-    while (curr && curr !== document.body && curr.id !== 'categoryModal') {
-      const text = curr.textContent || '';
-      const matches = text.match(/\b\d{1,2}-\d{1,2}\.?\b/g);
-      if (matches && matches.length === 1) {
-        return curr;
+    let el = btn;
+    while (el && el !== document.body && el.id !== 'categoryModal') {
+      el = el.parentElement;
+      if (!el) break;
+      const m = (el.textContent || '').match(/\b\d{1,2}-\d{1,2}\b/g) || [];
+      const unique = [...new Set(m)];
+      if (unique.length === 1) {
+        return el;
       }
-      curr = curr.parentElement;
     }
     return btn.closest('[data-cat-id], .c16-subcard-clean, [id^="sub-c"]') || btn.parentElement;
   }
 
-  // Exact Sub-Category Header Extractor
+  // Universal Deep Subcard Data Extractor (Works across all 50 categories)
   function extractSubcardData(card) {
     if (!card) return null;
     const seqMatch = card.textContent.match(/\b\d{1,2}-\d{1,2}\b/);
     const seq = seqMatch ? seqMatch[0] : '';
 
+    // Fast Path: Check canonical registry
     if (seq && CANONICAL_SUBCATS[seq]) {
       const c = CANONICAL_SUBCATS[seq];
       return { id: `fav-${seq}`, seq: c.seq, icon: c.icon, title: c.title, hiTitle: c.hiTitle };
     }
 
-    let icon = '🏷️';
-    const squircle = card.querySelector('div[class*="rounded-2xl"], div[class*="rounded-xl"]');
+    // Dynamic Deep Path:
+    // 1. English Title (Targets font-black, font-bold, text-base, headings)
+    let title = '';
+    const textEls = Array.from(card.querySelectorAll('div, h3, h4, h5, p, span'))
+      .filter(el => !el.closest('button') && el.children.length === 0);
+
+    for (let el of textEls) {
+      const txt = el.textContent.trim();
+      if (/[a-zA-Z]{3,}/.test(txt) && 
+          !txt.includes('Live') && !txt.includes('Verified') && 
+          !txt.includes('Protect') && !txt.includes('Play') &&
+          !txt.includes('Reviews') && !txt.includes('Min')) {
+        title = txt.replace(/^\d{1,2}-\d{1,2}\.?\s*/, '').trim();
+        break;
+      }
+    }
+
+    // 2. Hindi Subtitle (Targets emerald/green text or Devanagari text under the title)
+    let hiTitle = '';
+    const greenEl = card.querySelector('[class*="emerald"], [class*="green"], .cat-bilingual-hi');
+    if (greenEl && /[\u0900-\u097F]/.test(greenEl.textContent)) {
+      hiTitle = greenEl.textContent.trim();
+    }
+    if (!hiTitle) {
+      for (let el of textEls) {
+        const txt = el.textContent.trim();
+        if (/[\u0900-\u097F]{4,}/.test(txt) && 
+            !txt.includes('पिन') && !txt.includes('खोलें') && 
+            !txt.includes('वीडियो') && !txt.includes('ग्राहक') && 
+            !txt.includes('सत्यापित') && !txt.includes('समीक्षाएं')) {
+          hiTitle = txt;
+          break;
+        }
+      }
+    }
+
+    // 3. Real Icon (Extracts from squircle container or first emoji in the card header)
+    let icon = '';
+    const squircle = Array.from(card.querySelectorAll('div'))
+      .find(d => {
+        if (d.closest('button')) return false;
+        const cls = d.className || '';
+        return (cls.includes('rounded-2xl') || cls.includes('rounded-xl') || cls.includes('cat-icon')) &&
+               d.children.length <= 2 &&
+               /\p{Extended_Pictographic}/u.test(d.textContent);
+      });
+
     if (squircle) {
       const em = squircle.textContent.trim().match(/\p{Extended_Pictographic}/u);
       if (em) icon = em[0];
     }
+    if (!icon) {
+      const ems = textEls
+        .map(el => el.textContent.trim().match(/\p{Extended_Pictographic}/u))
+        .filter(Boolean)
+        .map(m => m[0])
+        .filter(e => !['📌', '★', '✓', '▶', '⚡', '⭐', '✕', '🛡️', '🛡'].includes(e));
+      if (ems.length > 0) icon = ems[0];
+    }
 
-    const enEl = card.querySelector('h3, h4, h5, .cat-bilingual-en, [class*="font-bold"]');
-    const title = enEl ? enEl.textContent.trim() : (seq ? `सेवा #${seq}` : 'विशेष सेवा');
-
-    let hiTitle = '';
-    const greenEl = card.querySelector('[class*="text-emerald"], [class*="text-green"]');
-    if (greenEl) hiTitle = greenEl.textContent.trim();
+    if (!title || title === 'undefined') title = seq ? `सेवा #${seq}` : 'पसंदीदा सेवा';
+    if (!hiTitle || hiTitle === 'undefined') hiTitle = 'उत्पाद व सेवा';
+    if (!icon) icon = '⭐';
 
     return { id: card.id || `fav-${seq}`, seq, icon, title, hiTitle };
   }
