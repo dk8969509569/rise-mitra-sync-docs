@@ -1,5 +1,5 @@
 /**
- * RISE MITRA — SOVEREIGN IN-SITU MASTER DOCK & PUBLIC CLOAKING ENGINE
+ * RISE MITRA — SOVEREIGN IN-SITU MASTER DOCK, CLOAKING & ANTI-OVERLAP ENGINE
  * SPECIFICATION : FOLDER A (MASTER DOCUMENT SSOT)
  * GOVERNANCE    : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0
  * REPO TARGET   : public/js/insitu-dock-engine.js
@@ -11,12 +11,116 @@
 (function () {
   'use strict';
 
+  // =========================================================================
+  // 0. UNIVERSAL CATALOG ANTI-OVERLAP & ANTI-DOME CSS SHIELD (RUNS ALWAYS)
+  // =========================================================================
+  const catalogCleanShield = document.createElement('style');
+  catalogCleanShield.id = 'rm-universal-catalog-clean-shield-css';
+  catalogCleanShield.textContent = `
+    /* 1. Universal Anti-Overlap: Vertical 12px Clean Stacking */
+    #categoryModal #tier1-list > div,
+    #categoryModal #tier2-list > div,
+    #categoryModal #tier1-list div,
+    #categoryModal #tier2-list div,
+    #categoryModal [class*="card"],
+    #categoryModal [id^="cat-"],
+    #categoryModal [data-cat-id] {
+      position: relative !important;
+      margin-top: 12px !important;
+      margin-bottom: 12px !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      border-radius: 16px !important;
+      top: auto !important;
+      bottom: auto !important;
+      left: auto !important;
+      right: auto !important;
+      transform: none !important;
+      clip-path: none !important;
+      -webkit-clip-path: none !important;
+      clear: both !important;
+      float: none !important;
+      box-sizing: border-box !important;
+    }
+
+    /* 2. Universal Anti-Dome: Eradicate 50% / Oval Border-Radius */
+    #categoryModal div,
+    #tier1-list div,
+    #tier2-list div,
+    #categoryModal [style*="border-radius: 50%"],
+    #categoryModal [style*="border-radius:50%"],
+    #categoryModal [style*="border-radius: 100px"] {
+      border-radius: 16px !important;
+    }
+
+    /* Keep native round badges and avatars intact */
+    #categoryModal .rounded-full,
+    #categoryModal [class*="rounded-full"],
+    #header-user-avatar {
+      border-radius: 9999px !important;
+    }
+
+    /* 3. Strip Negative Margins on Category Cards */
+    #categoryModal [style*="margin-top:-"],
+    #categoryModal [style*="margin-top: -"] {
+      margin-top: 12px !important;
+    }
+
+    /* 4. Suppress Radar Rings, Ripples and Overlays */
+    #categoryModal .sivme-radar-ring,
+    #categoryModal .sivme-ripple,
+    #categoryModal .sivme-radar-layer,
+    #categoryModal [class*="radar"],
+    #categoryModal [class*="ripple"] {
+      display: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+  `;
+  (document.head || document.documentElement).appendChild(catalogCleanShield);
+
+  // Active DOM Sanitizer to eliminate inline dome styles
+  function sanitizeCatalogDOM() {
+    const modal = document.getElementById('categoryModal');
+    if (!modal) return;
+
+    modal.querySelectorAll('#tier1-list > div, #tier2-list > div, [data-cat-id]').forEach(card => {
+      // Reset negative margin
+      if (card.style.marginTop && card.style.marginTop.includes('-')) {
+        card.style.setProperty('margin-top', '12px', 'important');
+      }
+      card.style.setProperty('margin-bottom', '12px', 'important');
+
+      // Reset dome curves
+      if (card.style.borderRadius && (card.style.borderRadius.includes('50%') || parseInt(card.style.borderRadius) > 24)) {
+        card.style.setProperty('border-radius', '16px', 'important');
+      }
+
+      // Neutralize absolute positioning
+      if (card.style.position === 'absolute') {
+        card.style.setProperty('position', 'relative', 'important');
+      }
+    });
+
+    // Remove legacy radar ring layers
+    modal.querySelectorAll('.sivme-radar-ring, .sivme-ripple, .sivme-radar-layer').forEach(el => el.remove());
+  }
+
+  // Hook sanitizer to clicks and accordion toggles
+  document.addEventListener('click', () => setTimeout(sanitizeCatalogDOM, 80));
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', sanitizeCatalogDOM);
+  } else {
+    sanitizeCatalogDOM();
+  }
+
   const urlParams = new URLSearchParams(window.location.search);
   const isOwner = urlParams.get('sov_mode') === 'in_situ' || 
                   urlParams.get('sivme') === 'owner' || 
                   urlParams.get('dev_auto') === '1';
 
-  // Helper: Extract all hidden items from Sovereign Visibility Registry
+  // Helper: Extract hidden items from Sovereign Visibility Registry
   function getHiddenKeys() {
     try {
       const raw = localStorage.getItem('rm_sovereign_visibility_registry_v1');
@@ -41,23 +145,14 @@
       const selectors = [];
 
       hiddenKeys.forEach(urn => {
-        // Direct attribute hooks
         selectors.push(`[data-sov-urn="${urn}"]`);
         selectors.push(`[data-target-urn="${urn}"]`);
         selectors.push(`[data-badge-urn="${urn}"]`);
 
-        // Known canonical element bindings
-        if (urn === 'rm:elem:dir-menu-btn') {
-          selectors.push('#cat-menu-btn');
-        }
-        if (urn === 'rm:card:rm-cash') {
-          selectors.push('.wallet-card');
-        }
-        if (urn === 'rm:elem:home-search') {
-          selectors.push('.sivme-search-container');
-        }
+        if (urn === 'rm:elem:dir-menu-btn') selectors.push('#cat-menu-btn');
+        if (urn === 'rm:card:rm-cash') selectors.push('.wallet-card');
+        if (urn === 'rm:elem:home-search') selectors.push('.sivme-search-container');
 
-        // Category card mappings (e.g., rm:cat:03, rm:cat:16)
         const catMatch = urn.match(/^rm:cat:(\d+)$/);
         if (catMatch) {
           const num = catMatch[1];
@@ -68,11 +163,8 @@
           selectors.push(`[data-cat-id="c${intNum}"]`);
           selectors.push(`[onclick*="'c${num}'"]`);
           selectors.push(`[onclick*="'${num}'"]`);
-          selectors.push(`[onclick*="'c${intNum}'"]`);
-          selectors.push(`[onclick*="'${intNum}'"]`);
         }
 
-        // Sub-category card mappings (e.g., rm:cat:16:sub:16-1)
         const subMatch = urn.match(/^rm:cat:(\d+):sub:(\d+)-(\d+)$/);
         if (subMatch) {
           const catNum = subMatch[1];
@@ -80,13 +172,11 @@
           selectors.push(`#sub-c${catNum} > div:nth-child(${subIdx})`);
         }
 
-        // Generic safe selector fallback
         const safeKey = urn.replace(/[^a-zA-Z0-9_-]/g, '\\$&');
         selectors.push(`#${safeKey}`);
         selectors.push(`[data-id="${urn}"]`);
       });
 
-      // Inject 0ms CSS Shield to prevent element flash in public mode
       let cloakStyle = document.getElementById('rm-public-cloaking-shield');
       if (!cloakStyle) {
         cloakStyle = document.createElement('style');
@@ -108,7 +198,6 @@
         }
       `;
 
-      // DOM sweeper for late-hydrated micro-apps and dynamic grids
       function sweepDOM() {
         hiddenKeys.forEach(urn => {
           if (urn === 'rm:elem:dir-menu-btn') {
@@ -149,24 +238,21 @@
       const observer = new MutationObserver(sweepDOM);
       observer.observe(document.documentElement, { childList: true, subtree: true });
     }
-    return; // Exit cleanly so owner HUD is never loaded for public users
+    return;
   }
 
   // =========================================================================
   // 2. OWNER IN-SITU MODE (Executes when isOwner is TRUE)
   // =========================================================================
 
-  // 1. Force activate authorization tokens for fail-closed bypass
   try {
     sessionStorage.setItem('rm_sov_in_situ_session', 'SOV_ACTIVE_2026');
     localStorage.setItem('rm_sov_in_situ_session', 'SOV_ACTIVE_2026');
   } catch (_) {}
 
-  // 2. Inject Master Z-Index Shield: Dock stays on TOP of all badges (z-index: 9999999)
   const masterShieldStyle = document.createElement('style');
   masterShieldStyle.id = 'rm-master-insitu-shield-css';
   masterShieldStyle.textContent = `
-    /* Eliminate legacy duplicate dock collision */
     [id*="sivme"]:not(#rm-master-insitu-dock),
     [id*="hud"]:not(#rm-master-insitu-dock),
     .sivme-hud-dock:not(#rm-master-insitu-dock),
@@ -177,7 +263,6 @@
       pointer-events: none !important;
     }
 
-    /* Force Master Dock to ALWAYS float above all card badges & overlays */
     #rm-master-insitu-dock {
       position: fixed !important;
       bottom: 68px !important;
@@ -191,7 +276,6 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 15px rgba(16, 185, 129, 0.3) !important;
     }
 
-    /* Keep card badges strictly below the Master Dock layer */
     .sivme-inline-badge,
     .sivme-notch-pill,
     [data-badge-vis],
@@ -203,7 +287,6 @@
   `;
   document.head.appendChild(masterShieldStyle);
 
-  // 3. Inject In-Situ Registry and Scanner scripts
   const scripts = [
     '/js/sovereign-in-situ-registry.js',
     '/js/sovereign-in-situ-hud.js'
@@ -215,7 +298,6 @@
     document.body.appendChild(s);
   });
 
-  // 4. Purge any duplicate dock from DOM
   function purgeDuplicateDocks() {
     const master = document.getElementById('rm-master-insitu-dock');
     document.querySelectorAll('body > div, body > footer, [class*="fixed"]').forEach(el => {
@@ -231,7 +313,6 @@
     });
   }
 
-  // 5. Accurate Ground-Truth Hidden Count (Direct DOM + LocalStorage Sync)
   function getHiddenCount() {
     const domCount = document.querySelectorAll(
       '[data-badge-vis="false"], .sivme-tracked-hidden, [data-sivme-status="hidden"], .sivme-ghost-dormant'
@@ -241,7 +322,6 @@
     return getHiddenKeys().length;
   }
 
-  // 6. Real-time counter updater
   function updateDockCount() {
     const badge = document.getElementById('rm-dock-hidden-count');
     if (badge) {
@@ -249,7 +329,6 @@
     }
   }
 
-  // 7. Render Single Authoritative In-Situ Dock
   function renderInSituDock() {
     purgeDuplicateDocks();
     if (document.getElementById('rm-master-insitu-dock')) {
@@ -287,7 +366,6 @@
     window.location.href = window.location.pathname;
   };
 
-  // Lifecycle execution triggers
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', renderInSituDock);
   } else {
@@ -295,11 +373,9 @@
   }
   setTimeout(renderInSituDock, 300);
 
-  // Dynamic live event listeners
   window.addEventListener('storage', updateDockCount);
   document.addEventListener('click', () => setTimeout(updateDockCount, 200));
   setInterval(updateDockCount, 500);
-
-  // Continuous purge to ensure zero-duplicate collision
   setInterval(purgeDuplicateDocks, 300);
+  setInterval(sanitizeCatalogDOM, 400);
 })();
