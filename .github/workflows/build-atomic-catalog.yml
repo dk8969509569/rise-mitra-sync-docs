@@ -1,0 +1,30 @@
+name: Build and Commit Atomic Catalog (01-50)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate-categories:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Run Atomic Catalog Generator
+        run: node scripts/generate-atomic-catalog.js
+
+      - name: Commit and Push Atomic Categories
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/js/universal-catalog/categories/
+          git commit -m "feat(catalog): auto-generate atomic categories 01-50 conforming to Play Store canonical specs" || echo "No changes to commit"
+          git push origin main
