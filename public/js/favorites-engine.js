@@ -1,11 +1,19 @@
 /**
  * RISE MITRA — UNIVERSAL FAVORITES SHORTCUTS ENGINE (PHASE 5 ARCHITECTURE)
- * Header        : "My Favorites (मेरी पसंदीदा)" — Products, Services, Utilities & Games Parity
- * Typography    : Line 1: English Roman (Bold) | Line 2: Hindi Devanagari Subtitle
- * Bulletproof Offline Persistence + Tolerant Schema + Natural Sequence Sort
+ *
+ * ==============================================================================
+ * ⚠️ HARD INVARIANT & ANTI-PATTERN LOCK (STRICT NEGATIVE INVARIANT):
+ * 1. ZERO ✕ / CLOSE / UNPIN BUTTONS ON HOME GRID CARDS.
+ *    - Accidental cancellation strictly prohibited. Cards are 100% Tap-Safe.
+ *    - Unpinning is EXCLUSIVELY allowed from inside the Catalog Modal.
+ * 2. BILINGUAL TYPOGRAPHY: Line 1 English Roman (Bold) | Line 2 Hindi Subtitle.
+ * 3. TOP ROW: Left Cyan Sequence Number (18px) | Right 40px Squircle Icon.
+ * ==============================================================================
+ *
  * SSOT Authority: Folder A (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)
  * REPO TARGET   : public/js/favorites-engine.js
  */
+
 (function initUniversalFavoritesEngine() {
   'use strict';
 
@@ -16,60 +24,59 @@
   // ==============================================================================
   const CANONICAL_SUBCATS = {
     // 01. Tribal Arts & Handloom (Products)
-    '01-1': { seq: '01-1', tag: 'Handloom', icon: '🥻', title: 'Tussar Silk & Handloom', hiTitle: 'तसर सिल्क, खादी व हथकरघा वस्त्र' },
-    '01-2': { seq: '01-2', tag: 'Tribal Art', icon: '🏺', title: 'Dokra & Tribal Artifacts', hiTitle: 'डोकरा धातु कला व जनजातीय हस्तशिल्प' },
-    '01-3': { seq: '01-3', tag: 'Pottery', icon: '🧱', title: 'Terracotta & Pottery', hiTitle: 'टेराकोटा, मूर्तिकला व मिट्टी बर्तन' },
+    '01-1': { seq: '01-1', icon: '🥻', title: 'Tussar Silk & Handloom', hiTitle: 'तसर सिल्क, खादी व हथकरघा वस्त्र' },
+    '01-2': { seq: '01-2', icon: '🏺', title: 'Dokra & Tribal Artifacts', hiTitle: 'डोकरा धातु कला व जनजातीय हस्तशिल्प' },
+    '01-3': { seq: '01-3', icon: '🧱', title: 'Terracotta & Pottery', hiTitle: 'टेराकोटा, मूर्तिकला व मिट्टी बर्तन' },
     
     // 02. Auto & Vehicles (Services)
-    '02-1': { seq: '02-1', tag: 'Bike Service', icon: '🛵', title: 'Bike & Scooter Service', hiTitle: 'बाइक व स्कूटर सर्विस' },
-    '02-2': { seq: '02-2', tag: 'Car Service', icon: '🚗', title: 'Car Repair & Washing', hiTitle: 'कार रिपेयर व वाशिंग' },
-    '02-3': { seq: '02-3', tag: 'Transport', icon: '🛺', title: 'Auto & Commercial Transport', hiTitle: 'ऑटो, टैक्सी व कमर्शियल वाहन' },
+    '02-1': { seq: '02-1', icon: '🛵', title: 'Bike & Scooter Service', hiTitle: 'बाइक व स्कूटर सर्विस' },
+    '02-2': { seq: '02-2', icon: '🚗', title: 'Car Repair & Washing', hiTitle: 'कार रिपेयर व वाशिंग' },
+    '02-3': { seq: '02-3', icon: '🛺', title: 'Auto & Commercial Transport', hiTitle: 'ऑटो, टैक्सी व कमर्शियल वाहन' },
 
     // 03. Beauty & Salon (Services)
-    '03-1': { seq: '03-1', tag: 'Grooming', icon: '💇‍♂️', title: "Men's Grooming", hiTitle: 'मेंस सैलून व हेयर स्टाइलिंग' },
-    '03-2': { seq: '03-2', tag: 'Parlour', icon: '💅', title: "Women's Parlour", hiTitle: 'महिला ब्यूटी पार्लर व ब्राइडल मेकअप' },
-    '03-3': { seq: '03-3', tag: 'Wellness', icon: '🌿', title: 'Ayurvedic Spa & Wellness', hiTitle: 'आयुर्वेदिक स्पा व थेरेपी' },
+    '03-1': { seq: '03-1', icon: '💇‍♂️', title: "Men's Grooming", hiTitle: 'मेंस सैलून व हेयर स्टाइलिंग' },
+    '03-2': { seq: '03-2', icon: '💅', title: "Women's Parlour", hiTitle: 'महिला ब्यूटी पार्लर व ब्राइडल मेकअप' },
+    '03-3': { seq: '03-3', icon: '🌿', title: 'Ayurvedic Spa & Wellness', hiTitle: 'आयुर्वेदिक स्पा व थेरेपी' },
 
     // 04. Education & Study (Products & Utilities)
-    '04-1': { seq: '04-1', tag: 'Library', icon: '🔔', title: 'Study Library & Reading Rooms', hiTitle: 'वाचनालय व शांत अध्ययन कक्ष' },
-    '04-2': { seq: '04-2', tag: 'Books', icon: '📚', title: 'Competitive Books & Notes', hiTitle: 'प्रतियोगी पुस्तकें व स्टडी नोट्स' },
+    '04-1': { seq: '04-1', icon: '🔔', title: 'Study Library & Reading Rooms', hiTitle: 'वाचनालय व शांत अध्ययन कक्ष' },
+    '04-2': { seq: '04-2', icon: '📚', title: 'Competitive Books & Notes', hiTitle: 'प्रतियोगी पुस्तकें व स्टडी नोट्स' },
 
     // 06. Comics & Entertainment (Products & Media)
-    '06-1': { seq: '06-1', tag: 'Comics', icon: '🦸', title: 'Classic Indian Comics', hiTitle: 'अमर चित्र कथा, चाचा चौधरी व सुपरहीरो' },
-    '06-2': { seq: '06-2', tag: 'Webtoons', icon: '📱', title: 'Manga & Webtoons', hiTitle: 'डिजिटल मांगा व रंगीन वेबटून' },
+    '06-1': { seq: '06-1', icon: '🦸', title: 'Classic Indian Comics', hiTitle: 'अमर चित्र कथा, चाचा चौधरी व सुपरहीरो' },
+    '06-2': { seq: '06-2', icon: '📱', title: 'Manga & Webtoons', hiTitle: 'डिजिटल मांगा व रंगीन वेबटून' },
 
     // 07. Government & Form Services (Citizen Utilities)
-    '07-1': { seq: '07-1', tag: 'Digital Seva', icon: '📄', title: 'CSC & Digital Seva Kendra', hiTitle: 'डिजिटल सेवा व सरकारी प्रमाण पत्र' },
-    '07-2': { seq: '07-2', tag: 'Online Forms', icon: '📝', title: 'Online Forms & Admissions', hiTitle: 'ऑनलाइन आवेदन व प्रवेश फॉर्म' },
+    '07-1': { seq: '07-1', icon: '📄', title: 'CSC & Digital Seva Kendra', hiTitle: 'डिजिटल सेवा व सरकारी प्रमाण पत्र' },
+    '07-2': { seq: '07-2', icon: '📝', title: 'Online Forms & Admissions', hiTitle: 'ऑनलाइन आवेदन व प्रवेश फॉर्म' },
 
     // 08. Electronics & Appliances (Services & Repairs)
-    '08-1': { seq: '08-1', tag: 'Gadget Care', icon: '📱', title: 'Smartphone & Gadget Care', hiTitle: 'स्मार्टफोन, लैपटॉप व स्क्रीन रिपेयर' },
-    '08-2': { seq: '08-2', tag: 'Appliances', icon: '⚡', title: 'Electrical & Appliances', hiTitle: 'घरेलू बिजली उपकरण व वायरिंग' },
+    '08-1': { seq: '08-1', icon: '📱', title: 'Smartphone & Gadget Care', hiTitle: 'स्मार्टफोन, लैपटॉप व स्क्रीन रिपेयर' },
+    '08-2': { seq: '08-2', icon: '⚡', title: 'Electrical & Appliances', hiTitle: 'घरेलू बिजली उपकरण व वायरिंग' },
 
     // 14. Food & Daily Dining (Products)
-    '14-1': { seq: '14-1', tag: 'Dining', icon: '🍲', title: 'Local Dhaba & Tiffin', hiTitle: 'पारंपरिक भोजन व टिफिन सेवा' },
-    '14-2': { seq: '14-2', tag: 'Snacks', icon: '☕', title: 'Tea, Snacks & Street Food', hiTitle: 'चाय, नाश्ता व स्ट्रीट फूड' },
+    '14-1': { seq: '14-1', icon: '🍲', title: 'Local Dhaba & Tiffin', hiTitle: 'पारंपरिक भोजन व टिफिन सेवा' },
+    '14-2': { seq: '14-2', icon: '☕', title: 'Tea, Snacks & Street Food', hiTitle: 'चाय, नाश्ता व स्ट्रीट फूड' },
 
     // 16. House & Home Care (Services & Utilities)
-    '16-1': { seq: '16-1', tag: 'Home Repair', icon: '🛠️', title: 'Mistry & Home Repair', hiTitle: 'मिस्त्री व दैनिक घरेलू मरम्मत सेवाएं' },
-    '16-2': { seq: '16-2', tag: 'Rent Ledger', icon: '📋', title: 'Rental Ledger', hiTitle: 'किराया बहीखाता व किरायेदार प्रबंधन' },
-    '16-3': { seq: '16-3', tag: 'Room Search', icon: '🏠', title: 'Room & Flat Search', hiTitle: 'कमरा, फ्लैट व पीजी खोज (0% दलाली)' },
+    '16-1': { seq: '16-1', icon: '🛠️', title: 'Mistry & Home Repair', hiTitle: 'मिस्त्री व दैनिक घरेलू मरम्मत सेवाएं' },
+    '16-2': { seq: '16-2', icon: '📋', title: 'Rental Ledger', hiTitle: 'किराया बहीखाता व किरायेदार प्रबंधन' },
+    '16-3': { seq: '16-3', icon: '🏠', title: 'Room & Flat Search', hiTitle: 'कमरा, फ्लैट व पीजी खोज (0% दलाली)' },
 
     // 20. Medical & Health (Products & Care)
-    '20-1': { seq: '20-1', tag: 'Pharmacy', icon: '💊', title: 'Pharmacy & Medicines', hiTitle: 'दवाइयां व जेनेरिक मेडिकल स्टोर' },
-    '20-2': { seq: '20-2', tag: 'Clinic', icon: '🩺', title: 'Doctor Consultation & Clinic', hiTitle: 'डॉक्टर परामर्श व प्राथमिक क्लिनिक' },
+    '20-1': { seq: '20-1', icon: '💊', title: 'Pharmacy & Medicines', hiTitle: 'दवाइयां व जेनेरिक मेडिकल स्टोर' },
+    '20-2': { seq: '20-2', icon: '🩺', title: 'Doctor Consultation & Clinic', hiTitle: 'डॉक्टर परामर्श व प्राथमिक क्लिनिक' },
 
     // 27. Shopping & Retail (Products)
-    '27-1': { seq: '27-1', tag: 'Grocery', icon: '🛒', title: 'Kirana & Daily Grocery', hiTitle: 'किराना दुकान व दैनिक घरेलू राशन' },
-    '27-2': { seq: '27-2', tag: 'Fashion', icon: '👔', title: 'Clothing & Local Fashion', hiTitle: 'कपड़े, रेडीमेड गारमेंट्स व परिधान' },
+    '27-1': { seq: '27-1', icon: '🛒', title: 'Kirana & Daily Grocery', hiTitle: 'किराना दुकान व दैनिक घरेलू राशन' },
+    '27-2': { seq: '27-2', icon: '👔', title: 'Clothing & Local Fashion', hiTitle: 'कपड़े, रेडीमेड गारमेंट्स व परिधान' },
 
     // 33. Revenue & Social Welfare (Citizen Services)
-    '33-1': { seq: '33-1', tag: 'Panchayat', icon: '🏛️', title: 'Panchayat & Block Office', hiTitle: 'पंचायत व प्रखंड जनसुविधा' },
-    '33-2': { seq: '33-2', tag: 'Welfare', icon: '👵', title: 'Pensions & Women Welfare', hiTitle: 'सामाजिक सुरक्षा व पेंशन योजनाएं' },
-    '33-3': { seq: '33-3', tag: 'Land Records', icon: '📜', title: 'Land Revenue & Khatiyan', hiTitle: 'राजस्व सेवाएं व भू-अभिलेख' }
+    '33-1': { seq: '33-1', icon: '🏛️', title: 'Panchayat & Block Office', hiTitle: 'पंचायत व प्रखंड जनसुविधा' },
+    '33-2': { seq: '33-2', icon: '👵', title: 'Pensions & Women Welfare', hiTitle: 'सामाजिक सुरक्षा व पेंशन योजनाएं' },
+    '33-3': { seq: '33-3', icon: '📜', title: 'Land Revenue & Khatiyan', hiTitle: 'राजस्व सेवाएं व भू-अभिलेख' }
   };
 
-  // Helper: Extract clean normalized sequence (handles spaces like "01 - 1" -> "01-1")
   function getSeqFromElement(el) {
     if (!el) return '';
     const text = el.textContent || '';
@@ -83,7 +90,7 @@
   }
 
   // ==============================================================================
-  // 2. BULLETPROOF PERSISTENCE & TOLERANT STORAGE (ZERO CUSTOMER DATA LOSS)
+  // 2. BULLETPROOF PERSISTENCE & TOLERANT STORAGE (ZERO DATA LOSS)
   // ==============================================================================
   function getPinned() {
     try {
@@ -96,7 +103,6 @@
       raw = raw.map(item => {
         if (!item || typeof item !== 'object') return null;
 
-        // Tolerant Schema: never drops items if seq or code or id exists
         const seqVal = item.seq || item.code || item.id || '';
         if (!seqVal) return null;
 
@@ -104,14 +110,12 @@
         const titleStr = typeof item.title === 'string' ? item.title : (item.enTitle || '');
         const hiTitleStr = typeof item.hiTitle === 'string' ? item.hiTitle : '';
 
-        // Auto-enrich legacy or fallback items without wiping
-        if (c && (titleStr.includes('सेवा #') || titleStr.includes('आइटम #') || !hiTitleStr || item.icon === '🏷️' || item.icon === '🪧' || !item.tag)) {
+        if (c && (titleStr.includes('सेवा #') || titleStr.includes('आइटम #') || !hiTitleStr || item.icon === '🏷️' || item.icon === '🪧')) {
           updated = true;
           return {
             id: item.id || `fav-${c.seq}`,
             seq: c.seq,
             code: c.seq,
-            tag: c.tag || 'Favorite',
             icon: c.icon,
             title: c.title,
             enTitle: c.title,
@@ -124,7 +128,6 @@
           id: item.id || `fav-${seqVal}`,
           seq: seqVal,
           code: seqVal,
-          tag: item.tag || (c ? c.tag : 'Favorite'),
           icon: item.icon || (c ? c.icon : '📌'),
           title: item.title || item.enTitle || (c ? c.title : `Item #${seqVal}`),
           enTitle: item.enTitle || item.title || (c ? c.title : `Item #${seqVal}`),
@@ -154,24 +157,21 @@
     updatePinButtonsUI();
   }
 
-  // Canonical User Pin/Unpin Toggle
-  window.toggleServicePin = function(id, title, hiTitle, seq, icon, tag) {
+  // Canonical User Pin/Unpin Toggle (Catalog Modal Controls Only)
+  window.toggleServicePin = function(id, title, hiTitle, seq, icon) {
     let list = getPinned();
     const targetSeq = seq || id;
     const existingIndex = list.findIndex(item => (targetSeq && (item.seq === targetSeq || item.code === targetSeq)) || item.id === id);
 
     if (existingIndex > -1) {
-      // User explicitly unpinned
       list.splice(existingIndex, 1);
     } else {
-      // User pinned new item
       const s = targetSeq || '⭐';
       const c = CANONICAL_SUBCATS[s];
       list.push({
         id: id || `fav-${s}`,
         seq: s,
         code: s,
-        tag: tag || (c ? c.tag : 'Favorite'),
         icon: icon || (c ? c.icon : '⭐'),
         title: title || (c ? c.title : 'My Favorite'),
         enTitle: title || (c ? c.title : 'My Favorite'),
@@ -182,18 +182,13 @@
     savePinned(list);
   };
 
-  // Dual-name alias for interoperability with catalog-sivme-render-engine
   window.togglePinService = function(code, icon, enTitle, hiTitle, event) {
     if (event) event.stopPropagation();
     window.toggleServicePin(`fav-${code}`, enTitle, hiTitle, code, icon);
   };
 
-  // Direct Card ✕ Unpin Action (Strict Customer Intent)
-  window.unpinFavoriteItem = function(seqOrCode, event) {
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
+  // Programmatic unpin handler (Only triggered via Catalog Modal)
+  window.unpinFavoriteItem = function(seqOrCode) {
     let list = getPinned();
     const filtered = list.filter(item => item.seq !== seqOrCode && item.code !== seqOrCode && item.id !== seqOrCode);
     savePinned(filtered);
@@ -231,7 +226,7 @@
   }
 
   // ==============================================================================
-  // 4. NATURAL SEQUENCE AUTO-SORT & RENDER ("My Favorites (मेरी पसंदीदा)")
+  // 4. NATURAL SEQUENCE AUTO-SORT & RENDER (100% TAP-SAFE, ZERO ✕ CROSS BUTTON)
   // ==============================================================================
   function ensureMountSection() {
     let section = document.getElementById('userPinnedFavoritesSection');
@@ -315,32 +310,25 @@
       return parseSeq(a.seq) - parseSeq(b.seq);
     });
 
+    // 100% TAP-SAFE: NO ✕ CROSS BUTTON ON THE CARD
     grid.innerHTML = list.map(item => `
-      <div class="rm-solid-panel bg-[#0b1329]/95 border border-slate-700/80 hover:border-cyan-500/60 p-3 rounded-2xl flex flex-col justify-between relative shadow-xl active:scale-[0.98] transition-all min-h-[128px] cursor-pointer group" style="border-radius: 14px;">
-        <!-- Card Close ✕ (User Explicit Unpin) -->
-        <button type="button" onclick="unpinFavoriteItem('${item.seq}', event)" title="Remove (हटाएं)" class="absolute -top-2 -right-2 z-20 w-6 h-6 rounded-full bg-slate-900 border border-slate-700 text-slate-400 hover:text-red-400 hover:border-red-500/60 flex items-center justify-center text-xs shadow cursor-pointer">✕</button>
-
-        <!-- Top Row: Cyan Sequence Number + Tag Pill + Squircle Icon -->
-        <div onclick="toggleMenuDrawer ? toggleMenuDrawer(true) : null" class="flex items-center justify-between w-full">
-          <div class="flex items-center space-x-1.5">
-            <span class="text-cyan-400 font-black text-base font-sans tracking-tight leading-none">
-              ${item.seq}.
-            </span>
-            <span class="bg-slate-800/90 text-slate-300 text-[9.5px] px-1.5 py-0.5 rounded font-medium border border-slate-700/60 truncate max-w-[85px] leading-tight">
-              ${item.tag || 'Item'}
-            </span>
-          </div>
+      <div onclick="toggleMenuDrawer ? toggleMenuDrawer(true) : null" class="rm-solid-panel bg-[#0b1329]/95 border border-slate-700/80 hover:border-cyan-500/60 p-3.5 rounded-2xl flex flex-col justify-between relative shadow-xl active:scale-[0.98] transition-all min-h-[120px] cursor-pointer group" style="border-radius: 14px;">
+        <!-- Top Row: Cyan Sequence Number (Left) + Squircle Icon Container (Right) -->
+        <div class="flex items-center justify-between w-full">
+          <span class="text-cyan-400 font-black text-lg font-sans tracking-tight leading-none">
+            ${item.seq}.
+          </span>
           <div class="w-10 h-10 rounded-xl bg-[#02091d] border border-cyan-500/40 flex items-center justify-center text-xl shadow-inner group-hover:scale-105 transition-transform overflow-hidden shrink-0">
             ${item.icon}
           </div>
         </div>
         
         <!-- Bottom Row: Bilingual Typography (English Roman First, Hindi Devanagari Second) -->
-        <div onclick="toggleMenuDrawer ? toggleMenuDrawer(true) : null" class="w-full text-left mt-2">
-          <div class="text-[12.5px] font-black text-slate-100 leading-tight group-hover:text-cyan-300 transition-colors break-words">
+        <div class="w-full text-left mt-2">
+          <div class="text-[13px] font-black text-slate-100 leading-tight group-hover:text-cyan-300 transition-colors break-words">
             ${item.title || item.enTitle}
           </div>
-          <div class="text-[10.5px] text-emerald-400 font-bold leading-tight mt-1 break-words">
+          <div class="text-[11px] text-emerald-400 font-bold leading-tight mt-1 break-words">
             ${item.hiTitle || 'पसंदीदा'}
           </div>
         </div>
@@ -377,7 +365,7 @@
 
     if (CANONICAL_SUBCATS[seq]) {
       const c = CANONICAL_SUBCATS[seq];
-      return { id: `fav-${seq}`, seq: c.seq, tag: c.tag, icon: c.icon, title: c.title, hiTitle: c.hiTitle };
+      return { id: `fav-${seq}`, seq: c.seq, icon: c.icon, title: c.title, hiTitle: c.hiTitle };
     }
 
     let title = '';
@@ -388,7 +376,7 @@
       const txt = el.textContent.trim();
       if (/[a-zA-Z]{3,}/.test(txt) && 
           !txt.includes('Live') && !txt.includes('Verified') && 
-          !txt.includes('Protect') && !txt.includes('Play') && 
+          !txt.includes('Protect') && !txt.includes('Play') &&
           !txt.includes('Reviews') && !txt.includes('Min')) {
         title = txt.replace(/^\d{1,2}\s*-\s*\d{1,2}\.?\s*/, '').trim();
         break;
@@ -441,11 +429,11 @@
     if (!hiTitle) hiTitle = 'पसंदीदा';
     if (!icon) icon = '⭐';
 
-    return { id: `fav-${seq}`, seq, tag: 'Favorite', icon, title, hiTitle };
+    return { id: `fav-${seq}`, seq, icon, title, hiTitle };
   }
 
   // ==============================================================================
-  // 7. EVENT LISTENER BINDING
+  // 7. EVENT LISTENER BINDING (STRICT CLICK INTERCEPTION)
   // ==============================================================================
   document.addEventListener('click', function(e) {
     const btn = e.target.closest('button');
@@ -458,7 +446,7 @@
       const card = findSubcardElement(btn);
       const data = extractSubcardData(card);
       if (data) {
-        window.toggleServicePin(data.id, data.title, data.hiTitle, data.seq, data.icon, data.tag);
+        window.toggleServicePin(data.id, data.title, data.hiTitle, data.seq, data.icon);
       }
     }
   }, true);
