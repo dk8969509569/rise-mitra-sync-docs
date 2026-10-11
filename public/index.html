@@ -3,7 +3,7 @@
 <!-- ============================================================================== -->
 <!-- RISE MITRA — SLIM MODULAR HTML SHELL (DEFAULT PUBLIC LOCK & PHASE 5 FAVORITES) -->
 <!-- GOVERNANCE : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0            -->
-<!-- SPEC SSOT  : FOLDER A (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)                       -->
+<!-- SPEC SSOT  : FOLDER A (MASTER DOCUMENT SSOT)                                   -->
 <!-- STATUS     : FULLY DECOUPLED (CSS -> app.css | JS -> modular engines)          -->
 <!-- ============================================================================== -->
 <head>
@@ -120,7 +120,7 @@
       box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.45) !important;
     }
 
-    /* 7. UNIVERSAL ANTI-DASHED BAN: 100% Elimination of Dashed Outlines */
+    /* 7. UNIVERSAL ANTI-DASHED BAN: 100% Elimination of Dashed Outlines in Public Mode */
     *, *::before, *::after {
       outline: none !important;
     }
@@ -141,7 +141,7 @@
       border-color: #06b6d4 !important;
     }
 
-    /* 8. UNIVERSAL RADAR & OVERLAP SUPPRESSION (Clean Public Layout) */
+    /* 8. UNIVERSAL RADAR & OVERLAP SUPPRESSION (Clean Layout) */
     [class*="radar"],
     [class*="ripple"],
     .sivme-radar-ring,
@@ -166,13 +166,35 @@
       transform: none !important;
       z-index: 1 !important;
     }
+
+    /* 9. ELIMINATE DUPLICATE DOCK */
+    #sivmeFloatingDock {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    /* 10. SINGLE AUTHORITATIVE IN-SITU MASTER DOCK */
+    #rm-master-insitu-dock {
+      position: fixed !important;
+      bottom: 68px !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      z-index: 50 !important;
+      display: flex !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
   </style>
 
   <!-- Auto-Purge Stale SIVME Flags on Normal Public Launch -->
   <script>
     (function() {
       const urlParams = new URLSearchParams(window.location.search);
-      const isOwnerLaunch = urlParams.get('sivme') === 'owner';
+      const isOwnerLaunch = urlParams.get('sivme') === 'owner' || 
+                            urlParams.get('sov_mode') === 'in_situ' || 
+                            urlParams.get('dev_auto') === '1';
       if (!isOwnerLaunch) {
         try {
           localStorage.removeItem('sivme_active');
