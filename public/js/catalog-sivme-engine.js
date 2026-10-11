@@ -1,11 +1,8 @@
 /**
  * RISE MITRA — UNIVERSAL CATALOG SIVME MASTER LOADER
- * SPECIFICATION : FOLDER A (SSOT: 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) | Section II-18
- * GOVERNANCE    : GATE-23.5 | MODULAR ARCHITECTURE | ZERO-ELEMENT-LOSS (ZEL)
+ * SPECIFICATION : FOLDER A (SSOT: 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) | Section 11-12
+ * GOVERNANCE    : GATE-25.0 | MODULAR ARCHITECTURE | ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/catalog-sivme-engine.js
- * DUAL-FOLDER REFERENCES:
- *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
- *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
  */
 
 (function (window, document) {
@@ -17,9 +14,7 @@
     var script = document.createElement('script');
     script.src = src + '?v=' + epoch;
     script.async = false;
-    if (callback) {
-      script.onload = callback;
-    }
+    if (callback) { script.onload = callback; }
     script.onerror = function () {
       console.error('[SIVME-Loader] Failed to load module:', src);
     };
@@ -37,5 +32,4 @@
       }
     });
   });
-
 })(typeof window !== 'undefined' ? window : this, typeof document !== 'undefined' ? document : null);

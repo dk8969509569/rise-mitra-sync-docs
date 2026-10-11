@@ -1,7 +1,8 @@
 /**
  * RISE MITRA — CATALOG SIVME RENDER ENGINE (MODULE 2 OF 2)
  * MODULE        : UI Rendering, Accordion DOM Engine & 3-Pill Action Strip
- * SPECIFICATION : FOLDER A (SSOT: 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) | Section II-18
+ * SPECIFICATION : FOLDER A (SSOT: 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) | 14_04__EXT_005
+ * GOVERNANCE    : GATE-16.6 • GATE-16.7 • GATE-25.0 | ZERO-ELEMENT-LOSS (ZEL VERIFIED)
  * REPO TARGET   : public/js/catalog-sivme-render-engine.js
  */
 
@@ -9,7 +10,7 @@
   'use strict';
 
   function getCore() {
-    return window.RM_SivmeCore || window.RM_CatalogCore || {
+    return window.RM_CatalogCore || window.RM_SivmeCore || {
       isOwnerInSituActive: function () { return false; },
       isCategoryLive: function () { return true; },
       isSubItemLive: function () { return true; },
@@ -20,7 +21,30 @@
   }
 
   // ==============================================================================
-  // SECTION 1: PIN MANAGER & ACTION MODALS
+  // SECTION 0: EXT_005 IDEMPOTENT MARKETING POSTER PURGER
+  // ==============================================================================
+
+  function purgeMarketingDuplicates() {
+    var modal = document.getElementById('categoryModal');
+    if (!modal) return;
+    var candidates = modal.querySelectorAll('#tier1-list > div, #tier2-list > div');
+    candidates.forEach(function (card) {
+      if (card.classList.contains('sivme-cat-card')) return;
+      var text = card.textContent || '';
+      var isDuplicate = text.indexOf('100% सुरक्षित व प्रमाणित सेवा') !== -1 ||
+                        text.indexOf('पारदर्शी तय रेट कार्ड') !== -1 ||
+                        text.indexOf('कार्य संतुष्टि गारंटी') !== -1 ||
+                        card.classList.contains('universal-card') ||
+                        card.classList.contains('universal-cat-card') ||
+                        (card.id && card.id.indexOf('unicat-') === 0);
+      if (isDuplicate) {
+        card.remove();
+      }
+    });
+  }
+
+  // ==============================================================================
+  // SECTION 1: PIN MANAGER & ACTION MODALS (100% ZEL PRESERVED)
   // ==============================================================================
 
   function getPinnedList() {
@@ -166,13 +190,14 @@
   }
 
   // ==============================================================================
-  // SECTION 3: CATALOG ACCORDION RENDER ENGINE
+  // SECTION 3: CATALOG ACCORDION RENDER ENGINE (DYNAMIC COUNT BINDING)
   // ==============================================================================
 
   function renderCatalogItems() {
     var core = getCore();
-    core.ensureFailOpenRegistry();
-    core.injectSingleDashedStyles();
+    if (core.ensureFailOpenRegistry) core.ensureFailOpenRegistry();
+    if (core.injectSingleDashedStyles) core.injectSingleDashedStyles();
+    purgeMarketingDuplicates();
 
     var services = window.RM_SERVICES_DATA || [];
     var games = window.RM_GAMES_DATA || [];
@@ -182,7 +207,7 @@
     var t1 = document.getElementById('tier1-list');
     var t2 = document.getElementById('tier2-list');
 
-    // Render 33 Services
+    // 1. Render 33 Services (Dynamic Count: `${count} विकल्प`)
     if (t1) {
       t1.innerHTML = services.map(function (item) {
         var isLive = core.isCategoryLive(item.id, item.num);
@@ -195,7 +220,7 @@
             : '<div class="sivme-live-notch absolute -top-2.5 right-3 z-30 flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#450a0a] text-red-300 border border-red-500/80 shadow-[0_0_8px_rgba(239,68,68,0.3)] cursor-pointer" onclick="toggleSivmeCategory(\'' + item.id + '\', \'' + item.num + '\', event)"><span>🔴</span><span>Hidden ⇄</span></div>';
         }
 
-        var inlineStyles = 'border: 1px solid rgba(51, 65, 85, 0.6) !important; overflow: visible;';
+        var inlineStyles = 'border: 1px solid rgba(51, 65, 85, 0.7) !important; overflow: visible;';
         if (isInSitu) {
           var outlineColor = isLive ? '#10b981' : '#ef4444';
           inlineStyles += ' outline: 2px dashed ' + outlineColor + ' !important; outline-offset: 3px !important;';
@@ -203,6 +228,10 @@
         } else {
           if (!isLive) inlineStyles += ' display: none !important;';
         }
+
+        // Dynamic count badge eliminates hardcoded "3 सेवाएं"
+        var countNum = (item.children && Array.isArray(item.children)) ? item.children.length : 3;
+        var dynamicCountBadge = countNum + ' विकल्प';
 
         return [
           '<div data-cat-id="' + item.id + '" data-sivme-urn="rm:cat:' + item.num + '" class="sivme-cat-card ' + stateClass + ' w-full rounded-xl bg-slate-900/90 transition-all mb-3.5 shadow-md relative" style="' + inlineStyles + '">',
@@ -217,7 +246,7 @@
           '      </div>',
           '    </div>',
           '    <div class="flex items-center space-x-1.5 shrink-0">',
-          '      <span class="text-[10px] text-emerald-400 font-bold bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-800/50 whitespace-nowrap">3 सेवाएं</span>',
+          '      <span class="text-[10px] text-emerald-400 font-bold bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-800/50 whitespace-nowrap">' + dynamicCountBadge + '</span>',
           '      <span class="acc-arrow text-slate-300 text-xs font-mono font-bold bg-slate-800/90 border border-slate-700/80 w-6 h-6 rounded-full flex items-center justify-center">▼</span>',
           '    </div>',
           '  </div>',
@@ -230,7 +259,7 @@
       t1.dataset.rendered = 'true';
     }
 
-    // Render 17 Games
+    // 2. Render 17 Games (Dynamic Count: `${count} गेम्स`)
     if (t2) {
       t2.innerHTML = games.map(function (item) {
         var isLive = core.isCategoryLive(item.id, item.num);
@@ -243,7 +272,7 @@
             : '<div class="sivme-live-notch absolute -top-2.5 right-3 z-30 flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#450a0a] text-red-300 border border-red-500/80 shadow-[0_0_8px_rgba(239,68,68,0.3)] cursor-pointer" onclick="toggleSivmeCategory(\'' + item.id + '\', \'' + item.num + '\', event)"><span>🔴</span><span>Hidden ⇄</span></div>';
         }
 
-        var inlineStyles = 'border: 1px solid rgba(51, 65, 85, 0.6) !important; overflow: visible;';
+        var inlineStyles = 'border: 1px solid rgba(51, 65, 85, 0.7) !important; overflow: visible;';
         if (isInSitu) {
           var outlineColor = isLive ? '#10b981' : '#ef4444';
           inlineStyles += ' outline: 2px dashed ' + outlineColor + ' !important; outline-offset: 3px !important;';
@@ -251,6 +280,9 @@
         } else {
           if (!isLive) inlineStyles += ' display: none !important;';
         }
+
+        var countNumGames = (item.children && Array.isArray(item.children)) ? item.children.length : 3;
+        var dynamicGameBadge = countNumGames + ' गेम्स';
 
         return [
           '<div data-cat-id="' + item.id + '" data-sivme-urn="rm:cat:' + item.num + '" class="sivme-cat-card ' + stateClass + ' w-full rounded-xl bg-slate-900/90 transition-all mb-3.5 shadow-md relative" style="' + inlineStyles + '">',
@@ -265,7 +297,7 @@
           '      </div>',
           '    </div>',
           '    <div class="flex items-center space-x-1.5 shrink-0">',
-          '      <span class="text-[10px] text-cyan-400 font-bold bg-cyan-950/80 px-2 py-0.5 rounded-full border border-cyan-800/50 whitespace-nowrap">3 गेम्स</span>',
+          '      <span class="text-[10px] text-cyan-400 font-bold bg-cyan-950/80 px-2 py-0.5 rounded-full border border-cyan-800/50 whitespace-nowrap">' + dynamicGameBadge + '</span>',
           '      <span class="acc-arrow text-slate-300 text-xs font-mono font-bold bg-slate-800/90 border border-slate-700/80 w-6 h-6 rounded-full flex items-center justify-center">▼</span>',
           '    </div>',
           '  </div>',
@@ -278,6 +310,7 @@
       t2.dataset.rendered = 'true';
     }
 
+    // Default expand Category-16 (House & Home)
     var sub16 = document.getElementById('sub-c16');
     if (sub16) {
       sub16.classList.remove('hidden');
@@ -290,19 +323,22 @@
     }
 
     syncCategoryVisibilityFromOwner();
-    core.enforceSingleSivmeOutline();
-    setTimeout(core.enforceSingleSivmeOutline, 60);
-    setTimeout(core.enforceSingleSivmeOutline, 180);
+    if (core.enforceSingleSivmeOutline) {
+      core.enforceSingleSivmeOutline();
+      setTimeout(core.enforceSingleSivmeOutline, 60);
+      setTimeout(core.enforceSingleSivmeOutline, 180);
+    }
+    setTimeout(purgeMarketingDuplicates, 100);
   }
 
   // ==============================================================================
-  // SECTION 4: OWNER CONSOLE VISIBILITY SYNC
+  // SECTION 4: OWNER CONSOLE VISIBILITY SYNC (100% ZEL PRESERVED)
   // ==============================================================================
 
   function syncCategoryVisibilityFromOwner() {
     try {
       var core = getCore();
-      core.ensureFailOpenRegistry();
+      if (core.ensureFailOpenRegistry) core.ensureFailOpenRegistry();
       var isInSitu = core.isOwnerInSituActive();
       var raw = localStorage.getItem('rm_active_categories_v1');
       var activeIds = new Set();
@@ -347,7 +383,7 @@
         });
 
         var t1Header = document.getElementById('tier1-header-text') || document.querySelector('#tier1-toggle span');
-        if (t1Header) t1Header.textContent = '💼 आजीविका (' + liveT1 + ' सेवाएं उपलब्ध)';
+        if (t1Header) t1Header.textContent = '💼 आजीविका (' + liveT1 + ' श्रेणियां उपलब्ध)';
       }
 
       var t2List = document.getElementById('tier2-list');
@@ -374,7 +410,7 @@
 
       var modalCount = document.getElementById('modal-catalog-count');
       if (modalCount) {
-        modalCount.textContent = liveT1 + ' Services • ' + liveT2 + ' Games Active';
+        modalCount.textContent = liveT1 + ' Categories • ' + liveT2 + ' Games Active';
       }
     } catch (err) {
       console.warn('[RM-CatalogRender] Sync note:', err);
@@ -382,7 +418,7 @@
   }
 
   // ==============================================================================
-  // SECTION 5: ACCORDION TOGGLE & CATEGORY LAUNCH ENGINE
+  // SECTION 5: ACCORDION TOGGLE & CATEGORY LAUNCH ENGINE (100% ZEL PRESERVED)
   // ==============================================================================
 
   function handleCategoryClick(catId, el) {
@@ -399,7 +435,8 @@
         sub.classList.add('hidden');
         if (arrow) arrow.textContent = '▼';
       }
-      getCore().enforceSingleSivmeOutline();
+      var core = getCore();
+      if (core.enforceSingleSivmeOutline) core.enforceSingleSivmeOutline();
     }
   }
 
@@ -433,14 +470,14 @@
       }
     } else if (catId === 'c16' && subId === '16-3') {
       if (typeof openFullscreenModule === 'function') {
-        openFullscreenModule('🏠 16-3. Room & Flat Search (कमरा व फ्लैट खोज)');
+        openFullscreenModule('🏠 16-3. Room & Flat Listing (कमरा व फ्लैट लिस्टिंग)');
       }
       if (window.RM_Cat16_Sub3_RentalSearch && typeof window.RM_Cat16_Sub3_RentalSearch.mount === 'function') {
         window.RM_Cat16_Sub3_RentalSearch.mount(container);
       } else {
-        container.innerHTML = '<div class="p-6 text-center text-xs text-emerald-400 animate-pulse">कमरा व फ्लैट खोज लोड हो रहा है...</div>';
+        container.innerHTML = '<div class="p-6 text-center text-xs text-emerald-400 animate-pulse">कमरा व फ्लैट लिस्टिंग लोड हो रहा है...</div>';
         var script2 = document.createElement('script');
-        script2.src = '/js/catalog/category-16/16-3-rental-search.js?v=' + (window.RM_DEPLOY_EPOCH || Date.now());
+        script2.src = '/js/catalog/category-16/16-3-room-listing.js?v=' + (window.RM_DEPLOY_EPOCH || Date.now());
         script2.async = true;
         script2.onload = function () {
           if (window.RM_Cat16_Sub3_RentalSearch && typeof window.RM_Cat16_Sub3_RentalSearch.mount === 'function') {
@@ -450,10 +487,23 @@
           }
         };
         script2.onerror = function () {
-          container.innerHTML = '<div class="p-6 text-center text-xs text-red-400 bg-red-950/40 border border-red-800/60 rounded-xl space-y-2"><div>मॉड्यूल लोड नहीं हो सका — कृपया पुनः प्रयास करें।</div><button onclick="handleLaunchCategory(\'c16\', \'16-3\')" class="px-3 py-1 bg-red-900/60 border border-red-700 text-red-200 rounded text-[10px] font-bold cursor-pointer">रीट्राई करें</button></div>';
+          // Fallback to rental-search.js if room-listing is not present
+          var fallbackScript = document.createElement('script');
+          fallbackScript.src = '/js/catalog/category-16/16-3-rental-search.js?v=' + (window.RM_DEPLOY_EPOCH || Date.now());
+          fallbackScript.onload = function () {
+            if (window.RM_Cat16_Sub3_RentalSearch && typeof window.RM_Cat16_Sub3_RentalSearch.mount === 'function') {
+              window.RM_Cat16_Sub3_RentalSearch.mount(container);
+            }
+          };
+          fallbackScript.onerror = function () {
+            container.innerHTML = '<div class="p-6 text-center text-xs text-red-400 bg-red-950/40 border border-red-800/60 rounded-xl space-y-2"><div>मॉड्यूल लोड नहीं हो सका — कृपया पुनः प्रयास करें।</div><button onclick="handleLaunchCategory(\'c16\', \'16-3\')" class="px-3 py-1 bg-red-900/60 border border-red-700 text-red-200 rounded text-[10px] font-bold cursor-pointer">रीट्राई करें</button></div>';
+          };
+          document.body.appendChild(fallbackScript);
         };
         document.body.appendChild(script2);
       }
+    } else if (catId === 'c16' && subId === '16-1') {
+      alert('🛠️ [16-1] मिस्त्री व गृह मरम्मत (Mistri & Home Repairs) — सेवा जल्द शुरू होगी।');
     } else if (catId === 'c05' && (subId === '05-1' || !subId)) {
       alert('💼 [05-1] सॉवरेन बहीखाता (Business Khata) लोड हो रहा है...');
     } else {
@@ -471,7 +521,7 @@
     launch: handleLaunchCategory
   };
 
-  // Backwards-compatibility alias
+  // Backwards-compatibility alias (100% ZEL Safe)
   window.RM_CatalogRenderer = window.RM_SivmeRender;
   window.renderCatalogItems = renderCatalogItems;
   window.syncCategoryVisibilityFromOwner = syncCategoryVisibilityFromOwner;
@@ -494,15 +544,21 @@
 
   window.addEventListener('storage', function () {
     syncCategoryVisibilityFromOwner();
-    getCore().enforceSingleSivmeOutline();
+    var core = getCore();
+    if (core.enforceSingleSivmeOutline) core.enforceSingleSivmeOutline();
   });
 
   document.addEventListener('click', function (e) {
     if (e.target && e.target.closest && e.target.closest('#cat-menu-btn, [onclick*="catalog"], [onclick*="category"], #menu-btn')) {
       setTimeout(renderCatalogItems, 20);
+      setTimeout(purgeMarketingDuplicates, 60);
       setTimeout(renderCatalogItems, 120);
+      setTimeout(purgeMarketingDuplicates, 180);
     }
   }, true);
+
+  // Background active sweep for marketing posters
+  setInterval(purgeMarketingDuplicates, 350);
 
   var recoveryInterval = setInterval(function () {
     var t1 = document.getElementById('tier1-list');

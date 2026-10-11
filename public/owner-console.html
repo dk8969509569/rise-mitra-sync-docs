@@ -7,7 +7,8 @@
   <meta name="theme-color" content="#030712">
   <title>Rise Mitra — Sovereign Cockpit</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="js/sovereign-in-situ-registry.js"></script>
+  <!-- SIVME v2.0 Phase 1: Core Visibility Registry Engine (Decoupled Path) -->
+  <script src="/js/core/sovereign-in-situ-registry.js"></script>
   <style>
     * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; user-select: none; }
     body { background-color: #030712; color: #f8fafc; font-family: ui-monospace, Menlo, Consolas, monospace; min-height: 100vh; touch-action: manipulation; }
@@ -182,5 +183,118 @@
   <script src="js/owner-console.js?v=20261010"></script>
   <script src="js/revenue-monetization-engine.js?v=20261010"></script>
   <script src="js/hyperlocal-gps-booking-engine.js?v=20261010"></script>
+
+  <!-- 5. SOVEREIGN AUTHENTICATION & IN-SITU BRIDGE RUNTIME (PIN: 30011987) -->
+  <script>
+    (function initSovereignBridge() {
+      'use strict';
+      const SOVEREIGN_PIN = '30011987';
+      const SESSION_TICKET = 'rm_sov_in_situ_session';
+
+      // Override / Guarantee verifyPinFallback with canonical PIN 30011987
+      window.verifyPinFallback = function() {
+        const pinInput = document.getElementById('consolePin');
+        const err = document.getElementById('authError');
+        const pin = (pinInput ? pinInput.value : '').trim();
+
+        if (pin === SOVEREIGN_PIN) {
+          const ticket = {
+            authenticated: true,
+            issuedAt: Date.now(),
+            expiresAt: Date.now() + (4 * 60 * 60 * 1000),
+            role: 'SUPER_OWNER'
+          };
+          sessionStorage.setItem(SESSION_TICKET, JSON.stringify(ticket));
+          localStorage.setItem('sivme_active', 'true');
+          localStorage.setItem('sivme_mode', 'in_situ_console');
+
+          if (err) err.style.display = 'none';
+          document.getElementById('authGate').style.display = 'none';
+          document.getElementById('consolePanel').style.display = 'block';
+        } else {
+          if (err) {
+            err.style.display = 'block';
+            err.textContent = '⚠️ अमान्य पिन! प्रवेश अस्वीकृत (Fail-Closed).';
+          }
+          if (pinInput) pinInput.value = '';
+        }
+      };
+
+      // Launch Surface-A in Visual Console Mode
+      window.launchSurfaceAInSitu = function() {
+        localStorage.setItem('sivme_active', 'true');
+        localStorage.setItem('sivme_mode', 'in_situ_console');
+        window.location.href = '/index.html?sivme=owner';
+      };
+
+      // In-Situ Mode switch toggle helper
+      window.setInSituMode = function(enable) {
+        const badge = document.getElementById('inSituModeBadge');
+        const btnPub = document.getElementById('btnModePublic');
+        const btnInSitu = document.getElementById('btnModeInSitu');
+
+        if (enable) {
+          localStorage.setItem('sivme_mode', 'in_situ_console');
+          localStorage.setItem('sivme_active', 'true');
+          if (badge) {
+            badge.textContent = 'IN-SITU CONSOLE ACTIVE';
+            badge.className = 'text-[9px] font-bold bg-cyan-950 text-cyan-300 border border-cyan-600 px-2 py-0.5 rounded-full';
+          }
+          if (btnInSitu) {
+            btnInSitu.className = 'bg-cyan-950 border-2 border-cyan-400 text-xs py-2.5 px-3 rounded-xl text-cyan-200 font-black active:scale-95 cursor-pointer';
+          }
+          if (btnPub) {
+            btnPub.className = 'bg-slate-950 border border-slate-800 text-xs py-2.5 px-3 rounded-xl text-slate-400 font-bold active:scale-95 cursor-pointer';
+          }
+        } else {
+          localStorage.setItem('sivme_mode', 'public');
+          localStorage.removeItem('sivme_active');
+          if (badge) {
+            badge.textContent = 'PUBLIC LIVE MODE';
+            badge.className = 'text-[9px] font-bold bg-slate-900 text-slate-400 border border-slate-700 px-2 py-0.5 rounded-full';
+          }
+          if (btnPub) {
+            btnPub.className = 'bg-emerald-950 border-2 border-emerald-400 text-xs py-2.5 px-3 rounded-xl text-emerald-200 font-black active:scale-95 cursor-pointer';
+          }
+          if (btnInSitu) {
+            btnInSitu.className = 'bg-slate-950 border border-slate-800 text-xs py-2.5 px-3 rounded-xl text-slate-400 font-bold active:scale-95 cursor-pointer';
+          }
+        }
+      };
+
+      // Emergency Reset Handler
+      window.emergencyResetAllVisible = function() {
+        if (confirm('चेतावनी: क्या आप सभी हिडन कंपोनेंट्स को 100% पब्लिक लाइव रीस्टोर करना चाहते हैं?')) {
+          if (window.RM_SOVEREIGN_REGISTRY) {
+            window.RM_SOVEREIGN_REGISTRY.resetAllToPublicLive();
+          }
+          localStorage.removeItem('sivme_active');
+          localStorage.removeItem('sivme_mode');
+          sessionStorage.removeItem(SESSION_TICKET);
+          alert('सफलता: सभी कंपोनेंट्स पब्लिक लाइव पर रीस्टोर कर दिए गए हैं।');
+          window.location.reload();
+        }
+      };
+
+      // Lock console & exit
+      window.lockConsole = function() {
+        sessionStorage.removeItem(SESSION_TICKET);
+        localStorage.removeItem('sivme_active');
+        localStorage.removeItem('sivme_mode');
+        document.getElementById('consolePanel').style.display = 'none';
+        document.getElementById('authGate').style.display = 'block';
+      };
+
+      // Enter key support for consolePin input
+      const pinField = document.getElementById('consolePin');
+      if (pinField) {
+        pinField.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter') {
+            window.verifyPinFallback();
+          }
+        });
+      }
+    })();
+  </script>
 </body>
 </html>
