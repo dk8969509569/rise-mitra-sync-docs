@@ -3,14 +3,13 @@
  * RISE MITRA (RM WORLD) — MASTER UNIFIED APP STYLESHEET (100% ZEL PRODUCTION)
  * REPO TARGET   : public/css/app.css
  * GOVERNANCE    : GATE-16.7 • GATE-25.0 • ZERO-ELEMENT-LOSS (ZEL) PRESERVED
- * SPEC SSOT     : FOLDER A (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)
- * STATUS        : 🟢 FULL CONSOLIDATION • ZERO REGRESSION • TOP-ANCHORED FULLSCREEN
+ * SPEC SSOT     : FOLDER A (MASTER DOCUMENT SSOT)
+ * STATUS        : 🟢 100% ZEL PARITY • ZERO OVERLAP • 0MS INSTANT CLOSE
  * ==============================================================================
  */
 
 /* ==========================================================================
    PART 1: RM-UI-INTERACTION-FEEDBACK-01 | CANONICAL STYLESHEET
-   Ref: EXT_001 Part D (D-04, D-05) & DEC-RM-SOV-UX-20260929-001
    ========================================================================== */
 
 button,
@@ -79,7 +78,6 @@ a:focus-visible,
 
 /* ==========================================================================
    PART 2: GLOBAL CORE TOKENS, TACTILE 2.5D & MODULAR LAYOUT GUARDS
-   Ref: FOLDER A (SSOT: 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)
    ========================================================================== */
 
 * {
@@ -510,12 +508,14 @@ input, textarea {
   margin-bottom: 24px !important;
 }
 
-/* 2.5D Tactile Elevation & Uniform 72px Geometry across all Categories */
+/* ==========================================================================
+   NATURAL HEIGHT & 2.5D GEOMETRY (ZERO-OVERLAP FIX)
+   ========================================================================== */
 #categoryModal [data-cat-id]:not([data-cat-id="c16"]),
 #categoryModal [data-cat-id="c16"] > div:first-child {
   min-height: 72px !important;
-  height: 72px !important;
-  padding: 22px 14px 14px 14px !important;
+  height: auto !important; /* CRITICAL FIX: Eliminates card overlapping */
+  padding: 18px 14px !important;
   border-radius: 14px !important;
   position: relative !important;
   display: flex !important;
@@ -538,7 +538,7 @@ input, textarea {
 }
 
 #categoryModal [data-cat-id]:not([data-cat-id="c16"]) {
-  margin-bottom: 20px !important;
+  margin-bottom: 18px !important;
 }
 
 #categoryModal [data-cat-id] > div:first-child > div:first-child,
@@ -575,7 +575,7 @@ input, textarea {
 
 #categoryModal .overflow-y-auto,
 #categoryModal > div > div:last-child {
-  padding-top: 20px !important;
+  padding-top: 14px !important;
   padding-bottom: 120px !important;
 }
 
@@ -627,8 +627,8 @@ div[style*="border-radius: 50%"][style*="border:"] {
 }
 
 /* ==========================================================================
-   PART 4: CANONICAL 100% TOP-ANCHORED FULLSCREEN CATALOG (ZERO TOP GAP)
-   Fixes Bottom-Sheet artifact from Screenshot 1000300354.png
+   PART 4: CANONICAL 100% TOP-ANCHORED FULLSCREEN CATALOG & 0MS CLOSE LOCK
+   Fixes Bottom-Sheet artifact AND Cross (✕) Close Failure
    ========================================================================== */
 
 #categoryModal {
@@ -641,14 +641,31 @@ div[style*="border-radius: 50%"][style*="border:"] {
   height: 100vh !important;
   height: 100dvh !important;
   background-color: #030712 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: flex-start !important;
-  align-items: center !important;
   padding: 0 !important;
   margin: 0 !important;
   z-index: 99990 !important;
   overflow: hidden !important;
+}
+
+/* 1. GUARANTEED CLOSE: Cross (✕) dabane par modal turant 0ms me gayab hoga */
+#categoryModal.hidden,
+#categoryModal[style*="display: none"],
+#categoryModal[aria-hidden="true"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* 2. OPEN STATE: Fullscreen Top-Anchored Flex Container */
+#categoryModal:not(.hidden):not([style*="display: none"]):not([aria-hidden="true"]) {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
 #categoryModal > div:first-child,
