@@ -1,17 +1,17 @@
-# OWNER-REVIEW v2.0.1: use with the matching snapshot generator.
+# OWNER-REVIEW v2.1.0: use with the matching snapshot generator.
 name: Sync Codebase Snapshot to Google Drive
 
 # SECTION 1 — TRIGGERS
 on:
   push:
-    branches: [main]
+    branches: [main, pre-main]
   workflow_dispatch:
     inputs:
       upload:
         description: 'Update Folder B after local verification'
         type: boolean
         required: true
-        default: false
+        default: true
 
 # SECTION 2 — REPOSITORY PERMISSIONS
 permissions:
@@ -27,7 +27,7 @@ concurrency:
 # SECTION 4 — SNAPSHOT JOB
 jobs:
   bundle-and-sync:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/pre-main'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
@@ -49,7 +49,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install Google API dependencies
-        run: python -m pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib
+        run: python -m pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib httplib2
 
       # SECTION 7 — VERIFY WITHOUT UPLOADING
       - name: Verify snapshot locally
@@ -57,7 +57,7 @@ jobs:
 
       # SECTION 8 — UPLOAD AND VERIFY EXACT DRIVE CONTENT
       # Runs only after preceding steps succeed.
-      # Manual runs upload only when the upload input is true.
+      # Push events automatically upload; manual runs upload when upload input is true.
       - name: Generate, upload and verify Folder B snapshot
         if: github.event_name == 'push' || inputs.upload == true
         env:
