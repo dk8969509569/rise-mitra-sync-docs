@@ -1,7 +1,16 @@
+/**
+ * ==============================================================================
+ * RISE MITRA (RM WORLD) — MASTER UNIFIED APP STYLESHEET (100% ZEL PRODUCTION)
+ * REPO TARGET   : public/css/app.css
+ * GOVERNANCE    : GATE-16.7 • GATE-25.0 • ZERO-ELEMENT-LOSS (ZEL) PRESERVED
+ * SPEC SSOT     : FOLDER A (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)
+ * STATUS        : 🟢 FULL CONSOLIDATION • ZERO REGRESSION • TOP-ANCHORED FULLSCREEN
+ * ==============================================================================
+ */
+
 /* ==========================================================================
    PART 1: RM-UI-INTERACTION-FEEDBACK-01 | CANONICAL STYLESHEET
    Ref: EXT_001 Part D (D-04, D-05) & DEC-RM-SOV-UX-20260929-001
-   GOVERNANCE: 100% ZEL PRESERVED
    ========================================================================== */
 
 button,
@@ -24,7 +33,7 @@ a:active,
 [role="button"]:active,
 .nav-tab:active {
   transform: scale(0.97) !important;
-  outline: 2px solid #10B981 !important;
+  outline: 2px solid #10b981 !important;
   outline-offset: 2px !important;
   box-shadow: 0 0 10px rgba(16, 185, 129, 0.40) !important;
   transition: transform 0.08s ease, outline 0.08s ease, box-shadow 0.08s ease !important;
@@ -43,7 +52,7 @@ select {
 input:focus,
 textarea:focus,
 select:focus {
-  outline: 2px solid #10B981 !important;
+  outline: 2px solid #10b981 !important;
   outline-offset: 1px !important;
   box-shadow: 0 0 8px rgba(16, 185, 129, 0.25) !important;
 }
@@ -52,7 +61,7 @@ button:focus-visible,
 a:focus-visible,
 [role="button"]:focus-visible,
 .nav-tab:focus-visible {
-  outline: 2px solid #10B981 !important;
+  outline: 2px solid #10b981 !important;
   outline-offset: 2px !important;
   box-shadow: 0 0 8px rgba(16, 185, 129, 0.35) !important;
 }
@@ -64,15 +73,13 @@ a:focus-visible,
   .nav-tab:active {
     transform: none !important;
     box-shadow: none !important;
-    outline: 2px solid #10B981 !important;
+    outline: 2px solid #10b981 !important;
   }
 }
-
 
 /* ==========================================================================
    PART 2: GLOBAL CORE TOKENS, TACTILE 2.5D & MODULAR LAYOUT GUARDS
    Ref: FOLDER A (SSOT: 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW)
-   GOVERNANCE: DECOUPLED FROM INDEX.HTML (100% ZEL)
    ========================================================================== */
 
 * {
@@ -226,7 +233,10 @@ input, textarea {
   }
 }
 
-/* Master Design Tokens & Canonical Layout Guards */
+/* ==========================================================================
+   PART 3: MASTER DESIGN TOKENS, SIVME GUARDS & CANONICAL LAYOUT
+   ========================================================================== */
+
 :root {
   --rm-canvas-bg: #060913;
   --rm-card-bg: linear-gradient(180deg, rgba(24, 33, 47, 0.94) 0%, rgba(11, 17, 30, 0.98) 100%);
@@ -234,8 +244,14 @@ input, textarea {
   --rm-emerald: #10b981;
   --rm-emerald-glow: #34d399;
   --rm-slate-sub: #94a3b8;
+  --rm-grid-unit: 8px;
+  --rm-glass-bg: rgba(11, 15, 25, 0.85);
+  --rm-glass-border: rgba(51, 65, 85, 0.85);
+  --rm-badge-live: #10b981;
+  --rm-badge-hidden: #ef4444;
 }
 
+/* Category-16 Clean Container Isolation */
 #sub-c16, [id^="sub-c16"], .sivme-subcat-container {
   border-left: none !important;
   padding-left: 0 !important;
@@ -244,35 +260,409 @@ input, textarea {
 
 #sub-c16::before, #sub-c16::after,
 #sub-c16 > div::before, #sub-c16 > div::after,
-.sivme-subcat-card::before, .sivme-subcat-card::after {
+.sivme-subcat-card::before, .sivme-subcat-card::after,
+.subcategory-tree::before, .subcategory-tree::after,
+[id^="sub-c"]::before, [id^="sub-c"]::after {
   display: none !important;
   content: none !important;
   border: none !important;
 }
 
+[id^="sub-c"], #sub-c16 {
+  border-left: none !important;
+  box-shadow: none !important;
+}
+
+/* Action Buttons: Prevent Text Split ("खोलें ›" stays 1-line) */
+#categoryModal button,
 #categoryModal [data-cat-id] button,
 #categoryModal [data-cat-id] a,
 #categoryModal [data-cat-id] span[class*="text-emerald"],
 #categoryModal [data-cat-id] span[class*="text-cyan"],
-.rm-clean-act, .sivme-action-btn {
+.cat-action-btn,
+.rm-clean-act,
+.sivme-action-btn,
+[data-action="launch"],
+[data-action="open-sub"] {
   white-space: nowrap !important;
+  word-break: keep-all !important;
   flex-shrink: 0 !important;
   display: inline-flex !important;
   align-items: center !important;
 }
 
-#categoryModal [data-cat-id] {
+/* SIVME Badge Containment Boundary */
+#categoryModal [data-cat-id],
+.category-card-wrapper,
+.catalog-item-container {
   position: relative !important;
 }
 
-#categoryModal [data-cat-id] > .sivme-inline-badge {
+/* Universal Anti-Squish Inline Badge */
+.sivme-inline-badge {
   position: absolute !important;
-  top: 8px !important;
-  right: 76px !important;
-  margin: 0 !important;
-  font-size: 9.5px !important;
-  padding: 2px 6px !important;
-  border-radius: 6px !important;
+  top: -10px !important;
+  left: 14px !important;
+  right: auto !important;
+  z-index: 30 !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  padding: 3px 9px !important;
+  border-radius: 9999px !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 4px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.85) !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  touch-action: manipulation !important;
+  pointer-events: auto !important;
+  opacity: 1 !important;
+  white-space: nowrap !important;
+  writing-mode: horizontal-tb !important;
+  width: max-content !important;
+  box-sizing: border-box !important;
+  line-height: 1.2 !important;
+}
+
+.sivme-inline-badge::before {
+  content: '' !important;
+  position: absolute !important;
+  top: -8px !important;
+  bottom: -8px !important;
+  left: -10px !important;
+  right: -10px !important;
+  z-index: 1 !important;
+}
+
+.sivme-inline-badge * {
+  pointer-events: none !important;
+  white-space: nowrap !important;
+}
+
+.sivme-inline-badge:active {
+  transform: scale(0.92) !important;
+}
+
+.sivme-badge-live {
+  background: #064e3b !important;
+  color: #6ee7b7 !important;
+  border: 1.5px solid #10b981 !important;
+}
+
+.sivme-badge-dormant {
+  background: #7f1d1d !important;
+  color: #fca5a5 !important;
+  border: 1.5px solid #ef4444 !important;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.6) !important;
+}
+
+.sivme-ghost-dormant {
+  border: 2px dashed #ef4444 !important;
+  border-radius: 14px !important;
+  position: relative !important;
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(239, 68, 68, 0.12),
+    rgba(239, 68, 68, 0.12) 10px,
+    transparent 10px,
+    transparent 20px
+  ) !important;
+  cursor: pointer !important;
+}
+
+.sivme-ghost-dormant > *:not(.sivme-inline-badge) {
+  opacity: 0.32 !important;
+  filter: grayscale(85%) !important;
+  pointer-events: none !important;
+}
+
+.sivme-public-hidden {
+  display: none !important;
+}
+
+/* Single Category Dormant Rows Pointer Lock (Cat 16 completely unlocked) */
+#categoryModal [data-cat-id]:not([data-cat-id="c16"]).sivme-ghost-dormant > *:not(.sivme-inline-badge) {
+  opacity: 0.55 !important;
+  filter: grayscale(50%) !important;
+  pointer-events: none !important;
+}
+
+/* Category 16 Accordion & All Sub-cards MUST ALWAYS have active touch pointers */
+#categoryModal [data-cat-id="c16"],
+#categoryModal [data-cat-id="c16"] *,
+#sub-c16,
+#sub-c16 * {
+  pointer-events: auto !important;
+}
+
+/* Category-16 Sub-Card Ergonomics & Height Lock */
+.c16-subcard-clean {
+  min-height: 108px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  position: relative !important;
+}
+
+/* 2.5D Tactile Sub-Services (Category 16) */
+#sub-c16 > div {
+  min-height: 60px !important;
+  padding: 18px 14px 12px 14px !important;
+  margin-bottom: 14px !important;
+  border-radius: 12px !important;
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  background: linear-gradient(180deg, rgba(24, 33, 47, 0.85) 0%, rgba(11, 17, 30, 0.95) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.16) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  transition: transform 0.12s ease, box-shadow 0.12s ease !important;
+}
+
+#sub-c16 > div:active {
+  transform: translateY(1.5px) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.75), inset 0 2px 3px rgba(0, 0, 0, 0.45) !important;
+}
+
+#sub-c16 > div .sivme-inline-badge {
+  top: -9px !important;
+  left: 14px !important;
+  right: auto !important;
+}
+
+/* Category 16 Accordion Parent Container */
+#categoryModal [data-cat-id="c16"] {
+  display: block !important;
+  min-height: auto !important;
+  margin-top: 18px !important;
+  margin-bottom: 24px !important;
+  position: relative !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+}
+
+#categoryModal [data-cat-id="c16"] > div:first-child {
+  cursor: pointer !important;
+  user-select: none !important;
+}
+
+#sub-c16 {
+  width: 100% !important;
+  margin-top: 14px !important;
+  overflow: visible !important;
+  pointer-events: auto !important;
+}
+
+#sub-c16.hidden,
+#sub-c16[style*="display: none"],
+#sub-c16.sivme-collapsed {
+  display: none !important;
+}
+
+#sub-c16:not(.hidden):not([style*="display: none"]):not(.sivme-collapsed) {
+  display: block !important;
+}
+
+/* Clean 2-Tier Bilingual Typography */
+.cat-bilingual-title {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  line-height: 1.3 !important;
+}
+
+.cat-bilingual-en {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #f8fafc !important;
+  letter-spacing: -0.01em !important;
+}
+
+.cat-bilingual-hi {
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  color: #94a3b8 !important;
+  margin-top: 1px !important;
+}
+
+/* Section Headers Clearance & 2.5D Recessed Pill */
+.sivme-catalog-section-header {
+  margin-top: 28px !important;
+  margin-bottom: 24px !important;
+  position: relative !important;
   z-index: 10 !important;
-  line-height: 1 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+#categoryModal > div > div > button:first-of-type,
+#categoryModal .sivme-first-header {
+  margin-top: 14px !important;
+  margin-bottom: 24px !important;
+}
+
+/* 2.5D Tactile Elevation & Uniform 72px Geometry across all Categories */
+#categoryModal [data-cat-id]:not([data-cat-id="c16"]),
+#categoryModal [data-cat-id="c16"] > div:first-child {
+  min-height: 72px !important;
+  height: 72px !important;
+  padding: 22px 14px 14px 14px !important;
+  border-radius: 14px !important;
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+  width: 100% !important;
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.98) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.75), 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+  transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.12s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+#categoryModal [data-cat-id]:not([data-cat-id="c16"]):active,
+#categoryModal [data-cat-id="c16"] > div:first-child:active {
+  transform: translateY(1.5px) !important;
+  box-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.85), inset 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+#categoryModal [data-cat-id]:not([data-cat-id="c16"]) {
+  margin-bottom: 20px !important;
+}
+
+#categoryModal [data-cat-id] > div:first-child > div:first-child,
+#categoryModal [data-cat-id]:not([data-cat-id="c16"]) > div:first-child {
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
+  padding-right: 12px !important;
+}
+
+#categoryModal [data-cat-id] .text-xs,
+#categoryModal [data-cat-id] .font-bold,
+#categoryModal [data-cat-id] span,
+#categoryModal [data-cat-id] div,
+#sub-c16 * {
+  line-height: 1.5 !important;
+  overflow: visible !important;
+}
+
+#categoryModal [data-cat-id] button,
+#categoryModal [data-cat-id] a,
+#categoryModal [data-cat-id] .text-cyan-400,
+#categoryModal [data-cat-id] .text-emerald-400,
+#categoryModal [data-cat-id] .text-slate-400,
+#sub-c16 button,
+#sub-c16 a,
+#sub-c16 span {
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  flex-shrink: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+}
+
+#categoryModal .overflow-y-auto,
+#categoryModal > div > div:last-child {
+  padding-top: 20px !important;
+  padding-bottom: 120px !important;
+}
+
+/* Universal Anti-Dashed Ban */
+*, *::before, *::after {
+  outline: none !important;
+}
+
+[style*="dashed"]:not(.sivme-ghost-dormant),
+[class*="dashed"]:not(.sivme-ghost-dormant),
+.sivme-tracked-live,
+.sivme-tracked-hidden,
+[data-sivme-status],
+[data-sivme-id] {
+  border-style: solid !important;
+  outline: none !important;
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.45) !important;
+}
+
+/* Universal Radar & Overlap Suppression */
+[class*="radar"],
+[class*="ripple"],
+.sivme-radar-ring,
+.sivme-ripple,
+.sivme-radar-layer,
+div[style*="border-radius: 50%"][style*="border:"] {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* In-Situ Docks Suppression & Layout */
+#sivmeFloatingDock {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+#rm-master-insitu-dock {
+  position: fixed !important;
+  bottom: 68px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 50 !important;
+  display: flex !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* ==========================================================================
+   PART 4: CANONICAL 100% TOP-ANCHORED FULLSCREEN CATALOG (ZERO TOP GAP)
+   Fixes Bottom-Sheet artifact from Screenshot 1000300354.png
+   ========================================================================== */
+
+#categoryModal {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  background-color: #030712 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  align-items: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  z-index: 99990 !important;
+  overflow: hidden !important;
+}
+
+#categoryModal > div:first-child,
+#categoryModal > div {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  max-height: 100dvh !important;
+  border-radius: 0 !important;
+  border: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-shadow: none !important;
 }
