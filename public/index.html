@@ -37,157 +37,6 @@
     }
   </script>
 
-  <!-- ========================================================================== -->
-  <!-- RISE MITRA — MASTER GLOBAL CSS TOKENS, SOLID BORDERS & CONTRAST SHIELD    -->
-  <!-- ========================================================================== -->
-  <style>
-    :root {
-      --rm-grid-unit: 8px;
-      --rm-glass-bg: rgba(11, 15, 25, 0.85);
-      --rm-glass-border: rgba(51, 65, 85, 0.85);
-      --rm-badge-live: #10b981;
-      --rm-badge-hidden: #ef4444;
-    }
-
-    /* 1. Universal Action Buttons: Prevent Text Split ("खोलें ›" stays 1-line) */
-    #categoryModal button,
-    .cat-action-btn,
-    [data-action="launch"],
-    [data-action="open-sub"] {
-      white-space: nowrap !important;
-      word-break: keep-all !important;
-      flex-shrink: 0 !important;
-    }
-
-    /* 2. Sub-Category Tree-Line Removal Rules (Zero-Artifact) */
-    #sub-c16::before,
-    #sub-c16::after,
-    .subcategory-tree::before,
-    .subcategory-tree::after,
-    [id^="sub-c"]::before,
-    [id^="sub-c"]::after {
-      display: none !important;
-      content: none !important;
-      border-left: none !important;
-    }
-
-    [id^="sub-c"],
-    #sub-c16 {
-      border-left: none !important;
-      box-shadow: none !important;
-    }
-
-    /* 3. SIVME Badge Containment Boundary */
-    #categoryModal [data-cat-id],
-    .category-card-wrapper,
-    .catalog-item-container {
-      position: relative !important;
-    }
-
-    /* 4. Category 16 Sub-Card Ergonomics (108px Lock) */
-    .c16-subcard-clean {
-      min-height: 108px !important;
-      display: flex !important;
-      flex-direction: column !important;
-      justify-content: space-between !important;
-      position: relative !important;
-    }
-
-    /* 5. Clean 2-Tier Bilingual Typography */
-    .cat-bilingual-title {
-      display: flex !important;
-      flex-direction: column !important;
-      justify-content: center !important;
-      line-height: 1.3 !important;
-    }
-    .cat-bilingual-en {
-      font-size: 14px !important;
-      font-weight: 700 !important;
-      color: #f8fafc !important;
-      letter-spacing: -0.01em !important;
-    }
-    .cat-bilingual-hi {
-      font-size: 11.5px !important;
-      font-weight: 500 !important;
-      color: #94a3b8 !important;
-      margin-top: 1px !important;
-    }
-
-    /* 6. Universal Solid 2.5D Elevation & Button Contrast Standards */
-    .rm-solid-panel {
-      border: 1px solid rgba(51, 65, 85, 0.85) !important;
-      border-radius: 16px !important;
-      box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.45) !important;
-    }
-
-    /* 7. UNIVERSAL ANTI-DASHED BAN: 100% Elimination of Dashed Outlines in Public Mode */
-    *, *::before, *::after {
-      outline: none !important;
-    }
-    [style*="dashed"],
-    [class*="dashed"],
-    .sivme-tracked-live,
-    .sivme-tracked-hidden,
-    [data-sivme-status],
-    [data-sivme-id] {
-      border-style: solid !important;
-      outline: none !important;
-      box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.45) !important;
-    }
-    input:focus,
-    input:focus-visible,
-    button:focus-visible {
-      outline: none !important;
-      border-color: #06b6d4 !important;
-    }
-
-    /* 8. UNIVERSAL RADAR & OVERLAP SUPPRESSION (Clean Layout) */
-    [class*="radar"],
-    [class*="ripple"],
-    .sivme-radar-ring,
-    .sivme-ripple,
-    .sivme-radar-layer,
-    div[style*="border-radius: 50%"][style*="border:"] {
-      display: none !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
-    }
-    #categoryModal [data-cat-id],
-    #categoryModal .category-card,
-    .category-card-wrapper,
-    .catalog-item-container,
-    .c16-subcard-clean {
-      position: relative !important;
-      margin-top: 10px !important;
-      margin-bottom: 10px !important;
-      border-radius: 16px !important;
-      clear: both !important;
-      float: none !important;
-      transform: none !important;
-      z-index: 1 !important;
-    }
-
-    /* 9. ELIMINATE DUPLICATE DOCK */
-    #sivmeFloatingDock {
-      display: none !important;
-      visibility: hidden !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
-    }
-
-    /* 10. SINGLE AUTHORITATIVE IN-SITU MASTER DOCK */
-    #rm-master-insitu-dock {
-      position: fixed !important;
-      bottom: 68px !important;
-      left: 50% !important;
-      transform: translateX(-50%) !important;
-      z-index: 50 !important;
-      display: flex !important;
-      opacity: 1 !important;
-      pointer-events: auto !important;
-    }
-  </style>
-
   <!-- Auto-Purge Stale SIVME Flags on Normal Public Launch -->
   <script>
     (function() {
@@ -384,9 +233,9 @@
   <!-- ============================================================================ -->
   <!-- MODALS & FULLSCREEN VIEWPORT MOUNT TARGETS                                   -->
   <!-- ============================================================================ -->
-  <!-- Universal Catalog Modal -->
-  <div id="categoryModal" onclick="if(event.target === this) toggleMenuDrawer(false)" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex flex-col justify-start pt-14 px-3 sm:px-4 transition-all">
-    <div class="bg-[#0b0f19] border border-slate-800 rounded-2xl max-w-md w-full mx-auto max-h-[82vh] flex flex-col shadow-2xl overflow-hidden">
+  <!-- Universal Catalog Modal: 100% Top-Anchored Fullscreen (Zero Gap) -->
+  <div id="categoryModal" onclick="if(event.target === this) toggleMenuDrawer(false)" class="fixed inset-0 z-[99990] bg-[#030712] hidden flex flex-col justify-start items-center p-0 m-0 overflow-hidden">
+    <div class="w-full h-full max-w-md bg-[#0b0f19] border-none rounded-none flex flex-col shadow-none overflow-hidden">
       <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/70">
         <div>
           <h3 class="text-sm font-black text-slate-100 uppercase tracking-wide">RM World — Universal Catalog</h3>
@@ -483,6 +332,9 @@
   <!-- Decoupled Shell Controller Engine & Viewport Dispatcher -->
   <script src="/js/shell-controller.js?v=20261007_01"></script>
 
+  <!-- Sovereign In-Situ Isolated Adapters -->
+  <script src="/js/sivme-adapters/cat16-adapter.js"></script>
+
   <!-- Universal Production Catalog & 0.05s Search Intelligence Engine -->
   <script src="/js/universal-catalog/catalog-metadata-registry.js"></script>
   <script src="/js/universal-catalog/universal-card-engine.js"></script>
@@ -498,12 +350,26 @@
   <!-- SIVME v2.0 Phase 1: Core Visibility Registry Engine (ZEL Isolated) -->
   <script src="/js/core/sovereign-in-situ-registry.js"></script>
 
-  <!-- CONDITIONAL SIVME DEBUG ENGINE (ONLY RUNS WHEN LAUNCHED FROM SURFACE-B) -->
+  <!-- ============================================================================ -->
+  <!-- CONDITIONAL SIVME DEBUG ENGINE & MASTER IN-SITU DOCK (FAIL-SAFE ELEVATED)    -->
+  <!-- ============================================================================ -->
   <script>
     (function() {
       const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('sivme') === 'owner') {
+      const isOwner = urlParams.get('sov_mode') === 'in_situ' || 
+                      urlParams.get('sivme') === 'owner' || 
+                      urlParams.get('dev_auto') === '1';
+
+      if (isOwner) {
+        // 1. In-Situ Session Token Active karein
+        try {
+          sessionStorage.setItem('rm_sov_in_situ_session', 'SOV_ACTIVE_2026');
+          localStorage.setItem('rm_sov_in_situ_session', 'SOV_ACTIVE_2026');
+        } catch (_) {}
+
+        // 2. Registry aur HUD Script Inject karein
         const scripts = [
+          '/js/sovereign-in-situ-registry.js',
           '/js/sovereign-in-situ-hud.js'
         ];
         scripts.forEach(src => {
@@ -512,6 +378,51 @@
           s.async = false;
           document.body.appendChild(s);
         });
+
+        // 3. Elevated Dock: Bottom Nav ke theek upar render karein
+        function renderInSituDock() {
+          if (document.getElementById('rm-master-insitu-dock')) return;
+          const dock = document.createElement('div');
+          dock.id = 'rm-master-insitu-dock';
+          dock.className = 'fixed bottom-[68px] left-1/2 -translate-x-1/2 z-50 flex items-center space-x-2.5 px-3.5 py-1.5 rounded-full bg-[#06121f]/95 border border-emerald-500/80 shadow-2xl backdrop-blur-md select-none';
+          
+          let hiddenCount = 0;
+          try {
+            const reg = JSON.parse(localStorage.getItem('rm_sovereign_visibility_registry_v1') || '{}');
+            hiddenCount = Object.values(reg).filter(v => v === false || v?.visible === false).length;
+          } catch(e) {}
+
+          dock.innerHTML = `
+            <div class="flex items-center space-x-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span class="text-[10px] font-black tracking-wider text-emerald-300 uppercase">OWNER IN-SITU</span>
+            </div>
+            <span class="text-slate-600 text-xs">|</span>
+            <span class="text-[10px] font-bold text-red-400">Hidden: <span id="rm-dock-hidden-count">${hiddenCount}</span></span>
+            <button type="button" onclick="disableOwnerInSitu()" class="px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 text-[9px] font-bold border border-slate-700 active:scale-95 cursor-pointer">Disable</button>
+            <button type="button" onclick="window.location.reload()" class="px-2.5 py-0.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black text-[10px] flex items-center space-x-1 active:scale-95 cursor-pointer">
+              <span>⚡</span><span>Reload</span>
+            </button>
+          `;
+          document.body.appendChild(dock);
+        }
+
+        window.disableOwnerInSitu = function() {
+          try {
+            sessionStorage.removeItem('rm_sov_in_situ_session');
+            localStorage.removeItem('rm_sov_in_situ_session');
+            localStorage.removeItem('sivme_active');
+            localStorage.removeItem('sivme_mode');
+          } catch(e) {}
+          window.location.href = window.location.pathname;
+        };
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', renderInSituDock);
+        } else {
+          renderInSituDock();
+        }
+        setTimeout(renderInSituDock, 400);
       }
     })();
   </script>
