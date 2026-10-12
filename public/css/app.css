@@ -593,7 +593,8 @@ html[data-theme="dark"], html.dark {
 /* 3. ZERO-OVERLAP: Cards Natural Auto-Height Flow */
 #categoryModal [data-cat-id],
 #categoryModal .category-card,
-.category-card-wrapper {
+.category-card-wrapper,
+.catalog-item-container {
   display: block !important;
   position: relative !important;
   height: auto !important;
