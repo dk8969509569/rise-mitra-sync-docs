@@ -12,8 +12,133 @@
 (function () {
   'use strict';
 
+  // ==============================================================================
+  // 1. HARD INVARIANT DEFINITIONS (CATEGORIES 15 & 16)
+  // ==============================================================================
+
+  var RM_HEALTH_FITNESS_15 = {
+    id: 'c15',
+    number: '15.',
+    icon: '🧘',
+    title: 'Health & Fitness',
+    subtitle: 'स्वस्थ मन, देसी अखाड़ा, योग, प्राकृतिक चिकित्सा व स्वास्थ्य लाभ',
+    rating: '★ 4.9 (19k+ साधक व परिवार)',
+    trustBadge: 'Ayush & Health Verified',
+    supportBadge: '24x7 स्वास्थ्य परामर्श',
+    macroPillars: [
+      { text: '🏋️ 15-1: देसी अखाड़ा, व्यायामशाला व फिटनेस ट्रेनिंग', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.12)' },
+      { text: '🌿 15-2: आयुर्वेदिक नाड़ी वैद्य, प्राकृतिक उपचार व योग', color: '#34d399', bg: 'rgba(52, 211, 153, 0.12)' },
+      { text: '🩺 15-3: दैनिक स्वास्थ्य डायरी (BP/Sugar) व दवा रिकॉर्ड', color: '#facc15', bg: 'rgba(250, 204, 21, 0.12)' }
+    ],
+    subcategories: {
+      '15-1': {
+        code: '[15-1]', icon: '🏋️', title: 'Desi Akhada & Fitness', hindiTitle: 'देसी अखाड़ा, व्यायामशाला व जिम पास',
+        categoryTag: 'फिटनेस व कसरत', rating: '★ 4.8', reviewCount: '7,800+ युवा व पहलवान', metaBadge: 'प्रमाणित उस्ताद व कोच',
+        servicesTitle: 'उपलब्ध फिटनेस सुविधाएं:',
+        services: [
+          { text: '🏋️ पारंपरिक मिट्टी अखाड़ा व कुश्ती अभ्यास', bg: 'rgba(56,189,248,0.12)', c: '#38bdf8' },
+          { text: '💪 आधुनिक जिम मेंबरशिप व वेट ट्रेनिंग', bg: 'rgba(250,204,21,0.12)', c: '#facc15' },
+          { text: '🧘 सूर्य नमस्कार व प्राणायाम सत्र', bg: 'rgba(52,211,153,0.12)', c: '#34d399' },
+          { text: '🥗 देसी डाइट चार्ट व प्राकृतिक पोषण परामर्श', bg: 'rgba(192,132,252,0.12)', c: '#c084fc' }
+        ],
+        highlights: ['स्थानीय अखाड़ों और आधुनिक जिमों की 1-क्लिक मासिक मेंबरशिप।', 'अनुभवी उस्तादों और प्रमाणित कोचों की देखरेख में सुरक्षित अभ्यास।', 'बिना सप्लीमेंट के शुद्ध प्राकृतिक खान-पान और देशी कसरत।'],
+        btnText: 'जिम व अखाड़ा पास लें'
+      },
+      '15-2': {
+        code: '[15-2]', icon: '🌿', title: 'Ayurvedic Nadi Vaidya', hindiTitle: 'आयुर्वेदिक नाड़ी वैद्य व प्राकृतिक चिकित्सा',
+        categoryTag: 'आयुर्वेद व वेलनेस', rating: '★ 4.9', reviewCount: '6,500+ रोगी लाभान्वित', metaBadge: 'प्रमाणित नाड़ी वैद्य',
+        servicesTitle: 'पारंपरिक चिकित्सा परामर्श:',
+        services: [
+          { text: '🩺 नाड़ी परीक्षण व वात-पित्त-कफ संतुलन निदान', bg: 'rgba(52,211,153,0.12)', c: '#34d399' },
+          { text: '🌿 शुद्ध जड़ी-बूटी व क्वाथ (काढ़ा) परामर्श', bg: 'rgba(56,189,248,0.12)', c: '#38bdf8' },
+          { text: '💆 पंचकर्म, शिरोधारा व मालिश थेरेपी', bg: 'rgba(250,204,21,0.12)', c: '#facc15' },
+          { text: '🍵 मौसमी खान-पान व प्राकृतिक उपचार सलाह', bg: 'rgba(192,132,252,0.12)', c: '#c084fc' }
+        ],
+        highlights: ['प्राचीन भारतीय नाड़ी विज्ञान से रोग के मूल कारण की पहचान।', 'शून्य साइड इफेक्ट्स—पूर्णतः प्राकृतिक और पारंपरिक जड़ी-बूटी उपचार।', 'घर बैठे अनुभवी वैद्यों से परामर्श स्लॉट बुकिंग।'],
+        btnText: 'वैद्य परामर्श बुक करें'
+      },
+      '15-3': {
+        code: '[15-3]', icon: '🩺', title: 'Health Ledger & Yoga', hindiTitle: 'स्वास्थ्य बहीखाता (BP/Sugar) व योग डायरी',
+        categoryTag: 'स्वास्थ्य ट्रैकर', rating: '★ 4.9', reviewCount: '9,400+ दैनिक साधक', metaBadge: 'सॉवरेन हेल्थ रिकॉर्ड',
+        servicesTitle: 'स्वास्थ्य निगरानी व योगाभ्यास:',
+        services: [
+          { text: '🧘 दैनिक ऑनलाइन/पार्क योग व ध्यान सत्र', bg: 'rgba(56,189,248,0.12)', c: '#38bdf8' },
+          { text: '📈 बीपी, शुगर व वजन दैनिक स्वास्थ्य डायरी', bg: 'rgba(52,211,153,0.12)', c: '#34d399' },
+          { text: '⏰ दवा व मॉर्निंग वॉक स्वचालित रिमाइंडर', bg: 'rgba(250,204,21,0.12)', c: '#facc15' },
+          { text: '📑 पारिवारिक मेडिकल हिस्ट्री सुरक्षित वॉल्ट', bg: 'rgba(192,132,252,0.12)', c: '#c084fc' }
+        ],
+        highlights: ['दैनिक बीपी और शुगर का आसान डिजिटल रिकॉर्ड—डॉक्टर को 1-क्लिक में दिखाएं।', 'मानसिक शांति और तनाव मुक्ति हेतु प्राणायाम और ध्यान मार्गदर्शन।', '100% गोपनीय और सुरक्षित ऑफलाइन-फर्स्ट स्वास्थ्य बहीखाता।'],
+        btnText: 'स्वास्थ्य लेज़र शुरू करें'
+      }
+    }
+  };
+
+  var RM_HOUSE_HOME_16 = {
+    id: 'c16',
+    number: '16.',
+    icon: '🏠',
+    title: 'House & Home',
+    subtitle: 'घर, आवास व दैनिक व्यवस्थापन केंद्र',
+    rating: '★ 4.9 (12k+ परिवार)',
+    trustBadge: 'Rise Verified Network',
+    supportBadge: '24x7 सहायता केंद्र',
+    macroPillars: [
+      { text: '🛠️ 16-1: गृह मरम्मत व कुशल कारीगर', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.12)' },
+      { text: '📋 16-2: डिजिटल किराया बहीखाता व लेजर', color: '#34d399', bg: 'rgba(52, 211, 153, 0.12)' },
+      { text: '🏠 16-3: 0% ब्रोकरेज कमरा व फ्लैट खोज', color: '#facc15', bg: 'rgba(250, 204, 21, 0.12)' }
+    ],
+    subcategories: {
+      '16-1': {
+        code: '[16-1]', icon: '🛠️', title: 'Mistry & Home Repair', hindiTitle: 'मिस्त्री व दैनिक घरेलू मरम्मत सेवाएं',
+        categoryTag: 'होम मेंटेनेंस', rating: '★ 4.8', reviewCount: '2,400+ समीक्षाएं', metaBadge: '⚡ 30 मिनट विज़िट',
+        servicesTitle: 'उपलब्ध प्रमाणित कारीगर सेवाएं:',
+        services: [
+          { text: '🚿 प्लंबर (नल, मोटर, पाइप लीकेज)', bg: 'rgba(56,189,248,0.12)', c: '#38bdf8' },
+          { text: '⚡ इलेक्ट्रीशियन (शॉर्ट सर्किट, वायरिंग)', bg: 'rgba(250,204,21,0.12)', c: '#facc15' },
+          { text: '🪚 बढ़ई / कारपेंटर (फर्नीचर, ताला, किवाड़)', bg: 'rgba(244,114,182,0.12)', c: '#f472b6' },
+          { text: '🎨 पेंटर (वॉल पुट्टी, डिस्टेंपर, वॉटरप्रूफ)', bg: 'rgba(192,132,252,0.12)', c: '#c084fc' },
+          { text: '🧱 राजमिस्त्री (टाइल फिटिंग, प्लास्टर, चिनाई)', bg: 'rgba(52,211,153,0.12)', c: '#34d399' }
+        ],
+        highlights: ['तय और पारदर्शी रेट कार्ड — काम से पहले पक्का रेट, कोई मोलभाव नहीं।', '30 मिनट में स्थानीय व कुशल कारीगर आपके दरवाजे पर।', '7 दिन की कार्य संतुष्टि वारंटी व शून्य छुपा शुल्क।'],
+        btnText: 'तुरंत मिस्त्री बुक करें'
+      },
+      '16-2': {
+        code: '[16-2]', icon: '📋', title: 'Rental Ledger', hindiTitle: 'किराया बहीखाता व किरायेदार प्रबंधन',
+        categoryTag: 'फाइनेंस व प्रॉपर्टी टूल', rating: '★ 4.9', reviewCount: '4,800+ मकान मालिक', metaBadge: '₹0 आजीवन मुफ्त',
+        servicesTitle: 'डिजिटल बहीखाता मुख्य टूल्स:',
+        services: [
+          { text: '🧾 1-क्लिक WhatsApp किराया रसीद (PDF)', bg: 'rgba(52,211,153,0.12)', c: '#34d399' },
+          { text: '⚡ ऑटो सब-मीटर बिजली यूनिट कैलकुलेटर', bg: 'rgba(250,204,21,0.12)', c: '#facc15' },
+          { text: '👥 किरायेदार पहचान व सत्यापन रिकॉर्ड', bg: 'rgba(56,189,248,0.12)', c: '#38bdf8' },
+          { text: '⏰ स्वचालित मासिक SMS / WhatsApp ड्यू अलर्ट', bg: 'rgba(244,114,182,0.12)', c: '#f472b6' },
+          { text: '📑 कानूनी रेंट एग्रीमेंट ड्राफ्ट व ई-हस्ताक्षर', bg: 'rgba(192,132,252,0.12)', c: '#c084fc' }
+        ],
+        highlights: ['पुराने रजिस्टर व डायरी से मुक्ति — बिजली यूनिट डालते ही कुल बिल का ऑटो कैलकुलेशन।', 'मकान मालिक और किरायेदार दोनों के फोन पर रियल-टाइम हिसाब सिंक।', '100% सुरक्षित क्लाउड बैकअप व ऑटोमेटेड पेमेंट ट्रैकिंग।'],
+        btnText: 'बहीखाता खोलें व रसीद बनाएं'
+      },
+      '16-3': {
+        code: '[16-3]', icon: '🏠', title: 'Room & Flat Search', hindiTitle: 'कमरा, फ्लैट व पीजी खोज (0% दलाली)',
+        categoryTag: 'रेंटल प्रॉपर्टी नेटवर्क', rating: '★ 4.9', reviewCount: '9,200+ छात्र व परिवार', metaBadge: '0% ब्रोकरेज',
+        servicesTitle: 'किराए हेतु उपलब्ध विकल्प:',
+        services: [
+          { text: '🛏️ सिंगल कमरा / 1 RK (स्टूडेंट्स व जॉब)', bg: 'rgba(56,189,248,0.12)', c: '#38bdf8' },
+          { text: '🏢 1 BHK / 2 BHK / 3 BHK फैमिली फ्लैट', bg: 'rgba(52,211,153,0.12)', c: '#34d399' },
+          { text: '👩 Girls हॉस्टल व सेफ पीजी (सुरक्षा सहित)', bg: 'rgba(244,114,182,0.12)', c: '#f472b6' },
+          { text: '👨 Boys लॉज व मेस सुविधा', bg: 'rgba(250,204,21,0.12)', c: '#facc15' },
+          { text: '🏬 दुकान व कमर्शियल ऑफिस स्पेस', bg: 'rgba(192,132,252,0.12)', c: '#c084fc' }
+        ],
+        highlights: ['बिना किसी दलाल या ब्रोकर के सीधे असली मकान मालिक से बात करें।', 'सत्यापित रूम, फ्लैट और हॉस्टल की विश्वसनीय लिस्टिंग।', 'पानी, बिजली सब-मीटर, पार्किंग व गेट टाइमिंग की पहले से स्पष्ट जानकारी।'],
+        btnText: 'सीधे मालिक से संपर्क करें'
+      }
+    }
+  };
+
+  // ==============================================================================
+  // 2. MASTER REGISTRY OBJECT
+  // ==============================================================================
+
   var RM_CATALOG_REGISTRY = {
-    // CATEGORY 01: ART & DESIGN (OFFICIAL GOOGLE PLAY STORE TAXONOMY)
+    // CATEGORY 01: ART & DESIGN
     '1': {
       id: 'c1',
       number: '01.',
@@ -71,7 +196,7 @@
       }
     },
 
-    // CATEGORY 02: AUTO & VEHICLES (OFFICIAL GOOGLE PLAY STORE TAXONOMY)
+    // CATEGORY 02: AUTO & VEHICLES
     '2': {
       id: 'c2',
       number: '02.',
@@ -129,7 +254,7 @@
       }
     },
 
-    // CATEGORY 03: BEAUTY (OFFICIAL GOOGLE PLAY STORE TAXONOMY)
+    // CATEGORY 03: BEAUTY
     '3': {
       id: 'c3',
       number: '03.',
@@ -187,160 +312,68 @@
       }
     },
 
-    // CATEGORY 15: HOUSE & HOME (OFFICIAL GOOGLE PLAY STORE TAXONOMY)
-    '15': {
-      id: 'c15',
-      number: '15.',
-      icon: '🏠',
-      title: 'House & Home',
-      subtitle: 'घर, आवास व दैनिक व्यवस्थापन केंद्र',
-      rating: '★ 4.9 (12k+ परिवार)',
-      trustBadge: 'Rise Verified Network',
-      supportBadge: '24x7 सहायता केंद्र',
-      macroPillars: [
-        { text: '🛠️ 15-1: गृह मरम्मत व कुशल कारीगर', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.12)' },
-        { text: '📋 15-2: डिजिटल किराया बहीखाता व लेजर', color: '#34d399', bg: 'rgba(52, 211, 153, 0.12)' },
-        { text: '🏠 15-3: 0% ब्रोकरेज कमरा व फ्लैट खोज', color: '#facc15', bg: 'rgba(250, 204, 21, 0.12)' }
-      ],
-      subcategories: {
-        '15-1': {
-          code: '[15-1]', icon: '🛠️', title: 'Mistry & Home Repair', hindiTitle: 'मिस्त्री व दैनिक घरेलू मरम्मत सेवाएं',
-          categoryTag: 'होम मेंटेनेंस', rating: '★ 4.8', reviewCount: '2,400+ समीक्षाएं', metaBadge: '⚡ 30 मिनट विज़िट',
-          servicesTitle: 'उपलब्ध प्रमाणित कारीगर सेवाएं:',
-          services: [
-            { text: '🚰 प्लंबर (नल, मोटर, पाइप लीकेज)', bg: 'rgba(56,189,248,0.12)', c: '#38bdf8' },
-            { text: '⚡ इलेक्ट्रीशियन (शॉर्ट सर्किट, वायरिंग)', bg: 'rgba(250,204,21,0.12)', c: '#facc15' },
-            { text: '🪚 बढ़ई / कारपेंटर (फर्नीचर, ताला, किवाड़)', bg: 'rgba(244,114,182,0.12)', c: '#f472b6' },
-            { text: '🎨 पेंटर (वॉल पुट्टी, डिस्टेंपर, वॉटरप्रूफ)', bg: 'rgba(192,132,252,0.12)', c: '#c084fc' },
-            { text: '🧱 राजमिस्त्री (टाइल फिटिंग, प्लास्टर, चिनाई)', bg: 'rgba(52,211,153,0.12)', c: '#34d399' }
-          ],
-          highlights: ['तय और पारदर्शी रेट कार्ड — काम से पहले पक्का रेट, कोई मोलभाव नहीं।', '30 मिनट में स्थानीय व कुशल कारीगर आपके दरवाजे पर।', '7 दिन की कार्य संतुष्टि वारंटी व शून्य छुपा शुल्क।'],
-          btnText: 'तुरंत मिस्त्री बुक करें'
-        },
-        '15-2': {
-          code: '[15-2]', icon: '📋', title: 'Rental Ledger', hindiTitle: 'किराया बहीखाता व किरायेदार प्रबंधन',
-          categoryTag: 'फाइनेंस व प्रॉपर्टी टूल', rating: '★ 4.9', reviewCount: '4,800+ मकान मालिक', metaBadge: '₹0 आजीवन मुफ्त',
-          servicesTitle: 'डिजिटल बहीखाता मुख्य टूल्स:',
-          services: [
-            { text: '🧾 1-क्लिक WhatsApp किराया रसीद (PDF)', bg: 'rgba(52,211,153,0.12)', c: '#34d399' },
-            { text: '⚡ ऑटो सब-मीटर बिजली यूनिट कैलकुलेटर', bg: 'rgba(250,204,21,0.12)', c: '#facc15' },
-            { text: '👥 किरायेदार पहचान व सत्यापन रिकॉर्ड', bg: 'rgba(56,189,248,0.12)', c: '#38bdf8' },
-            { text: '⏰ स्वचालित मासिक SMS / WhatsApp ड्यू अलर्ट', bg: 'rgba(244,114,182,0.12)', c: '#f472b6' },
-            { text: '📑 कानूनी रेंट एग्रीमेंट ड्राफ्ट व ई-हस्ताक्षर', bg: 'rgba(192,132,252,0.12)', c: '#c084fc' }
-          ],
-          highlights: ['पुराने रजिस्टर व डायरी से मुक्ति — बिजली यूनिट डालते ही कुल बिल का ऑटो कैलकुलेशन।', 'मकान मालिक और किरायेदार दोनों के फोन पर रियल-टाइम हिसाब सिंक।', '100% सुरक्षित क्लाउड बैकअप व ऑटोमेटेड पेमेंट ट्रैकिंग।'],
-          btnText: 'बहीखाता खोलें व रसीद बनाएं'
-        },
-        '15-3': {
-          code: '[15-3]', icon: '🏠', title: 'Room & Flat Search', hindiTitle: 'कमरा, फ्लैट व पीजी खोज (0% दलाली)',
-          categoryTag: 'रेंटल प्रॉपर्टी नेटवर्क', rating: '★ 4.9', reviewCount: '9,200+ छात्र व परिवार', metaBadge: '0% ब्रोकरेज',
-          servicesTitle: 'किराए हेतु उपलब्ध विकल्प:',
-          services: [
-            { text: '🛏️ सिंगल कमरा / 1 RK (स्टूडेंट्स व जॉब)', bg: 'rgba(56,189,248,0.12)', c: '#38bdf8' },
-            { text: '🏢 1 BHK / 2 BHK / 3 BHK फैमिली फ्लैट', bg: 'rgba(52,211,153,0.12)', c: '#34d399' },
-            { text: '👩 Girls हॉस्टल व सेफ पीजी (सुरक्षा सहित)', bg: 'rgba(244,114,182,0.12)', c: '#f472b6' },
-            { text: '👨 Boys लॉज व मेस सुविधा', bg: 'rgba(250,204,21,0.12)', c: '#facc15' },
-            { text: '🏬 दुकान व कमर्शियल ऑफिस स्पेस', bg: 'rgba(192,132,252,0.12)', c: '#c084fc' }
-          ],
-          highlights: ['बिना किसी दलाल या ब्रोकर के सीधे असली मकान मालिक से बात करें।', 'सत्यापित रूम, फ्लैट और हॉस्टल की विश्वसनीय लिस्टिंग।', 'पानी, बिजली सब-मीटर, पार्किंग व गेट टाइमिंग की पहले से स्पष्ट जानकारी।'],
-          btnText: 'सीधे मालिक से संपर्क करें'
-        }
-      }
-    },
-
-    // CATEGORY 16: DUAL-ALIAS FOR HOUSE & HOME (100% BACKWARD COMPATIBILITY)
-    '16': {
-      id: 'c16',
-      number: '16.',
-      icon: '🏠',
-      title: 'House & Home',
-      subtitle: 'घर, आवास व दैनिक व्यवस्थापन केंद्र',
-      rating: '★ 4.9 (12k+ परिवार)',
-      trustBadge: 'Rise Verified Network',
-      supportBadge: '24x7 सहायता केंद्र',
-      macroPillars: [
-        { text: '🛠️ 16-1: गृह मरम्मत व कुशल कारीगर', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.12)' },
-        { text: '📋 16-2: डिजिटल किराया बहीखाता व लेजर', color: '#34d399', bg: 'rgba(52, 211, 153, 0.12)' },
-        { text: '🏠 16-3: 0% ब्रोकरेज कमरा व फ्लैट खोज', color: '#facc15', bg: 'rgba(250, 204, 21, 0.12)' }
-      ],
-      subcategories: {
-        '16-1': {
-          code: '[16-1]', icon: '🛠️', title: 'Mistry & Home Repair', hindiTitle: 'मिस्त्री व दैनिक घरेलू मरम्मत सेवाएं',
-          categoryTag: 'होम मेंटेनेंस', rating: '★ 4.8', reviewCount: '2,400+ समीक्षाएं', metaBadge: '⚡ 30 मिनट विज़िट',
-          servicesTitle: 'उपलब्ध प्रमाणित कारीगर सेवाएं:',
-          services: [
-            { text: '🚰 प्लंबर (नल, मोटर, पाइप लीकेज)', bg: 'rgba(56,189,248,0.12)', c: '#38bdf8' },
-            { text: '⚡ इलेक्ट्रीशियन (शॉर्ट सर्किट, वायरिंग)', bg: 'rgba(250,204,21,0.12)', c: '#facc15' },
-            { text: '🪚 बढ़ई / कारपेंटर (फर्नीचर, ताला, किवाड़)', bg: 'rgba(244,114,182,0.12)', c: '#f472b6' },
-            { text: '🎨 पेंटर (वॉल पुट्टी, डिस्टेंपर, वॉटरप्रूफ)', bg: 'rgba(192,132,252,0.12)', c: '#c084fc' },
-            { text: '🧱 राजमिस्त्री (टाइल फिटिंग, प्लास्टर, चिनाई)', bg: 'rgba(52,211,153,0.12)', c: '#34d399' }
-          ],
-          highlights: ['तय और पारदर्शी रेट कार्ड — काम से पहले पक्का रेट, कोई मोलभाव नहीं।', '30 मिनट में स्थानीय व कुशल कारीगर आपके दरवाजे पर।', '7 दिन की कार्य संतुष्टि वारंटी व शून्य छुपा शुल्क।'],
-          btnText: 'तुरंत मिस्त्री बुक करें'
-        },
-        '16-2': {
-          code: '[16-2]', icon: '📋', title: 'Rental Ledger', hindiTitle: 'किराया बहीखाता व किरायेदार प्रबंधन',
-          categoryTag: 'फाइनेंस व प्रॉपर्टी टूल', rating: '★ 4.9', reviewCount: '4,800+ मकान मालिक', metaBadge: '₹0 आजीवन मुफ्त',
-          servicesTitle: 'डिजिटल बहीखाता मुख्य टूल्स:',
-          services: [
-            { text: '🧾 1-क्लिक WhatsApp किराया रसीद (PDF)', bg: 'rgba(52,211,153,0.12)', c: '#34d399' },
-            { text: '⚡ ऑटो सब-मीटर बिजली यूनिट कैलकुलेटर', bg: 'rgba(250,204,21,0.12)', c: '#facc15' },
-            { text: '👥 किरायेदार पहचान व सत्यापन रिकॉर्ड', bg: 'rgba(56,189,248,0.12)', c: '#38bdf8' },
-            { text: '⏰ स्वचालित मासिक SMS / WhatsApp ड्यू अलर्ट', bg: 'rgba(244,114,182,0.12)', c: '#f472b6' },
-            { text: '📑 कानूनी रेंट एग्रीमेंट ड्राफ्ट व ई-हस्ताक्षर', bg: 'rgba(192,132,252,0.12)', c: '#c084fc' }
-          ],
-          highlights: ['पुराने रजिस्टर व डायरी से मुक्ति — बिजली यूनिट डालते ही कुल बिल का ऑटो कैलकुलेशन।', 'मकान मालिक और किरायेदार दोनों के फोन पर रियल-टाइम हिसाब सिंक।', '100% सुरक्षित क्लाउड बैकअप व ऑटोमेटेड पेमेंट ट्रैकिंग।'],
-          btnText: 'बहीखाता खोलें व रसीद बनाएं'
-        },
-        '16-3': {
-          code: '[16-3]', icon: '🏠', title: 'Room & Flat Search', hindiTitle: 'कमरा, फ्लैट व पीजी खोज (0% दलाली)',
-          categoryTag: 'रेंटल प्रॉपर्टी नेटवर्क', rating: '★ 4.9', reviewCount: '9,200+ छात्र व परिवार', metaBadge: '0% ब्रोकरेज',
-          servicesTitle: 'किराए हेतु उपलब्ध विकल्प:',
-          services: [
-            { text: '🛏️ सिंगल कमरा / 1 RK (स्टूडेंट्स व जॉब)', bg: 'rgba(56,189,248,0.12)', c: '#38bdf8' },
-            { text: '🏢 1 BHK / 2 BHK / 3 BHK फैमिली फ्लैट', bg: 'rgba(52,211,153,0.12)', c: '#34d399' },
-            { text: '👩 Girls हॉस्टल व सेफ पीजी (सुरक्षा सहित)', bg: 'rgba(244,114,182,0.12)', c: '#f472b6' },
-            { text: '👨 Boys लॉज व मेस सुविधा', bg: 'rgba(250,204,21,0.12)', c: '#facc15' },
-            { text: '🏬 दुकान व कमर्शियल ऑफिस स्पेस', bg: 'rgba(192,132,252,0.12)', c: '#c084fc' }
-          ],
-          highlights: ['बिना किसी दलाल या ब्रोकर के सीधे असली मकान मालिक से बात करें।', 'सत्यापित रूम, फ्लैट और हॉस्टल की विश्वसनीय लिस्टिंग।', 'पानी, बिजली सब-मीटर, पार्किंग व गेट टाइमिंग की पहले से स्पष्ट जानकारी।'],
-          btnText: 'सीधे मालिक से संपर्क करें'
-        }
-      }
-    }
+    '15': RM_HEALTH_FITNESS_15,
+    'c15': RM_HEALTH_FITNESS_15,
+    '16': RM_HOUSE_HOME_16,
+    'c16': RM_HOUSE_HOME_16
   };
 
-  // Authoritative Registry API with Robust ID Normalization
+  // ==============================================================================
+  // 3. AUTHORITATIVE API WITH HARD INVARIANT LOCK
+  // ==============================================================================
+
   window.RM_CATALOG_REGISTRY = {
     getCategoryData: function (catId) {
       if (!catId) return null;
       var cleanId = String(catId).replace(/[^0-9]/g, '');
       if (!cleanId) return null;
       var intId = String(parseInt(cleanId, 10));
+
+      // HARD INVARIANT LOCK: Category 15 is 100% ALWAYS Health & Fitness
+      if (intId === '15') return RM_HEALTH_FITNESS_15;
+      // HARD INVARIANT LOCK: Category 16 is 100% ALWAYS House & Home
+      if (intId === '16') return RM_HOUSE_HOME_16;
+
       return RM_CATALOG_REGISTRY[intId] || RM_CATALOG_REGISTRY[cleanId] || null;
     },
+
     getSubcategoryData: function (catId, subId) {
       var cat = this.getCategoryData(catId);
       if (!cat || !cat.subcategories) return null;
-      var cleanSubId = String(subId).replace(/^[c]/, '');
+      var cleanSubId = String(subId).replace(/^[cg]/, '');
       var numParts = String(subId).match(/\d+/g);
       var normSubId = numParts && numParts.length >= 2 ? (parseInt(numParts[0], 10) + '-' + parseInt(numParts[1], 10)) : cleanSubId;
       return cat.subcategories[cleanSubId] || cat.subcategories[normSubId] || null;
     },
+
     registerBatch: function (batchData) {
       if (typeof batchData === 'object') {
+        // Anti-Regression Lock: Do not let stale batches overwrite Category 15 with House & Home
+        if (batchData['15']) batchData['15'] = RM_HEALTH_FITNESS_15;
+        if (batchData['c15']) batchData['c15'] = RM_HEALTH_FITNESS_15;
+        if (batchData['16']) batchData['16'] = RM_HOUSE_HOME_16;
+        if (batchData['c16']) batchData['c16'] = RM_HOUSE_HOME_16;
+
         Object.assign(RM_CATALOG_REGISTRY, batchData);
+
+        // Re-enforce Hard Invariants
+        RM_CATALOG_REGISTRY['15'] = RM_HEALTH_FITNESS_15;
+        RM_CATALOG_REGISTRY['c15'] = RM_HEALTH_FITNESS_15;
+        RM_CATALOG_REGISTRY['16'] = RM_HOUSE_HOME_16;
+        RM_CATALOG_REGISTRY['c16'] = RM_HOUSE_HOME_16;
+
         if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
           setTimeout(window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog, 20);
         }
       }
     },
+
     getAllCategories: function () {
       return RM_CATALOG_REGISTRY;
     }
   };
 
-  // Automatic Modular Extension Loader (Loads 5 extension batches dynamically)
+  // Automatic Modular Extension Loader
   var extBatches = [
     'ext-batch-01-10.js',
     'ext-batch-11-20.js',

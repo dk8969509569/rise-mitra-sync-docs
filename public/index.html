@@ -3,7 +3,7 @@
 <!-- ============================================================================== -->
 <!-- RISE MITRA — SLIM MODULAR HTML SHELL (DEFAULT PUBLIC LOCK & PHASE 5 FAVORITES) -->
 <!-- GOVERNANCE : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0            -->
-<!-- SPEC SSOT  : FOLDER A (MASTER DOCUMENT SSOT)                                   -->
+<!-- SPEC SSOT  : FOLDER A (MASTER DOCUMENT SSOT) & FOLDER B (LIVE SNAPSHOT)       -->
 <!-- STATUS     : FULLY DECOUPLED (CSS -> app.css | JS -> modular engines)          -->
 <!-- ============================================================================== -->
 <head>
@@ -19,8 +19,8 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  <!-- Master Decoupled Global CSS & Design Tokens -->
-  <link rel="stylesheet" href="/css/app.css">
+  <!-- Master Decoupled Global CSS with Fresh Cache Buster -->
+  <link rel="stylesheet" href="/css/app.css?v=20261012_v6">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -36,157 +36,6 @@
       }
     }
   </script>
-
-  <!-- ========================================================================== -->
-  <!-- RISE MITRA — MASTER GLOBAL CSS TOKENS, SOLID BORDERS & CONTRAST SHIELD    -->
-  <!-- ========================================================================== -->
-  <style>
-    :root {
-      --rm-grid-unit: 8px;
-      --rm-glass-bg: rgba(11, 15, 25, 0.85);
-      --rm-glass-border: rgba(51, 65, 85, 0.85);
-      --rm-badge-live: #10b981;
-      --rm-badge-hidden: #ef4444;
-    }
-
-    /* 1. Universal Action Buttons: Prevent Text Split ("खोलें ›" stays 1-line) */
-    #categoryModal button,
-    .cat-action-btn,
-    [data-action="launch"],
-    [data-action="open-sub"] {
-      white-space: nowrap !important;
-      word-break: keep-all !important;
-      flex-shrink: 0 !important;
-    }
-
-    /* 2. Sub-Category Tree-Line Removal Rules (Zero-Artifact) */
-    #sub-c16::before,
-    #sub-c16::after,
-    .subcategory-tree::before,
-    .subcategory-tree::after,
-    [id^="sub-c"]::before,
-    [id^="sub-c"]::after {
-      display: none !important;
-      content: none !important;
-      border-left: none !important;
-    }
-
-    [id^="sub-c"],
-    #sub-c16 {
-      border-left: none !important;
-      box-shadow: none !important;
-    }
-
-    /* 3. SIVME Badge Containment Boundary */
-    #categoryModal [data-cat-id],
-    .category-card-wrapper,
-    .catalog-item-container {
-      position: relative !important;
-    }
-
-    /* 4. Category 16 Sub-Card Ergonomics (108px Lock) */
-    .c16-subcard-clean {
-      min-height: 108px !important;
-      display: flex !important;
-      flex-direction: column !important;
-      justify-content: space-between !important;
-      position: relative !important;
-    }
-
-    /* 5. Clean 2-Tier Bilingual Typography */
-    .cat-bilingual-title {
-      display: flex !important;
-      flex-direction: column !important;
-      justify-content: center !important;
-      line-height: 1.3 !important;
-    }
-    .cat-bilingual-en {
-      font-size: 14px !important;
-      font-weight: 700 !important;
-      color: #f8fafc !important;
-      letter-spacing: -0.01em !important;
-    }
-    .cat-bilingual-hi {
-      font-size: 11.5px !important;
-      font-weight: 500 !important;
-      color: #94a3b8 !important;
-      margin-top: 1px !important;
-    }
-
-    /* 6. Universal Solid 2.5D Elevation & Button Contrast Standards */
-    .rm-solid-panel {
-      border: 1px solid rgba(51, 65, 85, 0.85) !important;
-      border-radius: 16px !important;
-      box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.45) !important;
-    }
-
-    /* 7. UNIVERSAL ANTI-DASHED BAN: 100% Elimination of Dashed Outlines in Public Mode */
-    *, *::before, *::after {
-      outline: none !important;
-    }
-    [style*="dashed"],
-    [class*="dashed"],
-    .sivme-tracked-live,
-    .sivme-tracked-hidden,
-    [data-sivme-status],
-    [data-sivme-id] {
-      border-style: solid !important;
-      outline: none !important;
-      box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.45) !important;
-    }
-    input:focus,
-    input:focus-visible,
-    button:focus-visible {
-      outline: none !important;
-      border-color: #06b6d4 !important;
-    }
-
-    /* 8. UNIVERSAL RADAR & OVERLAP SUPPRESSION (Clean Layout) */
-    [class*="radar"],
-    [class*="ripple"],
-    .sivme-radar-ring,
-    .sivme-ripple,
-    .sivme-radar-layer,
-    div[style*="border-radius: 50%"][style*="border:"] {
-      display: none !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
-    }
-    #categoryModal [data-cat-id],
-    #categoryModal .category-card,
-    .category-card-wrapper,
-    .catalog-item-container,
-    .c16-subcard-clean {
-      position: relative !important;
-      margin-top: 10px !important;
-      margin-bottom: 10px !important;
-      border-radius: 16px !important;
-      clear: both !important;
-      float: none !important;
-      transform: none !important;
-      z-index: 1 !important;
-    }
-
-    /* 9. ELIMINATE DUPLICATE DOCK */
-    #sivmeFloatingDock {
-      display: none !important;
-      visibility: hidden !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
-    }
-
-    /* 10. SINGLE AUTHORITATIVE IN-SITU MASTER DOCK */
-    #rm-master-insitu-dock {
-      position: fixed !important;
-      bottom: 68px !important;
-      left: 50% !important;
-      transform: translateX(-50%) !important;
-      z-index: 50 !important;
-      display: flex !important;
-      opacity: 1 !important;
-      pointer-events: auto !important;
-    }
-  </style>
 
   <!-- Auto-Purge Stale SIVME Flags on Normal Public Launch -->
   <script>
@@ -215,7 +64,7 @@
   <header class="sticky top-0 z-40 bg-[#030712]/95 backdrop-blur-md border-b border-slate-800/80 px-4 py-3">
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <div class="relative flex items-center justify-center cursor-pointer min-w-[48px] min-h-[48px]" onclick="toggleMenuDrawer(true)">
+        <div class="relative flex items-center justify-center cursor-pointer min-w-[48px] min-h-[48px]" onclick="openCatalogModal()">
           <div class="absolute -inset-1 bg-gradient-to-r from-blue-500/30 to-cyan-400/20 rounded-2xl blur-xs opacity-75"></div>
           <img src="/rise-mitra-logo.svg" alt="RM WORLD Logo" class="relative w-11 h-11 rounded-xl shadow-lg border border-slate-700/60 object-contain bg-[#02091d]" />
         </div>
@@ -259,7 +108,7 @@
   <!-- ============================================================================ -->
   <main class="max-w-md mx-auto px-4 py-4 space-y-4">
     <!-- Block 1: RM World Directory (Solid 2.5D Slate Border + High-Contrast Button) -->
-    <button type="button" id="cat-menu-btn" onclick="toggleMenuDrawer(true)" class="w-full tactile-25d bg-gradient-to-r from-slate-900 via-[#0d1527] to-slate-900 border border-slate-700/80 hover:border-cyan-500/60 p-3.5 rounded-2xl flex items-center justify-between cursor-pointer group shadow-xl transition-all min-h-[56px]">
+    <button type="button" id="cat-menu-btn" onclick="openCatalogModal()" class="w-full tactile-25d bg-gradient-to-r from-slate-900 via-[#0d1527] to-slate-900 border border-slate-700/80 hover:border-cyan-500/60 p-3.5 rounded-2xl flex items-center justify-between cursor-pointer group shadow-xl transition-all min-h-[56px]">
       <div class="flex items-center space-x-3">
         <div class="w-10 h-10 rounded-xl bg-slate-950 border border-slate-700/80 flex items-center justify-center text-lg text-slate-200 shadow-inner group-hover:scale-105 group-hover:border-cyan-400/80 transition-all">
           ☰
@@ -384,15 +233,16 @@
   <!-- ============================================================================ -->
   <!-- MODALS & FULLSCREEN VIEWPORT MOUNT TARGETS                                   -->
   <!-- ============================================================================ -->
-  <!-- Universal Catalog Modal -->
-  <div id="categoryModal" onclick="if(event.target === this) toggleMenuDrawer(false)" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex flex-col justify-start pt-14 px-3 sm:px-4 transition-all">
-    <div class="bg-[#0b0f19] border border-slate-800 rounded-2xl max-w-md w-full mx-auto max-h-[82vh] flex flex-col shadow-2xl overflow-hidden">
+  <!-- Universal Catalog Modal: 100% Top-Anchored Fullscreen (Zero Gap & Instant Close) -->
+  <div id="categoryModal" class="hidden" style="display: none;">
+    <div class="w-full h-full max-w-md bg-[#0b0f19] border-none rounded-none flex flex-col shadow-none overflow-hidden">
       <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/70">
         <div>
           <h3 class="text-sm font-black text-slate-100 uppercase tracking-wide">RM World — Universal Catalog</h3>
           <p id="modal-catalog-count" class="text-[10px] text-emerald-400">Services • Utilities • Security • Games</p>
         </div>
-        <button type="button" onclick="toggleMenuDrawer(false)" class="w-9 h-9 rounded-lg bg-slate-800 text-slate-300 font-bold text-sm hover:bg-slate-700 cursor-pointer flex items-center justify-center">
+        <!-- 100% Fail-Safe Instant Close Button -->
+        <button type="button" onclick="closeCatalogModal()" class="w-9 h-9 rounded-lg bg-slate-800 text-slate-300 font-bold text-sm hover:bg-slate-700 cursor-pointer flex items-center justify-center">
           ✕
         </button>
       </div>
@@ -465,47 +315,78 @@
   </nav>
 
   <!-- ============================================================================ -->
-  <!-- MODULAR ENGINES & DECOUPLED CONTROLLERS (100% CLEAN PUBLIC RUNTIME)          -->
+  <!-- MODULAR CONTROLLERS & BULLETPROOF MODAL DISPATCHER                           -->
   <!-- ============================================================================ -->
+  <script>
+    function openCatalogModal() {
+      var m = document.getElementById('categoryModal');
+      if (!m) return;
+      m.classList.remove('hidden');
+      m.style.setProperty('display', 'flex', 'important');
+    }
+
+    function closeCatalogModal() {
+      var m = document.getElementById('categoryModal');
+      if (!m) return;
+      m.classList.add('hidden');
+      m.style.setProperty('display', 'none', 'important');
+    }
+
+    window.toggleMenuDrawer = function(open) {
+      if (open) openCatalogModal();
+      else closeCatalogModal();
+    };
+  </script>
+
   <!-- Pan-India Master Geographic Dataset -->
   <script src="/js/data/india-geo-data.js"></script>
 
   <!-- Modular Home Grid Engine (12 Play Store Standard Verticals) -->
-  <script src="/js/home-grid-engine.js?v=20261007_01"></script>
+  <script src="/js/home-grid-engine.js?v=20261012_06"></script>
 
   <!-- Sovereign Profile & Control Hub Engine (Angel One Taxonomy) -->
-  <script src="/js/profile-hub-engine.js?v=20261007_01"></script>
+  <script src="/js/profile-hub-engine.js?v=20261012_06"></script>
 
   <!-- Canonical Decoupled Catalog Engine & Data Registry -->
-  <script src="/js/categories-data.js?v=20261007_01"></script>
-  <script src="/js/catalog-sivme-engine.js?v=20261007_01"></script>
+  <script src="/js/categories-data.js?v=20261012_06"></script>
+  <script src="/js/catalog-sivme-engine.js?v=20261012_06"></script>
 
   <!-- Decoupled Shell Controller Engine & Viewport Dispatcher -->
-  <script src="/js/shell-controller.js?v=20261007_01"></script>
+  <script src="/js/shell-controller.js?v=20261012_06"></script>
 
-  <!-- Universal Production Catalog & 0.05s Search Intelligence Engine -->
-  <script src="/js/universal-catalog/catalog-metadata-registry.js"></script>
-  <script src="/js/universal-catalog/universal-card-engine.js"></script>
-  <script src="/js/universal-catalog/universal-search-engine.js"></script>
+  <!-- Sovereign In-Situ Isolated Adapters -->
+  <script src="/js/sivme-adapters/cat16-adapter.js?v=20261012_06"></script>
 
-  <!-- Modular Catalog Extensions (Google Play Store Canonical Batches) -->
-  <script src="/js/universal-catalog/extensions/ext-batch-11-15.js"></script>
-  <script src="/js/universal-catalog/extensions/ext-batch-16-20.js"></script>
+  <!-- Universal Production Catalog & 0.05s Search Intelligence Engine (Cache-Busted) -->
+  <script src="/js/universal-catalog/catalog-metadata-registry.js?v=20261012_v6"></script>
+  <script src="/js/universal-catalog/universal-card-engine.js?v=20261012_v6"></script>
+  <script src="/js/universal-catalog/universal-search-engine.js?v=20261012_v6"></script>
+
+  <!-- Modular Catalog Extensions (Cache-Busted Play Store Batches) -->
+  <script src="/js/universal-catalog/extensions/ext-batch-11-15.js?v=20261012_v6"></script>
+  <script src="/js/universal-catalog/extensions/ext-batch-16-20.js?v=20261012_v6"></script>
 
   <!-- MODULAR PHASE 5 FAVORITES ENGINE (DECOUPLED & PLAY STORE STYLED) -->
-  <script src="/js/favorites-engine.js?v=20261010_01"></script>
+  <script src="/js/favorites-engine.js?v=20261012_06"></script>
 
   <!-- SIVME v2.0 Phase 1: Core Visibility Registry Engine (ZEL Isolated) -->
-  <script src="/js/core/sovereign-in-situ-registry.js"></script>
+  <script src="/js/core/sovereign-in-situ-registry.js?v=20261012_06"></script>
+
+  <!-- Service Worker Auto-Update Sentinel -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(regs) {
+        for (var reg of regs) { reg.update(); }
+      });
+    }
+  </script>
 
   <!-- CONDITIONAL SIVME DEBUG ENGINE (ONLY RUNS WHEN LAUNCHED FROM SURFACE-B) -->
   <script>
     (function() {
       const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('sivme') === 'owner') {
-        const scripts = [
-          '/js/sovereign-in-situ-hud.js'
-        ];
+      if (urlParams.get('sivme') === 'owner' || urlParams.get('sov_mode') === 'in_situ') {
+        const scripts = ['/js/sovereign-in-situ-hud.js'];
         scripts.forEach(src => {
           const s = document.createElement('script');
           s.src = src;

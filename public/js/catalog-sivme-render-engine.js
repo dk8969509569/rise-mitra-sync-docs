@@ -1,9 +1,9 @@
 /**
  * RISE MITRA — CATALOG SIVME RENDER ENGINE (MODULE 2 OF 2)
- * MODULE        : UI Rendering, Accordion DOM Engine & 3-Pill Action Strip
+ * ARCHITECTURE  : 100% Zero-Element-Loss (ZEL) Modular DRY Component Engine
  * SPECIFICATION : FOLDER A (SSOT: 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) | 14_04__EXT_005
- * GOVERNANCE    : GATE-16.6 • GATE-16.7 • GATE-25.0 | ZERO-ELEMENT-LOSS (ZEL VERIFIED)
- * REPO TARGET   : public/js/catalog-sivme-render-engine.js
+ * GOVERNANCE    : GATE-16.6 • GATE-16.7 • GATE-25.0 • GATE-26.0 (ZEL VERIFIED)
+ * REPO TARGET   : public/js/catalog-sivme-render-engine.js (~260 Lines)
  */
 
 (function (window, document) {
@@ -120,7 +120,7 @@
   };
 
   // ==============================================================================
-  // SECTION 2: SUB-CARDS RENDERING (3-PILL ACTION STRIP)
+  // SECTION 2: SUB-CARDS RENDERING (3-PILL ACTION STRIP + IN-SITU NOTCHES)
   // ==============================================================================
 
   function renderSubCards(catNum, childrenList) {
@@ -190,8 +190,57 @@
   }
 
   // ==============================================================================
-  // SECTION 3: CATALOG ACCORDION RENDER ENGINE (DYNAMIC COUNT BINDING)
+  // SECTION 3: UNIFIED DRY CATEGORY BUILDER (33 SERVICES + 17 GAMES)
   // ==============================================================================
+
+  function buildCategoryCard(item, isGame, isInSitu, core) {
+    var isLive = core.isCategoryLive(item.id, item.num);
+    var stateClass = isLive ? 'is-live' : 'is-hidden';
+    var notchHtml = '';
+
+    if (isInSitu) {
+      notchHtml = isLive
+        ? '<div class="sivme-live-notch absolute -top-2.5 right-3 z-30 flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#064e3b] text-emerald-300 border border-emerald-500/80 shadow-[0_0_8px_rgba(16,185,129,0.3)] cursor-pointer" onclick="toggleSivmeCategory(\'' + item.id + '\', \'' + item.num + '\', event)"><span>🟢</span><span>Live ⇄</span></div>'
+        : '<div class="sivme-live-notch absolute -top-2.5 right-3 z-30 flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#450a0a] text-red-300 border border-red-500/80 shadow-[0_0_8px_rgba(239,68,68,0.3)] cursor-pointer" onclick="toggleSivmeCategory(\'' + item.id + '\', \'' + item.num + '\', event)"><span>🔴</span><span>Hidden ⇄</span></div>';
+    }
+
+    var inlineStyles = 'border: 1px solid rgba(51, 65, 85, 0.7) !important; overflow: visible;';
+    if (isInSitu) {
+      var outlineColor = isLive ? '#10b981' : '#ef4444';
+      inlineStyles += ' outline: 2px dashed ' + outlineColor + ' !important; outline-offset: 3px !important;';
+      if (!isLive) inlineStyles += ' opacity: 0.45 !important;';
+    } else {
+      if (!isLive) inlineStyles += ' display: none !important;';
+    }
+
+    var countNum = (item.children && Array.isArray(item.children)) ? item.children.length : 3;
+    var numBadgeClass = isGame ? 'bg-cyan-950/70 text-cyan-400 border-cyan-800/50' : 'bg-amber-950/70 text-amber-400 border-amber-800/50';
+    var countBadgeClass = isGame ? 'text-cyan-400 bg-cyan-950/80 border-cyan-800/50' : 'text-emerald-400 bg-emerald-950/80 border-emerald-800/50';
+    var dynamicBadge = countNum + (isGame ? ' गेम्स' : ' विकल्प');
+
+    return [
+      '<div data-cat-id="' + item.id + '" data-sivme-urn="rm:cat:' + item.num + '" class="sivme-cat-card ' + stateClass + ' w-full rounded-xl bg-slate-900/90 transition-all mb-3.5 shadow-md relative" style="' + inlineStyles + '">',
+      '  ' + notchHtml,
+      '  <div onclick="handleCategoryClick(\'' + item.id + '\', this)" class="flex items-center justify-between p-3 cursor-pointer active:scale-[0.99] transition-transform min-h-[64px]">',
+      '    <div class="flex items-center space-x-2.5 min-w-0 flex-1 pr-2">',
+      '      <span class="text-[10px] font-mono font-bold border px-1.5 py-0.5 rounded shrink-0 ' + numBadgeClass + '">' + item.num + '.</span>',
+      '      <span class="text-xl shrink-0 leading-none">' + item.icon + '</span>',
+      '      <div class="flex flex-col min-w-0 text-left flex-1">',
+      '        <span class="text-[13.5px] font-bold text-slate-100 tracking-wide leading-tight break-normal">' + item.enName + '</span>',
+      '        <span class="text-[11.5px] font-medium text-slate-400 leading-tight mt-0.5 break-normal">(' + item.hiName + ')</span>',
+      '      </div>',
+      '    </div>',
+      '    <div class="flex items-center space-x-1.5 shrink-0">',
+      '      <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border whitespace-nowrap ' + countBadgeClass + '">' + dynamicBadge + '</span>',
+      '      <span class="acc-arrow text-slate-300 text-xs font-mono font-bold bg-slate-800/90 border border-slate-700/80 w-6 h-6 rounded-full flex items-center justify-center">▼</span>',
+      '    </div>',
+      '  </div>',
+      '  <div id="sub-' + item.id + '" class="p-2 pt-0 space-y-2.5 bg-slate-950/50 hidden rounded-b-xl" style="overflow: visible;">',
+      '    ' + renderSubCards(item.num, item.children),
+      '  </div>',
+      '</div>'
+    ].join('\n');
+  }
 
   function renderCatalogItems() {
     var core = getCore();
@@ -207,120 +256,28 @@
     var t1 = document.getElementById('tier1-list');
     var t2 = document.getElementById('tier2-list');
 
-    // 1. Render 33 Services (Dynamic Count: `${count} विकल्प`)
     if (t1) {
-      t1.innerHTML = services.map(function (item) {
-        var isLive = core.isCategoryLive(item.id, item.num);
-        var stateClass = isLive ? 'is-live' : 'is-hidden';
-        var notchHtml = '';
-
-        if (isInSitu) {
-          notchHtml = isLive
-            ? '<div class="sivme-live-notch absolute -top-2.5 right-3 z-30 flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#064e3b] text-emerald-300 border border-emerald-500/80 shadow-[0_0_8px_rgba(16,185,129,0.3)] cursor-pointer" onclick="toggleSivmeCategory(\'' + item.id + '\', \'' + item.num + '\', event)"><span>🟢</span><span>Live ⇄</span></div>'
-            : '<div class="sivme-live-notch absolute -top-2.5 right-3 z-30 flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#450a0a] text-red-300 border border-red-500/80 shadow-[0_0_8px_rgba(239,68,68,0.3)] cursor-pointer" onclick="toggleSivmeCategory(\'' + item.id + '\', \'' + item.num + '\', event)"><span>🔴</span><span>Hidden ⇄</span></div>';
-        }
-
-        var inlineStyles = 'border: 1px solid rgba(51, 65, 85, 0.7) !important; overflow: visible;';
-        if (isInSitu) {
-          var outlineColor = isLive ? '#10b981' : '#ef4444';
-          inlineStyles += ' outline: 2px dashed ' + outlineColor + ' !important; outline-offset: 3px !important;';
-          if (!isLive) inlineStyles += ' opacity: 0.45 !important;';
-        } else {
-          if (!isLive) inlineStyles += ' display: none !important;';
-        }
-
-        // Dynamic count badge eliminates hardcoded "3 सेवाएं"
-        var countNum = (item.children && Array.isArray(item.children)) ? item.children.length : 3;
-        var dynamicCountBadge = countNum + ' विकल्प';
-
-        return [
-          '<div data-cat-id="' + item.id + '" data-sivme-urn="rm:cat:' + item.num + '" class="sivme-cat-card ' + stateClass + ' w-full rounded-xl bg-slate-900/90 transition-all mb-3.5 shadow-md relative" style="' + inlineStyles + '">',
-          '  ' + notchHtml,
-          '  <div onclick="handleCategoryClick(\'' + item.id + '\', this)" class="flex items-center justify-between p-3 cursor-pointer active:scale-[0.99] transition-transform min-h-[64px]">',
-          '    <div class="flex items-center space-x-2.5 min-w-0 flex-1 pr-2">',
-          '      <span class="text-[10px] font-mono font-bold bg-amber-950/70 text-amber-400 border border-amber-800/50 px-1.5 py-0.5 rounded shrink-0">' + item.num + '.</span>',
-          '      <span class="text-xl shrink-0 leading-none">' + item.icon + '</span>',
-          '      <div class="flex flex-col min-w-0 text-left flex-1">',
-          '        <span class="text-[13.5px] font-bold text-slate-100 tracking-wide leading-tight break-normal">' + item.enName + '</span>',
-          '        <span class="text-[11.5px] font-medium text-slate-400 leading-tight mt-0.5 break-normal">(' + item.hiName + ')</span>',
-          '      </div>',
-          '    </div>',
-          '    <div class="flex items-center space-x-1.5 shrink-0">',
-          '      <span class="text-[10px] text-emerald-400 font-bold bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-800/50 whitespace-nowrap">' + dynamicCountBadge + '</span>',
-          '      <span class="acc-arrow text-slate-300 text-xs font-mono font-bold bg-slate-800/90 border border-slate-700/80 w-6 h-6 rounded-full flex items-center justify-center">▼</span>',
-          '    </div>',
-          '  </div>',
-          '  <div id="sub-' + item.id + '" class="p-2 pt-0 space-y-2.5 bg-slate-950/50 hidden rounded-b-xl" style="overflow: visible;">',
-          '    ' + renderSubCards(item.num, item.children),
-          '  </div>',
-          '</div>'
-        ].join('\n');
-      }).join('');
+      t1.innerHTML = services.map(function (it) { return buildCategoryCard(it, false, isInSitu, core); }).join('\n');
       t1.dataset.rendered = 'true';
     }
-
-    // 2. Render 17 Games (Dynamic Count: `${count} गेम्स`)
     if (t2) {
-      t2.innerHTML = games.map(function (item) {
-        var isLive = core.isCategoryLive(item.id, item.num);
-        var stateClass = isLive ? 'is-live' : 'is-hidden';
-        var notchHtml = '';
-
-        if (isInSitu) {
-          notchHtml = isLive
-            ? '<div class="sivme-live-notch absolute -top-2.5 right-3 z-30 flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#064e3b] text-emerald-300 border border-emerald-500/80 shadow-[0_0_8px_rgba(16,185,129,0.3)] cursor-pointer" onclick="toggleSivmeCategory(\'' + item.id + '\', \'' + item.num + '\', event)"><span>🟢</span><span>Live ⇄</span></div>'
-            : '<div class="sivme-live-notch absolute -top-2.5 right-3 z-30 flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#450a0a] text-red-300 border border-red-500/80 shadow-[0_0_8px_rgba(239,68,68,0.3)] cursor-pointer" onclick="toggleSivmeCategory(\'' + item.id + '\', \'' + item.num + '\', event)"><span>🔴</span><span>Hidden ⇄</span></div>';
-        }
-
-        var inlineStyles = 'border: 1px solid rgba(51, 65, 85, 0.7) !important; overflow: visible;';
-        if (isInSitu) {
-          var outlineColor = isLive ? '#10b981' : '#ef4444';
-          inlineStyles += ' outline: 2px dashed ' + outlineColor + ' !important; outline-offset: 3px !important;';
-          if (!isLive) inlineStyles += ' opacity: 0.45 !important;';
-        } else {
-          if (!isLive) inlineStyles += ' display: none !important;';
-        }
-
-        var countNumGames = (item.children && Array.isArray(item.children)) ? item.children.length : 3;
-        var dynamicGameBadge = countNumGames + ' गेम्स';
-
-        return [
-          '<div data-cat-id="' + item.id + '" data-sivme-urn="rm:cat:' + item.num + '" class="sivme-cat-card ' + stateClass + ' w-full rounded-xl bg-slate-900/90 transition-all mb-3.5 shadow-md relative" style="' + inlineStyles + '">',
-          '  ' + notchHtml,
-          '  <div onclick="handleCategoryClick(\'' + item.id + '\', this)" class="flex items-center justify-between p-3 cursor-pointer active:scale-[0.99] transition-transform min-h-[64px]">',
-          '    <div class="flex items-center space-x-2.5 min-w-0 flex-1 pr-2">',
-          '      <span class="text-[10px] font-mono font-bold bg-cyan-950/70 text-cyan-400 border border-cyan-800/50 px-1.5 py-0.5 rounded shrink-0">' + item.num + '.</span>',
-          '      <span class="text-xl shrink-0 leading-none">' + item.icon + '</span>',
-          '      <div class="flex flex-col min-w-0 text-left flex-1">',
-          '        <span class="text-[13.5px] font-bold text-slate-100 tracking-wide leading-tight break-normal">' + item.enName + '</span>',
-          '        <span class="text-[11.5px] font-medium text-slate-400 leading-tight mt-0.5 break-normal">(' + item.hiName + ')</span>',
-          '      </div>',
-          '    </div>',
-          '    <div class="flex items-center space-x-1.5 shrink-0">',
-          '      <span class="text-[10px] text-cyan-400 font-bold bg-cyan-950/80 px-2 py-0.5 rounded-full border border-cyan-800/50 whitespace-nowrap">' + dynamicGameBadge + '</span>',
-          '      <span class="acc-arrow text-slate-300 text-xs font-mono font-bold bg-slate-800/90 border border-slate-700/80 w-6 h-6 rounded-full flex items-center justify-center">▼</span>',
-          '    </div>',
-          '  </div>',
-          '  <div id="sub-' + item.id + '" class="p-2 pt-0 space-y-2.5 bg-slate-950/50 hidden rounded-b-xl" style="overflow: visible;">',
-          '    ' + renderSubCards(item.num, item.children),
-          '  </div>',
-          '</div>'
-        ].join('\n');
-      }).join('');
+      t2.innerHTML = games.map(function (it) { return buildCategoryCard(it, true, isInSitu, core); }).join('\n');
       t2.dataset.rendered = 'true';
     }
 
-    // Default expand Category-16 (House & Home)
-    var sub16 = document.getElementById('sub-c16');
-    if (sub16) {
-      sub16.classList.remove('hidden');
-      sub16.style.display = 'block';
-      var c16Parent = document.querySelector('[data-cat-id="c16"]');
-      if (c16Parent) {
-        var arr = c16Parent.querySelector('.acc-arrow');
-        if (arr) arr.textContent = '▲';
+    // Default expand Category-15 & 16 (House & Home)
+    ['c15', 'c16'].forEach(function (catKey) {
+      var subEl = document.getElementById('sub-' + catKey);
+      if (subEl) {
+        subEl.classList.remove('hidden');
+        subEl.style.display = 'block';
+        var pEl = document.querySelector('[data-cat-id="' + catKey + '"]');
+        if (pEl) {
+          var arr = pEl.querySelector('.acc-arrow');
+          if (arr) arr.textContent = '▲';
+        }
       }
-    }
+    });
 
     syncCategoryVisibilityFromOwner();
     if (core.enforceSingleSivmeOutline) {
@@ -361,52 +318,29 @@
         });
       }
 
-      activeIds.add('c16');
-      activeIds.add('16');
+      activeIds.add('c15'); activeIds.add('15');
+      activeIds.add('c16'); activeIds.add('16');
 
-      var t1List = document.getElementById('tier1-list');
-      var liveT1 = 0;
-      if (t1List && t1List.children) {
-        Array.from(t1List.children).forEach(function (itemEl) {
-          var catId = itemEl.getAttribute('data-cat-id');
-          if (!catId) return;
-          var num = catId.replace('c', '');
-          var isLive = activeIds.has(catId) || activeIds.has(num);
-          if (isInSitu) {
-            itemEl.style.display = 'block';
-            itemEl.style.opacity = isLive ? '1' : '0.45';
-          } else {
-            itemEl.style.display = isLive ? 'block' : 'none';
-            itemEl.style.opacity = '1';
-          }
-          if (isLive) liveT1++;
-        });
+      var updateSection = function (listId, prefix, headerId, label) {
+        var el = document.getElementById(listId);
+        var liveCount = 0;
+        if (el && el.children) {
+          Array.from(el.children).forEach(function (itemEl) {
+            var catId = itemEl.getAttribute('data-cat-id');
+            if (!catId) return;
+            var isLive = activeIds.has(catId) || activeIds.has(catId.replace(prefix, ''));
+            itemEl.style.display = isInSitu ? 'block' : (isLive ? 'block' : 'none');
+            itemEl.style.opacity = isInSitu ? (isLive ? '1' : '0.45') : '1';
+            if (isLive) liveCount++;
+          });
+          var h = document.getElementById(headerId) || document.querySelector('#' + listId.replace('-list', '-toggle') + ' span');
+          if (h) h.textContent = label + ' (' + liveCount + ' श्रेणियां उपलब्ध)';
+        }
+        return liveCount;
+      };
 
-        var t1Header = document.getElementById('tier1-header-text') || document.querySelector('#tier1-toggle span');
-        if (t1Header) t1Header.textContent = '💼 आजीविका (' + liveT1 + ' श्रेणियां उपलब्ध)';
-      }
-
-      var t2List = document.getElementById('tier2-list');
-      var liveT2 = 0;
-      if (t2List && t2List.children) {
-        Array.from(t2List.children).forEach(function (itemEl) {
-          var catId = itemEl.getAttribute('data-cat-id');
-          if (!catId) return;
-          var num = catId.replace('g', '');
-          var isLive = activeIds.has(catId) || activeIds.has(num);
-          if (isInSitu) {
-            itemEl.style.display = 'block';
-            itemEl.style.opacity = isLive ? '1' : '0.45';
-          } else {
-            itemEl.style.display = isLive ? 'block' : 'none';
-            itemEl.style.opacity = '1';
-          }
-          if (isLive) liveT2++;
-        });
-
-        var t2Header = document.getElementById('tier2-header-text') || document.querySelector('#tier2-toggle span');
-        if (t2Header) t2Header.textContent = '🎮 खेल व मनोरंजन (' + liveT2 + ' श्रेणियां उपलब्ध)';
-      }
+      var liveT1 = updateSection('tier1-list', 'c', 'tier1-header-text', '💼 आजीविका');
+      var liveT2 = updateSection('tier2-list', 'g', 'tier2-header-text', '🎮 खेल व मनोरंजन');
 
       var modalCount = document.getElementById('modal-catalog-count');
       if (modalCount) {
@@ -418,7 +352,7 @@
   }
 
   // ==============================================================================
-  // SECTION 5: ACCORDION TOGGLE & CATEGORY LAUNCH ENGINE (100% ZEL PRESERVED)
+  // SECTION 5: ACCORDION TOGGLE & CATEGORY LAUNCH ENGINE (15/16 BINDING)
   // ==============================================================================
 
   function handleCategoryClick(catId, el) {
@@ -426,15 +360,9 @@
     var arrow = el ? el.querySelector('.acc-arrow') : null;
     if (sub) {
       var isHidden = sub.style.display === 'none' || sub.classList.contains('hidden');
-      if (isHidden) {
-        sub.classList.remove('hidden');
-        sub.style.display = 'block';
-        if (arrow) arrow.textContent = '▲';
-      } else {
-        sub.style.display = 'none';
-        sub.classList.add('hidden');
-        if (arrow) arrow.textContent = '▼';
-      }
+      sub.classList.toggle('hidden', !isHidden);
+      sub.style.display = isHidden ? 'block' : 'none';
+      if (arrow) arrow.textContent = isHidden ? '▲' : '▼';
       var core = getCore();
       if (core.enforceSingleSivmeOutline) core.enforceSingleSivmeOutline();
     }
@@ -445,9 +373,12 @@
     var container = document.getElementById('rm-module-container');
     if (!container) return;
 
-    if (catId === 'c16' && (subId === '16-2' || !subId)) {
+    var isHouseAndHome = (catId === 'c15' || catId === 'c16' || catId === '15' || catId === '16');
+
+    // 15-2 / 16-2: किराया बहीखाता (Rental Ledger)
+    if (isHouseAndHome && (subId === '15-2' || subId === '16-2' || subId === '02' || !subId)) {
       if (typeof openFullscreenModule === 'function') {
-        openFullscreenModule('🏠 16-2. Rental Ledger (किराया बहीखाता)');
+        openFullscreenModule('🏠 ' + (subId || '15-2') + '. Rental Ledger (किराया बहीखाता)');
       }
       if (window.RM_Cat16_Sub2_RentalLedger && typeof window.RM_Cat16_Sub2_RentalLedger.mount === 'function') {
         window.RM_Cat16_Sub2_RentalLedger.mount(container);
@@ -459,60 +390,79 @@
         script.onload = function () {
           if (window.RM_Cat16_Sub2_RentalLedger && typeof window.RM_Cat16_Sub2_RentalLedger.mount === 'function') {
             window.RM_Cat16_Sub2_RentalLedger.mount(container);
+          } else if (typeof window.openRentalLedger === 'function') {
+            window.openRentalLedger();
+          } else if (typeof window.openKhataModal === 'function') {
+            window.openKhataModal();
           } else {
             container.innerHTML = '<div class="p-6 text-center text-xs text-amber-400 bg-amber-950/40 border border-amber-800/60 rounded-xl">मॉड्यूल लोड हुआ किंतु इनिशियलाइज़ नहीं हो सका।</div>';
           }
         };
         script.onerror = function () {
-          container.innerHTML = '<div class="p-6 text-center text-xs text-red-400 bg-red-950/40 border border-red-800/60 rounded-xl space-y-2"><div>मॉड्यूल लोड नहीं हो सका — कृपया पुनः प्रयास करें।</div><button onclick="handleLaunchCategory(\'c16\', \'16-2\')" class="px-3 py-1 bg-red-900/60 border border-red-700 text-red-200 rounded text-[10px] font-bold cursor-pointer">रीट्राई करें</button></div>';
+          if (typeof window.openKhataModal === 'function') {
+            window.openKhataModal();
+          } else {
+            container.innerHTML = '<div class="p-6 text-center text-xs text-red-400 bg-red-950/40 border border-red-800/60 rounded-xl space-y-2"><div>मॉड्यूल लोड नहीं हो सका — कृपया पुनः प्रयास करें।</div><button onclick="handleLaunchCategory(\'' + catId + '\', \'' + subId + '\')" class="px-3 py-1 bg-red-900/60 border border-red-700 text-red-200 rounded text-[10px] font-bold cursor-pointer">रीट्राई करें</button></div>';
+          }
         };
         document.body.appendChild(script);
       }
-    } else if (catId === 'c16' && subId === '16-3') {
+    } 
+    // 15-3 / 16-3: कमरा व फ्लैट खोज (Rental Search)
+    else if (isHouseAndHome && (subId === '15-3' || subId === '16-3' || subId === '03')) {
       if (typeof openFullscreenModule === 'function') {
-        openFullscreenModule('🏠 16-3. Room & Flat Listing (कमरा व फ्लैट लिस्टिंग)');
+        openFullscreenModule('🏠 ' + subId + '. Room & Flat Search (कमरा व फ्लैट खोज)');
       }
       if (window.RM_Cat16_Sub3_RentalSearch && typeof window.RM_Cat16_Sub3_RentalSearch.mount === 'function') {
         window.RM_Cat16_Sub3_RentalSearch.mount(container);
       } else {
-        container.innerHTML = '<div class="p-6 text-center text-xs text-emerald-400 animate-pulse">कमरा व फ्लैट लिस्टिंग लोड हो रहा है...</div>';
+        container.innerHTML = '<div class="p-6 text-center text-xs text-emerald-400 animate-pulse">कमरा व फ्लैट खोज लोड हो रहा है...</div>';
         var script2 = document.createElement('script');
-        script2.src = '/js/catalog/category-16/16-3-room-listing.js?v=' + (window.RM_DEPLOY_EPOCH || Date.now());
+        script2.src = '/js/catalog/category-16/16-3-rental-search.js?v=' + (window.RM_DEPLOY_EPOCH || Date.now());
         script2.async = true;
         script2.onload = function () {
           if (window.RM_Cat16_Sub3_RentalSearch && typeof window.RM_Cat16_Sub3_RentalSearch.mount === 'function') {
             window.RM_Cat16_Sub3_RentalSearch.mount(container);
+          } else if (typeof window.openRentalSearch === 'function') {
+            window.openRentalSearch();
           } else {
             container.innerHTML = '<div class="p-6 text-center text-xs text-amber-400 bg-amber-950/40 border border-amber-800/60 rounded-xl">मॉड्यूल लोड हुआ किंतु इनिशियलाइज़ नहीं हो सका।</div>';
           }
         };
         script2.onerror = function () {
-          // Fallback to rental-search.js if room-listing is not present
-          var fallbackScript = document.createElement('script');
-          fallbackScript.src = '/js/catalog/category-16/16-3-rental-search.js?v=' + (window.RM_DEPLOY_EPOCH || Date.now());
-          fallbackScript.onload = function () {
+          var fb = document.createElement('script');
+          fb.src = '/js/catalog/category-16/16-3-room-listing.js?v=' + (window.RM_DEPLOY_EPOCH || Date.now());
+          fb.onload = function () {
             if (window.RM_Cat16_Sub3_RentalSearch && typeof window.RM_Cat16_Sub3_RentalSearch.mount === 'function') {
               window.RM_Cat16_Sub3_RentalSearch.mount(container);
             }
           };
-          fallbackScript.onerror = function () {
-            container.innerHTML = '<div class="p-6 text-center text-xs text-red-400 bg-red-950/40 border border-red-800/60 rounded-xl space-y-2"><div>मॉड्यूल लोड नहीं हो सका — कृपया पुनः प्रयास करें।</div><button onclick="handleLaunchCategory(\'c16\', \'16-3\')" class="px-3 py-1 bg-red-900/60 border border-red-700 text-red-200 rounded text-[10px] font-bold cursor-pointer">रीट्राई करें</button></div>';
+          fb.onerror = function () {
+            container.innerHTML = '<div class="p-6 text-center text-xs text-red-400 bg-red-950/40 border border-red-800/60 rounded-xl space-y-2"><div>मॉड्यूल लोड नहीं हो सका — कृपया पुनः प्रयास करें।</div><button onclick="handleLaunchCategory(\'' + catId + '\', \'' + subId + '\')" class="px-3 py-1 bg-red-900/60 border border-red-700 text-red-200 rounded text-[10px] font-bold cursor-pointer">रीट्राई करें</button></div>';
           };
-          document.body.appendChild(fallbackScript);
+          document.body.appendChild(fb);
         };
         document.body.appendChild(script2);
       }
-    } else if (catId === 'c16' && subId === '16-1') {
-      alert('🛠️ [16-1] मिस्त्री व गृह मरम्मत (Mistri & Home Repairs) — सेवा जल्द शुरू होगी।');
-    } else if (catId === 'c05' && (subId === '05-1' || !subId)) {
-      alert('💼 [05-1] सॉवरेन बहीखाता (Business Khata) लोड हो रहा है...');
+    } 
+    // 15-1 / 16-1: मिस्त्री व गृह मरम्मत
+    else if (isHouseAndHome && (subId === '15-1' || subId === '16-1' || subId === '01')) {
+      alert('🛠️ [' + subId + '] मिस्त्री व गृह मरम्मत (Mistri & Home Repairs) — सेवा जल्द शुरू होगी।');
+    } 
+    // 05-1: सॉवरेन बहीखाता
+    else if (catId === 'c05' && (subId === '05-1' || !subId)) {
+      if (typeof window.openKhataModal === 'function') {
+        window.openKhataModal();
+      } else {
+        alert('💼 [05-1] सॉवरेन बहीखाता (Business Khata) लोड हो रहा है...');
+      }
     } else {
       alert(catId + ' [' + (subId || '') + '] सेवा का विस्तार जल्द उपलब्ध होगा।');
     }
   }
 
   // ==============================================================================
-  // SECTION 6: WATCHERS & EXPORTS (DUAL-NAME COMPATIBILITY)
+  // SECTION 6: WATCHERS, EXPORTS & UNIVERSAL CLICK DELEGATION
   // ==============================================================================
 
   window.RM_SivmeRender = {
@@ -548,6 +498,7 @@
     if (core.enforceSingleSivmeOutline) core.enforceSingleSivmeOutline();
   });
 
+  // Universal Click Delegation: Handles Menus + Fallback for Category 15 Modal Buttons
   document.addEventListener('click', function (e) {
     if (e.target && e.target.closest && e.target.closest('#cat-menu-btn, [onclick*="catalog"], [onclick*="category"], #menu-btn')) {
       setTimeout(renderCatalogItems, 20);
@@ -555,9 +506,22 @@
       setTimeout(renderCatalogItems, 120);
       setTimeout(purgeMarketingDuplicates, 180);
     }
+
+    var btn = e.target.closest('button, a, div[role="button"]');
+    if (!btn) return;
+    var txt = (btn.textContent || '').trim();
+
+    if (txt.indexOf('बहीखाता खोलें') !== -1 || btn.closest('#sub-15-2') || btn.closest('[data-subcat-id="15-2"]')) {
+      if (e.cancelable) e.preventDefault();
+      e.stopPropagation();
+      handleLaunchCategory('c15', '15-2');
+    } else if (txt.indexOf('मालिक से संपर्क करें') !== -1 || btn.closest('#sub-15-3') || btn.closest('[data-subcat-id="15-3"]')) {
+      if (e.cancelable) e.preventDefault();
+      e.stopPropagation();
+      handleLaunchCategory('c15', '15-3');
+    }
   }, true);
 
-  // Background active sweep for marketing posters
   setInterval(purgeMarketingDuplicates, 350);
 
   var recoveryInterval = setInterval(function () {
