@@ -1,6 +1,10 @@
 name: Apply 50 Canonical Taxonomy to Repository
 
 on:
+  push:
+    paths:
+      - '.github/workflows/apply-taxonomy-50.yml'
+      - 'scripts/update-taxonomy-50.js'
   workflow_dispatch:
 
 permissions:
