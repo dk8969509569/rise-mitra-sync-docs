@@ -1,41 +1,44 @@
 {
   "category_id": 43,
   "category_code": "43",
-  "category_slug": "game-puzzle",
-  "category_name_en": "Puzzle Games",
-  "category_name_hi": "दिमागी पहेलियाँ",
+  "category_slug": "game-racing",
+  "category_name_en": "Racing Games",
+  "category_name_hi": "गो-कार्टिंग व साइक्लोथॉन",
   "sub_categories": [
     {
       "sub_code": "43-1",
-      "slug": "general-listings",
-      "name_en": "Primary Puzzle Games",
-      "name_hi": "मुख्य दिमागी पहेलियाँ",
+      "slug": "go-karting-track-racing-pass",
+      "name_en": "Go-Karting Track Racing Pass",
+      "name_hi": "10-लैप गो-कार्टिंग ट्रैक रेसिंग टिकट",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Go-Karting",
+        "Track Pass",
+        "Racing"
       ]
     },
     {
       "sub_code": "43-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Puzzle Games",
-      "name_hi": "विशेष दिमागी पहेलियाँ",
+      "slug": "rc-car-obstacle-track",
+      "name_en": "RC Car Obstacle Track",
+      "name_hi": "हाई-स्पीड रिमोट कंट्रोल कार ट्रैक स्लॉट",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "RC Car",
+        "Obstacle Track",
+        "Slots"
       ]
     },
     {
-      "sub_code": "43-N",
-      "slug": "other-services",
-      "name_en": "Other Puzzle Games",
-      "name_hi": "अन्य दिमागी पहेलियाँ",
+      "sub_code": "43-3",
+      "slug": "bicycle-cyclothon-entry-pass",
+      "name_en": "Bicycle Cyclothon Entry Pass",
+      "name_hi": "10 किमी हाईवे साइकिल मैराथन पास",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Cyclothon",
+        "Marathon",
+        "Jersey"
       ]
     }
   ]

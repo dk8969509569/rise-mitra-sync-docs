@@ -3,39 +3,42 @@
   "category_code": "10",
   "category_slug": "entertainment",
   "category_name_en": "Entertainment",
-  "category_name_hi": "मनोरंजन",
+  "category_name_hi": "मनोरंजन व उत्सव",
   "sub_categories": [
     {
       "sub_code": "10-1",
-      "slug": "general-listings",
-      "name_en": "Primary Entertainment",
-      "name_hi": "मुख्य मनोरंजन",
+      "slug": "cinema-mela-tickets",
+      "name_en": "Cinema & Mela Tickets",
+      "name_hi": "मेला, सर्कस व सिनेमा पास",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Mela",
+        "Circus",
+        "Tickets"
       ]
     },
     {
       "sub_code": "10-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Entertainment",
-      "name_hi": "विशेष मनोरंजन",
+      "slug": "live-stage-artists-dj",
+      "name_en": "Live Stage Artists & DJ",
+      "name_hi": "लाइव लोक गायक व डीजे बुकिंग",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Artists",
+        "DJ",
+        "Jagran"
       ]
     },
     {
-      "sub_code": "10-N",
-      "slug": "other-services",
-      "name_en": "Other Entertainment",
-      "name_hi": "अन्य मनोरंजन",
+      "sub_code": "10-3",
+      "slug": "regional-theater-comedy",
+      "name_en": "Regional Theater & Comedy",
+      "name_hi": "पारंपरिक नौटंकी व कवि सम्मेलन",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Nautanki",
+        "Poetry",
+        "Comedy"
       ]
     }
   ]

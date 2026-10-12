@@ -1,41 +1,44 @@
 {
   "category_id": 47,
   "category_code": "47",
-  "category_slug": "game-sports",
-  "category_name_en": "Sports Gaming",
-  "category_name_hi": "गली क्रिकेट",
+  "category_slug": "game-strategy",
+  "category_name_en": "Strategy Games",
+  "category_name_hi": "शतरंज रणनीति व मोहरे",
   "sub_categories": [
     {
       "sub_code": "47-1",
-      "slug": "general-listings",
-      "name_en": "Primary Sports Gaming",
-      "name_hi": "मुख्य गली क्रिकेट",
+      "slug": "7-day-chess-tactics-camp",
+      "name_en": "7-Day Chess Tactics Camp",
+      "name_hi": "ग्रैंडमास्टर ओपनिंग व एंडगेम कैंप",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Tactics Camp",
+        "Opening",
+        "Endgame"
       ]
     },
     {
       "sub_code": "47-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Sports Gaming",
-      "name_hi": "विशेष गली क्रिकेट",
+      "slug": "rapid-timed-chess-league",
+      "name_en": "Rapid Timed Chess League",
+      "name_hi": "10-मिनट डिजिटल क्लॉक रैपिड लीग",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Rapid Chess",
+        "Digital Clock",
+        "League"
       ]
     },
     {
-      "sub_code": "47-N",
-      "slug": "other-services",
-      "name_en": "Other Sports Gaming",
-      "name_hi": "अन्य गली क्रिकेट",
+      "sub_code": "47-3",
+      "slug": "weighted-wooden-chess-sets",
+      "name_en": "Weighted Wooden Chess Sets",
+      "name_hi": "भारी शीशम लकड़ी स्टॉन्टन शतरंज मोहरे",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Staunton Chess",
+        "Sheesham",
+        "Vinyl Mat"
       ]
     }
   ]

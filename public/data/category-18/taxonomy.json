@@ -1,41 +1,44 @@
 {
   "category_id": 18,
   "category_code": "18",
-  "category_slug": "lifestyle",
-  "category_name_en": "Lifestyle",
-  "category_name_hi": "स्वावलंबन",
+  "category_slug": "maps-and-navigation",
+  "category_name_en": "Maps & Navigation",
+  "category_name_hi": "टेम्पो व ट्रांसपोर्ट",
   "sub_categories": [
     {
       "sub_code": "18-1",
-      "slug": "general-listings",
-      "name_en": "Primary Lifestyle",
-      "name_hi": "मुख्य स्वावलंबन",
+      "slug": "goods-tempo-booking",
+      "name_en": "Goods Tempo Booking",
+      "name_hi": "छोटा हाथी व बोलेरो पिकअप टेम्पो",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Tata Ace",
+        "Pickup",
+        "Loading"
       ]
     },
     {
       "sub_code": "18-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Lifestyle",
-      "name_hi": "विशेष स्वावलंबन",
+      "slug": "hyperlocal-2-hour-courier",
+      "name_en": "Hyperlocal 2-Hour Courier",
+      "name_hi": "शहर के अंदर 2-घंटे में डिलीवरी",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Bike Courier",
+        "Urgent",
+        "Medicine"
       ]
     },
     {
-      "sub_code": "18-N",
-      "slug": "other-services",
-      "name_en": "Other Lifestyle",
-      "name_hi": "अन्य स्वावलंबन",
+      "sub_code": "18-3",
+      "slug": "packers-movers-shifting",
+      "name_en": "Packers & Movers Shifting",
+      "name_hi": "पैपर्स एंड मूवर्स सुरक्षित शिफ्टिंग",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "House Shifting",
+        "Packing",
+        "Safe"
       ]
     }
   ]

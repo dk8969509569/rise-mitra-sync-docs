@@ -1,41 +1,44 @@
 {
   "category_id": 17,
   "category_code": "17",
-  "category_slug": "libraries-and-demo",
-  "category_name_en": "Libraries & Reference",
-  "category_name_hi": "पुस्तकालय",
+  "category_slug": "lifestyle",
+  "category_name_en": "Lifestyle",
+  "category_name_hi": "लाइफस्टाइल व टेलरिंग",
   "sub_categories": [
     {
       "sub_code": "17-1",
-      "slug": "general-listings",
-      "name_en": "Primary Libraries & Reference",
-      "name_hi": "मुख्य पुस्तकालय",
+      "slug": "steam-dry-cleaning-laundry",
+      "name_en": "Steam Dry Cleaning & Laundry",
+      "name_hi": "स्टीम ड्राई क्लीनिंग व लाउंड्री",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Dry Clean",
+        "Blanket",
+        "Steam Iron"
       ]
     },
     {
       "sub_code": "17-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Libraries & Reference",
-      "name_hi": "विशेष पुस्तकालय",
+      "slug": "ladies-doorstep-tailoring",
+      "name_en": "Ladies Doorstep Tailoring",
+      "name_hi": "घर पर महिला टेलरिंग व सिलाई",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Blouse",
+        "Suit",
+        "Fall Pico"
       ]
     },
     {
-      "sub_code": "17-N",
-      "slug": "other-services",
-      "name_en": "Other Libraries & Reference",
-      "name_hi": "अन्य पुस्तकालय",
+      "sub_code": "17-3",
+      "slug": "home-deep-cleaning",
+      "name_en": "Home Deep Cleaning",
+      "name_hi": "सोफा, किचन व बाथरूम डीप क्लीनिंग",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Sofa Wash",
+        "Kitchen",
+        "Bathroom"
       ]
     }
   ]

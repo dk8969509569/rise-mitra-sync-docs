@@ -1,41 +1,44 @@
 {
   "category_id": 29,
   "category_code": "29",
-  "category_slug": "sports",
-  "category_name_en": "Sports Community",
-  "category_name_hi": "खेलकूद",
+  "category_slug": "tools",
+  "category_name_en": "Tools",
+  "category_name_hi": "पावर टूल्स व मिस्त्री किट",
   "sub_categories": [
     {
       "sub_code": "29-1",
-      "slug": "general-listings",
-      "name_en": "Primary Sports Community",
-      "name_hi": "मुख्य खेलकूद",
+      "slug": "daily-power-tools-rental",
+      "name_en": "Daily Power Tools Rental",
+      "name_hi": "हैमर ड्रिल, कटर व जनरेटर दैनिक किराया",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Hammer Drill",
+        "Cutter",
+        "Rental"
       ]
     },
     {
       "sub_code": "29-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Sports Community",
-      "name_hi": "विशेष खेलकूद",
+      "slug": "power-tool-rewinding",
+      "name_en": "Power Tool Rewinding",
+      "name_hi": "पावर टूल आर्मेचर वाइंडिंग व रिपेयर",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Armature",
+        "Rewinding",
+        "Switch"
       ]
     },
     {
-      "sub_code": "29-N",
-      "slug": "other-services",
-      "name_en": "Other Sports Community",
-      "name_hi": "अन्य खेलकूद",
+      "sub_code": "29-3",
+      "slug": "mistry-hand-tools-kit",
+      "name_en": "Mistry Hand Tools Kit",
+      "name_hi": "करनी, रंदा, पाना व हथौड़ा संपूर्ण सेट",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Mistry Kit",
+        "Hammer",
+        "Hand Tools"
       ]
     }
   ]

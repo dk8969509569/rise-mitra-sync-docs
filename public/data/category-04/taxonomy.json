@@ -6,36 +6,39 @@
   "category_name_hi": "किताबें व संदर्भ",
   "sub_categories": [
     {
-      "sub_code": "4-1",
-      "slug": "general-listings",
-      "name_en": "Primary Books & Reference",
-      "name_hi": "मुख्य किताबें व संदर्भ",
+      "sub_code": "04-1",
+      "slug": "regional-audio-stories",
+      "name_en": "Regional Audio Stories",
+      "name_hi": "क्षेत्रीय लोककथाएँ व ऑडियो",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Audio",
+        "Stories",
+        "Biographies"
       ]
     },
     {
-      "sub_code": "4-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Books & Reference",
-      "name_hi": "विशेष किताबें व संदर्भ",
+      "sub_code": "04-2",
+      "slug": "sarkari-exam-notes",
+      "name_en": "Sarkari Exam Notes",
+      "name_hi": "सरकारी परीक्षा हस्तलिखित नोट्स",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Police",
+        "Railway",
+        "SSC"
       ]
     },
     {
-      "sub_code": "4-N",
-      "slug": "other-services",
-      "name_en": "Other Books & Reference",
-      "name_hi": "अन्य किताबें व संदर्भ",
+      "sub_code": "04-3",
+      "slug": "dainik-panchang-sahitya",
+      "name_en": "Dainik Panchang & Sahitya",
+      "name_hi": "दैनिक पंचांग व धर्म साहित्य",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Panchang",
+        "Muhurat",
+        "Sahitya"
       ]
     }
   ]

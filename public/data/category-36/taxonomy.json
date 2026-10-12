@@ -1,41 +1,44 @@
 {
   "category_id": 36,
   "category_code": "36",
-  "category_slug": "game-arcade",
-  "category_name_en": "Arcade Games",
-  "category_name_hi": "गेंद टप्पा",
+  "category_slug": "game-board",
+  "category_name_en": "Board Games",
+  "category_name_hi": "कैरम व शतरंज क्लब",
   "sub_categories": [
     {
       "sub_code": "36-1",
-      "slug": "general-listings",
-      "name_en": "Primary Arcade Games",
-      "name_hi": "मुख्य गेंद टप्पा",
+      "slug": "mohalla-carrom-tournament",
+      "name_en": "Mohalla Carrom Tournament",
+      "name_hi": "मोहल्ला कैरम चैंपियनशिप रजिस्ट्रेशन",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Carrom",
+        "Tournament",
+        "Trophy"
       ]
     },
     {
       "sub_code": "36-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Arcade Games",
-      "name_hi": "विशेष गेंद टप्पा",
+      "slug": "offline-chess-academy-club",
+      "name_en": "Offline Chess Academy & Club",
+      "name_hi": "टाइमर शतरंज कोचिंग व क्लब मैच",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Chess Club",
+        "Timer",
+        "FIDE"
       ]
     },
     {
-      "sub_code": "36-N",
-      "slug": "other-services",
-      "name_en": "Other Arcade Games",
-      "name_hi": "अन्य गेंद टप्पा",
+      "sub_code": "36-3",
+      "slug": "heavy-birch-carrom-boards",
+      "name_en": "Heavy Birch Carrom Boards",
+      "name_hi": "32mm इंग्लिश बर्च कैरम बोर्ड व पाउडर",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Carrom Board",
+        "Striker",
+        "Powder"
       ]
     }
   ]

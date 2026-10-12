@@ -1,40 +1,43 @@
 {
   "category_id": 26,
   "category_code": "26",
-  "category_slug": "productivity",
-  "category_name_en": "Productivity & Billing",
-  "category_name_hi": "बिलिंग",
+  "category_slug": "shopping",
+  "category_name_en": "Shopping",
+  "category_name_hi": "किराना व वस्त्र बाज़ार",
   "sub_categories": [
     {
       "sub_code": "26-1",
-      "slug": "general-listings",
-      "name_en": "Primary Productivity & Billing",
-      "name_hi": "मुख्य बिलिंग",
+      "slug": "monthly-grocery-ration",
+      "name_en": "Monthly Grocery Ration",
+      "name_hi": "विश्वसनीय बनिया मासिक राशन डिलीवरी",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Monthly Ration",
+        "Atta-Dal",
+        "Local"
       ]
     },
     {
       "sub_code": "26-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Productivity & Billing",
-      "name_hi": "विशेष बिलिंग",
+      "slug": "wholesale-saree-garments",
+      "name_en": "Wholesale Saree & Garments",
+      "name_hi": "थोक साड़ी, पैंट-शर्ट व वस्त्र",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Saree",
+        "Garments",
+        "Mandi Rate"
       ]
     },
     {
-      "sub_code": "26-N",
-      "slug": "other-services",
-      "name_en": "Other Productivity & Billing",
-      "name_hi": "अन्य बिलिंग",
+      "sub_code": "26-3",
+      "slug": "in-store-easy-exchange",
+      "name_en": "In-Store Easy Exchange",
+      "name_hi": "24-घंटे काउंटर आसान सामान वापसी",
       "filter_chips": [
         "Sabhi",
+        "Easy Exchange",
+        "Counter",
         "Support"
       ]
     }

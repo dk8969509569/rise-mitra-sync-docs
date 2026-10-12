@@ -2,40 +2,43 @@
   "category_id": 11,
   "category_code": "11",
   "category_slug": "events",
-  "category_name_en": "Events & Passes",
-  "category_name_hi": "कार्यक्रम व पास",
+  "category_name_en": "Events",
+  "category_name_hi": "इवेंट्स व शादी समारोह",
   "sub_categories": [
     {
       "sub_code": "11-1",
-      "slug": "general-listings",
-      "name_en": "Primary Events & Passes",
-      "name_hi": "मुख्य कार्यक्रम व पास",
+      "slug": "tent-light-decor",
+      "name_en": "Tent & Light Decor",
+      "name_hi": "टेंट, जर्मन हैंगर व लाइट डेकोर",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Tent",
+        "Lighting",
+        "Stage"
       ]
     },
     {
       "sub_code": "11-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Events & Passes",
-      "name_hi": "विशेष कार्यक्रम व पास",
+      "slug": "halwai-catering-services",
+      "name_en": "Halwai & Catering Services",
+      "name_hi": "हलवाई टीम व शुद्ध देशी घी कैटरिंग",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Halwai",
+        "Catering",
+        "Utensils"
       ]
     },
     {
-      "sub_code": "11-N",
-      "slug": "other-services",
-      "name_en": "Other Events & Passes",
-      "name_hi": "अन्य कार्यक्रम व पास",
+      "sub_code": "11-3",
+      "slug": "wedding-drone-photography",
+      "name_en": "Wedding Drone Photography",
+      "name_hi": "4K ड्रोन कवरेज व प्री-वेडिंग शूट",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Drone",
+        "Photography",
+        "Album"
       ]
     }
   ]

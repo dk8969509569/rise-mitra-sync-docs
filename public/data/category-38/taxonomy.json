@@ -1,41 +1,44 @@
 {
   "category_id": 38,
   "category_code": "38",
-  "category_slug": "game-card",
-  "category_name_en": "Card Games",
-  "category_name_hi": "ताश सॉलिटेयर",
+  "category_slug": "game-casino",
+  "category_name_en": "Casino Games",
+  "category_name_hi": "फन रूले व स्पिन व्हील",
   "sub_categories": [
     {
       "sub_code": "38-1",
-      "slug": "general-listings",
-      "name_en": "Primary Card Games",
-      "name_hi": "मुख्य ताश सॉलिटेयर",
+      "slug": "wedding-fun-casino-setup",
+      "name_en": "Wedding Fun Casino Setup",
+      "name_hi": "शादी पार्टी फन रूले टेबल (गैर-जुआ)",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Fun Casino",
+        "Party",
+        "Roulette"
       ]
     },
     {
       "sub_code": "38-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Card Games",
-      "name_hi": "विशेष ताश सॉलिटेयर",
+      "slug": "promotional-lucky-spin-wheel",
+      "name_en": "Promotional Lucky Spin Wheel",
+      "name_hi": "दुकान प्रचार लकी स्पिन व्हील निर्माण",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Spin Wheel",
+        "Promo",
+        "Discount"
       ]
     },
     {
-      "sub_code": "38-N",
-      "slug": "other-services",
-      "name_en": "Other Card Games",
-      "name_hi": "अन्य ताश सॉलिटेयर",
+      "sub_code": "38-3",
+      "slug": "party-game-dealer-troupe",
+      "name_en": "Party Game Dealer Troupe",
+      "name_hi": "पेशेवर क्रुपियर व कस्टमाइज्ड चिप्स",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Dealer",
+        "Chips",
+        "Party Game"
       ]
     }
   ]

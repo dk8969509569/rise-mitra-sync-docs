@@ -1,41 +1,44 @@
 {
   "category_id": 32,
   "category_code": "32",
-  "category_slug": "video-players",
-  "category_name_en": "Video Players & Editor",
-  "category_name_hi": "वीडियो प्लेयर व संपादन",
+  "category_slug": "weather",
+  "category_name_en": "Weather",
+  "category_name_hi": "मौसम व कृषि चेतावनी",
   "sub_categories": [
     {
       "sub_code": "32-1",
-      "slug": "general-listings",
-      "name_en": "Primary Video Players & Editor",
-      "name_hi": "मुख्य वीडियो प्लेयर व संपादन",
+      "slug": "village-rain-storm-alerts",
+      "name_en": "Village Rain & Storm Alerts",
+      "name_hi": "72-घंटे गांव स्तर सटीक बारिश चेतावनी",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Rain Alert",
+        "Radar",
+        "Storm"
       ]
     },
     {
       "sub_code": "32-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Video Players & Editor",
-      "name_hi": "विशेष वीडियो प्लेयर व संपादन",
+      "slug": "crop-spray-weather-advisory",
+      "name_en": "Crop Spray Weather Advisory",
+      "name_hi": "मौसम अनुसार कीटनाशक छिड़काव समय",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Agro Advisory",
+        "Spray Time",
+        "Kisan"
       ]
     },
     {
-      "sub_code": "32-N",
-      "slug": "other-services",
-      "name_en": "Other Video Players & Editor",
-      "name_hi": "अन्य वीडियो प्लेयर व संपादन",
+      "sub_code": "32-3",
+      "slug": "crop-damage-insurance-claim",
+      "name_en": "Crop Damage Insurance Claim",
+      "name_hi": "अतिवृष्टि व सूखा फसल मुआवजा सहायता",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Crop Damage",
+        "Survey",
+        "Claim"
       ]
     }
   ]

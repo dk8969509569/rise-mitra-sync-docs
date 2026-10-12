@@ -1,41 +1,44 @@
 {
   "category_id": 31,
   "category_code": "31",
-  "category_slug": "travel-and-local",
-  "category_name_en": "Travel & Local Transit",
-  "category_name_hi": "यात्रा",
+  "category_slug": "video-players-and-editors",
+  "category_name_en": "Video Players & Editors",
+  "category_name_hi": "दुकान रील्स व वीडियो",
   "sub_categories": [
     {
       "sub_code": "31-1",
-      "slug": "general-listings",
-      "name_en": "Primary Travel & Local Transit",
-      "name_hi": "मुख्य यात्रा",
+      "slug": "retail-shop-promo-reels",
+      "name_en": "Retail Shop Promo Reels",
+      "name_hi": "स्थानीय दुकान हेतु 30-सेकंड रील्स शूट",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Reels",
+        "Shop Promo",
+        "Instagram"
       ]
     },
     {
       "sub_code": "31-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Travel & Local Transit",
-      "name_hi": "विशेष यात्रा",
+      "slug": "wedding-video-song-mixing",
+      "name_en": "Wedding Video Song Mixing",
+      "name_hi": "शादी 3D टाइटल व गीत वीडियो मिक्सिंग",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Wedding Mixing",
+        "3D Titles",
+        "Cinematic"
       ]
     },
     {
-      "sub_code": "31-N",
-      "slug": "other-services",
-      "name_en": "Other Travel & Local Transit",
-      "name_hi": "अन्य यात्रा",
+      "sub_code": "31-3",
+      "slug": "youtube-channel-edit-thumb",
+      "name_en": "YouTube Channel Edit & Thumb",
+      "name_hi": "यूट्यूब वीडियो एडिटिंग व थंबनेल डिजाइन",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "YouTube Edit",
+        "Thumbnail",
+        "Voice Clean"
       ]
     }
   ]

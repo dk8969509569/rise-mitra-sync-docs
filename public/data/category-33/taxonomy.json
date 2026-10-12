@@ -1,41 +1,44 @@
 {
   "category_id": 33,
   "category_code": "33",
-  "category_slug": "weather",
-  "category_name_en": "Weather Forecast",
-  "category_name_hi": "मौसम पूर्वानुमान",
+  "category_slug": "game-action",
+  "category_name_en": "Action Games",
+  "category_name_hi": "गेमिंग पार्लर व लेजर टैग",
   "sub_categories": [
     {
       "sub_code": "33-1",
-      "slug": "general-listings",
-      "name_en": "Primary Weather Forecast",
-      "name_hi": "मुख्य मौसम पूर्वानुमान",
+      "slug": "ps5-pc-gaming-parlor",
+      "name_en": "PS5 & PC Gaming Parlor",
+      "name_hi": "4K स्क्रीन PS5 व गेमिंग पीसी 1-घंटा स्लॉट",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "PS5",
+        "PC Gaming",
+        "Slot"
       ]
     },
     {
       "sub_code": "33-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Weather Forecast",
-      "name_hi": "विशेष मौसम पूर्वानुमान",
+      "slug": "action-gaming-tournament-pass",
+      "name_en": "Action Gaming Tournament Pass",
+      "name_hi": "लैन ई-स्पोर्ट्स मुकाबला टीम एंट्री पास",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Tournament",
+        "LAN",
+        "Prize Pool"
       ]
     },
     {
-      "sub_code": "33-N",
-      "slug": "other-services",
-      "name_en": "Other Weather Forecast",
-      "name_hi": "अन्य मौसम पूर्वानुमान",
+      "sub_code": "33-3",
+      "slug": "laser-tag-arena-party-setup",
+      "name_en": "Laser Tag Arena Party Setup",
+      "name_hi": "लेजर टैग शूटिंग बंकर पार्टी सेटअप",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Laser Tag",
+        "Party Setup",
+        "Arena"
       ]
     }
   ]

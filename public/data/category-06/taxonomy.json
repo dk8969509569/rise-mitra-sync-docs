@@ -3,39 +3,42 @@
   "category_code": "06",
   "category_slug": "comics",
   "category_name_en": "Comics",
-  "category_name_hi": "कहानियाँ व कॉमिक्स",
+  "category_name_hi": "कॉमिक्स व बाल साहित्य",
   "sub_categories": [
     {
-      "sub_code": "6-1",
-      "slug": "general-listings",
-      "name_en": "Primary Comics",
-      "name_hi": "मुख्य कहानियाँ व कॉमिक्स",
+      "sub_code": "06-1",
+      "slug": "pauranik-graphic-comics",
+      "name_en": "Pauranik Graphic Comics",
+      "name_hi": "पौराणिक सचित्र कॉमिक्स",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Ramayana",
+        "Mahabharata",
+        "Comics"
       ]
     },
     {
-      "sub_code": "6-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Comics",
-      "name_hi": "विशेष कहानियाँ व कॉमिक्स",
+      "sub_code": "06-2",
+      "slug": "kids-illustrated-books",
+      "name_en": "Kids Illustrated Books",
+      "name_hi": "बाल साहित्य व सचित्र पुस्तकें",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Panchatantra",
+        "Tenali Raman",
+        "Box Set"
       ]
     },
     {
-      "sub_code": "6-N",
-      "slug": "other-services",
-      "name_en": "Other Comics",
-      "name_hi": "अन्य कहानियाँ व कॉमिक्स",
+      "sub_code": "06-3",
+      "slug": "daily-humor-puzzles",
+      "name_en": "Daily Humor & Puzzles",
+      "name_hi": "हास्य व्यंग्य व दैनिक पहेलियाँ",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Humor",
+        "Sudoku",
+        "Crossword"
       ]
     }
   ]

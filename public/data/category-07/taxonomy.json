@@ -3,39 +3,42 @@
   "category_code": "07",
   "category_slug": "communication",
   "category_name_en": "Communication",
-  "category_name_hi": "संपर्क व संवाद",
+  "category_name_hi": "संचार व सत्यापन",
   "sub_categories": [
     {
-      "sub_code": "7-1",
-      "slug": "general-listings",
-      "name_en": "Primary Communication",
-      "name_hi": "मुख्य संपर्क व संवाद",
+      "sub_code": "07-1",
+      "slug": "verified-merchant-directory",
+      "name_en": "Verified Merchant Directory",
+      "name_hi": "सत्यापित व्यापारी डायरेक्टरी",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Verified",
+        "1-Tap Call",
+        "Local"
       ]
     },
     {
-      "sub_code": "7-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Communication",
-      "name_hi": "विशेष संपर्क व संवाद",
+      "sub_code": "07-2",
+      "slug": "whatsapp-promo-broadcaster",
+      "name_en": "WhatsApp Promo Broadcaster",
+      "name_hi": "व्हाट्सएप प्रोमो ब्रॉडकास्टर",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Offers",
+        "Broadcast",
+        "Festivals"
       ]
     },
     {
-      "sub_code": "7-N",
-      "slug": "other-services",
-      "name_en": "Other Communication",
-      "name_hi": "अन्य संपर्क व संवाद",
+      "sub_code": "07-3",
+      "slug": "cyber-fraud-spam-shield",
+      "name_en": "Cyber Fraud & Spam Shield",
+      "name_hi": "साइबर फ्रॉड व स्पैम शील्ड",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Fraud Alert",
+        "Helpline",
+        "Security"
       ]
     }
   ]

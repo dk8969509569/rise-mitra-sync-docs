@@ -1,41 +1,44 @@
 {
   "category_id": 34,
   "category_code": "34",
-  "category_slug": "game-action",
-  "category_name_en": "Action Gaming",
-  "category_name_hi": "एक्शन तीरंदाजी",
+  "category_slug": "game-adventure",
+  "category_name_en": "Adventure Games",
+  "category_name_hi": "कैंपिंग व ट्रैकिंग",
   "sub_categories": [
     {
       "sub_code": "34-1",
-      "slug": "general-listings",
-      "name_en": "Primary Action Gaming",
-      "name_hi": "मुख्य एक्शन तीरंदाजी",
+      "slug": "camping-tent-gear-rental",
+      "name_en": "Camping Tent & Gear Rental",
+      "name_hi": "वाटरप्रूफ कैंपिंग टेंट व बॉनफायर किराया",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Camping Tent",
+        "Bonfire",
+        "Gear"
       ]
     },
     {
       "sub_code": "34-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Action Gaming",
-      "name_hi": "विशेष एक्शन तीरंदाजी",
+      "slug": "local-forest-trekking-guides",
+      "name_en": "Local Forest Trekking Guides",
+      "name_hi": "स्थानीय जंगल ट्रैकिंग प्रमाणित गाइड",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Trekking",
+        "Forest",
+        "Guide"
       ]
     },
     {
-      "sub_code": "34-N",
-      "slug": "other-services",
-      "name_en": "Other Action Gaming",
-      "name_hi": "अन्य एक्शन तीरंदाजी",
+      "sub_code": "34-3",
+      "slug": "zipline-adventure-park-pass",
+      "name_en": "Zipline & Adventure Park Pass",
+      "name_hi": "रिवर राफ्टिंग व जिपलाइन डिस्काउंट पास",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Zipline",
+        "Rafting",
+        "Park Pass"
       ]
     }
   ]

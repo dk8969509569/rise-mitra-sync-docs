@@ -1,41 +1,44 @@
 {
   "category_id": 41,
   "category_code": "41",
-  "category_slug": "game-educational",
-  "category_name_en": "Educational Quiz",
-  "category_name_hi": "भारत क्विज़",
+  "category_slug": "game-music",
+  "category_name_en": "Music Games",
+  "category_name_hi": "जैम रूम व कराओके",
   "sub_categories": [
     {
       "sub_code": "41-1",
-      "slug": "general-listings",
-      "name_en": "Primary Educational Quiz",
-      "name_hi": "मुख्य भारत क्विज़",
+      "slug": "soundproof-jam-room-slot",
+      "name_en": "Soundproof Jam Room Slot",
+      "name_hi": "साउंडप्रूफ म्यूजिक रूम प्रैक्टिस स्लॉट",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Jam Room",
+        "Drums",
+        "Hourly"
       ]
     },
     {
       "sub_code": "41-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Educational Quiz",
-      "name_hi": "विशेष भारत क्विज़",
+      "slug": "party-karaoke-machine-setup",
+      "name_en": "Party Karaoke Machine Setup",
+      "name_hi": "वायरलेस माइक व लिरिक्स स्क्रीन कराओके",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Karaoke",
+        "Mics",
+        "Party Setup"
       ]
     },
     {
-      "sub_code": "41-N",
-      "slug": "other-services",
-      "name_en": "Other Educational Quiz",
-      "name_hi": "अन्य भारत क्विज़",
+      "sub_code": "41-3",
+      "slug": "local-singing-audition-pass",
+      "name_en": "Local Singing Audition Pass",
+      "name_hi": "क्षेत्रीय स्टेज गायन प्रतियोगिता ऑडिशन",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Singing",
+        "Audition",
+        "Stage Pass"
       ]
     }
   ]

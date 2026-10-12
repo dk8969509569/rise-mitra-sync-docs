@@ -1,41 +1,44 @@
 {
   "category_id": 40,
   "category_code": "40",
-  "category_slug": "game-casual",
-  "category_name_en": "Casual Craft",
-  "category_name_hi": "रंगोली क्राफ्ट",
+  "category_slug": "game-educational",
+  "category_name_en": "Educational Games",
+  "category_name_hi": "अबेकस व साइंस किट्स",
   "sub_categories": [
     {
       "sub_code": "40-1",
-      "slug": "general-listings",
-      "name_en": "Primary Casual Craft",
-      "name_hi": "मुख्य रंगोली क्राफ्ट",
+      "slug": "offline-abacus-mental-math",
+      "name_en": "Offline Abacus & Mental Math",
+      "name_hi": "ऑफलाइन हैंड्स-ऑन अबेकस क्लास",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Abacus",
+        "Mental Math",
+        "Classes"
       ]
     },
     {
       "sub_code": "40-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Casual Craft",
-      "name_hi": "विशेष रंगोली क्राफ्ट",
+      "slug": "inter-school-brain-quiz-pass",
+      "name_en": "Inter-School Brain Quiz Pass",
+      "name_hi": "क्षेत्रीय विज्ञान व सामान्य ज्ञान क्विज पास",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Science Quiz",
+        "Pass",
+        "Inter-School"
       ]
     },
     {
-      "sub_code": "40-N",
-      "slug": "other-services",
-      "name_en": "Other Casual Craft",
-      "name_hi": "अन्य रंगोली क्राफ्ट",
+      "sub_code": "40-3",
+      "slug": "wooden-science-model-kits",
+      "name_en": "Wooden Science Model Kits",
+      "name_hi": "हाइड्रोलिक क्रेन व सोलर साइंस किट्स",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Science Kit",
+        "DIY Wooden",
+        "Models"
       ]
     }
   ]

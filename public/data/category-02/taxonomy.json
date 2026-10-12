@@ -3,39 +3,42 @@
   "category_code": "02",
   "category_slug": "auto-and-vehicles",
   "category_name_en": "Auto & Vehicles",
-  "category_name_hi": "वाहन सेवा",
+  "category_name_hi": "ऑटो व वाहन",
   "sub_categories": [
     {
-      "sub_code": "2-1",
-      "slug": "general-listings",
-      "name_en": "Primary Auto & Vehicles",
-      "name_hi": "मुख्य वाहन सेवा",
+      "sub_code": "02-1",
+      "slug": "roadside-assistance-rsa",
+      "name_en": "Roadside Assistance (RSA)",
+      "name_hi": "ऑन-साइट पंचर व क्रेन टोइंग",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Puncture",
+        "Jump Start",
+        "Towing"
       ]
     },
     {
-      "sub_code": "2-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Auto & Vehicles",
-      "name_hi": "विशेष वाहन सेवा",
+      "sub_code": "02-2",
+      "slug": "rto-challan-fastag",
+      "name_en": "RTO Challan & FASTag",
+      "name_hi": "ई-चालान व फ़ास्टैग रिचार्ज",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "E-Challan",
+        "FASTag",
+        "RTO"
       ]
     },
     {
-      "sub_code": "2-N",
-      "slug": "other-services",
-      "name_en": "Other Auto & Vehicles",
-      "name_hi": "अन्य वाहन सेवा",
+      "sub_code": "02-3",
+      "slug": "used-vehicles-buy-sell",
+      "name_en": "Used Vehicles Buy/Sell",
+      "name_hi": "पुरानी गाड़ी खरीद-बिक्री",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Bike",
+        "Car",
+        "Tractor"
       ]
     }
   ]

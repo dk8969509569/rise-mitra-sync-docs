@@ -1,41 +1,44 @@
 {
   "category_id": 15,
   "category_code": "15",
-  "category_slug": "health-and-fitness",
-  "category_name_en": "Health & Fitness",
-  "category_name_hi": "स्वस्थ मन व योग",
+  "category_slug": "house-and-home",
+  "category_name_en": "House & Home",
+  "category_name_hi": "घरेलू सेवाएँ व मरम्मत",
   "sub_categories": [
     {
       "sub_code": "15-1",
-      "slug": "general-listings",
-      "name_en": "Primary Health & Fitness",
-      "name_hi": "मुख्य स्वस्थ मन व योग",
+      "slug": "electrician-motor-repair",
+      "name_en": "Electrician & Motor Repair",
+      "name_hi": "इलेक्ट्रीशियन व समर्सिबल रिपेयर",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Wiring",
+        "Motor",
+        "Inverter"
       ]
     },
     {
       "sub_code": "15-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Health & Fitness",
-      "name_hi": "विशेष स्वस्थ मन व योग",
+      "slug": "plumber-sanitary",
+      "name_en": "Plumber & Sanitary",
+      "name_hi": "प्लम्बर व पाइपलाइन ब्लॉकेज सफाई",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Plumber",
+        "Tank Fitting",
+        "Leakage"
       ]
     },
     {
-      "sub_code": "15-N",
-      "slug": "other-services",
-      "name_en": "Other Health & Fitness",
-      "name_hi": "अन्य स्वस्थ मन व योग",
+      "sub_code": "15-3",
+      "slug": "carpenter-home-painting",
+      "name_en": "Carpenter & Home Painting",
+      "name_hi": "कारपेंटर, पुट्टी व पेंटिंग",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Carpenter",
+        "Paint",
+        "Putty"
       ]
     }
   ]

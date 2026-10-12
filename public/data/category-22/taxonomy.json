@@ -1,41 +1,44 @@
 {
   "category_id": 22,
   "category_code": "22",
-  "category_slug": "news-and-magazines",
-  "category_name_en": "News & Media",
-  "category_name_hi": "समाचार",
+  "category_slug": "parenting",
+  "category_name_en": "Parenting",
+  "category_name_hi": "जच्चा-बच्चा देखभाल",
   "sub_categories": [
     {
       "sub_code": "22-1",
-      "slug": "general-listings",
-      "name_en": "Primary News & Media",
-      "name_hi": "मुख्य समाचार",
+      "slug": "newborn-mother-massage-dai",
+      "name_en": "Newborn & Mother Massage Dai",
+      "name_hi": "पारंपरिक दाई जच्चा-बच्चा मालिश",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Dai",
+        "Baby Massage",
+        "Care"
       ]
     },
     {
       "sub_code": "22-2",
-      "slug": "custom-services",
-      "name_en": "Specialized News & Media",
-      "name_hi": "विशेष समाचार",
+      "slug": "pure-organic-baby-food",
+      "name_en": "Pure Organic Baby Food",
+      "name_hi": "शुद्ध रागी व मखाना शिशु आहार",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Ragi",
+        "Makhana",
+        "Baby Food"
       ]
     },
     {
-      "sub_code": "22-N",
-      "slug": "other-services",
-      "name_en": "Other News & Media",
-      "name_hi": "अन्य समाचार",
+      "sub_code": "22-3",
+      "slug": "baby-cradle-cotton-clothes",
+      "name_en": "Baby Cradle & Cotton Clothes",
+      "name_hi": "लकड़ी का पालना व सूती झबले",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Cradle",
+        "Cotton",
+        "Walker"
       ]
     }
   ]

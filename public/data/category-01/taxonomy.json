@@ -3,39 +3,42 @@
   "category_code": "01",
   "category_slug": "art-and-design",
   "category_name_en": "Art & Design",
-  "category_name_hi": "डिज़ाइन व कला",
+  "category_name_hi": "आर्ट व डिज़ाइन",
   "sub_categories": [
     {
-      "sub_code": "1-1",
-      "slug": "general-listings",
-      "name_en": "Primary Art & Design",
-      "name_hi": "मुख्य डिज़ाइन व कला",
+      "sub_code": "01-1",
+      "slug": "festival-post-digital-card",
+      "name_en": "Festival Post & Digital Card",
+      "name_hi": "त्योहार पोस्टर्स व डिजिटल कार्ड",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Festivals",
+        "Digital Card",
+        "Branding"
       ]
     },
     {
-      "sub_code": "1-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Art & Design",
-      "name_hi": "विशेष डिज़ाइन व कला",
+      "sub_code": "01-2",
+      "slug": "flex-board-printing",
+      "name_en": "Flex Board & Printing",
+      "name_hi": "फ्लेक्स बोर्ड व प्रिंटिंग",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Flex Board",
+        "Glow Sign",
+        "Vinyl"
       ]
     },
     {
-      "sub_code": "1-N",
-      "slug": "other-services",
-      "name_en": "Other Art & Design",
-      "name_hi": "अन्य डिज़ाइन व कला",
+      "sub_code": "01-3",
+      "slug": "visiting-card-bill-books",
+      "name_en": "Visiting Card & Bill Books",
+      "name_hi": "विज़िटिंग कार्ड व बिल बुक",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Visiting Card",
+        "Bill Book",
+        "Stamp"
       ]
     }
   ]

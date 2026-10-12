@@ -1,41 +1,44 @@
 {
   "category_id": 21,
   "category_code": "21",
-  "category_slug": "music-and-audio",
-  "category_name_en": "Music & Audio",
-  "category_name_hi": "संगीत",
+  "category_slug": "news-and-magazines",
+  "category_name_en": "News & Magazines",
+  "category_name_hi": "समाचार व पत्रिकाएँ",
   "sub_categories": [
     {
       "sub_code": "21-1",
-      "slug": "general-listings",
-      "name_en": "Primary Music & Audio",
-      "name_hi": "मुख्य संगीत",
+      "slug": "hyperlocal-citizen-news",
+      "name_en": "Hyperlocal Citizen News",
+      "name_hi": "वार्ड व ग्राम नागरिक समाचार मंच",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Local News",
+        "Video",
+        "Issues"
       ]
     },
     {
       "sub_code": "21-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Music & Audio",
-      "name_hi": "विशेष संगीत",
+      "slug": "newspaper-classified-ads",
+      "name_en": "Newspaper Classified Ads",
+      "name_hi": "अखबार में नाम परिवर्तन व विज्ञापन",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Classifieds",
+        "Ads",
+        "Notice"
       ]
     },
     {
-      "sub_code": "21-N",
-      "slug": "other-services",
-      "name_en": "Other Music & Audio",
-      "name_hi": "अन्य संगीत",
+      "sub_code": "21-3",
+      "slug": "monthly-magazines-courier",
+      "name_en": "Monthly Magazines Courier",
+      "name_hi": "प्रतियोगिता दर्पण व मासिक पत्रिकाएँ",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Pratiyogita Darpan",
+        "GK",
+        "Courier"
       ]
     }
   ]
