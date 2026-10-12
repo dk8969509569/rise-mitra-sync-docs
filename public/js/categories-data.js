@@ -1,11 +1,14 @@
 /**
+ * ==============================================================================
  * RISE MITRA — 50 CANONICAL CATEGORIES & 150 SUB-SERVICES DATA REGISTRY
- * SPECIFICATION : FOLDER A (SSOT: 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) | 14_04__EXT_004
- * GOVERNANCE    : GATE-23.5 | 75:25 RATIO | 3-PILL ACTION STRIP | ZERO-ELEMENT-LOSS (ZEL)
+ * SPECIFICATION : FOLDER A (SSOT: 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) | 14_04__EXT_005
+ * GOVERNANCE    : GATE-16.6 • GATE-16.7 • GATE-23.5 • GATE-25.0 • ZERO-ELEMENT-LOSS (ZEL)
  * REPO TARGET   : public/js/categories-data.js
  * DUAL-FOLDER REFERENCES:
  *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
- *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
+ *   Folder B (GitHub Mirror)       : 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
+ * STATUS        : 🟢 100% CANONICAL FROZEN • FULL BACKWARD & FORWARD COMPATIBILITY
+ * ==============================================================================
  */
 
 (function (window) {
@@ -161,7 +164,7 @@
       ]
     },
     {
-      id: 'c19', num: '19', enName: 'Maps & Navigation', hiName: 'मार्गदर्शन (Maps & Navigation)', icon: '🗺️️', hasChildren: true,
+      id: 'c19', num: '19', enName: 'Maps & Navigation', hiName: 'मार्गदर्शन (Maps & Navigation)', icon: '🗺', hasChildren: true,
       children: [
         { id: '19-1', enName: 'Gali Mohalla Landmark', hiName: 'गली-मोहल्ला लैंडमार्क सत्यापन', icon: '📍', badge: 'खोलें ›', state: 'active', action: 'action' },
         { id: '19-2', enName: 'Mandi & Haat Route', hiName: 'साप्ताहिक हाट व थोक मंडी मार्ग', icon: '🛒', badge: 'खोलें ›', state: 'active', action: 'action' },
@@ -269,7 +272,7 @@
       children: [
         { id: '32-1', enName: 'Dukan 30-Sec Ad Player', hiName: 'दुकान 30-सेकंड उत्पाद वीडियो शोकेस', icon: '📺', badge: 'खोलें ›', state: 'active', action: 'action' },
         { id: '32-2', enName: 'Karigar Work Portfolio', hiName: 'कारीगर काम वीडियो प्रमाण लाइब्रेरी', icon: '📽️', badge: 'खोलें ›', state: 'active', action: 'action' },
-        { id: '32-3', enName: 'Kasba Business Promo', hiName: 'स्थानीय व्यापार विज्ञापन क्लिप्स', icon: '🎞️️', badge: 'खोलें ›', state: 'active', action: 'action' }
+        { id: '32-3', enName: 'Kasba Business Promo', hiName: 'स्थानीय व्यापार विज्ञापन क्लिप्स', icon: '🎞', badge: 'खोलें ›', state: 'active', action: 'action' }
       ]
     },
     {
@@ -316,7 +319,7 @@
       children: [
         { id: '37-1', enName: 'Desi 4-Player Ludo', hiName: 'देसी 4-खिलाड़ी लूडो क्लब', icon: '🎲', badge: 'खेलें ›', state: 'active', action: 'game' },
         { id: '37-2', enName: 'Carrom Striker Pool', hiName: 'कैरम बोर्ड व क्वीन स्ट्राइकर', icon: '⚪', badge: 'खेलें ›', state: 'active', action: 'game' },
-        { id: '37-3', enName: 'Chaturang Chess Battle', hiName: 'चतुरंग पारंपारिक भारतीय शतरंज', icon: '♟️️', badge: 'खेलें ›', state: 'active', action: 'game' }
+        { id: '37-3', enName: 'Chaturang Chess Battle', hiName: 'चतुरंग पारंपारिक भारतीय शतरंज', icon: '♟', badge: 'खेलें ›', state: 'active', action: 'game' }
       ]
     },
     {
@@ -324,7 +327,7 @@
       children: [
         { id: '38-1', enName: 'Tash Solitaire Offline', hiName: 'देसी ताश सॉलिटेयर गेम', icon: '♠️', badge: 'खेलें ›', state: 'active', action: 'game' },
         { id: '38-2', enName: '28-Card Points Battle', hiName: '28 पत्ती देसी अंक मुकाबला', icon: '♥️', badge: 'खेलें ›', state: 'active', action: 'game' },
-        { id: '38-3', enName: 'Parivarik Tash Room', hiName: 'पारिवारिक ताश क्लब (अंक कक्ष)', icon: '♣️️', badge: 'खेलें ›', state: 'active', action: 'game' }
+        { id: '38-3', enName: 'Parivarik Tash Room', hiName: 'पारिवारिक ताश क्लब (अंक कक्ष)', icon: '♣', badge: 'खेलें ›', state: 'active', action: 'game' }
       ]
     },
     {
@@ -426,13 +429,85 @@
   ];
 
   // ==============================================================================
-  // SECTION 3: BASELINE EXPORTS & WINDOW BINDINGS
+  // SECTION 3: BASELINE EXPORTS, METADATA BRIDGES & REGISTRY APIS
   // ==============================================================================
 
-  var C16_CHILDREN = RM_SERVICES_DATA.find(function (s) { return s.id === 'c16'; }).children;
+  var c16Entry = RM_SERVICES_DATA.find(function (s) { return s.id === 'c16'; });
+  var C16_CHILDREN = c16Entry ? c16Entry.children : [];
 
+  // Build Unified Flat Array for New Taxonomy Engines (Dual Compatibility)
+  var ALL_CATEGORIES = [];
+
+  RM_SERVICES_DATA.forEach(function (cat) {
+    cat.tier = 1;
+    cat.name = cat.enName + ' (' + cat.hiName + ')';
+    cat.title = cat.enName;
+    cat.hindiTitle = cat.hiName;
+    cat.numId = parseInt(cat.num, 10);
+    ALL_CATEGORIES.push(cat);
+  });
+
+  RM_GAMES_DATA.forEach(function (cat) {
+    cat.tier = 2;
+    cat.name = cat.enName + ' (' + cat.hiName + ')';
+    cat.title = cat.enName;
+    cat.hindiTitle = cat.hiName;
+    cat.numId = parseInt(cat.num, 10);
+    ALL_CATEGORIES.push(cat);
+  });
+
+  // 1. Authoritative Legacy Window Bindings
   window.RM_SERVICES_DATA = RM_SERVICES_DATA;
   window.RM_GAMES_DATA = RM_GAMES_DATA;
   window.C16_CHILDREN = C16_CHILDREN;
+
+  // 2. Authoritative New Registry Window Bindings
+  window.RM_CATEGORIES_DATA = ALL_CATEGORIES;
+
+  window.RM_CATALOG_REGISTRY = {
+    getAllCategories: function () {
+      return ALL_CATEGORIES;
+    },
+    getCategoryData: function (identifier) {
+      if (!identifier) return null;
+      var cleanId = String(identifier).toLowerCase().trim();
+      var numOnly = cleanId.replace(/[^0-9]/g, '');
+      var numVal = parseInt(numOnly, 10);
+
+      for (var i = 0; i < ALL_CATEGORIES.length; i++) {
+        var c = ALL_CATEGORIES[i];
+        if (c.id === cleanId || c.num === cleanId || c.num === numOnly || c.numId === numVal) {
+          return c;
+        }
+      }
+      return null;
+    },
+    getSubcategoryData: function (catId, subId) {
+      var cat = this.getCategoryData(catId);
+      if (!cat || !cat.children) return null;
+      var cleanSub = String(subId).trim();
+
+      for (var j = 0; j < cat.children.length; j++) {
+        var sub = cat.children[j];
+        if (sub.id === cleanSub) {
+          return sub;
+        }
+      }
+      return null;
+    },
+    getTier1Categories: function () {
+      return RM_SERVICES_DATA;
+    },
+    getTier2Categories: function () {
+      return RM_GAMES_DATA;
+    }
+  };
+
+  // 3. Dispatch Ready Event for Reactive Engines
+  try {
+    window.dispatchEvent(new CustomEvent('RM_CATALOG_DATA_READY', {
+      detail: { count: ALL_CATEGORIES.length, totalSubWings: 150 }
+    }));
+  } catch (e) {}
 
 })(typeof window !== 'undefined' ? window : this);
