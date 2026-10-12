@@ -3,7 +3,7 @@
 <!-- ============================================================================== -->
 <!-- RISE MITRA — SLIM MODULAR HTML SHELL (DEFAULT PUBLIC LOCK & PHASE 5 FAVORITES) -->
 <!-- GOVERNANCE : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0            -->
-<!-- SPEC SSOT  : FOLDER A (MASTER DOCUMENT SSOT)                                   -->
+<!-- SPEC SSOT  : FOLDER A (MASTER DOCUMENT SSOT) & FOLDER B (LIVE SNAPSHOT)       -->
 <!-- STATUS     : FULLY DECOUPLED (CSS -> app.css | JS -> modular engines)          -->
 <!-- ============================================================================== -->
 <head>
@@ -20,7 +20,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <!-- Master Decoupled Global CSS with Fresh Cache Buster -->
-  <link rel="stylesheet" href="/css/app.css?v=20261012_v4">
+  <link rel="stylesheet" href="/css/app.css?v=20261012_v6">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -318,7 +318,6 @@
   <!-- MODULAR CONTROLLERS & BULLETPROOF MODAL DISPATCHER                           -->
   <!-- ============================================================================ -->
   <script>
-    // Bulletproof Modal Controller (Zero Conflict with Tailwind or CSS)
     function openCatalogModal() {
       var m = document.getElementById('categoryModal');
       if (!m) return;
@@ -333,7 +332,6 @@
       m.style.setProperty('display', 'none', 'important');
     }
 
-    // Bridge for legacy handlers
     window.toggleMenuDrawer = function(open) {
       if (open) openCatalogModal();
       else closeCatalogModal();
@@ -344,35 +342,44 @@
   <script src="/js/data/india-geo-data.js"></script>
 
   <!-- Modular Home Grid Engine (12 Play Store Standard Verticals) -->
-  <script src="/js/home-grid-engine.js?v=20261012_01"></script>
+  <script src="/js/home-grid-engine.js?v=20261012_06"></script>
 
   <!-- Sovereign Profile & Control Hub Engine (Angel One Taxonomy) -->
-  <script src="/js/profile-hub-engine.js?v=20261012_01"></script>
+  <script src="/js/profile-hub-engine.js?v=20261012_06"></script>
 
   <!-- Canonical Decoupled Catalog Engine & Data Registry -->
-  <script src="/js/categories-data.js?v=20261012_01"></script>
-  <script src="/js/catalog-sivme-engine.js?v=20261012_01"></script>
+  <script src="/js/categories-data.js?v=20261012_06"></script>
+  <script src="/js/catalog-sivme-engine.js?v=20261012_06"></script>
 
   <!-- Decoupled Shell Controller Engine & Viewport Dispatcher -->
-  <script src="/js/shell-controller.js?v=20261012_01"></script>
+  <script src="/js/shell-controller.js?v=20261012_06"></script>
 
   <!-- Sovereign In-Situ Isolated Adapters -->
-  <script src="/js/sivme-adapters/cat16-adapter.js?v=20261012_01"></script>
+  <script src="/js/sivme-adapters/cat16-adapter.js?v=20261012_06"></script>
 
-  <!-- Universal Production Catalog & 0.05s Search Intelligence Engine -->
-  <script src="/js/universal-catalog/catalog-metadata-registry.js?v=20261012_01"></script>
-  <script src="/js/universal-catalog/universal-card-engine.js?v=20261012_01"></script>
-  <script src="/js/universal-catalog/universal-search-engine.js?v=20261012_01"></script>
+  <!-- Universal Production Catalog & 0.05s Search Intelligence Engine (Cache-Busted) -->
+  <script src="/js/universal-catalog/catalog-metadata-registry.js?v=20261012_v6"></script>
+  <script src="/js/universal-catalog/universal-card-engine.js?v=20261012_v6"></script>
+  <script src="/js/universal-catalog/universal-search-engine.js?v=20261012_v6"></script>
 
-  <!-- Modular Catalog Extensions (Google Play Store Canonical Batches) -->
-  <script src="/js/universal-catalog/extensions/ext-batch-11-15.js?v=20261012_01"></script>
-  <script src="/js/universal-catalog/extensions/ext-batch-16-20.js?v=20261012_01"></script>
+  <!-- Modular Catalog Extensions (Cache-Busted Play Store Batches) -->
+  <script src="/js/universal-catalog/extensions/ext-batch-11-15.js?v=20261012_v6"></script>
+  <script src="/js/universal-catalog/extensions/ext-batch-16-20.js?v=20261012_v6"></script>
 
   <!-- MODULAR PHASE 5 FAVORITES ENGINE (DECOUPLED & PLAY STORE STYLED) -->
-  <script src="/js/favorites-engine.js?v=20261012_01"></script>
+  <script src="/js/favorites-engine.js?v=20261012_06"></script>
 
   <!-- SIVME v2.0 Phase 1: Core Visibility Registry Engine (ZEL Isolated) -->
-  <script src="/js/core/sovereign-in-situ-registry.js?v=20261012_01"></script>
+  <script src="/js/core/sovereign-in-situ-registry.js?v=20261012_06"></script>
+
+  <!-- Service Worker Auto-Update Sentinel -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(regs) {
+        for (var reg of regs) { reg.update(); }
+      });
+    }
+  </script>
 
   <!-- CONDITIONAL SIVME DEBUG ENGINE (ONLY RUNS WHEN LAUNCHED FROM SURFACE-B) -->
   <script>
