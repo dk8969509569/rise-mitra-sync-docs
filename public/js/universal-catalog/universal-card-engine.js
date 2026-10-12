@@ -124,37 +124,53 @@
     }
   }
 
-  // 2. RENDER SUB-CARD (ZERO TEXT CUTOFF + INTERACTIVE TAP HIGHLIGHT GLOW)
+  // 2. RENDER SUB-CARD (ZERO TEXT CUTOFF + INTERACTIVE TAP HIGHLIGHT GLOW + 50 CATEGORIES RICH SUPPORT)
   function renderSubCard(subCardEl, catId, subId) {
     if (!subCardEl) return;
     var numId = String(catId).replace(/[^0-9]/g, '');
-    var cleanSub = String(subId).replace(/^[c]/, '');
+    var cleanSub = String(subId).replace(/^[cg]/, '');
+    var intNum = parseInt(numId, 10);
+    var isGame = intNum >= 34;
 
     if (subCardEl.getAttribute('data-rm-sub-rendered') === cleanSub) {
       return;
     }
 
+    var defaultChips = isGame ? [
+      { text: '🎮 देसी P2P लाइव गेमप्ले', bg: 'rgba(56,189,248,0.15)', c: '#38bdf8' },
+      { text: '⚔️ 1v1 क्विक बैटल व टूर्नामेंट', bg: 'rgba(52,211,153,0.15)', c: '#34d399' },
+      { text: '👥 प्राइवेट रूम कोड (दोस्तों संग)', bg: 'rgba(250,204,21,0.15)', c: '#facc15' },
+      { text: '🛡️ 100% असली स्थानीय खिलाड़ी', bg: 'rgba(192,132,252,0.15)', c: '#c084fc' }
+    ] : [
+      { text: '✓ 100% सत्यापित सुविधा', bg: 'rgba(56,189,248,0.15)', c: '#38bdf8' },
+      { text: '⚡ त्वरित स्थानीय पहुंच', bg: 'rgba(52,211,153,0.15)', c: '#34d399' },
+      { text: '🛡️ सुरक्षित व पारदर्शी', bg: 'rgba(250,204,21,0.15)', c: '#facc15' },
+      { text: '📋 पक्की ऑनलाइन रसीद', bg: 'rgba(244,114,182,0.15)', c: '#f472b6' }
+    ];
+
+    var defaultHighlights = isGame ? [
+      'कोई AI बॉट नहीं — केवल असली स्थानीय खिलाड़ियों के साथ वास्तविक मुकाबला।',
+      'कोई नकद सट्टा नहीं — विशुद्ध पारिवारिक मनोरंजन एवं वीकेंड मेडल लीग।',
+      '2G व 3G नेटवर्क पर भी बिना रुकावट स्मूथ व सुपरफास्ट गेमिंग।'
+    ] : [
+      'सत्यापित और प्रशिक्षित विशेषज्ञों द्वारा विश्वसनीय सेवा व उत्पाद आपूर्ति।',
+      'तय रेट कार्ड और पारदर्शी ऑनलाइन रसीद।',
+      'Rise Mitra कार्य संतुष्टि गारंटी व प्रत्यक्ष सहायता।'
+    ];
+
     var info = (window.RM_CATALOG_REGISTRY && window.RM_CATALOG_REGISTRY.getSubcategoryData(numId, cleanSub)) || {
       code: '[' + cleanSub + ']',
-      icon: '🛠️',
-      title: 'सेवा ' + cleanSub,
-      hindiTitle: 'प्रमाणित व विश्वसनीय सेवा',
-      categoryTag: 'जनसुविधा नेटवर्क',
-      rating: '★ 4.8',
-      reviewCount: '1,500+ समीक्षाएं',
-      metaBadge: '⚡ त्वरित समाधान',
-      servicesTitle: 'उपलब्ध प्रमाणित सेवाएं व उत्पाद:',
-      services: [
-        { text: '✓ 100% सत्यापित सुविधा', bg: 'rgba(56,189,248,0.15)', c: '#38bdf8' },
-        { text: '⚡ त्वरित स्थानीय पहुंच', bg: 'rgba(52,211,153,0.15)', c: '#34d399' },
-        { text: '🛡️ सुरक्षित व पारदर्शी', bg: 'rgba(250,204,21,0.15)', c: '#facc15' }
-      ],
-      highlights: [
-        'सत्यापित और प्रशिक्षित विशेषज्ञों द्वारा विश्वसनीय सेवा व उत्पाद आपूर्ति।',
-        'तय रेट कार्ड और पारदर्शी ऑनलाइन रसीद।',
-        'Rise Mitra कार्य संतुष्टि गारंटी व प्रत्यक्ष सहायता।'
-      ],
-      btnText: 'खोलें ➔'
+      icon: isGame ? '🎮' : '🛠️',
+      title: isGame ? ('देसी खेल ' + cleanSub) : ('सेवा ' + cleanSub),
+      hindiTitle: isGame ? 'पारंपरिक भारतीय मनोरंजन क्लब' : 'प्रमाणित व विश्वसनीय सेवा',
+      categoryTag: isGame ? 'देसी खेल प्रतियोगिता' : 'जनसुविधा नेटवर्क',
+      rating: '★ 4.9',
+      reviewCount: isGame ? '18k+ खिलाड़ी' : '1,500+ समीक्षाएं',
+      metaBadge: isGame ? '⚡ लाइव P2P मुकाबला' : '⚡ त्वरित समाधान',
+      servicesTitle: isGame ? 'उपलब्ध गेम मोड्स व फीचर्स:' : 'उपलब्ध प्रमाणित सेवाएं व उत्पाद:',
+      services: defaultChips,
+      highlights: defaultHighlights,
+      btnText: isGame ? 'खेलें ➔' : 'खोलें ➔'
     };
 
     // Hard-collapse outer container: Eliminate vertical void completely
@@ -206,12 +222,12 @@
       subCardEl.appendChild(container);
     }
 
-    var servicesList = info.services || info.chips || [];
+    var servicesList = info.services || info.chips || defaultChips;
     var servicesHtml = servicesList.map(function (s) {
       return '<span style="font-size:13px;font-weight:600;padding:5px 10px;background:' + s.bg + ';color:' + s.c + ';border:1.2px solid ' + s.c + '44;border-radius:7px;display:inline-flex;align-items:center;">' + s.text + '</span>';
     }).join(' ');
 
-    var highlightsHtml = (info.highlights || []).map(function (h) {
+    var highlightsHtml = (info.highlights || defaultHighlights).map(function (h) {
       return '<div style="font-size:12.5px;color:#cbd5e1;line-height:1.45;display:flex;align-items:flex-start;gap:6px;"><span style="color:#10b981;font-weight:900;">✓</span><span>' + h + '</span></div>';
     }).join('');
 
@@ -222,13 +238,13 @@
       '  <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 5px; flex-shrink: 0; min-width: 52px;">',
       '    <div style="font-size: 24px; font-weight: 900; color: #38bdf8; font-family: ui-monospace, monospace; line-height: 1; text-align: center; letter-spacing: -0.5px;">' + cleanSub + '.</div>',
       '    <div style="width: 48px; height: 48px; border-radius: 13px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 1.5px solid rgba(56, 189, 248, 0.4); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">',
-      '      <span style="font-size: 26px; line-height: 1;">' + info.icon + '</span>',
+      '      <span style="font-size: 26px; line-height: 1;">' + (info.icon || (isGame ? '🎮' : '🛠️')) + '</span>',
       '    </div>',
       '  </div>',
       '  <!-- Right Column Stack: 20px Bold Title & 14px Subtitle -->',
       '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0; padding-top: 1px;">',
       '    <div style="display: flex; align-items: center; gap: 6px;">',
-      '      <span style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 4px;">' + (info.categoryTag || 'Rise Mitra Official') + '</span>',
+      '      <span style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 4px;">' + (info.categoryTag || (isGame ? 'देसी खेल प्रतियोगिता' : 'Rise Mitra Official')) + '</span>',
       '    </div>',
       '    <div style="font-size: 20px; font-weight: 900; color: #ffffff; letter-spacing: -0.3px; line-height: 1.25; margin-top: 3px; white-space: normal; word-break: break-word;">' + info.title + '</div>',
       '    <div style="font-size: 14px; font-weight: 700; color: #34d399; line-height: 1.35; margin-top: 3px; white-space: normal; word-break: break-word;">' + (info.hindiTitle || info.hindi || '') + '</div>',
@@ -236,12 +252,12 @@
       '</div>',
       '<!-- Play Store Rating & Stats Strip -->',
       '<div style="display: flex; align-items: center; gap: 8px; width: 100%; margin-top: 1px; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap;">',
-      '  <span style="font-size: 12.5px; font-weight: 800; color: #facc15; background: rgba(250, 204, 21, 0.12); padding: 2px 7px; border-radius: 5px;">' + info.rating + '</span>',
-      '  <span style="font-size: 12px; font-weight: 600; color: #94a3b8;">' + info.reviewCount + '</span>',
-      '  <span style="font-size: 12px; font-weight: 700; color: #34d399; background: rgba(52, 211, 153, 0.12); padding: 2px 7px; border-radius: 5px;">' + info.metaBadge + '</span>',
+      '  <span style="font-size: 12.5px; font-weight: 800; color: #facc15; background: rgba(250, 204, 21, 0.12); padding: 2px 7px; border-radius: 5px;">' + (info.rating || '★ 4.9') + '</span>',
+      '  <span style="font-size: 12px; font-weight: 600; color: #94a3b8;">' + (info.reviewCount || (isGame ? '18k+ खिलाड़ी' : '1,500+ समीक्षाएं')) + '</span>',
+      '  <span style="font-size: 12px; font-weight: 700; color: #34d399; background: rgba(52, 211, 153, 0.12); padding: 2px 7px; border-radius: 5px;">' + (info.metaBadge || (isGame ? '⚡ लाइव P2P मुकाबला' : '⚡ त्वरित समाधान')) + '</span>',
       '</div>',
       '<!-- Services & Products Chips Row -->',
-      '<div style="font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;">' + (info.servicesTitle || 'उपलब्ध सुविधाएं व सामग्री:') + '</div>',
+      '<div style="font-size: 12px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px;">' + (info.servicesTitle || (isGame ? 'उपलब्ध गेम मोड्स व फीचर्स:' : 'उपलब्ध सुविधाएं व सामग्री:')) + '</div>',
       '<div style="display: flex; flex-wrap: wrap; gap: 6px; width: 100%;">' + servicesHtml + '</div>',
       '<!-- Highlights Feature Box -->',
       '<div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 10px 12px; margin-top: 4px; display: flex; flex-direction: column; gap: 5px;">' + highlightsHtml + '</div>',
@@ -253,8 +269,8 @@
       '  <button type="button" class="rm-act-video" style="min-width: 0 !important; background: rgba(30, 41, 59, 0.9); border: 1.2px solid rgba(167, 139, 250, 0.4); color: #c4b5fd; border-radius: 10px; padding: 8px 3px; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 3px; cursor: pointer; transition: all 0.15s ease;" onpointerdown="this.style.borderColor=\'#a78bfa\';this.style.boxShadow=\'0 0 10px rgba(167,139,250,0.6)\'" onpointerup="this.style.borderColor=\'rgba(167,139,250,0.4)\';this.style.boxShadow=\'none\'">',
       '    <span>▶</span> <span>वीडियो</span>',
       '  </button>',
-      '  <button type="button" class="rm-act-open" style="min-width: 0 !important; background: #059669; border: 1.5px solid #10b981; color: #ffffff; border-radius: 10px; padding: 8px 6px; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 3px 8px rgba(0,0,0,0.4); cursor: pointer; text-align: center; line-height: 1.15; white-space: normal; word-break: break-word; transition: all 0.15s ease;" onpointerdown="this.style.borderColor=\'#38bdf8\';this.style.boxShadow=\'0 0 14px rgba(56,189,248,0.85)\';this.style.transform=\'scale(0.97)\'" onpointerup="this.style.borderColor=\'#10b981\';this.style.boxShadow=\'0 3px 8px rgba(0,0,0,0.4)\';this.style.transform=\'scale(1)\'">',
-      '    <span>' + (info.btnText || 'खोलें ➔') + '</span>',
+      '  <button type="button" class="rm-act-open" style="min-width: 0 !important; background: ' + (isGame ? '#0284c7' : '#059669') + '; border: 1.5px solid ' + (isGame ? '#38bdf8' : '#10b981') + '; color: #ffffff; border-radius: 10px; padding: 8px 6px; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 3px 8px rgba(0,0,0,0.4); cursor: pointer; text-align: center; line-height: 1.15; white-space: normal; word-break: break-word; transition: all 0.15s ease;" onpointerdown="this.style.borderColor=\'#38bdf8\';this.style.boxShadow=\'0 0 14px rgba(56,189,248,0.85)\';this.style.transform=\'scale(0.97)\'" onpointerup="this.style.borderColor=\'#10b981\';this.style.boxShadow=\'0 3px 8px rgba(0,0,0,0.4)\';this.style.transform=\'scale(1)\'">',
+      '    <span>' + (info.btnText || (isGame ? 'खेलें ➔' : 'खोलें ➔')) + '</span>',
       '  </button>',
       '</div>'
     ].join('');
@@ -279,19 +295,19 @@
     if (openBtn) {
       openBtn.onclick = function (e) {
         e.stopPropagation();
-        triggerLegacySubAction(subCardEl, 'खोलें') || triggerLegacySubAction(subCardEl, 'संपर्क') || triggerLegacySubAction(subCardEl, 'उपलब्ध');
+        triggerLegacySubAction(subCardEl, 'खोलें') || triggerLegacySubAction(subCardEl, 'खेलें') || triggerLegacySubAction(subCardEl, 'संपर्क') || triggerLegacySubAction(subCardEl, 'उपलब्ध');
       };
     }
 
     subCardEl.setAttribute('data-rm-sub-rendered', cleanSub);
   }
 
-  // 3. FULL AUTONOMOUS SCANNER ACROSS ALL 50 CATEGORIES
+  // 3. FULL AUTONOMOUS SCANNER ACROSS ALL 50 CATEGORIES (CHECKS BOTH sub-c AND sub-g CONTAINERS)
   function sweepCatalog() {
     if (isSweeping) return;
     isSweeping = true;
     try {
-      var modal = document.getElementById('categoryModel') || document.body;
+      var modal = document.getElementById('categoryModel') || document.getElementById('categoryModal') || document.body;
       var cats = modal.querySelectorAll('[data-cat-id]');
       cats.forEach(function (catEl) {
         var rawId = catEl.getAttribute('data-cat-id');
@@ -299,7 +315,13 @@
         var cleanNum = rawId.replace(/[^0-9]/g, '');
 
         var header = catEl.querySelector(':scope > div:first-child');
-        var sub = document.getElementById('sub-c' + cleanNum) || document.getElementById('sub-' + cleanNum);
+        
+        // Critical ZEL Fix: Detects both sub-c (Services) and sub-g (Games) containers
+        var sub = document.getElementById('sub-c' + cleanNum) || 
+                  document.getElementById('sub-g' + cleanNum) || 
+                  document.getElementById('sub-' + rawId) || 
+                  document.getElementById('sub-' + cleanNum);
+                  
         var isOpen = sub && !sub.classList.contains('hidden') && sub.style.display !== 'none';
         var subCards = sub ? sub.querySelectorAll(':scope > div') : [];
 
@@ -327,7 +349,7 @@
     setTimeout(sweepCatalog, 1500);
 
     document.addEventListener('click', function (e) {
-      if (e.target.closest('[data-cat-id], #categoryModel, button')) {
+      if (e.target.closest('[data-cat-id], #categoryModel, #categoryModal, button')) {
         setTimeout(sweepCatalog, 40);
         setTimeout(sweepCatalog, 250);
       }
