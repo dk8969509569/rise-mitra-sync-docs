@@ -3,34 +3,75 @@
  * RISE MITRA (RM WORLD) — MASTER UNIFIED APP STYLESHEET (100% ZEL PRODUCTION)
  * REPO TARGET   : public/css/app.css
  * GOVERNANCE    : GATE-16.7 • GATE-25.0 • ZERO-ELEMENT-LOSS (ZEL) PRESERVED
- * SPEC SSOT     : FOLDER A (MASTER DOCUMENT SSOT)
+ * SPEC SSOT     : FOLDER A (MASTER DOCUMENT BLUEPRINT)
+ * CONSOLIDATION : base.css + themes.css + layout.css + app.css (ALL IN ONE)
  * STATUS        : 🟢 100% ZEL PARITY • ZERO OVERLAP • 0MS INSTANT CLOSE
  * ==============================================================================
  */
 
 /* ==========================================================================
-   PART 1: RM-UI-INTERACTION-FEEDBACK-01 | CANONICAL STYLESHEET
+   PART 1: BASE CSS RESET, FLUID TYPOGRAPHY & INTERACTION FEEDBACK
+   (Includes WCAG AA 48px targets & base.css guards)
    ========================================================================== */
 
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-size: 100%;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+html[data-font-scale="small"] { font-size: 87.5%; }
+html[data-font-scale="standard"] { font-size: 100%; }
+html[data-font-scale="large"] { font-size: 125%; }
+
+body {
+  background-color: #030712;
+  color: #f8fafc;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Devanagari", sans-serif;
+  min-height: 100vh;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  overflow-x: hidden;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+input, textarea {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+}
+
+/* 48px Minimum Touch Targets (WCAG AA) */
 button,
 a,
 input[type="button"],
 input[type="submit"],
 [role="button"],
-.nav-tab {
+.nav-tab,
+.rm-icon-btn {
   min-height: 48px;
   min-width: 48px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
 }
 
 button:active,
 a:active,
 [role="button"]:active,
-.nav-tab:active {
+.nav-tab:active,
+.rm-action-tile:active {
   transform: scale(0.97) !important;
   outline: 2px solid #10b981 !important;
   outline-offset: 2px !important;
@@ -43,14 +84,16 @@ input[type="number"],
 input[type="tel"],
 input[type="search"],
 textarea,
-select {
+select,
+.rm-search-input {
   min-height: 48px;
   transform: none !important;
 }
 
 input:focus,
 textarea:focus,
-select:focus {
+select:focus,
+.rm-search-input:focus {
   outline: 2px solid #10b981 !important;
   outline-offset: 1px !important;
   box-shadow: 0 0 8px rgba(16, 185, 129, 0.25) !important;
@@ -76,34 +119,82 @@ a:focus-visible,
   }
 }
 
+/* Screen-Reader Only Utility */
+.rm-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ==========================================================================
-   PART 2: GLOBAL CORE TOKENS, TACTILE 2.5D & MODULAR LAYOUT GUARDS
+   PART 2: THEME TOKENS & SYSTEM METRICS (themes.css ZEL)
    ========================================================================== */
 
-* {
-  -webkit-tap-highlight-color: transparent;
-  box-sizing: border-box;
-  -webkit-touch-callout: none;
+:root {
+  --rm-header-height: 3.75rem;
+  --rm-bottom-bar-height: 4rem;
+  --rm-radius-sm: 0.375rem;
+  --rm-radius-md: 0.625rem;
+  --rm-radius-lg: 1rem;
+  --rm-transition-fast: 0.15s ease;
+  --rm-transition-normal: 0.25s ease;
+
+  --rm-grid-unit: 8px;
+  --rm-glass-bg: rgba(11, 15, 25, 0.85);
+  --rm-glass-border: rgba(51, 65, 85, 0.85);
+  --rm-badge-live: #10b981;
+  --rm-badge-hidden: #ef4444;
+
+  --rm-canvas-bg: #060913;
+  --rm-card-bg: linear-gradient(180deg, rgba(24, 33, 47, 0.94) 0%, rgba(11, 17, 30, 0.98) 100%);
+  --rm-cyan: #38bdf8;
+  --rm-emerald: #10b981;
+  --rm-emerald-glow: #34d399;
+  --rm-slate-sub: #94a3b8;
 }
 
-body {
-  background-color: #030712;
-  color: #f8fafc;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  touch-action: manipulation;
-  -webkit-user-select: none;
-  user-select: none;
+/* Light Theme Tokens */
+html[data-theme="light"] {
+  --rm-bg-primary: #ffffff;
+  --rm-bg-secondary: #f8fafc;
+  --rm-bg-card: #f1f5f9;
+  --rm-text-primary: #0f172a;
+  --rm-text-secondary: #475569;
+  --rm-text-muted: #64748b;
+  --rm-border-color: #cbd5e1;
+  --rm-brand-accent: #2563eb;
+  --rm-brand-accent-hover: #1d4ed8;
+  --rm-badge-bg: #dcfce7;
+  --rm-badge-text: #166534;
+  --rm-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
-input, textarea {
-  -webkit-user-select: text !important;
-  user-select: text !important;
+/* Dark Theme Tokens (OLED Dark #030712 / #0f172a) */
+html[data-theme="dark"], html.dark {
+  --rm-bg-primary: #030712;
+  --rm-bg-secondary: #0b0f19;
+  --rm-bg-card: #111827;
+  --rm-text-primary: #f8fafc;
+  --rm-text-secondary: #cbd5e1;
+  --rm-text-muted: #94a3b8;
+  --rm-border-color: #334155;
+  --rm-brand-accent: #10b981;
+  --rm-brand-accent-hover: #059669;
+  --rm-badge-bg: #064e3b;
+  --rm-badge-text: #a7f3d0;
+  --rm-card-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* 2.5D Tactile Elevation Tokens (EL-UX-ELEVATION-25D) */
+/* ==========================================================================
+   PART 3: 2.5D TACTILE ELEVATION & LAYOUT COMPONENTS (layout.css ZEL)
+   ========================================================================== */
+
 .tactile-25d {
   position: relative;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
@@ -121,12 +212,17 @@ input, textarea {
               0 2px 6px rgba(0, 0, 0, 0.40) !important;
 }
 
-/* High-Contrast Luminous Active Ring (EL-UX-LUMINOUS-AURA) */
 .ring-active-luminous {
   border: 2px solid #34d399 !important;
   box-shadow: 0 0 14px -1px rgba(16, 185, 129, 0.45),
               inset 0 1px 0 rgba(255, 255, 255, 0.20) !important;
   background: linear-gradient(135deg, rgba(6, 78, 59, 0.35) 0%, rgba(11, 15, 25, 0.95) 100%) !important;
+}
+
+.rm-solid-panel {
+  border: 1px solid rgba(51, 65, 85, 0.85) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.45) !important;
 }
 
 .wallet-card {
@@ -157,7 +253,84 @@ input, textarea {
   50% { opacity: 0.4; transform: scale(1.15); }
 }
 
-/* Shared subcategory hierarchy guides */
+/* Layout Blueprint Classes (layout.css) */
+.rm-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  min-height: var(--rm-header-height);
+  background-color: var(--rm-bg-primary);
+  border-bottom: 1px solid var(--rm-border-color);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+}
+
+.rm-header-inner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.rm-user-identity { flex-shrink: 0; }
+.rm-user-badge {
+  font-size: 0.75rem;
+  font-family: monospace;
+  font-weight: 600;
+  padding: 0.35rem 0.6rem;
+  background: var(--rm-bg-card);
+  border: 1px solid var(--rm-border-color);
+  border-radius: var(--rm-radius-sm);
+  color: var(--rm-text-secondary);
+}
+
+.rm-main {
+  flex: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 1rem calc(var(--rm-bottom-bar-height) + 1.5rem) 1rem;
+}
+
+.rm-card {
+  background: var(--rm-bg-secondary);
+  border: 1px solid var(--rm-border-color);
+  border-radius: var(--rm-radius-lg);
+  padding: 1.25rem;
+  box-shadow: var(--rm-card-shadow);
+  margin-bottom: 1.25rem;
+}
+
+.rm-grid-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.rm-action-tile {
+  background: var(--rm-bg-card);
+  border: 1px solid var(--rm-border-color);
+  border-radius: var(--rm-radius-md);
+  padding: 1.25rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--rm-text-primary);
+  transition: transform var(--rm-transition-fast);
+}
+
+.rm-tile-icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
+.rm-tile-label { font-size: 0.95rem; font-weight: 600; text-align: center; }
+
+/* Subcategory Guides */
 #categoryModal .rm-subcategory-list {
   --rm-guide-color: #526b78;
   --rm-guide-offset: 12px;
@@ -187,13 +360,8 @@ input, textarea {
   pointer-events: none;
 }
 
-#categoryModal .rm-subcategory-list > div:first-child::before {
-  top: -9px;
-}
-
-#categoryModal .rm-subcategory-list > div:last-child::before {
-  bottom: 50%;
-}
+#categoryModal .rm-subcategory-list > div:first-child::before { top: -9px; }
+#categoryModal .rm-subcategory-list > div:last-child::before { bottom: 50%; }
 
 #categoryModal .rm-subcategory-list > div::after {
   content: "";
@@ -206,50 +374,15 @@ input, textarea {
   pointer-events: none;
 }
 
-#categoryModal .rm-subcategory-list > div > div {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-#categoryModal .rm-subcategory-list > div > div > span:first-child {
-  flex-shrink: 0;
-}
-
-#categoryModal .rm-subcategory-list > div > div > span:last-child {
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-#categoryModal .rm-subcategory-list > div > span {
-  flex: 0 0 auto;
-  margin-left: 8px;
-}
-
-@media (forced-colors: active) {
-  #categoryModal .rm-subcategory-list {
-    --rm-guide-color: CanvasText;
-  }
-}
+#categoryModal .rm-subcategory-list > div > div { flex: 1 1 auto; min-width: 0; }
+#categoryModal .rm-subcategory-list > div > div > span:first-child { flex-shrink: 0; }
+#categoryModal .rm-subcategory-list > div > div > span:last-child { min-width: 0; overflow-wrap: anywhere; }
+#categoryModal .rm-subcategory-list > div > span { flex: 0 0 auto; margin-left: 8px; }
 
 /* ==========================================================================
-   PART 3: MASTER DESIGN TOKENS, SIVME GUARDS & CANONICAL LAYOUT
+   PART 4: SIVME VISUAL GUARDS & CATEGORY-16 ISOLATION
    ========================================================================== */
 
-:root {
-  --rm-canvas-bg: #060913;
-  --rm-card-bg: linear-gradient(180deg, rgba(24, 33, 47, 0.94) 0%, rgba(11, 17, 30, 0.98) 100%);
-  --rm-cyan: #38bdf8;
-  --rm-emerald: #10b981;
-  --rm-emerald-glow: #34d399;
-  --rm-slate-sub: #94a3b8;
-  --rm-grid-unit: 8px;
-  --rm-glass-bg: rgba(11, 15, 25, 0.85);
-  --rm-glass-border: rgba(51, 65, 85, 0.85);
-  --rm-badge-live: #10b981;
-  --rm-badge-hidden: #ef4444;
-}
-
-/* Category-16 Clean Container Isolation */
 #sub-c16, [id^="sub-c16"], .sivme-subcat-container {
   border-left: none !important;
   padding-left: 0 !important;
@@ -289,7 +422,6 @@ input, textarea {
   align-items: center !important;
 }
 
-/* SIVME Badge Containment Boundary */
 #categoryModal [data-cat-id],
 .category-card-wrapper,
 .catalog-item-container {
@@ -320,29 +452,9 @@ input, textarea {
   pointer-events: auto !important;
   opacity: 1 !important;
   white-space: nowrap !important;
-  writing-mode: horizontal-tb !important;
   width: max-content !important;
   box-sizing: border-box !important;
   line-height: 1.2 !important;
-}
-
-.sivme-inline-badge::before {
-  content: '' !important;
-  position: absolute !important;
-  top: -8px !important;
-  bottom: -8px !important;
-  left: -10px !important;
-  right: -10px !important;
-  z-index: 1 !important;
-}
-
-.sivme-inline-badge * {
-  pointer-events: none !important;
-  white-space: nowrap !important;
-}
-
-.sivme-inline-badge:active {
-  transform: scale(0.92) !important;
 }
 
 .sivme-badge-live {
@@ -362,34 +474,10 @@ input, textarea {
   border: 2px dashed #ef4444 !important;
   border-radius: 14px !important;
   position: relative !important;
-  background: repeating-linear-gradient(
-    -45deg,
-    rgba(239, 68, 68, 0.12),
-    rgba(239, 68, 68, 0.12) 10px,
-    transparent 10px,
-    transparent 20px
-  ) !important;
-  cursor: pointer !important;
 }
 
-.sivme-ghost-dormant > *:not(.sivme-inline-badge) {
-  opacity: 0.32 !important;
-  filter: grayscale(85%) !important;
-  pointer-events: none !important;
-}
+.sivme-public-hidden { display: none !important; }
 
-.sivme-public-hidden {
-  display: none !important;
-}
-
-/* Single Category Dormant Rows Pointer Lock (Cat 16 completely unlocked) */
-#categoryModal [data-cat-id]:not([data-cat-id="c16"]).sivme-ghost-dormant > *:not(.sivme-inline-badge) {
-  opacity: 0.55 !important;
-  filter: grayscale(50%) !important;
-  pointer-events: none !important;
-}
-
-/* Category 16 Accordion & All Sub-cards MUST ALWAYS have active touch pointers */
 #categoryModal [data-cat-id="c16"],
 #categoryModal [data-cat-id="c16"] *,
 #sub-c16,
@@ -397,7 +485,6 @@ input, textarea {
   pointer-events: auto !important;
 }
 
-/* Category-16 Sub-Card Ergonomics & Height Lock */
 .c16-subcard-clean {
   min-height: 108px !important;
   display: flex !important;
@@ -406,86 +493,38 @@ input, textarea {
   position: relative !important;
 }
 
-/* 2.5D Tactile Sub-Services (Category 16) */
 #sub-c16 > div {
   min-height: 60px !important;
-  padding: 18px 14px 12px 14px !important;
-  margin-bottom: 14px !important;
+  padding: 16px 14px !important;
+  margin-bottom: 12px !important;
   border-radius: 12px !important;
   position: relative !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  overflow: visible !important;
   box-sizing: border-box !important;
-  pointer-events: auto !important;
-  cursor: pointer !important;
   background: linear-gradient(180deg, rgba(24, 33, 47, 0.85) 0%, rgba(11, 17, 30, 0.95) 100%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.06) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.16) !important;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-  transition: transform 0.12s ease, box-shadow 0.12s ease !important;
-}
-
-#sub-c16 > div:active {
-  transform: translateY(1.5px) !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.75), inset 0 2px 3px rgba(0, 0, 0, 0.45) !important;
-}
-
-#sub-c16 > div .sivme-inline-badge {
-  top: -9px !important;
-  left: 14px !important;
-  right: auto !important;
-}
-
-/* Category 16 Accordion Parent Container */
-#categoryModal [data-cat-id="c16"] {
-  display: block !important;
-  min-height: auto !important;
-  margin-top: 18px !important;
-  margin-bottom: 24px !important;
-  position: relative !important;
-  box-sizing: border-box !important;
-  overflow: visible !important;
-}
-
-#categoryModal [data-cat-id="c16"] > div:first-child {
-  cursor: pointer !important;
-  user-select: none !important;
-}
-
-#sub-c16 {
-  width: 100% !important;
-  margin-top: 14px !important;
-  overflow: visible !important;
-  pointer-events: auto !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 #sub-c16.hidden,
 #sub-c16[style*="display: none"],
-#sub-c16.sivme-collapsed {
-  display: none !important;
-}
+#sub-c16.sivme-collapsed { display: none !important; }
+#sub-c16:not(.hidden):not([style*="display: none"]):not(.sivme-collapsed) { display: block !important; }
 
-#sub-c16:not(.hidden):not([style*="display: none"]):not(.sivme-collapsed) {
-  display: block !important;
-}
-
-/* Clean 2-Tier Bilingual Typography */
+/* 2-Tier Bilingual Typography */
 .cat-bilingual-title {
   display: flex !important;
   flex-direction: column !important;
   justify-content: center !important;
   line-height: 1.3 !important;
 }
-
 .cat-bilingual-en {
   font-size: 14px !important;
   font-weight: 700 !important;
   color: #f8fafc !important;
   letter-spacing: -0.01em !important;
 }
-
 .cat-bilingual-hi {
   font-size: 11.5px !important;
   font-weight: 500 !important;
@@ -493,142 +532,9 @@ input, textarea {
   margin-top: 1px !important;
 }
 
-/* Section Headers Clearance & 2.5D Recessed Pill */
-.sivme-catalog-section-header {
-  margin-top: 28px !important;
-  margin-bottom: 24px !important;
-  position: relative !important;
-  z-index: 10 !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
-}
-
-#categoryModal > div > div > button:first-of-type,
-#categoryModal .sivme-first-header {
-  margin-top: 14px !important;
-  margin-bottom: 24px !important;
-}
-
 /* ==========================================================================
-   NATURAL HEIGHT & 2.5D GEOMETRY (ZERO-OVERLAP FIX)
-   ========================================================================== */
-#categoryModal [data-cat-id]:not([data-cat-id="c16"]),
-#categoryModal [data-cat-id="c16"] > div:first-child {
-  min-height: 72px !important;
-  height: auto !important; /* CRITICAL FIX: Eliminates card overlapping */
-  padding: 18px 14px !important;
-  border-radius: 14px !important;
-  position: relative !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  box-sizing: border-box !important;
-  overflow: visible !important;
-  width: 100% !important;
-  background: linear-gradient(180deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.98) 100%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.22) !important;
-  box-shadow: 0 6px 16px -2px rgba(0, 0, 0, 0.75), 0 2px 4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
-  transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.12s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-#categoryModal [data-cat-id]:not([data-cat-id="c16"]):active,
-#categoryModal [data-cat-id="c16"] > div:first-child:active {
-  transform: translateY(1.5px) !important;
-  box-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.85), inset 0 2px 4px rgba(0, 0, 0, 0.5) !important;
-}
-
-#categoryModal [data-cat-id]:not([data-cat-id="c16"]) {
-  margin-bottom: 18px !important;
-}
-
-#categoryModal [data-cat-id] > div:first-child > div:first-child,
-#categoryModal [data-cat-id]:not([data-cat-id="c16"]) > div:first-child {
-  min-width: 0 !important;
-  flex: 1 1 auto !important;
-  padding-right: 12px !important;
-}
-
-#categoryModal [data-cat-id] .text-xs,
-#categoryModal [data-cat-id] .font-bold,
-#categoryModal [data-cat-id] span,
-#categoryModal [data-cat-id] div,
-#sub-c16 * {
-  line-height: 1.5 !important;
-  overflow: visible !important;
-}
-
-#categoryModal [data-cat-id] button,
-#categoryModal [data-cat-id] a,
-#categoryModal [data-cat-id] .text-cyan-400,
-#categoryModal [data-cat-id] .text-emerald-400,
-#categoryModal [data-cat-id] .text-slate-400,
-#sub-c16 button,
-#sub-c16 a,
-#sub-c16 span {
-  white-space: nowrap !important;
-  word-break: keep-all !important;
-  flex-shrink: 0 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 3px !important;
-}
-
-#categoryModal .overflow-y-auto,
-#categoryModal > div > div:last-child {
-  padding-top: 14px !important;
-  padding-bottom: 120px !important;
-}
-
-/* Universal Anti-Dashed Ban */
-*, *::before, *::after {
-  outline: none !important;
-}
-
-[style*="dashed"]:not(.sivme-ghost-dormant),
-[class*="dashed"]:not(.sivme-ghost-dormant),
-.sivme-tracked-live,
-.sivme-tracked-hidden,
-[data-sivme-status],
-[data-sivme-id] {
-  border-style: solid !important;
-  outline: none !important;
-  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.45) !important;
-}
-
-/* Universal Radar & Overlap Suppression */
-[class*="radar"],
-[class*="ripple"],
-.sivme-radar-ring,
-.sivme-ripple,
-.sivme-radar-layer,
-div[style*="border-radius: 50%"][style*="border:"] {
-  display: none !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-}
-
-/* In-Situ Docks Suppression & Layout */
-#sivmeFloatingDock {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-}
-
-#rm-master-insitu-dock {
-  position: fixed !important;
-  bottom: 68px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  z-index: 50 !important;
-  display: flex !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
-}
-
-/* ==========================================================================
-   PART 4: CANONICAL 100% TOP-ANCHORED FULLSCREEN CATALOG & 0MS CLOSE LOCK
-   Fixes Bottom-Sheet artifact AND Cross (✕) Close Failure
+   PART 5: CANONICAL 100% TOP-ANCHORED FULLSCREEN CATALOG & ZERO-OVERLAP FLOW
+   (Fixes Card Overlap Bug AND Cross ✕ Close Failure)
    ========================================================================== */
 
 #categoryModal {
@@ -647,7 +553,7 @@ div[style*="border-radius: 50%"][style*="border:"] {
   overflow: hidden !important;
 }
 
-/* 1. GUARANTEED CLOSE: Cross (✕) dabane par modal turant 0ms me gayab hoga */
+/* 1. GUARANTEED 0MS CLOSE: Cross (✕) ya backdrop par tap karte hi modal turant gayab hoga */
 #categoryModal.hidden,
 #categoryModal[style*="display: none"],
 #categoryModal[aria-hidden="true"] {
@@ -657,7 +563,7 @@ div[style*="border-radius: 50%"][style*="border:"] {
   pointer-events: none !important;
 }
 
-/* 2. OPEN STATE: Fullscreen Top-Anchored Flex Container */
+/* 2. OPEN STATE: Fullscreen Container */
 #categoryModal:not(.hidden):not([style*="display: none"]):not([aria-hidden="true"]) {
   display: flex !important;
   flex-direction: column !important;
@@ -682,4 +588,52 @@ div[style*="border-radius: 50%"][style*="border:"] {
   display: flex !important;
   flex-direction: column !important;
   box-shadow: none !important;
+}
+
+/* 3. ZERO-OVERLAP: Cards Natural Auto-Height Flow */
+#categoryModal [data-cat-id],
+#categoryModal .category-card,
+.category-card-wrapper {
+  display: block !important;
+  position: relative !important;
+  height: auto !important;
+  min-height: min-content !important;
+  width: 100% !important;
+  margin-top: 14px !important;
+  margin-bottom: 20px !important;
+  clear: both !important;
+  float: none !important;
+  transform: none !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+}
+
+/* Anti-Dashed Ban */
+[style*="dashed"]:not(.sivme-ghost-dormant),
+[class*="dashed"]:not(.sivme-ghost-dormant) {
+  border-style: solid !important;
+  outline: none !important;
+}
+
+/* Radar & duplicate dock suppression */
+[class*="radar"],
+[class*="ripple"],
+.sivme-radar-ring,
+.sivme-ripple,
+.sivme-radar-layer,
+#sivmeFloatingDock {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+#rm-master-insitu-dock {
+  position: fixed !important;
+  bottom: 68px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 50 !important;
+  display: flex !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
