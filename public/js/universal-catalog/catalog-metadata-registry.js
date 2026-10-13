@@ -156,12 +156,16 @@
   }
 
   // ==============================================================================
-  // 4. MICRO-BATCH EXTENSION LOADER (100% REPO-SYNCED - ATOMIC 16 TO 20 WIRED)
+  // 4. MICRO-BATCH EXTENSION LOADER (100% ATOMIC MODULES 11-20 WIRED)
   // ==============================================================================
 
   var extBatches = [
     'ext-batch-01-10.js',
-    'ext-batch-11-15.js',
+    'ext-cat-11.js',
+    'ext-cat-12.js',
+    'ext-cat-13.js',
+    'ext-cat-14.js',
+    'ext-cat-15.js',
     'ext-cat-16.js',
     'ext-cat-17.js',
     'ext-cat-18.js',
