@@ -538,11 +538,24 @@
         { text: '🔊 20-2: जेबीएल डबल बेस स्पीकर, शार्पी लाइट व फॉग मशीन', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.14)' },
         { text: '🪕 20-3: हारमोनियम ट्यूनिंग, तबला-ढोलक चमड़ा व गायन क्लास', color: '#34d399', bg: 'rgba(52, 211, 153, 0.14)' }
       ]
+    },
+
+    // CANONICAL SLOT 33: ACTION GAMES (OFFICIAL PLAY STORE GAME CANONICAL #1)
+    '33': {
+      id: 'c33', catId: '33', num: '33.', number: '33.', icon: '🎯',
+      title: 'Action', category_name_en: 'Action', category_name_hi: 'एक्शन गेम्स, ई-स्पोर्ट्स व गेमिंग पार्लर',
+      subtitle: 'PS5/PC गेमिंग पार्लर, ई-स्पोर्ट्स टूर्नामेंट व लेजर टैग एरीना',
+      rating: '★ 4.9 (48k+ गेमर्स)', trustBadge: 'Tournament Certified', supportBadge: 'लो-पिंग गेमिंग जोन',
+      macroPillars: [
+        { text: '🎮 33-1: PS5 व हाई-एंड पीसी गेमिंग पार्लर स्लॉट बुकिंग', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.14)' },
+        { text: '🏆 33-2: मोहल्ला/जिला ई-स्पोर्ट्स बैटल पास व नकद पुरस्कार लीग', color: '#facc15', bg: 'rgba(250, 204, 21, 0.14)' },
+        { text: '🔫 33-3: आउटडोर लेजर टैग एरीना व पार्टी एक्शन गेम सेटअप', color: '#34d399', bg: 'rgba(52, 211, 153, 0.14)' }
+      ]
     }
   };
 
   // MULTI-KEY ALIAS INJECTION ('c11', '011', etc.)
-  ['1', '2', '3', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20'].forEach(function (num) {
+  ['1', '2', '3', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '33'].forEach(function (num) {
     var item = RM_CATALOG_REGISTRY[num];
     if (item) {
       RM_CATALOG_REGISTRY['c' + num] = item;
@@ -585,7 +598,7 @@
     },
 
     registerBatch: function (batchData) {
-      if (typeof batchData === 'object') {
+      if (typeof batchData === 'object' && batchData !== null) {
         Object.assign(RM_CATALOG_REGISTRY, batchData);
 
         // Enforce Canonical Invariants (Cat 14, 15, 16)
@@ -608,7 +621,7 @@
   };
 
   // ==============================================================================
-  // 4. REAL-TIME DOM TITLE PURGE HOOK (PURGES "Category 11." ON SCREEN)
+  // 4. REAL-TIME DOM TITLE PURGE HOOK (PURGES FALLBACK TEXT AUTOMATICALLY)
   // ==============================================================================
 
   function enforcePlayStoreTitlesInDOM() {
@@ -621,7 +634,7 @@
         if (match) num = match[1];
       }
       var intNum = String(parseInt(num, 10));
-      var canonical = RM_CATALOG_REGISTRY[intNum];
+      var canonical = window.RM_CATALOG_REGISTRY.getCategoryData(intNum);
       if (canonical) {
         var titleEl = card.querySelector('h3, .category-title, .font-bold.text-lg, .text-xl');
         if (titleEl && (titleEl.textContent.indexOf('Category') !== -1 || titleEl.textContent.trim().length <= 4)) {
@@ -655,7 +668,7 @@
   }
 
   // ==============================================================================
-  // 5. EXTENSION MICRO-BATCH LOADER
+  // 5. EXTENSION MICRO-BATCH LOADER (OFFICIAL MODULAR WIRING)
   // ==============================================================================
 
   var extBatches = [
@@ -663,7 +676,8 @@
     'ext-batch-11-15.js',
     'ext-batch-16-20.js',
     'ext-batch-21-30.js',
-    'ext-batch-31-40.js',
+    'ext-batch-31-35.js',
+    'ext-batch-36-40.js',
     'ext-batch-41-50.js'
   ];
 
