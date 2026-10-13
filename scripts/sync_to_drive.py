@@ -934,9 +934,10 @@ def get_drive_service():
         )
     )
 
+    # 60s timeout for streaming larger snapshot files stably
     http = google_auth_httplib2.AuthorizedHttp(
         credentials,
-        http=httplib2.Http(timeout=30),
+        http=httplib2.Http(timeout=60),
     )
 
     return build(
@@ -955,6 +956,7 @@ def target_metadata(service):
         'E_FOLDER_CONFIGURATION',
     )
 
+    # Autonomous retry guard: 3 retries against transient API dropouts
     metadata = service.files().get(
         fileId=TARGET_FILE_ID,
         fields=(
@@ -962,7 +964,7 @@ def target_metadata(service):
             'trashed,capabilities(canEdit)'
         ),
         supportsAllDrives=True,
-    ).execute()
+    ).execute(num_retries=3)
 
     require(
         not metadata.get('trashed'),
@@ -1030,12 +1032,13 @@ def update_drive_snapshot(service, destination, identity):
         flush=True,
     )
 
+    # Autonomous auto-retry: 3 retries on transient network/API backend drops
     service.files().update(
         fileId=TARGET_FILE_ID,
         media_body=media,
         fields='id,name,modifiedTime',
         supportsAllDrives=True,
-    ).execute()
+    ).execute(num_retries=3)
 
     buffer = io.BytesIO()
 
@@ -1054,7 +1057,7 @@ def update_drive_snapshot(service, destination, identity):
 
     while not done:
         _, done = downloader.next_chunk(
-            num_retries=2
+            num_retries=3
         )
 
         require(
