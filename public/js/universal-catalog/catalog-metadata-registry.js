@@ -156,13 +156,17 @@
   }
 
   // ==============================================================================
-  // 4. MICRO-BATCH EXTENSION LOADER (8 PARALLEL ASYNC EXTENSIONS - ALL 50 CATS)
+  // 4. MICRO-BATCH EXTENSION LOADER (100% REPO-SYNCED - ATOMIC 16 TO 20 WIRED)
   // ==============================================================================
 
   var extBatches = [
     'ext-batch-01-10.js',
     'ext-batch-11-15.js',
-    'ext-batch-16-20.js',
+    'ext-cat-16.js',
+    'ext-cat-17.js',
+    'ext-cat-18.js',
+    'ext-cat-19.js',
+    'ext-cat-20.js',
     'ext-batch-21-30.js',
     'ext-batch-31-35.js',
     'ext-batch-36-40.js',
