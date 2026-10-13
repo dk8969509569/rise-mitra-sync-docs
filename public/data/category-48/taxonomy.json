@@ -1,41 +1,44 @@
 {
   "category_id": 48,
   "category_code": "48",
-  "category_slug": "game-strategy",
-  "category_name_en": "Strategy Games",
-  "category_name_hi": "चाणक्य नीति",
+  "category_slug": "game-trivia",
+  "category_name_en": "Trivia Games",
+  "category_name_hi": "लाइव क्विज व जीके बुक्स",
   "sub_categories": [
     {
       "sub_code": "48-1",
-      "slug": "general-listings",
-      "name_en": "Primary Strategy Games",
-      "name_hi": "मुख्य चाणक्य नीति",
+      "slug": "live-buzzer-round-quiz-pass",
+      "name_en": "Live Buzzer Round Quiz Pass",
+      "name_hi": "लाइव बजर राउंड पोडियम क्विज पास",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Buzzer Round",
+        "Live Quiz",
+        "Podium"
       ]
     },
     {
       "sub_code": "48-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Strategy Games",
-      "name_hi": "विशेष चाणक्य नीति",
+      "slug": "saturday-cash-prize-trivia",
+      "name_en": "Saturday Cash Prize Trivia",
+      "name_hi": "शनिवार शाम नकद पुरस्कार प्रश्नोत्तरी",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Cash Trivia",
+        "Saturday",
+        "Prize"
       ]
     },
     {
-      "sub_code": "48-N",
-      "slug": "other-services",
-      "name_en": "Other Strategy Games",
-      "name_hi": "अन्य चाणक्य नीति",
+      "sub_code": "48-3",
+      "slug": "5000-gk-question-booklets",
+      "name_en": "5000 GK Question Booklets",
+      "name_hi": "5000 सामान्य ज्ञान प्रश्नोत्तर बुकलेट",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "GK Booklets",
+        "5000 Q&A",
+        "Current Affairs"
       ]
     }
   ]

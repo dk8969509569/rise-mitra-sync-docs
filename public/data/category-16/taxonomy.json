@@ -1,45 +1,44 @@
 {
   "category_id": 16,
   "category_code": "16",
-  "category_slug": "house-and-home",
-  "category_name_en": "House & Home",
-  "category_name_hi": "घर व मकान",
+  "category_slug": "libraries-and-demo",
+  "category_name_en": "Libraries & Demo",
+  "category_name_hi": "लाइब्रेरी व अध्ययन डेस्क",
   "sub_categories": [
     {
       "sub_code": "16-1",
-      "slug": "home-repair-mistri",
-      "name_en": "Home Repair & Mistri",
-      "name_hi": "मिस्त्री व गृह मरम्मत",
+      "slug": "ac-study-library-seat",
+      "name_en": "AC Study Library Seat",
+      "name_hi": "शांत एसी स्टडी लाइब्रेरी सीट",
       "filter_chips": [
         "Sabhi",
-        "Plumber",
-        "Electrician",
-        "Carpenter"
+        "AC Seat",
+        "WiFi",
+        "24x7"
       ]
     },
     {
       "sub_code": "16-2",
-      "slug": "rental-ledger",
-      "name_en": "Rental Ledger & Accounts",
-      "name_hi": "किराया बहीखाता",
+      "slug": "old-books-buy-sell",
+      "name_en": "Old Books Buy/Sell Market",
+      "name_hi": "प्रतियोगी पुरानी किताबें बाज़ार",
       "filter_chips": [
         "Sabhi",
-        "Daily Ledger",
-        "Monthly Lease",
-        "Security Deposit"
+        "Old Books",
+        "UPSC",
+        "SSC"
       ]
     },
     {
       "sub_code": "16-3",
-      "slug": "rental-search",
-      "name_en": "Room & Flat Search",
-      "name_hi": "कमरा व फ्लैट खोज",
+      "slug": "bulk-school-stationery",
+      "name_en": "Bulk School Stationery",
+      "name_hi": "थोक स्कूल व प्रतियोगी स्टेशनरी",
       "filter_chips": [
         "Sabhi",
-        "1 BHK",
-        "2 BHK",
-        "Single Room",
-        "Commercial"
+        "Notebooks",
+        "Pens",
+        "Mill Rate"
       ]
     }
   ]

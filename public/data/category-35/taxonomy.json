@@ -1,41 +1,44 @@
 {
   "category_id": 35,
   "category_code": "35",
-  "category_slug": "game-adventure",
-  "category_name_en": "Adventure Games",
-  "category_name_hi": "रोमांचक यात्रा",
+  "category_slug": "game-arcade",
+  "category_name_en": "Arcade Games",
+  "category_name_hi": "मेला झूले व आर्केड जोन",
   "sub_categories": [
     {
       "sub_code": "35-1",
-      "slug": "general-listings",
-      "name_en": "Primary Adventure Games",
-      "name_hi": "मुख्य रोमांचक यात्रा",
+      "slug": "mela-jhoola-dragon-train",
+      "name_en": "Mela Jhoola & Dragon Train",
+      "name_hi": "मेला ब्रेकडांस झूला व ड्रैगन ट्रेन पास",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Jhoola",
+        "Dragon Train",
+        "Mela Pass"
       ]
     },
     {
       "sub_code": "35-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Adventure Games",
-      "name_hi": "विशेष रोमांचक यात्रा",
+      "slug": "arcade-center-token-packs",
+      "name_en": "Arcade Center Token Packs",
+      "name_hi": "मॉल गेमिंग जोन सिक्के (टोकन) पैक",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Tokens",
+        "Gaming Zone",
+        "Bonus"
       ]
     },
     {
-      "sub_code": "35-N",
-      "slug": "other-services",
-      "name_en": "Other Adventure Games",
-      "name_hi": "अन्य रोमांचक यात्रा",
+      "sub_code": "35-3",
+      "slug": "party-bouncy-air-hockey",
+      "name_en": "Party Bouncy & Air Hockey",
+      "name_hi": "बर्थडे पार्टी बाउंसिंग झूला व एयर हॉकी",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Bouncy",
+        "Air Hockey",
+        "Party Rental"
       ]
     }
   ]

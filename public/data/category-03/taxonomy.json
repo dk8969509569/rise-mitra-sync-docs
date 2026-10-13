@@ -2,40 +2,43 @@
   "category_id": 3,
   "category_code": "03",
   "category_slug": "beauty",
-  "category_name_en": "Beauty & Salon",
-  "category_name_hi": "ब्यूटी व सैलून",
+  "category_name_en": "Beauty",
+  "category_name_hi": "ब्यूटी व ग्रूमिंग",
   "sub_categories": [
     {
-      "sub_code": "3-1",
-      "slug": "general-listings",
-      "name_en": "Primary Beauty & Salon",
-      "name_hi": "मुख्य ब्यूटी व सैलून",
+      "sub_code": "03-1",
+      "slug": "salon-at-home-ladies",
+      "name_en": "Salon at Home (Ladies Only)",
+      "name_hi": "घर पर सैलून सेवा (महिलाएँ)",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Facial",
+        "Waxing",
+        "Hair Spa"
       ]
     },
     {
-      "sub_code": "3-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Beauty & Salon",
-      "name_hi": "विशेष ब्यूटी व सैलून",
+      "sub_code": "03-2",
+      "slug": "bridal-makeup-mehndi",
+      "name_en": "Bridal Makeup & Mehndi",
+      "name_hi": "ब्राइडल मेकअप व दुल्हन मेहंदी",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Bridal Makeup",
+        "Mehndi",
+        "Package"
       ]
     },
     {
-      "sub_code": "3-N",
-      "slug": "other-services",
-      "name_en": "Other Beauty & Salon",
-      "name_hi": "अन्य ब्यूटी व सैलून",
+      "sub_code": "03-3",
+      "slug": "men-grooming-barber",
+      "name_en": "Men Grooming & Barber",
+      "name_hi": "मेंस ग्रूमिंग व सैलून",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Haircut",
+        "Shave",
+        "Grooming"
       ]
     }
   ]

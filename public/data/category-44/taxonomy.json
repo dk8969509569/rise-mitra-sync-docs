@@ -1,41 +1,44 @@
 {
   "category_id": 44,
   "category_code": "44",
-  "category_slug": "game-racing",
-  "category_name_en": "Racing Games",
-  "category_name_hi": "बैलगाड़ी रेस",
+  "category_slug": "game-role-playing",
+  "category_name_en": "Role Playing Games",
+  "category_name_hi": "रामलीला व नाटक वेशभूषा",
   "sub_categories": [
     {
       "sub_code": "44-1",
-      "slug": "general-listings",
-      "name_en": "Primary Racing Games",
-      "name_hi": "मुख्य बैलगाड़ी रेस",
+      "slug": "ramlila-character-auditions",
+      "name_en": "Ramlila Character Auditions",
+      "name_hi": "रामलीला व ऐतिहासिक नाटक पात्र चयन",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Ramlila",
+        "Auditions",
+        "Drama"
       ]
     },
     {
       "sub_code": "44-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Racing Games",
-      "name_hi": "विशेष बैलगाड़ी रेस",
+      "slug": "historical-costume-rental",
+      "name_en": "Historical Costume Rental",
+      "name_hi": "राजा, मुकुट, तलवार व नाटक पोशाक किराया",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Costumes",
+        "Crown",
+        "Props"
       ]
     },
     {
-      "sub_code": "44-N",
-      "slug": "other-services",
-      "name_en": "Other Racing Games",
-      "name_hi": "अन्य बैलगाड़ी रेस",
+      "sub_code": "44-3",
+      "slug": "professional-nukkad-natak",
+      "name_en": "Professional Nukkad Natak",
+      "name_hi": "जागरूकता अभियान पेशेवर नुक्कड़ नाटक",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Nukkad Natak",
+        "Folk Drama",
+        "Awareness"
       ]
     }
   ]

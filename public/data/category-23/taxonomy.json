@@ -1,41 +1,44 @@
 {
   "category_id": 23,
   "category_code": "23",
-  "category_slug": "parenting",
-  "category_name_en": "Parenting & Child Care",
-  "category_name_hi": "शिशु पोषण",
+  "category_slug": "personalization",
+  "category_name_en": "Personalization",
+  "category_name_hi": "कस्टमाइजेशन व स्किन",
   "sub_categories": [
     {
       "sub_code": "23-1",
-      "slug": "general-listings",
-      "name_en": "Primary Parenting & Child Care",
-      "name_hi": "मुख्य शिशु पोषण",
+      "slug": "mobile-skins-uv-glass",
+      "name_en": "Mobile Skins & UV Glass",
+      "name_hi": "मोबाइल 360° स्किन व यूवी ग्लास",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Mobile Skin",
+        "UV Glass",
+        "Back Cover"
       ]
     },
     {
       "sub_code": "23-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Parenting & Child Care",
-      "name_hi": "विशेष शिशु पोषण",
+      "slug": "customized-photo-gifts",
+      "name_en": "Customized Photo Gifts",
+      "name_hi": "फोटो मग, कुशन व एलईडी फ्रेम",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Photo Mug",
+        "Frame",
+        "Gifts"
       ]
     },
     {
-      "sub_code": "23-N",
-      "slug": "other-services",
-      "name_en": "Other Parenting & Child Care",
-      "name_hi": "अन्य शिशु पोषण",
+      "sub_code": "23-3",
+      "slug": "vehicle-radium-plates",
+      "name_en": "Vehicle Radium & Plates",
+      "name_hi": "नंबर प्लेट फ्रेम व रेडियम कटिंग",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Number Plate",
+        "Radium",
+        "Sticker"
       ]
     }
   ]

@@ -1,41 +1,44 @@
 {
   "category_id": 8,
   "category_code": "08",
-  "category_slug": "dating-relations",
-  "category_name_en": "Relations & Social",
-  "category_name_hi": "रिश्ते व संबंध",
+  "category_slug": "dating-and-matrimony",
+  "category_name_en": "Dating & Matrimony",
+  "category_name_hi": "विवाह व रिश्ते",
   "sub_categories": [
     {
-      "sub_code": "8-1",
-      "slug": "general-listings",
-      "name_en": "Primary Relations & Social",
-      "name_hi": "मुख्य रिश्ते व संबंध",
+      "sub_code": "08-1",
+      "slug": "samajik-matrimony",
+      "name_en": "Samajik Matrimony",
+      "name_hi": "सत्यापित सामाजिक बायोडाटा",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Verified",
+        "Community",
+        "Biodata"
       ]
     },
     {
-      "sub_code": "8-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Relations & Social",
-      "name_hi": "विशेष रिश्ते व संबंध",
+      "sub_code": "08-2",
+      "slug": "kundali-milan-matching",
+      "name_en": "Kundali Milan & Matching",
+      "name_hi": "कुंडली मिलान व ज्योतिष परामर्श",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Kundali",
+        "36 Gun",
+        "Consult"
       ]
     },
     {
-      "sub_code": "8-N",
-      "slug": "other-services",
-      "name_en": "Other Relations & Social",
-      "name_hi": "अन्य रिश्ते व संबंध",
+      "sub_code": "08-3",
+      "slug": "vivah-madhyasth-network",
+      "name_en": "Vivah Madhyasth Network",
+      "name_hi": "विवाह मध्यस्थ व मैरिज ब्यूरो",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Madhyasth",
+        "Meeting",
+        "Bureau"
       ]
     }
   ]

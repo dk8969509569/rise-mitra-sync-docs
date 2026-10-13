@@ -1,41 +1,44 @@
 {
   "category_id": 24,
   "category_code": "24",
-  "category_slug": "personalization",
-  "category_name_en": "Themes & Customization",
-  "category_name_hi": "थीम्स",
+  "category_slug": "photography",
+  "category_name_en": "Photography",
+  "category_name_hi": "स्टूडियो व फोटोग्राफी",
   "sub_categories": [
     {
       "sub_code": "24-1",
-      "slug": "general-listings",
-      "name_en": "Primary Themes & Customization",
-      "name_hi": "मुख्य थीम्स",
+      "slug": "instant-passport-photos",
+      "name_en": "Instant Passport Photos",
+      "name_hi": "5-मिनट में तत्काल पासपोर्ट फोटो",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Passport Size",
+        "Instant",
+        "Print"
       ]
     },
     {
       "sub_code": "24-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Themes & Customization",
-      "name_hi": "विशेष थीम्स",
+      "slug": "shop-catalog-photo-shoot",
+      "name_en": "Shop Catalog Photo Shoot",
+      "name_hi": "दुकान सामान व कपड़ा स्टूडियो शूट",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Catalog Shoot",
+        "Studio",
+        "White BG"
       ]
     },
     {
-      "sub_code": "24-N",
-      "slug": "other-services",
-      "name_en": "Other Themes & Customization",
-      "name_hi": "अन्य थीम्स",
+      "sub_code": "24-3",
+      "slug": "event-videography",
+      "name_en": "Event Videography",
+      "name_hi": "मुंडन, जन्मदिन व उत्सव वीडियो मिक्सिंग",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Videography",
+        "HD Video",
+        "Mixing"
       ]
     }
   ]

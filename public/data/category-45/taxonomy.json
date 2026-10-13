@@ -1,41 +1,44 @@
 {
   "category_id": 45,
   "category_code": "45",
-  "category_slug": "game-role-playing",
-  "category_name_en": "Role Playing",
-  "category_name_hi": "गाँव का प्रधान",
+  "category_slug": "game-simulation",
+  "category_name_en": "Simulation Games",
+  "category_name_hi": "केबिन सिम्युलेटर व वीआर",
   "sub_categories": [
     {
       "sub_code": "45-1",
-      "slug": "general-listings",
-      "name_en": "Primary Role Playing",
-      "name_hi": "मुख्य गाँव का प्रधान",
+      "slug": "car-driving-cockpit-sim",
+      "name_en": "Car Driving Cockpit Sim",
+      "name_hi": "शून्य जोखिम कार ड्राइविंग केबिन सिम्युलेटर",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Car Sim",
+        "Steering",
+        "Traffic"
       ]
     },
     {
       "sub_code": "45-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Role Playing",
-      "name_hi": "विशेष गाँव का प्रधान",
+      "slug": "tractor-harvester-training",
+      "name_en": "Tractor & Harvester Training",
+      "name_hi": "खेत में ट्रैक्टर व हार्वेस्टर ड्राइविंग क्लास",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Tractor",
+        "Harvester",
+        "Vocational"
       ]
     },
     {
-      "sub_code": "45-N",
-      "slug": "other-services",
-      "name_en": "Other Role Playing",
-      "name_hi": "अन्य गाँव का प्रधान",
+      "sub_code": "45-3",
+      "slug": "9d-virtual-reality-vr-zone",
+      "name_en": "9D Virtual Reality (VR) Zone",
+      "name_hi": "360° मोशन चेयर रोलर कोस्टर वीआर राइड",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "9D VR",
+        "Roller Coaster",
+        "VR Ride"
       ]
     }
   ]

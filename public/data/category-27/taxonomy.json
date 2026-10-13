@@ -1,41 +1,44 @@
 {
   "category_id": 27,
   "category_code": "27",
-  "category_slug": "shopping",
-  "category_name_en": "Shopping & Store",
-  "category_name_hi": "0% किराना स्टोर",
+  "category_slug": "social",
+  "category_name_en": "Social",
+  "category_name_hi": "चौपाल व नागरिक मंच",
   "sub_categories": [
     {
       "sub_code": "27-1",
-      "slug": "general-listings",
-      "name_en": "Primary Shopping & Store",
-      "name_hi": "मुख्य 0% किराना स्टोर",
+      "slug": "mohalla-civic-complaint-board",
+      "name_en": "Mohalla Civic Complaint Board",
+      "name_hi": "वार्ड सड़क, नाली व लाइट सुधार मंच",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Civic",
+        "Ward",
+        "Complaints"
       ]
     },
     {
       "sub_code": "27-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Shopping & Store",
-      "name_hi": "विशेष 0% किराना स्टोर",
+      "slug": "kisan-trader-union-forum",
+      "name_en": "Kisan & Trader Union Forum",
+      "name_hi": "किसान खाद-बीज व मंडी सहयोग मंच",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Kisan Forum",
+        "Mandi",
+        "Seeds"
       ]
     },
     {
-      "sub_code": "27-N",
-      "slug": "other-services",
-      "name_en": "Other Shopping & Store",
-      "name_hi": "अन्य 0% किराना स्टोर",
+      "sub_code": "27-3",
+      "slug": "emergency-blood-donor-net",
+      "name_en": "Emergency Blood Donor Net",
+      "name_hi": "आपातकालीन स्थानीय रक्तदाता नेटवर्क",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Blood Donor",
+        "Emergency",
+        "Verified"
       ]
     }
   ]

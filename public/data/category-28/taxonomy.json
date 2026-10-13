@@ -1,41 +1,44 @@
 {
   "category_id": 28,
   "category_code": "28",
-  "category_slug": "social",
-  "category_name_en": "Social Community",
-  "category_name_hi": "चौपाल व संवाद",
+  "category_slug": "sports",
+  "category_name_en": "Sports",
+  "category_name_hi": "टर्फ ग्राउंड व खेलकूद",
   "sub_categories": [
     {
       "sub_code": "28-1",
-      "slug": "general-listings",
-      "name_en": "Primary Social Community",
-      "name_hi": "मुख्य चौपाल व संवाद",
+      "slug": "night-box-cricket-turf",
+      "name_en": "Night Box Cricket Turf",
+      "name_hi": "फ्लडलाइट बॉक्स क्रिकेट व टर्फ स्लॉट",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Box Cricket",
+        "Football Turf",
+        "Hourly"
       ]
     },
     {
       "sub_code": "28-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Social Community",
-      "name_hi": "विशेष चौपाल व संवाद",
+      "slug": "cricket-bat-repair-grip",
+      "name_en": "Cricket Bat Repair & Grip",
+      "name_hi": "क्रिकेट बैट नॉकिंग, थ्रेडिंग व रिपेयर",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Bat Repair",
+        "Threading",
+        "Grip"
       ]
     },
     {
-      "sub_code": "28-N",
-      "slug": "other-services",
-      "name_en": "Other Social Community",
-      "name_hi": "अन्य चौपाल व संवाद",
+      "sub_code": "28-3",
+      "slug": "local-cricket-tournaments",
+      "name_en": "Local Cricket Tournaments",
+      "name_hi": "टेनिस बॉल टूर्नामेंट टीम एंट्री व स्कोरिंग",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Tournament",
+        "Entry Pass",
+        "Trophy"
       ]
     }
   ]

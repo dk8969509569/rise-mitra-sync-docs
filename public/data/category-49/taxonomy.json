@@ -1,41 +1,44 @@
 {
   "category_id": 49,
   "category_code": "49",
-  "category_slug": "game-trivia",
-  "category_name_en": "Trivia & Facts",
-  "category_name_hi": "देसी ट्रिविया व तथ्य",
+  "category_slug": "game-word",
+  "category_name_en": "Word Games",
+  "category_name_hi": "स्पेलिंग बी व स्क्रैबल",
   "sub_categories": [
     {
       "sub_code": "49-1",
-      "slug": "general-listings",
-      "name_en": "Primary Trivia & Facts",
-      "name_hi": "मुख्य देसी ट्रिविया व तथ्य",
+      "slug": "spelling-bee-district-contest",
+      "name_en": "Spelling Bee District Contest",
+      "name_hi": "जिला स्तरीय स्पेलिंग बी प्रतियोगिता पास",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Spelling Bee",
+        "Contest",
+        "Certificate"
       ]
     },
     {
       "sub_code": "49-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Trivia & Facts",
-      "name_hi": "विशेष देसी ट्रिविया व तथ्य",
+      "slug": "monthly-crossword-contest",
+      "name_en": "Monthly Crossword Contest",
+      "name_hi": "मासिक अखबार वर्ग पहेली डाक मुकाबला",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Crossword",
+        "Monthly",
+        "Cash Prize"
       ]
     },
     {
-      "sub_code": "49-N",
-      "slug": "other-services",
-      "name_en": "Other Trivia & Facts",
-      "name_hi": "अन्य देसी ट्रिविया व तथ्य",
+      "sub_code": "49-3",
+      "slug": "wooden-scrabble-word-tiles",
+      "name_en": "Wooden Scrabble & Word Tiles",
+      "name_hi": "पाइनवुड लकड़ी वर्णमाला टाइल्स व स्क्रैबल",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Scrabble",
+        "Word Tiles",
+        "Pinewood"
       ]
     }
   ]

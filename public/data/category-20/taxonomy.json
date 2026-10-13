@@ -1,41 +1,44 @@
 {
   "category_id": 20,
   "category_code": "20",
-  "category_slug": "medical",
-  "category_name_en": "Medical & Clinic",
-  "category_name_hi": "दवाई व क्लिनिक",
+  "category_slug": "music-and-audio",
+  "category_name_en": "Music & Audio",
+  "category_name_hi": "बैंड, डीजे व साउंड",
   "sub_categories": [
     {
       "sub_code": "20-1",
-      "slug": "general-listings",
-      "name_en": "Primary Medical & Clinic",
-      "name_hi": "मुख्य दवाई व क्लिनिक",
+      "slug": "wedding-band-baggi",
+      "name_en": "Wedding Band & Baggi",
+      "name_hi": "शाही ब्रास बैंड, बग्गी व शहनाई",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Brass Band",
+        "Baggi",
+        "Shehnai"
       ]
     },
     {
       "sub_code": "20-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Medical & Clinic",
-      "name_hi": "विशेष दवाई व क्लिनिक",
+      "slug": "dj-sound-system-rental",
+      "name_en": "DJ Sound System Rental",
+      "name_hi": "जेबीएल साउंड सिस्टम व पार्टी सेटअप",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "DJ Sound",
+        "Bass",
+        "Lights"
       ]
     },
     {
-      "sub_code": "20-N",
-      "slug": "other-services",
-      "name_en": "Other Medical & Clinic",
-      "name_hi": "अन्य दवाई व क्लिनिक",
+      "sub_code": "20-3",
+      "slug": "instrument-repair-classes",
+      "name_en": "Instrument Repair & Classes",
+      "name_hi": "हारमोनियम, तबला रिपेयर व क्लास",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Harmonium",
+        "Dholak",
+        "Classes"
       ]
     }
   ]

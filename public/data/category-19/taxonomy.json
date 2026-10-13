@@ -1,41 +1,44 @@
 {
   "category_id": 19,
   "category_code": "19",
-  "category_slug": "maps-and-navigation",
-  "category_name_en": "Maps & Navigation",
-  "category_name_hi": "मार्गदर्शन",
+  "category_slug": "medical",
+  "category_name_en": "Medical",
+  "category_name_hi": "दवा व मेडिकल सेवाएँ",
   "sub_categories": [
     {
       "sub_code": "19-1",
-      "slug": "general-listings",
-      "name_en": "Primary Maps & Navigation",
-      "name_hi": "मुख्य मार्गदर्शन",
+      "slug": "home-blood-sample-collect",
+      "name_en": "Home Blood Sample Collect",
+      "name_hi": "घर से ब्लड सैंपल कलेक्शन व रिपोर्ट",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Blood Test",
+        "Lab",
+        "Home Sample"
       ]
     },
     {
       "sub_code": "19-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Maps & Navigation",
-      "name_hi": "विशेष मार्गदर्शन",
+      "slug": "doorstep-discount-medicines",
+      "name_en": "Doorstep Discount Medicines",
+      "name_hi": "पर्चे पर 20% छूट दवा होम डिलीवरी",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Medicines",
+        "Discount",
+        "GST Bill"
       ]
     },
     {
-      "sub_code": "19-N",
-      "slug": "other-services",
-      "name_en": "Other Maps & Navigation",
-      "name_hi": "अन्य मार्गदर्शन",
+      "sub_code": "19-3",
+      "slug": "24x7-oxygen-ambulance",
+      "name_en": "24x7 Oxygen Ambulance",
+      "name_hi": "24x7 ऑक्सीजन एम्बुलेंस सेवा",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Ambulance",
+        "Oxygen",
+        "Emergency"
       ]
     }
   ]

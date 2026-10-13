@@ -1,41 +1,44 @@
 {
   "category_id": 42,
   "category_code": "42",
-  "category_slug": "game-music",
-  "category_name_en": "Music & Rhythm",
-  "category_name_hi": "तबला व ढोलक ताल",
+  "category_slug": "game-puzzle",
+  "category_name_en": "Puzzle Games",
+  "category_name_hi": "रूबिक क्यूब व सुडोकू",
   "sub_categories": [
     {
       "sub_code": "42-1",
-      "slug": "general-listings",
-      "name_en": "Primary Music & Rhythm",
-      "name_hi": "मुख्य तबला व ढोलक ताल",
+      "slug": "rubiks-cube-speed-workshop",
+      "name_en": "Rubiks Cube Speed Workshop",
+      "name_hi": "30-सेकंड रूबिक क्यूब तकनीक वर्कशॉप",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Speedcube",
+        "Workshop",
+        "Technique"
       ]
     },
     {
       "sub_code": "42-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Music & Rhythm",
-      "name_hi": "विशेष तबला व ढोलक ताल",
+      "slug": "district-sudoku-championship",
+      "name_en": "District Sudoku Championship",
+      "name_hi": "जिला स्तरीय टाइमर सुडोकू प्रतियोगिता",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Sudoku",
+        "Championship",
+        "Certificate"
       ]
     },
     {
-      "sub_code": "42-N",
-      "slug": "other-services",
-      "name_en": "Other Music & Rhythm",
-      "name_hi": "अन्य तबला व ढोलक ताल",
+      "sub_code": "42-3",
+      "slug": "magnetic-speedcube-combos",
+      "name_en": "Magnetic Speedcube Combos",
+      "name_hi": "मैग्नेटिक 3x3, 4x4 क्यूब व लुब्रिकेंट",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Magnetic Cube",
+        "3x3",
+        "Speedcube"
       ]
     }
   ]

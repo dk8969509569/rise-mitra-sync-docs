@@ -2,40 +2,43 @@
   "category_id": 5,
   "category_code": "05",
   "category_slug": "business",
-  "category_name_en": "Business & Khata",
-  "category_name_hi": "सॉवरेन बहीखाता",
+  "category_name_en": "Business",
+  "category_name_hi": "व्यापार व मंडी",
   "sub_categories": [
     {
-      "sub_code": "5-1",
-      "slug": "general-listings",
-      "name_en": "Primary Business & Khata",
-      "name_hi": "मुख्य सॉवरेन बहीखाता",
+      "sub_code": "05-1",
+      "slug": "digital-udhar-khata",
+      "name_en": "Digital Udhar Khata",
+      "name_hi": "डिजिटल उधारी खाता व तगादा",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Udhar Khata",
+        "Reminders",
+        "UPI QR"
       ]
     },
     {
-      "sub_code": "5-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Business & Khata",
-      "name_hi": "विशेष सॉवरेन बहीखाता",
+      "sub_code": "05-2",
+      "slug": "wholesale-mandi-network",
+      "name_en": "Wholesale Mandi Network",
+      "name_hi": "थोक मंडी नेटवर्क व डायरेक्टरी",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Kirana",
+        "Kapda",
+        "Hardware"
       ]
     },
     {
-      "sub_code": "5-N",
-      "slug": "other-services",
-      "name_en": "Other Business & Khata",
-      "name_hi": "अन्य सॉवरेन बहीखाता",
+      "sub_code": "05-3",
+      "slug": "online-dukan-qr-catalog",
+      "name_en": "Online Dukan QR Catalog",
+      "name_hi": "ऑनलाइन दुकान क्यूआर कैटलॉग",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "QR Standee",
+        "Catalog",
+        "Orders"
       ]
     }
   ]

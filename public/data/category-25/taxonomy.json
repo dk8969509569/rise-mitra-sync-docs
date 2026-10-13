@@ -1,41 +1,44 @@
 {
   "category_id": 25,
   "category_code": "25",
-  "category_slug": "photography",
-  "category_name_en": "Photography & Scanner",
-  "category_name_hi": "स्कैनर",
+  "category_slug": "productivity",
+  "category_name_en": "Productivity",
+  "category_name_hi": "ऑनलाइन फॉर्म व जेरोक्स",
   "sub_categories": [
     {
       "sub_code": "25-1",
-      "slug": "general-listings",
-      "name_en": "Primary Photography & Scanner",
-      "name_hi": "मुख्य स्कैनर",
+      "slug": "sarkari-online-form-filling",
+      "name_en": "Sarkari Online Form Filling",
+      "name_hi": "सरकारी नौकरी व छात्रवृत्ति ऑनलाइन फॉर्म",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Online Form",
+        "Job",
+        "Admit Card"
       ]
     },
     {
       "sub_code": "25-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Photography & Scanner",
-      "name_hi": "विशेष स्कैनर",
+      "slug": "pan-identity-docs-help",
+      "name_en": "PAN & Identity Docs Help",
+      "name_hi": "पैन कार्ड व पहचान पत्र सुधार सहायता",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "PAN Card",
+        "Correction",
+        "Lamination"
       ]
     },
     {
-      "sub_code": "25-N",
-      "slug": "other-services",
-      "name_en": "Other Photography & Scanner",
-      "name_hi": "अन्य स्कैनर",
+      "sub_code": "25-3",
+      "slug": "bulk-xerox-lamination",
+      "name_en": "Bulk Xerox & Lamination",
+      "name_hi": "थोक फोटोकॉपी व स्पाइरल बाइंडिंग",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Bulk Xerox",
+        "Color Print",
+        "Spiral"
       ]
     }
   ]

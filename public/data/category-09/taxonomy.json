@@ -2,40 +2,43 @@
   "category_id": 9,
   "category_code": "09",
   "category_slug": "education",
-  "category_name_en": "Education & Skills",
-  "category_name_hi": "हुनर सीखें",
+  "category_name_en": "Education",
+  "category_name_hi": "शिक्षा व कोचिंग",
   "sub_categories": [
     {
-      "sub_code": "9-1",
-      "slug": "general-listings",
-      "name_en": "Primary Education & Skills",
-      "name_hi": "मुख्य हुनर सीखें",
+      "sub_code": "09-1",
+      "slug": "home-tutors-coaching",
+      "name_en": "Home Tutors & Coaching",
+      "name_hi": "होम ट्यूटर व नजदीकी शिक्षक",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Class 1-10",
+        "Class 11-12",
+        "Demo"
       ]
     },
     {
-      "sub_code": "9-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Education & Skills",
-      "name_hi": "विशेष हुनर सीखें",
+      "sub_code": "09-2",
+      "slug": "sarkari-mock-test-pass",
+      "name_en": "Sarkari Mock Test Pass",
+      "name_hi": "सरकारी मॉक टेस्ट पास",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Police",
+        "Railway",
+        "Mock Tests"
       ]
     },
     {
-      "sub_code": "9-N",
-      "slug": "other-services",
-      "name_en": "Other Education & Skills",
-      "name_hi": "अन्य हुनर सीखें",
+      "sub_code": "09-3",
+      "slug": "practical-skill-institutes",
+      "name_en": "Practical Skill Institutes",
+      "name_hi": "प्रैक्टिकल स्किल ट्रेनिंग सेंटर",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Mobile Repair",
+        "Wiring",
+        "Skills"
       ]
     }
   ]

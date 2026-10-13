@@ -1,41 +1,44 @@
 {
   "category_id": 46,
   "category_code": "46",
-  "category_slug": "game-simulation",
-  "category_name_en": "Farm Simulation",
-  "category_name_hi": "खेत सिमुलेटर",
+  "category_slug": "game-sports",
+  "category_name_en": "Sports Games",
+  "category_name_hi": "नॉकआउट मैच व ट्रॉफी",
   "sub_categories": [
     {
       "sub_code": "46-1",
-      "slug": "general-listings",
-      "name_en": "Primary Farm Simulation",
-      "name_hi": "मुख्य खेत सिमुलेटर",
+      "slug": "leather-ball-night-cricket",
+      "name_en": "Leather Ball Night Cricket",
+      "name_hi": "20-ओवर फ्लडलाइट लेदर बॉल टूर्नामेंट",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Leather Ball",
+        "Night Match",
+        "20 Overs"
       ]
     },
     {
       "sub_code": "46-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Farm Simulation",
-      "name_hi": "विशेष खेत सिमुलेटर",
+      "slug": "5v5-football-turf-court",
+      "name_en": "5v5 Football Turf Court",
+      "name_hi": "फुटसल कोर्ट 1-घंटा स्लॉट व मैच बॉल",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Futsal",
+        "5v5",
+        "Match Ball"
       ]
     },
     {
-      "sub_code": "46-N",
-      "slug": "other-services",
-      "name_en": "Other Farm Simulation",
-      "name_hi": "अन्य खेत सिमुलेटर",
+      "sub_code": "46-3",
+      "slug": "sports-trophies-medals",
+      "name_en": "Sports Trophies & Medals",
+      "name_hi": "3-फीट ब्रास ट्रॉफी, मेडल व जर्सी निर्माण",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Trophy",
+        "Medals",
+        "Jersey Set"
       ]
     }
   ]

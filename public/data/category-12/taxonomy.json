@@ -1,41 +1,44 @@
 {
   "category_id": 12,
   "category_code": "12",
-  "category_slug": "family-parenting",
-  "category_name_en": "Family & Care",
-  "category_name_hi": "परिवार व केयर",
+  "category_slug": "finance",
+  "category_name_en": "Finance",
+  "category_name_hi": "फाइनेंस व बैंकिंग",
   "sub_categories": [
     {
       "sub_code": "12-1",
-      "slug": "general-listings",
-      "name_en": "Primary Family & Care",
-      "name_hi": "मुख्य परिवार व केयर",
+      "slug": "doorstep-aeps-cash",
+      "name_en": "Doorstep AEPS Cash",
+      "name_hi": "घर बैठे बायोमेट्रिक नकद निकासी",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Cash Out",
+        "Balance",
+        "Micro-ATM"
       ]
     },
     {
       "sub_code": "12-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Family & Care",
-      "name_hi": "विशेष परिवार व केयर",
+      "slug": "vyapar-micro-loans",
+      "name_en": "Vyapar Micro-Loans",
+      "name_hi": "खुदरा व्यापार माइक्रो-ऋण",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Micro Loan",
+        "Daily Installment",
+        "Working Capital"
       ]
     },
     {
-      "sub_code": "12-N",
-      "slug": "other-services",
-      "name_en": "Other Family & Care",
-      "name_hi": "अन्य परिवार व केयर",
+      "sub_code": "12-3",
+      "slug": "vehicle-insurance",
+      "name_en": "1-Click Vehicle Insurance",
+      "name_hi": "वाहन बीमा रिन्यूअल व सहायता",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Bike Insurance",
+        "Car Insurance",
+        "Claims"
       ]
     }
   ]

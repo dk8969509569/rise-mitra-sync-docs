@@ -1,41 +1,44 @@
 {
   "category_id": 39,
   "category_code": "39",
-  "category_slug": "game-casino",
-  "category_name_en": "Casino & Spin",
-  "category_name_hi": "लकी चक्र",
+  "category_slug": "game-casual",
+  "category_name_en": "Casual Games",
+  "category_name_hi": "लूडो लीग व फूजबॉल",
   "sub_categories": [
     {
       "sub_code": "39-1",
-      "slug": "general-listings",
-      "name_en": "Primary Casino & Spin",
-      "name_hi": "मुख्य लकी चक्र",
+      "slug": "sunday-mohalla-ludo-league",
+      "name_en": "Sunday Mohalla Ludo League",
+      "name_hi": "रविवार पारिवारिक लूडो मुकाबला व मेडल",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Ludo League",
+        "Sunday",
+        "Medal"
       ]
     },
     {
       "sub_code": "39-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Casino & Spin",
-      "name_hi": "विशेष लकी चक्र",
+      "slug": "foosball-dart-board-tokens",
+      "name_en": "Foosball & Dart Board Tokens",
+      "name_hi": "कैफे टेबल सॉकर (फूजबॉल) टोकन व डार्ट",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Foosball",
+        "Dart",
+        "Cafe Games"
       ]
     },
     {
-      "sub_code": "39-N",
-      "slug": "other-services",
-      "name_en": "Other Casino & Spin",
-      "name_hi": "अन्य लकी चक्र",
+      "sub_code": "39-3",
+      "slug": "handcrafted-wooden-ludo-sets",
+      "name_en": "Handcrafted Wooden Ludo Sets",
+      "name_hi": "सागवान लकड़ी का बड़ा लूडो बोर्ड",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Wooden Ludo",
+        "Handcrafted",
+        "Snakes Ladders"
       ]
     }
   ]

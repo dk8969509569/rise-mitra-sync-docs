@@ -1,41 +1,44 @@
 {
   "category_id": 14,
   "category_code": "14",
-  "category_slug": "food-and-drink",
-  "category_name_en": "Food & Drink",
-  "category_name_hi": "ढाबा व भोजन",
+  "category_slug": "health-and-fitness",
+  "category_name_en": "Health & Fitness",
+  "category_name_hi": "स्वास्थ्य व योग",
   "sub_categories": [
     {
       "sub_code": "14-1",
-      "slug": "general-listings",
-      "name_en": "Primary Food & Drink",
-      "name_hi": "मुख्य ढाबा व भोजन",
+      "slug": "doorstep-yoga-physio",
+      "name_en": "Doorstep Yoga & Physio",
+      "name_hi": "घर पर योग प्रशिक्षक व फिजियोथेरेपी",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Yoga",
+        "Physio",
+        "Home Visit"
       ]
     },
     {
       "sub_code": "14-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Food & Drink",
-      "name_hi": "विशेष ढाबा व भोजन",
+      "slug": "local-gym-passes",
+      "name_en": "Local Gym Membership Passes",
+      "name_hi": "नजदीकी जिम वर्कआउट पास",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Day Pass",
+        "Monthly",
+        "Gym"
       ]
     },
     {
-      "sub_code": "14-N",
-      "slug": "other-services",
-      "name_en": "Other Food & Drink",
-      "name_hi": "अन्य ढाबा व भोजन",
+      "sub_code": "14-3",
+      "slug": "desi-akhada-nutrition",
+      "name_en": "Desi Akhada Nutrition",
+      "name_hi": "देशी गाय दूध व अखाड़ा न्यूट्रिशन",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "A2 Milk",
+        "Sattu",
+        "Diet Kit"
       ]
     }
   ]

@@ -1,41 +1,44 @@
 {
   "category_id": 37,
   "category_code": "37",
-  "category_slug": "game-board",
-  "category_name_en": "Board Games",
-  "category_name_hi": "देसी लूडो व कैरम",
+  "category_slug": "game-card",
+  "category_name_en": "Card Games",
+  "category_name_hi": "जादूगर ताश शो व क्लब",
   "sub_categories": [
     {
       "sub_code": "37-1",
-      "slug": "general-listings",
-      "name_en": "Primary Board Games",
-      "name_hi": "मुख्य देसी लूडो व कैरम",
+      "slug": "live-magician-card-show",
+      "name_en": "Live Magician Card Show",
+      "name_hi": "पारिवारिक उत्सव लाइव जादूगर ताश शो",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Magician",
+        "Card Tricks",
+        "Show"
       ]
     },
     {
       "sub_code": "37-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Board Games",
-      "name_hi": "विशेष देसी लूडो व कैरम",
+      "slug": "plastic-waterproof-cards",
+      "name_en": "100% Plastic Waterproof Cards",
+      "name_hi": "कसीनो-ग्रेड पीवीसी ताश व टेबल मैट",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "PVC Cards",
+        "Waterproof",
+        "Table Mat"
       ]
     },
     {
-      "sub_code": "37-N",
-      "slug": "other-services",
-      "name_en": "Other Board Games",
-      "name_hi": "अन्य देसी लूडो व कैरम",
+      "sub_code": "37-3",
+      "slug": "senior-citizen-bridge-club",
+      "name_en": "Senior Citizen Bridge Club",
+      "name_hi": "वरिष्ठ नागरिक शाम कम्युनिटी ब्रिज क्लब",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Bridge Club",
+        "Seniors",
+        "Recreation"
       ]
     }
   ]

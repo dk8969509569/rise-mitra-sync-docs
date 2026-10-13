@@ -1,41 +1,44 @@
 {
   "category_id": 50,
   "category_code": "50",
-  "category_slug": "game-word",
-  "category_name_en": "Word & Vocabulary",
-  "category_name_hi": "शब्द पहेली व कोश",
+  "category_slug": "game-family",
+  "category_name_en": "Family Games",
+  "category_name_hi": "तंबोला व पारिवारिक मेले",
   "sub_categories": [
     {
       "sub_code": "50-1",
-      "slug": "general-listings",
-      "name_en": "Primary Word & Vocabulary",
-      "name_hi": "मुख्य शब्द पहेली व कोश",
+      "slug": "saturday-mohalla-tambola-pass",
+      "name_en": "Saturday Mohalla Tambola Pass",
+      "name_hi": "शनिवार पारिवारिक तंबोला/हाउजी पास",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Tambola",
+        "Housie",
+        "Full House"
       ]
     },
     {
       "sub_code": "50-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Word & Vocabulary",
-      "name_hi": "विशेष शब्द पहेली व कोश",
+      "slug": "family-fun-fair-game-stalls",
+      "name_en": "Family Fun Fair Game Stalls",
+      "name_hi": "आनंद मेला रिंग थ्रो व गुब्बारा शूटिंग",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Mela Stalls",
+        "Ring Throw",
+        "Balloon Shooting"
       ]
     },
     {
-      "sub_code": "50-N",
-      "slug": "other-services",
-      "name_en": "Other Word & Vocabulary",
-      "name_hi": "अन्य शब्द पहेली व कोश",
+      "sub_code": "50-3",
+      "slug": "kitty-party-fun-games-kit",
+      "name_en": "Kitty Party Fun Games Kit",
+      "name_hi": "किटी पार्टी 10 मजेदार इनडोर गेम किट",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Kitty Party",
+        "Indoor Games",
+        "Gifts"
       ]
     }
   ]

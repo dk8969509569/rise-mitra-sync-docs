@@ -1,41 +1,44 @@
 {
   "category_id": 30,
   "category_code": "30",
-  "category_slug": "tools",
-  "category_name_en": "Tools & Utilities",
-  "category_name_hi": "कैलकुलेटर",
+  "category_slug": "travel-and-local",
+  "category_name_en": "Travel & Local",
+  "category_name_hi": "टैक्सी व टूर बस",
   "sub_categories": [
     {
       "sub_code": "30-1",
-      "slug": "general-listings",
-      "name_en": "Primary Tools & Utilities",
-      "name_hi": "मुख्य कैलकुलेटर",
+      "slug": "bolero-scorpio-rental",
+      "name_en": "Bolero & Scorpio Rental",
+      "name_hi": "शादी व यात्रा हेतु बोलेरो/स्कॉर्पियो",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Bolero",
+        "Scorpio",
+        "Innova"
       ]
     },
     {
       "sub_code": "30-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Tools & Utilities",
-      "name_hi": "विशेष कैलकुलेटर",
+      "slug": "pilgrimage-tour-bus-seats",
+      "name_en": "Pilgrimage Tour Bus Seats",
+      "name_hi": "अयोध्या व काशी तीर्थ यात्रा बस सीट",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Tour Bus",
+        "Pilgrimage",
+        "Seat Booking"
       ]
     },
     {
-      "sub_code": "30-N",
-      "slug": "other-services",
-      "name_en": "Other Tools & Utilities",
-      "name_hi": "अन्य कैलकुलेटर",
+      "sub_code": "30-3",
+      "slug": "railway-station-drop-cabs",
+      "name_en": "Railway Station Drop Cabs",
+      "name_hi": "स्टेशन व एयरपोर्ट फिक्स-किराया टैक्सी",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Station Drop",
+        "Cab",
+        "Fixed Rate"
       ]
     }
   ]

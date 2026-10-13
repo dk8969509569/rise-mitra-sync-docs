@@ -1,41 +1,44 @@
 {
   "category_id": 13,
   "category_code": "13",
-  "category_slug": "finance",
-  "category_name_en": "Finance & Cash Ledger",
-  "category_name_hi": "RM CASH लेज़र",
+  "category_slug": "food-and-drink",
+  "category_name_en": "Food & Drink",
+  "category_name_hi": "ढाबा व टिफिन",
   "sub_categories": [
     {
       "sub_code": "13-1",
-      "slug": "general-listings",
-      "name_en": "Primary Finance & Cash Ledger",
-      "name_hi": "मुख्य RM CASH लेज़र",
+      "slug": "monthly-tiffin-service",
+      "name_en": "Monthly Tiffin Service",
+      "name_hi": "मासिक शुद्ध शाकाहारी टिफिन पास",
       "filter_chips": [
         "Sabhi",
-        "Popular",
-        "Nearby",
-        "Verified"
+        "Tiffin",
+        "Veg",
+        "Monthly Pass"
       ]
     },
     {
       "sub_code": "13-2",
-      "slug": "custom-services",
-      "name_en": "Specialized Finance & Cash Ledger",
-      "name_hi": "विशेष RM CASH लेज़र",
+      "slug": "local-dhaba-sweets",
+      "name_en": "Local Dhaba & Sweets",
+      "name_hi": "लोकल ढाबा भोजन व देशी घी मिठाई",
       "filter_chips": [
         "Sabhi",
-        "Fast Track",
-        "Top Rated"
+        "Dhaba",
+        "Sweets",
+        "Delivery"
       ]
     },
     {
-      "sub_code": "13-N",
-      "slug": "other-services",
-      "name_en": "Other Finance & Cash Ledger",
-      "name_hi": "अन्य RM CASH लेज़र",
+      "sub_code": "13-3",
+      "slug": "bulk-mandi-event-ration",
+      "name_en": "Bulk Mandi Event Ration",
+      "name_hi": "शादी-भंडारा थोक राशन सप्लाई",
       "filter_chips": [
         "Sabhi",
-        "Support"
+        "Bulk Atta",
+        "Oil Tin",
+        "Sugar"
       ]
     }
   ]
