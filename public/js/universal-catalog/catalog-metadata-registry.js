@@ -22,11 +22,12 @@
     '16': { id: 'c16', catId: '16', num: '16.', icon: '📚', title: 'Libraries & Demo', subtitle: 'प्रतियोगी छात्र एसी केबिन डेस्क, पुरानी किताबें व स्टेशनरी' },
     '33': { id: 'c33', catId: '33', num: '33.', icon: '🎯', title: 'Action', subtitle: 'PS5/PC गेमिंग पार्लर, ई-स्पोर्ट्स टूर्नामेंट व लेजर टैग एरीना' },
     '34': { id: 'c34', catId: '34', num: '34.', icon: '🧭', title: 'Adventure', subtitle: 'ट्रेकिंग कैंप, ट्रेजर हंट क्वेस्ट व एडवेंचर पार्क एंट्री' },
-    '35': { id: 'c35', catId: '35', num: '35.', icon: '🕹️', title: 'Arcade', subtitle: 'क्लासिक आर्केड गेम्स, रेट्रो जॉयस्टिक, स्पीड रन व तुरंत एक्शन' }
+    '35': { id: 'c35', catId: '35', num: '35.', icon: '🕹️', title: 'Arcade', subtitle: 'क्लासिक आर्केड गेम्स, रेट्रो जॉयस्टिक, स्पीड रन व तुरंत एक्शन' },
+    '50': { id: 'c50', catId: '50', num: '50.', icon: '👨‍👩‍👧‍👦', title: 'Family', subtitle: 'शनिवार पारिवारिक तंबोला (Housie), मोहल्ला मेला स्टॉल्स व किटी पार्टी' }
   };
 
   // Seed aliases for instant lookup
-  ['14', '15', '16', '33', '34', '35'].forEach(function (num) {
+  ['14', '15', '16', '33', '34', '35', '50'].forEach(function (num) {
     var item = RM_CATALOG_REGISTRY[num];
     if (item) {
       RM_CATALOG_REGISTRY['c' + num] = item;
@@ -155,7 +156,7 @@
   }
 
   // ==============================================================================
-  // 4. MICRO-BATCH EXTENSION LOADER (7 PARALLEL ASYNC EXTENSIONS)
+  // 4. MICRO-BATCH EXTENSION LOADER (8 PARALLEL ASYNC EXTENSIONS - ALL 50 CATS)
   // ==============================================================================
 
   var extBatches = [
@@ -165,7 +166,8 @@
     'ext-batch-21-30.js',
     'ext-batch-31-35.js',
     'ext-batch-36-40.js',
-    'ext-batch-41-50.js'
+    'ext-batch-41-45.js',
+    'ext-batch-46-50.js'
   ];
 
   extBatches.forEach(function (file) {
