@@ -17,8 +17,18 @@
   // ==============================================================================
 
   var RM_CATALOG_REGISTRY = {
+    '1':  { id: 'c01', catId: '1',  num: '01.', icon: '🎨', title: 'Art & Design', subtitle: 'फ्लेक्स बोर्ड, डिजिटल कार्ड, बिल बुक व विनाइल प्रिंटिंग' },
+    '2':  { id: 'c02', catId: '2',  num: '02.', icon: '🚗', title: 'Auto & Vehicles', subtitle: 'ऑन-साइट पंचर, बैटरी जंपस्टार्ट, चालान व पुरानी गाड़ी बाजार' },
+    '3':  { id: 'c03', catId: '3',  num: '03.', icon: '✂️', title: 'Beauty', subtitle: 'घर पर फेशियल, दुल्हन मेकअप, मेहंदी व नाई टोकन' },
+    '4':  { id: 'c04', catId: '4',  num: '04.', icon: '📖', title: 'Books & Reference', subtitle: 'पुस्तकालय, संदर्भ पुस्तकें, अध्ययन सामग्री व वाचनालय' },
+    '5':  { id: 'c05', catId: '5',  num: '05.', icon: '💼', title: 'Business', subtitle: 'व्यापार निबंधन, एमएसएमई, जीएसटी, टैक्स व व्यावसायिक सेवाएं' },
+    '6':  { id: 'c06', catId: '6',  num: '06.', icon: '🦸', title: 'Comics', subtitle: 'चित्रकथा, बाल साहित्य, कॉमिक्स व रचनात्मक एनीमेशन' },
+    '7':  { id: 'c07', catId: '7',  num: '07.', icon: '💬', title: 'Communication', subtitle: 'प्रज्ञा केंद्र, ऑनलाइन फॉर्म, डिजिटल दस्तावेज व डाक सेवाएं' },
+    '8':  { id: 'c08', catId: '8',  num: '08.', icon: '💍', title: 'Dating', subtitle: 'सत्यापित वैवाहिक संबंध, रिश्ते व पारिवारिक मैचमेकिंग' },
+    '9':  { id: 'c09', catId: '9',  num: '09.', icon: '🎓', title: 'Education', subtitle: 'प्रतियोगी परीक्षा कोचिंग, ट्यूशन, कौशल विकास व कक्षाएं' },
+    '10': { id: 'c10', catId: '10', num: '10.', icon: '🎭', title: 'Entertainment', subtitle: 'टेंट हाउस, साउंड सिस्टम, स्टेज लाइटिंग व सांस्कृतिक आयोजन' },
     '14': { id: 'c14', catId: '14', num: '14.', icon: '🧘', title: 'Health & Fitness', subtitle: 'स्वस्थ मन, देसी अखाड़ा, योग, प्राकृतिक चिकित्सा व स्वास्थ्य लाभ' },
-    '15': { id: 'c15', catId: '15', num: '15.', icon: '🏠', title: 'House & Home', subtitle: 'घर, आवास व दैनिक व्यवस्थापन केंद्र (मिस्त्री, प्लंबर व पेंटिंग)' },
+    '15': { id: 'c15', catId: '15', num: '15.', icon: '🏠', title: 'House & Home', subtitle: 'कमरा खोजें (0% ब्रोकरेज), किराया बहीखाता व बिजली यूनिट, ऑन-कॉल मिस्त्री' },
     '16': { id: 'c16', catId: '16', num: '16.', icon: '📚', title: 'Libraries & Demo', subtitle: 'प्रतियोगी छात्र एसी केबिन डेस्क, पुरानी किताबें व स्टेशनरी' },
     '33': { id: 'c33', catId: '33', num: '33.', icon: '🎯', title: 'Action', subtitle: 'PS5/PC गेमिंग पार्लर, ई-स्पोर्ट्स टूर्नामेंट व लेजर टैग एरीना' },
     '34': { id: 'c34', catId: '34', num: '34.', icon: '🧭', title: 'Adventure', subtitle: 'ट्रेकिंग कैंप, ट्रेजर हंट क्वेस्ट व एडवेंचर पार्क एंट्री' },
@@ -27,11 +37,14 @@
   };
 
   // Seed aliases for instant lookup
-  ['14', '15', '16', '33', '34', '35', '50'].forEach(function (num) {
+  Object.keys(RM_CATALOG_REGISTRY).forEach(function (num) {
     var item = RM_CATALOG_REGISTRY[num];
     if (item) {
       RM_CATALOG_REGISTRY['c' + num] = item;
-      RM_CATALOG_REGISTRY[(parseInt(num, 10) < 10 ? '0' : '') + num] = item;
+      var intVal = parseInt(num, 10);
+      var padded = (intVal < 10 ? '0' : '') + intVal;
+      RM_CATALOG_REGISTRY[padded] = item;
+      RM_CATALOG_REGISTRY['c' + padded] = item;
     }
   });
 
@@ -156,11 +169,20 @@
   }
 
   // ==============================================================================
-  // 4. MICRO-BATCH EXTENSION LOADER (100% ATOMIC MODULES 11-20 WIRED)
+  // 4. MICRO-BATCH EXTENSION LOADER (100% ATOMIC MODULES 01 TO 20 WIRED)
   // ==============================================================================
 
   var extBatches = [
-    'ext-batch-01-10.js',
+    'ext-cat-01.js',
+    'ext-cat-02.js',
+    'ext-cat-03.js',
+    'ext-cat-04.js',
+    'ext-cat-05.js',
+    'ext-cat-06.js',
+    'ext-cat-07.js',
+    'ext-cat-08.js',
+    'ext-cat-09.js',
+    'ext-cat-10.js',
     'ext-cat-11.js',
     'ext-cat-12.js',
     'ext-cat-13.js',
