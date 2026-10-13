@@ -17,6 +17,9 @@
   // ==============================================================================
 
   var RM_CATALOG_REGISTRY = {
+    '1': { id: 'c01', catId: '1', num: '01.', icon: '🎨', title: 'Art & Design', subtitle: 'फ्लेक्स बोर्ड, डिजिटल कार्ड, बिल बुक व विनाइल प्रिंटिंग' },
+    '2': { id: 'c02', catId: '2', num: '02.', icon: '🚗', title: 'Auto & Vehicles', subtitle: 'ऑन-साइट पंचर, बैटरी जंपस्टार्ट, चालान व पुरानी गाड़ी बाजार' },
+    '3': { id: 'c03', catId: '3', num: '03.', icon: '✂️', title: 'Beauty', subtitle: 'घर पर फेशियल, दुल्हन मेकअप, मेहंदी व नाई टोकन' },
     '14': { id: 'c14', catId: '14', num: '14.', icon: '🧘', title: 'Health & Fitness', subtitle: 'स्वस्थ मन, देसी अखाड़ा, योग, प्राकृतिक चिकित्सा व स्वास्थ्य लाभ' },
     '15': { id: 'c15', catId: '15', num: '15.', icon: '🏠', title: 'House & Home', subtitle: 'घर, आवास व दैनिक व्यवस्थापन केंद्र (मिस्त्री, प्लंबर व पेंटिंग)' },
     '16': { id: 'c16', catId: '16', num: '16.', icon: '📚', title: 'Libraries & Demo', subtitle: 'प्रतियोगी छात्र एसी केबिन डेस्क, पुरानी किताबें व स्टेशनरी' },
@@ -27,11 +30,13 @@
   };
 
   // Seed aliases for instant lookup
-  ['14', '15', '16', '33', '34', '35', '50'].forEach(function (num) {
+  ['1', '2', '3', '14', '15', '16', '33', '34', '35', '50'].forEach(function (num) {
     var item = RM_CATALOG_REGISTRY[num];
     if (item) {
       RM_CATALOG_REGISTRY['c' + num] = item;
-      RM_CATALOG_REGISTRY[(parseInt(num, 10) < 10 ? '0' : '') + num] = item;
+      var padded = (parseInt(num, 10) < 10 ? '0' : '') + num;
+      RM_CATALOG_REGISTRY[padded] = item;
+      RM_CATALOG_REGISTRY['c' + padded] = item;
     }
   });
 
@@ -129,7 +134,7 @@
           titleEl.textContent = canonical.title;
         }
         var subEl = card.querySelector('p, .category-subtitle, .text-sm.text-slate-400');
-        if (subEl && subEl.textContent.indexOf('दैनिक जनसेवाएं') !== -1) {
+        if (subEl && (subEl.textContent.indexOf('दैनिक जनसेवाएं') !== -1 || subEl.textContent.trim().length <= 4)) {
           subEl.textContent = canonical.subtitle;
         }
         var iconEl = card.querySelector('.category-icon, .text-2xl, .text-3xl');
@@ -156,14 +161,16 @@
   }
 
   // ==============================================================================
-  // 4. MICRO-BATCH EXTENSION LOADER (8 PARALLEL ASYNC EXTENSIONS - ALL 50 CATS)
+  // 4. MICRO-BATCH EXTENSION LOADER (10 PARALLEL ASYNC EXTENSIONS - ALL 50 CATS)
   // ==============================================================================
 
   var extBatches = [
-    'ext-batch-01-10.js',
+    'ext-batch-01-05.js',
+    'ext-batch-06-10.js',
     'ext-batch-11-15.js',
     'ext-batch-16-20.js',
-    'ext-batch-21-30.js',
+    'ext-batch-21-25.js',
+    'ext-batch-26-30.js',
     'ext-batch-31-35.js',
     'ext-batch-36-40.js',
     'ext-batch-41-45.js',
