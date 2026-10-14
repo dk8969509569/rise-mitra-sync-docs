@@ -14,7 +14,7 @@
 
   var isSweeping = false;
 
-  // 1. RENDER UNIVERSAL PARENT CARD (TOP-LEFT: NUMBER ON TOP, LOGO BELOW | RIGHT: PLAY STORE TITLE)
+  // 1. RENDER UNIVERSAL PARENT CARD (CLEAN PLAY STORE APP-CARD - ZERO OUTSIDE NUMBERS)
   function renderParentCard(headerEl, catId, isOpen, subCount) {
     if (!headerEl) return;
     var numId = String(catId).replace(/[^0-9]/g, '');
@@ -28,7 +28,7 @@
 
     var regData = (window.RM_CATALOG_REGISTRY && window.RM_CATALOG_REGISTRY.getCategoryData(numId)) || null;
 
-    // Standard Google Play Store Authoritative Names (Folder A SSOT)
+    // Standard Google Play Store Authoritative Names (Folder A SSOT)[span_2](start_span)[span_2](end_span)
     var title = regData ? regData.title : ('Category ' + displayNum);
     var subtitle = regData ? regData.subtitle : 'दैनिक जनसेवाएं व आधिकारिक सुविधा केंद्र';
     var icon = regData ? regData.icon : '📦';
@@ -36,9 +36,9 @@
     var trustBadge = regData ? regData.trustBadge : 'Rise Verified Network';
     var supportBadge = regData ? regData.supportBadge : '24x7 सहायता केंद्र';
 
-    // Universal Future-Proof Domain Value Pillars (Friendly, Non-Sensitive & High Trust)
+    // Universal Future-Proof Domain Value Pillars
     var universalPillars = [
-      { icon: '🛡️', text: '100% सुरक्षित व प्रमाणित सेवा एवं उत्पाद नेटवर्क', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.12)' },
+      { icon: '🛡️', text: '100% आधार व पुलिस सत्यापित सेवा प्रदाता नेटवर्क', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.12)' },
       { icon: '⚡', text: 'पारदर्शी तय रेट कार्ड, डिजिटल बिलिंग व शून्य छुपा शुल्क', color: '#34d399', bg: 'rgba(52, 211, 153, 0.12)' },
       { icon: '🔒', text: 'Rise Mitra कार्य संतुष्टि गारंटी व प्रत्यक्ष सहायता', color: '#facc15', bg: 'rgba(250, 204, 21, 0.12)' }
     ];
@@ -76,20 +76,20 @@
       return '<div style="font-size:13px;font-weight:700;padding:8px 12px;background:' + p.bg + ';color:' + p.color + ';border:1px solid ' + p.color + '33;border-radius:9px;display:flex;align-items:center;gap:8px;"><span style="font-size:15px;">' + p.icon + '</span><span>' + p.text + '</span></div>';
     }).join('');
 
+    var countText = (subCount && subCount > 0) ? (subCount + ' सेवाएं ') : 'सभी सेवाएं ';
+
     container.innerHTML = [
-      '<!-- Top Row: Left Column (Number Top, Logo Below) + Right Column (Play Store Title, Subtitle, Badges) -->',
+      '<!-- Top Row: Squircle Badge [Icon + Order Inside] + Right Column [Play Store Bold Title & Subtitle] -->',
       '<div style="display: flex; align-items: flex-start; gap: 14px; width: 100%;">',
-      '  <!-- Left Column Stack: Top Big Monospace Number + Bottom Squircle Logo -->',
-      '  <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 6px; flex-shrink: 0; min-width: 58px;">',
-      '    <div style="font-size: 28px; font-weight: 900; color: #38bdf8; font-family: ui-monospace, monospace; line-height: 1; text-align: center; letter-spacing: -0.5px;">' + displayNum + '</div>',
-      '    <div style="width: 54px; height: 54px; border-radius: 16px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid rgba(56, 189, 248, 0.45); box-shadow: 0 4px 12px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">',
-      '      <span style="font-size: 28px; line-height: 1;">' + icon + '</span>',
-      '    </div>',
+      '  <!-- Squircle Badge: Order & Icon strictly INSIDE, zero numbers outside -->',
+      '  <div style="width: 58px; height: 58px; min-width: 58px; border-radius: 16px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 1.5px solid rgba(56, 189, 248, 0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.45); flex-shrink: 0;">',
+      '    <span style="font-size: 24px; line-height: 1;">' + icon + '</span>',
+      '    <span style="font-size: 11px; font-weight: 800; color: #38bdf8; font-family: ui-monospace, monospace; margin-top: 3px; line-height: 1;">' + displayNum + '</span>',
       '  </div>',
-      '  <!-- Right Column Stack: Google Play Store Bold Title, Subtitle & Badges -->',
-      '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0; padding-top: 1px;">',
-      '    <div style="font-size: 22px; font-weight: 900; color: #ffffff; letter-spacing: -0.3px; line-height: 1.25; margin-bottom: 4px; word-break: break-word;">' + title + '</div>',
-      '    <div style="font-size: 14px; font-weight: 600; color: #34d399; line-height: 1.35; margin-bottom: 6px; word-break: break-word;">' + subtitle + '</div>',
+      '  <!-- Right Column: Standard Play Store Bold Title & Clean Subtitle -->',
+      '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0;">',
+      '    <div style="font-size: 21px; font-weight: 900; color: #ffffff; letter-spacing: -0.3px; line-height: 1.25; margin-bottom: 4px; word-break: break-word;">' + title + '</div>',
+      '    <div style="font-size: 13.5px; font-weight: 600; color: #34d399; line-height: 1.35; margin-bottom: 6px; word-break: break-word;">' + subtitle + '</div>',
       '    <!-- Badges Row -->',
       '    <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">',
       '      <span style="font-size: 11.5px; font-weight: 800; color: #facc15; background: rgba(250, 204, 21, 0.12); border: 1px solid rgba(250, 204, 21, 0.3); padding: 2px 7px; border-radius: 5px;">' + rating + '</span>',
@@ -100,10 +100,11 @@
       '</div>',
       '<!-- Row 2: Universal Domain Value Pillars -->',
       '<div style="display: flex; flex-direction: column; gap: 7px; width: 100%; margin-top: 4px;">' + pillarsHtml + '</div>',
-      '<!-- Row 3: Scalable Dropdown Toggle Button (Unlimited Products & Services Future-Ready) -->',
+      '<!-- Row 3: Dropdown Toggle Button -->',
       '<div style="display: flex; justify-content: flex-end; align-items: center; width: 100%; margin-top: 2px;">',
       '  <div style="font-size: 13px; font-weight: 800; color: ' + (isOpen ? '#f87171' : '#34d399') + '; background: ' + (isOpen ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)') + '; border: 1px solid ' + (isOpen ? '#ef4444' : '#10b981') + '; padding: 6px 14px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">',
-      '    <span>' + (isOpen ? 'समेटें ▲' : 'और देखें ▼') + '</span>',
+      '    <span>' + countText + (isOpen ? 'छुपाएं' : 'देखें') + '</span>',
+      '    <span style="font-size: 11px;">' + (isOpen ? '▲' : '▼') + '</span>',
       '  </div>',
       '</div>'
     ].join('');
@@ -124,7 +125,7 @@
     }
   }
 
-  // 2. RENDER SUB-CARD (ZERO TEXT CUTOFF + INTERACTIVE TAP HIGHLIGHT GLOW + 50 CATEGORIES RICH SUPPORT)
+  // 2. RENDER SUB-CARD (ZERO TEXT CUTOFF + INTERACTIVE TAP HIGHLIGHT GLOW + 50 CATEGORIES RICH SUPPORT)[span_3](start_span)[span_3](end_span)
   function renderSubCard(subCardEl, catId, subId) {
     if (!subCardEl) return;
     var numId = String(catId).replace(/[^0-9]/g, '');
@@ -173,7 +174,7 @@
       btnText: isGame ? 'खेलें ➔' : 'खोलें ➔'
     };
 
-    // Hard-collapse outer container: Eliminate vertical void completely
+    // Hard-collapse outer container: Eliminate vertical void completely[span_4](start_span)[span_4](end_span)
     subCardEl.style.setProperty('height', 'auto', 'important');
     subCardEl.style.setProperty('min-height', 'auto', 'important');
     subCardEl.style.setProperty('display', 'flex', 'important');
