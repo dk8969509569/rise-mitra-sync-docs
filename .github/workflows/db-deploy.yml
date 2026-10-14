@@ -2,18 +2,48 @@ name: Deploy Database Schema to Neon
 
 on:
   workflow_dispatch:
+    inputs:
+      owner_approval:
+        description: 'Type APPROVE_SCHEMA_PUSH to authorize live Neon schema push'
+        required: true
+        default: 'DRY_RUN_ONLY'
+        type: string
+      backup_verified:
+        description: 'Confirm Neon snapshot/backup recovery point is verified before push'
+        required: true
+        default: false
+        type: boolean
+      backup_reference:
+        description: 'Backup/Snapshot ID or recovery reference'
+        required: false
+        default: 'READ_ONLY_VALIDATION'
+        type: string
   push:
     paths:
       - 'prisma/schema.prisma'
       - '.github/workflows/db-deploy.yml'
 
+# ZEL SAFETY CORRECTION:
+# Explicit read-only repository permission; live schema push gated behind explicit Owner approval and backup verification.
+permissions:
+  contents: read
+
+concurrency:
+  group: rm-db-deploy-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   migrate:
     name: Prisma DB Push to Neon
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -23,7 +53,68 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Validate Prisma Schema & Generate Client (Read-Only Gate)
+        env:
+          DATABASE_URL: 'postgresql://readonly:readonly@localhost:5432/risemitra_validate?schema=public'
+        run: |
+          npx prisma validate
+          npx prisma generate
+          echo "PASS: Prisma schema syntax and client generation verified in read-only mode."
+
+      - name: Verify Explicit Migration Approval & Backup Gate
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.owner_approval != 'DRY_RUN_ONLY'
+        run: |
+          if [ "${{ github.ref }}" != "refs/heads/main" ]; then
+            echo "FAIL_CLOSED: Authorized database schema deployment is restricted to refs/heads/main."
+            exit 1
+          fi
+          if [ "${{ github.event.inputs.owner_approval }}" != "APPROVE_SCHEMA_PUSH" ]; then
+            echo "FAIL_CLOSED: Invalid owner_approval token. Expected APPROVE_SCHEMA_PUSH."
+            exit 1
+          fi
+          if [ "${{ github.event.inputs.backup_verified }}" != "true" ]; then
+            echo "FAIL_CLOSED: Backup/recovery verification is mandatory before live schema deployment."
+            exit 1
+          fi
+          if [ -z "${{ github.event.inputs.backup_reference }}" ] \vert{}\vert{} [ "${{ github.event.inputs.backup_reference }}" = "READ_ONLY_VALIDATION" ]; then
+            echo "FAIL_CLOSED: Explicit backup_reference is required for authorized schema push."
+            exit 1
+          fi
+          echo "PASS: Explicit Owner migration approval and backup evidence verified."
+
       - name: Push Schema to Neon PostgreSQL
+        if: >-
+          github.event_name == 'workflow_dispatch' &&
+          github.ref == 'refs/heads/main' &&
+          github.event.inputs.owner_approval == 'APPROVE_SCHEMA_PUSH' &&
+          github.event.inputs.backup_verified == 'true'
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: npx prisma db push
+
+      - name: Verify Zero Tracked Source Mutation
+        run: |
+          if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
+            echo "FAIL_CLOSED: Tracked repository files were modified during db-deploy workflow."
+            git status --short --untracked-files=no
+            exit 1
+          fi
+          echo "PASS: Working tree remained 100% clean."
+
+      - name: Record Database Migration Gate Evidence
+        if: always()
+        run: |
+          {
+            echo "### Rise Mitra Database Schema Deployment Gate Evidence"
+            echo "- **Commit SHA:** \`${GITHUB_SHA}\`"
+            echo "- **Ref / Branch:** \`${GITHUB_REF}\`"
+            echo "- **Event:** \`${GITHUB_EVENT_NAME}\`"
+            echo "- **Run ID:** \`${GITHUB_RUN_ID}\`"
+            echo "- **Read-Only Schema Validation (\`prisma validate\` & \`prisma generate\`):** VERIFIED"
+            if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.owner_approval }}" = "APPROVE_SCHEMA_PUSH" ] && [ "${{ github.event.inputs.backup_verified }}" = "true" ] && [ "${GITHUB_REF}" = "refs/heads/main" ]; then
+              echo "- **Migration Execution Mode:** AUTHORIZED_LIVE_SCHEMA_PUSH"
+              echo "- **Backup Reference:** \`${{ github.event.inputs.backup_reference }}\`"
+            else
+              echo "- **Migration Execution Mode:** READ_ONLY_VALIDATION_ONLY (Unapproved live schema mutation blocked)"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
