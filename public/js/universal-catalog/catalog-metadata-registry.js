@@ -169,42 +169,4 @@
   }
 
   // ==============================================================================
-  // 4. MICRO-BATCH EXTENSION LOADER (100% ATOMIC MODULES 01 TO 20 WIRED)
-  // ==============================================================================
-
-  var extBatches = [
-    'ext-cat-01.js',
-    'ext-cat-02.js',
-    'ext-cat-03.js',
-    'ext-cat-04.js',
-    'ext-cat-05.js',
-    'ext-cat-06.js',
-    'ext-cat-07.js',
-    'ext-cat-08.js',
-    'ext-cat-09.js',
-    'ext-cat-10.js',
-    'ext-cat-11.js',
-    'ext-cat-12.js',
-    'ext-cat-13.js',
-    'ext-cat-14.js',
-    'ext-cat-15.js',
-    'ext-cat-16.js',
-    'ext-cat-17.js',
-    'ext-cat-18.js',
-    'ext-cat-19.js',
-    'ext-cat-20.js',
-    'ext-batch-21-30.js',
-    'ext-batch-31-35.js',
-    'ext-batch-36-40.js',
-    'ext-batch-41-45.js',
-    'ext-batch-46-50.js'
-  ];
-
-  extBatches.forEach(function (file) {
-    var s = document.createElement('script');
-    s.src = '/js/universal-catalog/extensions/' + file;
-    s.async = true;
-    document.head.appendChild(s);
-  });
-
-})();
+  // 4. MICRO-BATCH EXTENSION LOADER (100% ATOMIC MODULES 01 TO 
