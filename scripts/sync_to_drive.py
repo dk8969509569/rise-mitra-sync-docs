@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 """RISE MITRA Folder B commit-bound source snapshot.
 
@@ -1533,7 +1532,6 @@ def get_drive_service():
         )
     )
 
-    # 60s timeout for streaming larger snapshot files stably
     http = google_auth_httplib2.AuthorizedHttp(
         credentials,
         http=httplib2.Http(
@@ -1583,7 +1581,6 @@ def target_metadata(
     ).execute(
         num_retries=3
     )
-    ).execute(num_retries=3)
 
     require(
         not metadata.get(
