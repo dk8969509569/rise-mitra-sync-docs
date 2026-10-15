@@ -8,8 +8,8 @@
  *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
  * ==============================================================================
  * 🔒 EXISTING MODULAR FILES LOCK (DO NOT CREATE DUPLICATE FILES):
- *   - /js/one-tap-shell-bridge.js (This File)
- *   - /js/fullscreen-microapp-controller.js
+ *   - /js/one-tap-shell-bridge.js (This File: 1-Tap Controller & Catalog Sync)
+ *   - /js/fullscreen-microapp-controller.js (Dedicated 15-3/15-2 & Fullscreen UI)
  *   - /js/shell-controller.js & /js/sivme-adapters/cat16-adapter.js
  *   - /js/universal-catalog/universal-card-engine.js & sub-card-renderer.js
  * ==============================================================================
@@ -18,7 +18,7 @@
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261016_v25';
+  var CACHE_VERSION = '20261016_v26';
   var lastActionTs = 0;
   var lastTouchTs = 0;
   var lastModalOpenTs = 0;
@@ -74,34 +74,16 @@
     style.id = 'rm-zel-one-tap-lock';
     style.textContent = [
       'button, a, [onclick], .tactile-25d, #categoryModal [data-cat-id], #categoryModal [id^="sub-"] > div, .rm-service-chip {',
-      '  touch-action: manipulation !important;',
-      '  -webkit-tap-highlight-color: transparent !important;',
-      '  cursor: pointer !important;',
-      '  user-select: none !important;',
-      '  -webkit-user-select: none !important;',
+      '  touch-action: manipulation !important; -webkit-tap-highlight-color: transparent !important;',
+      '  cursor: pointer !important; user-select: none !important; -webkit-user-select: none !important;',
       '}',
       '.tactile-25d:active { transform: none !important; }',
-      '#categoryModal.hidden, #rm-fullscreen-view.hidden, #playStoreInstallBanner.hidden, #categoryModal .hidden, #categoryModal [id^="sub-"].hidden, #categoryModal [id^="sub-"][data-rm-collapsed="true"] {',
-      '  display: none !important;',
-      '}',
-      '#categoryModal [id^="sub-"][data-rm-collapsed="false"] {',
-      '  display: block !important;',
-      '}',
-      '#categoryModal:not(.hidden) {',
-      '  position: fixed !important; inset: 0 !important; z-index: 50 !important;',
-      '  background-color: #0b0f19 !important; display: flex !important; justify-content: center !important;',
-      '}',
-      '#rm-fullscreen-view:not(.hidden) {',
-      '  position: fixed !important; inset: 0 !important; z-index: 99999 !important; display: flex !important;',
-      '}',
-      '#fs-module-title {',
-      '  margin: 0 10px !important; font-size: 14px !important; font-weight: 800 !important;',
-      '  white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important;',
-      '  text-align: center !important; flex: 1 !important;',
-      '}',
-      '#rm-module-container select {',
-      '  font-size: 12.5px !important; padding-right: 24px !important; text-overflow: ellipsis !important;',
-      '}'
+      '#categoryModal.hidden, #rm-fullscreen-view.hidden, #playStoreInstallBanner.hidden, #categoryModal .hidden, #categoryModal [id^="sub-"].hidden, #categoryModal [id^="sub-"][data-rm-collapsed="true"] { display: none !important; }',
+      '#categoryModal [id^="sub-"][data-rm-collapsed="false"] { display: block !important; }',
+      '#categoryModal:not(.hidden) { position: fixed !important; inset: 0 !important; z-index: 50 !important; background-color: #0b0f19 !important; display: flex !important; justify-content: center !important; }',
+      '#rm-fullscreen-view:not(.hidden) { position: fixed !important; inset: 0 !important; z-index: 99999 !important; display: flex !important; }',
+      '#fs-module-title { margin: 0 10px !important; font-size: 14px !important; font-weight: 800 !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; text-align: center !important; flex: 1 !important; }',
+      '#rm-module-container select { font-size: 12.5px !important; padding-right: 24px !important; text-overflow: ellipsis !important; }'
     ].join('\n');
     document.head.appendChild(style);
   })();
@@ -136,83 +118,11 @@
     }
   }
 
-  // Helper: Zero-Hang Micro-App Hydration Guard (Eliminates "मॉड्यूल लोड हो रहा है..." hang on 15-3 / 15-2 / all modules)
+  // Helper: Zero-Hang Micro-App Hydration Guard (Delegated to fullscreen-microapp-controller.js)
   function ensureMicroAppRendered(subCode, titleText, subtitleText) {
-    var fs = document.getElementById('rm-fullscreen-view');
-    var fsTitle = document.getElementById('fs-module-title');
-    var fsContainer = document.getElementById('rm-module-container');
-    if (!fs || !fsContainer) return;
-
-    fs.classList.remove('hidden');
-    fs.style.setProperty('display', 'flex', 'important');
-    fs.style.setProperty('z-index', '99999', 'important');
-
-    var htmlNow = (fsContainer.innerHTML || '').trim();
-    var isStuckLoading = htmlNow === '' || htmlNow.indexOf('मॉड्यूल लोड हो रहा है') !== -1 || htmlNow.indexOf('लोड हो रहा है') !== -1;
-    if (!isStuckLoading) return;
-
-    if (subCode === '15-3' || subCode === '16-3') {
-      if (fsTitle) fsTitle.textContent = '🏢 ' + subCode + ' • कमरा व फ्लैट खोज';
-      fsContainer.innerHTML =
-        '<div class="space-y-3.5 text-slate-100 mt-1">' +
-          '<div class="rounded-2xl bg-[#0b0f19] border border-emerald-500/40 p-4 shadow-xl space-y-3">' +
-            '<div class="flex items-center justify-between">' +
-              '<span class="px-2.5 py-0.5 rounded-md bg-emerald-950 border border-emerald-600/50 text-emerald-300 text-[10px] font-bold">0% ब्रोकरेज • सीधा मकान मालिक संपर्क</span>' +
-              '<span class="text-xs font-bold text-amber-400">★ 4.9 सत्यापित</span>' +
-            '</div>' +
-            '<input type="text" placeholder="मोहल्ला, कॉलेज, स्टेशन या शहर खोजें..." class="w-full rounded-xl bg-slate-950 border border-slate-700 px-3.5 py-2.5 text-xs text-white placeholder-slate-400" />' +
-            '<div class="grid grid-cols-2 gap-2 text-xs">' +
-              '<select class="rounded-xl bg-slate-950 border border-slate-700 px-2.5 py-2 text-slate-200">' +
-                '<option>प्रकार: सभी (रूम / पीजी / फ्लैट)</option>' +
-                '<option>सिंगल कमरा (Student Room)</option>' +
-                '<option>1BHK / 2BHK फैमिली फ्लैट</option>' +
-                '<option>दुकान / गोदाम शटर</option>' +
-              '</select>' +
-              '<select class="rounded-xl bg-slate-950 border border-slate-700 px-2.5 py-2 text-slate-200">' +
-                '<option>बजट: ₹1,500 - ₹8,000/माह</option>' +
-                '<option>₹1,500 - ₹3,000/माह</option>' +
-                '<option>₹3,000 - ₹6,000/माह</option>' +
-                '<option>₹6,000+ फैमिली फ्लैट</option>' +
-              '</select>' +
-            '</div>' +
-          '</div>' +
-          '<div class="rounded-2xl bg-slate-900/95 border border-slate-800 p-3.5 space-y-2.5">' +
-            '<div class="flex justify-between items-start">' +
-              '<div>' +
-                '<div class="text-xs font-black text-white">सत्यापित स्टूडेंट रूम व 1BHK फ्लैट</div>' +
-                '<div class="text-[11px] text-slate-400">अलग सब-मीटर • 24x7 पानी • 0% दलाली</div>' +
-              '</div>' +
-              '<span class="px-2 py-1 rounded-lg bg-emerald-950 text-emerald-300 border border-emerald-700/50 text-xs font-black">₹2,500/माह</span>' +
-            '</div>' +
-            '<div class="grid grid-cols-2 gap-2 pt-1">' +
-              '<button type="button" onclick="alert(\'मकान मालिक से सीधा संपर्क अनुरोध दर्ज हो गया है।\')" class="py-2.5 rounded-xl bg-emerald-500 text-slate-950 font-black text-xs">📞 सीधा संपर्क करें</button>' +
-              '<button type="button" onclick="alert(\'अपना खाली कमरा/फ्लैट मुफ़्त लिस्ट करें।\')" class="py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-cyan-300 font-bold text-xs">+ कमरा लिस्ट करें</button>' +
-            '</div>' +
-          '</div>' +
-        '</div>';
-      return;
+    if (window.RM_FULLSCREEN_CONTROLLER && typeof window.RM_FULLSCREEN_CONTROLLER.ensureMicroAppRendered === 'function') {
+      window.RM_FULLSCREEN_CONTROLLER.ensureMicroAppRendered(subCode, titleText, subtitleText);
     }
-
-    if (subCode === '15-2' || subCode === '16-2') {
-      if (fsTitle) fsTitle.textContent = '📒 ' + subCode + ' • किराया बहीखाता';
-      fsContainer.innerHTML =
-        '<div class="space-y-3.5 text-slate-100 mt-1">' +
-          '<div class="rounded-2xl bg-[#0b0f19] border border-emerald-500/40 p-4 shadow-xl space-y-3">' +
-            '<div class="flex items-center justify-between">' +
-              '<span class="px-2.5 py-0.5 rounded-md bg-emerald-950 border border-emerald-600/50 text-emerald-300 text-[10px] font-bold">स्मार्ट किराया व सब-मीटर बिजली लेजर</span>' +
-              '<span class="text-xs font-bold text-emerald-400">100% ऑफलाइन-फर्स्ट</span>' +
-            '</div>' +
-            '<div class="grid grid-cols-2 gap-2 text-xs">' +
-              '<div class="p-3 rounded-xl bg-slate-950 border border-slate-800"><div class="text-[10px] text-slate-400">मासिक किराया</div><div class="text-sm font-black text-white mt-0.5">₹ 0.00</div></div>' +
-              '<div class="p-3 rounded-xl bg-slate-950 border border-slate-800"><div class="text-[10px] text-slate-400">सब-मीटर बिजली बिल</div><div class="text-sm font-black text-cyan-300 mt-0.5">0 यूनिट</div></div>' +
-            '</div>' +
-            '<button type="button" onclick="alert(\'नया किरायेदार / सब-मीटर रीडिंग जोड़ी गई।\')" class="w-full py-3 rounded-xl bg-emerald-500 text-slate-950 font-black text-xs shadow-lg">+ किरायेदार व मीटर रीडिंग जोड़ें</button>' +
-          '</div>' +
-        '</div>';
-      return;
-    }
-
-    launchOneTapServiceScreen(titleText || 'सत्यापित लोकल सेवा', subtitleText || 'Rise Mitra 1-Tap सेवा पोर्टल', subCode || '15-1');
   }
 
   // Helper: Resolve sub-container across all ID formats (sub-c01, sub-c1, sub-g34, etc.)
@@ -340,56 +250,11 @@
     };
   }
 
-  // 4. FULLSCREEN 1-TAP SERVICE LAUNCHER (DELEGATED TO RM_FULLSCREEN_CONTROLLER WITH INSTANT FALLBACK — 100% ZEL)
+  // 4. FULLSCREEN 1-TAP SERVICE LAUNCHER (Delegated to fullscreen-microapp-controller.js)
   function launchOneTapServiceScreen(titleText, subtitleText, subCode) {
     if (window.RM_FULLSCREEN_CONTROLLER && typeof window.RM_FULLSCREEN_CONTROLLER.launchOneTapServiceScreen === 'function') {
       window.RM_FULLSCREEN_CONTROLLER.launchOneTapServiceScreen(titleText, subtitleText, subCode);
-      return;
     }
-    var fs = document.getElementById('rm-fullscreen-view');
-    var fsTitle = document.getElementById('fs-module-title');
-    var fsContainer = document.getElementById('rm-module-container');
-    if (!fs || !fsContainer) return;
-
-    window.closeFullscreenModule = forceCloseFullscreenViewport;
-    if (fsTitle) {
-      fsTitle.textContent = (subCode ? subCode + ' • ' : '') + (titleText || 'सत्यापित सेवा');
-    }
-    fsContainer.innerHTML =
-      '<div class="rounded-2xl bg-[#0b0f19] border border-slate-700/80 p-4 space-y-4 shadow-2xl mt-2">' +
-        '<div class="flex items-center justify-between border-b border-slate-800 pb-3">' +
-          '<div>' +
-            '<span class="inline-block px-2.5 py-0.5 rounded-md bg-emerald-950/90 border border-emerald-600/50 text-emerald-300 text-[10px] font-bold mb-1">' +
-              (subCode || 'सत्यापित सेवा') + ' • 1-Tap Instant Active' +
-            '</span>' +
-            '<h2 class="text-base font-black text-white mt-0.5">' + (titleText || 'सत्यापित लोकल सेवा') + '</h2>' +
-            (subtitleText ? '<p class="text-xs text-emerald-400 mt-0.5 font-semibold">' + subtitleText + '</p>' : '') +
-          '</div>' +
-          '<span class="px-2 py-1 rounded-lg bg-amber-950/80 border border-amber-700/60 text-amber-400 text-xs font-bold">★ 4.9</span>' +
-        '</div>' +
-        '<div class="space-y-2 text-xs text-slate-300">' +
-          '<div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between">' +
-            '<span>🛡️ 100% सत्यापित स्थानीय सेवा प्रदाता नेटवर्क</span>' +
-            '<span class="text-emerald-400 font-bold">सक्रिय</span>' +
-          '</div>' +
-          '<div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between">' +
-            '<span>⚡ पारदर्शी तय रेट कार्ड व डिजिटल बिलिंग</span>' +
-            '<span class="text-cyan-400 font-bold">0% छुपा शुल्क</span>' +
-          '</div>' +
-        '</div>' +
-        '<div class="grid grid-cols-2 gap-2.5 pt-2">' +
-          '<button type="button" onclick="alert(\'आपका अनुरोध दर्ज हो गया है: \' + ' + JSON.stringify(titleText || subCode) + ')" class="w-full bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-black py-3 rounded-xl text-xs shadow-lg cursor-pointer min-h-[48px]">' +
-            '✓ अभी बुक / ऑर्डर करें' +
-          '</button>' +
-          '<button type="button" onclick="closeFullscreenModule()" class="w-full bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-600/80 text-slate-100 font-bold py-3 rounded-xl text-xs cursor-pointer min-h-[48px]">' +
-            '‹ कैटलॉग पर वापस' +
-          '</button>' +
-        '</div>' +
-      '</div>';
-
-    fs.classList.remove('hidden');
-    fs.style.setProperty('display', 'flex', 'important');
-    fs.style.setProperty('z-index', '99999', 'important');
   }
 
   // 5. DETERMINISTIC 1-TAP ACCORDION & SUB-SERVICE CLICK CONTROLLER (CASE 0, HOME, CASE 1 & CASE 2)
@@ -400,7 +265,6 @@
 
     var now = Date.now();
 
-    // Ghost-Click Shield: Prevent synthetic click from undoing touchend action within 650ms
     if (e.type === 'click' && (now - lastTouchTs < 650)) {
       e.stopImmediatePropagation();
       e.stopPropagation();
@@ -472,7 +336,6 @@
 
     if (!modal || !modal.contains(target)) return;
 
-    // Instant 1-Tap Close on Category Modal Top-Right '✕'
     var modalCloseBtn = target.closest('[onclick*="closeCatalogModal"]');
     if (modalCloseBtn) {
       if (e.type === 'touchend') lastTouchTs = now;
@@ -582,7 +445,6 @@
     }
   }
 
-  // Bind on window capture phase so it runs before all document-level listeners
   window.addEventListener('touchstart', function (e) {
     if (!e.touches || e.touches.length !== 1) return;
     touchStartX = e.touches[0].clientX;
@@ -603,7 +465,6 @@
   window.addEventListener('click', handleDeterministicOneTap, true);
   document.addEventListener('click', handleDeterministicOneTap, true);
 
-  // Auto-upgrade any raw cards injected by 20ms/120ms timers in catalog-sivme-render-engine.js
   function attachCatalogHydrationObserver() {
     var modal = document.getElementById('categoryModal');
     if (!modal || typeof MutationObserver === 'undefined') return;
