@@ -20,7 +20,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <!-- Master Decoupled Global CSS with Fresh Cache Buster -->
-  <link rel="stylesheet" href="/css/app.css?v=20261012_v6">
+  <link rel="stylesheet" href="/css/app.css?v=20261015_v10">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -52,18 +52,33 @@
           sessionStorage.removeItem('sivme_active');
         } catch(e) {}
       }
+      try {
+        if (localStorage.getItem('rm_cache_ver') !== '20261015_v10' && 'caches' in window) {
+          caches.keys().then(function(names) {
+            for (let name of names) caches.delete(name);
+          });
+          localStorage.setItem('rm_cache_ver', '20261015_v10');
+        }
+      } catch(e) {}
     })();
   </script>
 
   <!-- ZEL 1-Tap Instant Touch & Sub-Container Visibility Lock -->
   <style id="rm-zel-one-tap-lock">
-    button, a, [onclick], .tactile-25d, #categoryModal [data-cat-id], #categoryModal [id^="sub-"] > div {
+    button, a, [onclick], .tactile-25d, #categoryModal [data-cat-id], #categoryModal [id^="sub-"] > div, .rm-service-chip {
       touch-action: manipulation !important;
       -webkit-tap-highlight-color: transparent !important;
       cursor: pointer !important;
     }
+    .tactile-25d:active {
+      transform: none !important;
+    }
+    #categoryModal.hidden,
+    #rm-fullscreen-view.hidden,
+    #playStoreInstallBanner.hidden,
     #categoryModal .hidden,
-    #categoryModal [id^="sub-"].hidden {
+    #categoryModal [id^="sub-"].hidden,
+    #categoryModal [id^="sub-"][data-rm-collapsed="true"] {
       display: none !important;
     }
     #categoryModal:not(.hidden) {
@@ -71,7 +86,14 @@
       inset: 0 !important;
       z-index: 50 !important;
       background-color: #0b0f19 !important;
+      display: flex !important;
       justify-content: center !important;
+    }
+    #rm-fullscreen-view:not(.hidden) {
+      position: fixed !important;
+      inset: 0 !important;
+      z-index: 99999 !important;
+      display: flex !important;
     }
   </style>
 </head>
@@ -359,38 +381,38 @@
   </script>
 
   <!-- Pan-India Master Geographic Dataset -->
-  <script src="/js/data/india-geo-data.js"></script>
+  <script src="/js/data/india-geo-data.js?v=20261015_v10"></script>
 
   <!-- Modular Home Grid Engine (12 Play Store Standard Verticals) -->
-  <script src="/js/home-grid-engine.js?v=20261012_06"></script>
+  <script src="/js/home-grid-engine.js?v=20261015_v10"></script>
 
   <!-- Sovereign Profile & Control Hub Engine (Angel One Taxonomy) -->
-  <script src="/js/profile-hub-engine.js?v=20261012_06"></script>
+  <script src="/js/profile-hub-engine.js?v=20261015_v10"></script>
 
   <!-- Canonical Decoupled Catalog Engine & Data Registry -->
-  <script src="/js/categories-data.js?v=20261012_06"></script>
-  <script src="/js/catalog-sivme-engine.js?v=20261012_06"></script>
+  <script src="/js/categories-data.js?v=20261015_v10"></script>
+  <script src="/js/catalog-sivme-engine.js?v=20261015_v10"></script>
 
   <!-- Decoupled Shell Controller Engine & Viewport Dispatcher -->
-  <script src="/js/shell-controller.js?v=20261012_06"></script>
+  <script src="/js/shell-controller.js?v=20261015_v10"></script>
 
   <!-- Sovereign In-Situ Isolated Adapters -->
-  <script src="/js/sivme-adapters/cat16-adapter.js?v=20261012_06"></script>
+  <script src="/js/sivme-adapters/cat16-adapter.js?v=20261015_v10"></script>
 
   <!-- Universal Production Catalog & 0.05s Search Intelligence Engine (Cache-Busted) -->
-  <script src="/js/universal-catalog/catalog-metadata-registry.js?v=20261012_v6"></script>
-  <script src="/js/universal-catalog/universal-card-engine.js?v=20261012_v6"></script>
-  <script src="/js/universal-catalog/universal-search-engine.js?v=20261012_v6"></script>
+  <script src="/js/universal-catalog/catalog-metadata-registry.js?v=20261015_v10"></script>
+  <script src="/js/universal-catalog/universal-card-engine.js?v=20261015_v10"></script>
+  <script src="/js/universal-catalog/universal-search-engine.js?v=20261015_v10"></script>
 
   <!-- Modular Catalog Extensions (Cache-Busted Play Store Batches) -->
-  <script src="/js/universal-catalog/extensions/ext-batch-11-15.js?v=20261012_v6"></script>
-  <script src="/js/universal-catalog/extensions/ext-batch-16-20.js?v=20261012_v6"></script>
+  <script src="/js/universal-catalog/extensions/ext-batch-11-15.js?v=20261015_v10"></script>
+  <script src="/js/universal-catalog/extensions/ext-batch-16-20.js?v=20261015_v10"></script>
 
   <!-- MODULAR PHASE 5 FAVORITES ENGINE (DECOUPLED & PLAY STORE STYLED) -->
-  <script src="/js/favorites-engine.js?v=20261012_06"></script>
+  <script src="/js/favorites-engine.js?v=20261015_v10"></script>
 
   <!-- SIVME v2.0 Phase 1: Core Visibility Registry Engine (ZEL Isolated) -->
-  <script src="/js/core/sovereign-in-situ-registry.js?v=20261012_06"></script>
+  <script src="/js/core/sovereign-in-situ-registry.js?v=20261015_v10"></script>
 
   <!-- ============================================================================ -->
   <!-- ZEL 1-TAP DETERMINISTIC OPEN & ACCORDION SYNC CONTROLLER                     -->
@@ -455,6 +477,7 @@
 
         fs.classList.remove('hidden');
         fs.style.setProperty('display', 'flex', 'important');
+        fs.style.setProperty('z-index', '99999', 'important');
       }
 
       document.addEventListener('click', function (e) {
@@ -469,7 +492,18 @@
         if (catEl) {
           var rawId = catEl.getAttribute('data-cat-id') || '';
           var cleanNum = rawId.replace(/[^0-9]/g, '');
-          var subContainer = document.getElementById('sub-c' + cleanNum) || document.getElementById('sub-' + cleanNum);
+          var intNum = parseInt(cleanNum, 10);
+          var paddedNum = (intNum < 10 ? '0' : '') + intNum;
+          var normNum = isNaN(intNum) ? cleanNum : String(intNum);
+
+          var subContainer = document.getElementById('sub-c' + cleanNum) ||
+                             document.getElementById('sub-c' + paddedNum) ||
+                             document.getElementById('sub-c' + normNum) ||
+                             document.getElementById('sub-g' + cleanNum) ||
+                             document.getElementById('sub-g' + paddedNum) ||
+                             document.getElementById('sub-g' + normNum) ||
+                             document.getElementById('sub-' + rawId) ||
+                             document.getElementById('sub-' + cleanNum);
 
           // Check if tap is inside the parent header (and NOT inside the expanded sub-container)
           if (subContainer && !subContainer.contains(e.target)) {
@@ -485,13 +519,16 @@
             e.preventDefault();
 
             var isCurrentlyOpen = !subContainer.classList.contains('hidden') &&
+                                  subContainer.getAttribute('data-rm-collapsed') !== 'true' &&
                                   window.getComputedStyle(subContainer).display !== 'none';
 
             if (isCurrentlyOpen) {
               subContainer.classList.add('hidden');
+              subContainer.setAttribute('data-rm-collapsed', 'true');
               subContainer.style.setProperty('display', 'none', 'important');
             } else {
               subContainer.classList.remove('hidden');
+              subContainer.setAttribute('data-rm-collapsed', 'false');
               subContainer.style.setProperty('display', 'block', 'important');
             }
 
@@ -500,11 +537,11 @@
             var subCards = subContainer.querySelectorAll(':scope > div');
             if (window.RM_UNIVERSAL_CARD_ENGINE) {
               if (headerEl && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard === 'function') {
-                window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard(headerEl, cleanNum, !isCurrentlyOpen, subCards.length || 3);
+                window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard(headerEl, normNum, !isCurrentlyOpen, subCards.length || 3);
               }
-              if (!isCurrentlyOpen && typeof window.RM_UNIVERSAL_CARD_ENGINE. renderSubCard === 'function') {
+              if (!isCurrentlyOpen && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard === 'function') {
                 subCards.forEach(function (sc, idx) {
-                  window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, cleanNum, cleanNum + '-' + (idx + 1));
+                  window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, normNum, normNum + '-' + (idx + 1));
                 });
               }
             }
@@ -516,7 +553,7 @@
         var subWrapper = e.target.closest('[id^="sub-"]');
         if (subWrapper) {
           // Allow Pin & Video buttons to perform their own action
-          var actBtn = e.target.closest('.rm-act-pin, .rm-act-vid');
+          var actBtn = e.target.closest('.rm-act-pin, .rm-act-vid, .rm-act-video');
           if (actBtn) return;
 
           if (now - lastActionTs < 300) return;
@@ -527,8 +564,8 @@
           if (!subCard) return;
 
           // If native Category 16 sub-cards (16-2 / 16-3) have custom module openers, trigger them first
-          var subIdMatch = (subCard.textContent || '').match(/\b(\d{2}-\d)\s*\./);
-          var subCode = subIdMatch ? subIdMatch[1] : '';
+          var subIdMatch = (subCard.textContent || '').match(/\b(\d{1,2}-\d)\s*\./);
+          var subCode = subIdMatch ? subIdMatch[1] : (subCard.getAttribute('data-rm-sub-rendered') || '01-1');
 
           if (subCode === '16-2' && typeof window.openFullscreenModule === 'function') {
             window.openFullscreenModule('16-2');
@@ -540,9 +577,9 @@
           }
 
           // Detect if user tapped a specific service option pill (e.g., 🌟 एचडी स्टार फ्लेक्स बैनर...)
-          var tappedNode = e.target.closest('div, span, button');
+          var tappedNode = e.target.closest('.rm-service-chip, div, span, button');
           var tappedText = tappedNode ? (tappedNode.textContent || '').trim() : '';
-          var headingEl = subCard.querySelector('h3, h4, [style*="font-size: 18"], [style*="font-size: 19"], .font-black, .font-bold');
+          var headingEl = subCard.querySelector('h3, h4, [style*="font-size: 20"], [style*="font-size: 18"], [style*="font-size: 19"], .font-black, .font-bold');
           var cardTitle = headingEl ? headingEl.textContent.trim() : 'सत्यापित सेवा';
 
           var isServicePill = tappedText.length > 4 &&
@@ -551,17 +588,15 @@
                               tappedText.indexOf(subCode) === -1 &&
                               tappedText.indexOf('उपलब्ध') === -1 &&
                               tappedText.indexOf('प्रतिष्ठान') === -1 &&
-                              tappedText.indexOf('खोलें') === -1;
+                              tappedText.indexOf('खोलें') === -1 &&
+                              tappedText.indexOf('खेलें') === -1;
 
           var finalTitle = isServicePill ? tappedText : cardTitle;
           var finalSubtitle = isServicePill ? cardTitle : 'Rise Mitra सत्यापित सेवा व बुकिंग पोर्टल';
 
-          setTimeout(function () {
-            var fs = document.getElementById('rm-fullscreen-view');
-            if (fs && fs.classList.contains('hidden')) {
-              launchOneTapServiceScreen(finalTitle, finalSubtitle, subCode || '01-1');
-            }
-          }, 15);
+          e.stopImmediatePropagation();
+          e.preventDefault();
+          launchOneTapServiceScreen(finalTitle, finalSubtitle, subCode);
         }
       }, true);
     })();
