@@ -11,6 +11,76 @@
 (function () {
   'use strict';
 
+  // Real-Data Top-3 Revenue Definitions for Category 15 & Category 16 (Eliminates Formality Chips & Wrong 🚰/🪚 Icons)
+  var REAL_DATA_MISTRY_REPAIR = {
+    icon: '🛠️',
+    title: 'Mistry & Home Repair',
+    hindiTitle: 'मिस्त्री, इलेक्ट्रीशियन, प्लंबर व घरेलू मरम्मत',
+    categoryTag: 'ऑन-डिमांड होम रिपेयर (#1 रेवेन्यू)',
+    rating: '★ 4.9',
+    reviewCount: '28,500+ बुकिंग्स',
+    metaBadge: '⚡ 30-मिनट होम विजिट',
+    servicesTitle: 'सर्वाधिक मांग वाली टॉप-4 होम रिपेयर सेवाएं:',
+    services: [
+      { text: '❄️ एसी (AC), फ्रिज, वाशिंग मशीन व RO सर्विसिंग', bg: 'rgba(56,189,248,0.15)', c: '#38bdf8' },
+      { text: '⚡ इलेक्ट्रीशियन, इनवर्टर, पंखा व एमसीबी वायरिंग फॉल्ट', bg: 'rgba(250,204,21,0.15)', c: '#facc15' },
+      { text: '🚰 प्लंबर, पानी मोटर, टंकी व बाथरूम पाइप फिटिंग', bg: 'rgba(52,211,153,0.15)', c: '#34d399' },
+      { text: '🪚 कारपेंटर, दरवाजा-लॉक, फर्नीचर व होम पेंटिंग कार्य', bg: 'rgba(192,132,252,0.15)', c: '#c084fc' }
+    ],
+    highlights: [
+      'काम शुरू होने से पहले पारदर्शी तय रेट कार्ड व फिक्स विजिट शुल्क।',
+      '100% पहचान सत्यापित स्थानीय कुशल मिस्त्री, इलेक्ट्रीशियन व प्लंबर नेटवर्क।',
+      'प्रत्येक रिपेयर कार्य पर 30-दिन की सर्विस वारंटी व पक्की डिजिटल रसीद।'
+    ],
+    btnText: 'खोलें ➔'
+  };
+
+  var REAL_DATA_RENTAL_LEDGER = {
+    icon: '📒',
+    title: 'Rental Ledger',
+    hindiTitle: 'किराया बहीखाता व किरायेदार प्रबंधन',
+    categoryTag: 'प्रॉपटेक रेंटल बहीखाता (Top SaaS)',
+    rating: '★ 4.9',
+    reviewCount: '19,400+ मकान मालिक',
+    metaBadge: '🧾 ऑटो-रेंट रसीद',
+    servicesTitle: 'उपलब्ध किराया बहीखाता व प्रॉपर्टी प्रबंधन टूल:',
+    services: [
+      { text: '📖 मासिक किराया, एडवांस डिपाजिट व बकाया ऑटो-हिसाब', bg: 'rgba(52,211,153,0.15)', c: '#34d399' },
+      { text: '⚡ सब-मीटर बिजली यूनिट रीडिंग व पानी बिल कैलकुलेटर', bg: 'rgba(56,189,248,0.15)', c: '#38bdf8' },
+      { text: '📲 1-क्लिक व्हाट्सएप रेंट रिमाइंडर व डिजिटल किराया रसीद', bg: 'rgba(250,204,21,0.15)', c: '#facc15' },
+      { text: '🪪 किरायेदार केवाईसी (KYC), रेंट एग्रीमेंट व कमरा आवंटन रिकॉर्ड', bg: 'rgba(244,114,182,0.15)', c: '#f472b6' }
+    ],
+    highlights: [
+      'मकान मालिक, पीजी (PG), हॉस्टल व मार्केट दुकान किराया हेतु ऑफलाइन-फर्स्ट डिजिटल बहीखाता।',
+      'किराया प्राप्त होते ही किरायेदार को 1-टैप में प्रमाणित व्हाट्सएप रसीद भेजें।',
+      'कमरा खाली होने की तिथि, पिछला बकाया व मीटर यूनिट का शून्य-त्रुटि हिसाब।'
+    ],
+    btnText: 'खोलें ➔'
+  };
+
+  var REAL_DATA_ROOM_FLAT_SEARCH = {
+    icon: '🏢',
+    title: 'Room & Flat Search',
+    hindiTitle: 'कमरा, फ्लैट व पीजी खोज (0% दलाली)',
+    categoryTag: '0% ब्रोकरेज प्रॉपर्टी सर्च (59% मार्केट शेयर)',
+    rating: '★ 4.9',
+    reviewCount: '34,800+ प्रॉपर्टीज',
+    metaBadge: '🔑 0% दलाली (Direct Owner)',
+    servicesTitle: 'उपलब्ध रूम, फ्लैट, पीजी व कमर्शियल प्रॉपर्टी विकल्प:',
+    services: [
+      { text: '🏠 फैमिली हेतु 1BHK, 2BHK, 3BHK फ्लैट व स्वतंत्र मकान', bg: 'rgba(56,189,248,0.15)', c: '#38bdf8' },
+      { text: '🎓 छात्रों व वर्किंग प्रोफेशनल्स हेतु सिंगल/शेयरिंग रूम व PG', bg: 'rgba(52,211,153,0.15)', c: '#34d399' },
+      { text: '🏪 मुख्य बाजार में दुकान, ऑफिस स्पेस व गोदाम किराये पर', bg: 'rgba(250,204,21,0.15)', c: '#facc15' },
+      { text: '📍 पिनकोड व जीपीएस लोकेशन अनुसार सीधे मकान मालिक से संपर्क', bg: 'rgba(192,132,252,0.15)', c: '#c084fc' }
+    ],
+    highlights: [
+      'बिना किसी ब्रोकर या दलाली शुल्क (0% Brokerage) के सीधे मकान मालिक से संपर्क।',
+      'असली कमरा फोटो, मासिक किराया, एडवांस शर्तें व पिनकोड लोकेशन पहले से सत्यापित।',
+      'मकान मालिक अपना खाली कमरा, फ्लैट या दुकान 30 सेकंड में निःशुल्क सूचीबद्ध करें।'
+    ],
+    btnText: 'खोलें ➔'
+  };
+
   // 1. CANONICAL 150 SUB-CATEGORY MASTER MATRIX (01-1 TO 50-3 — 100% ZEL)
   var CANONICAL_SUB_MATRIX = {
     '01-1': { icon: '🪧', title: 'Flex Banner & Glow Sign Boards', hindiTitle: 'फ्लेक्स बैनर, विनाइल व ग्लोसाइन बोर्ड', categoryTag: 'आउटडोर प्रिंटिंग', reviewCount: '8,200+ प्रतिष्ठान', metaBadge: 'ऑल-वेदर प्रिंट', servicesTitle: 'उपलब्ध बोर्ड व प्रिंटिंग सेवाएं:', services: [ { text: '🌟 एचडी स्टार फ्लेक्स बैनर (तेज धूप व बारिश सुरक्षित)', bg: 'rgba(250,204,21,0.15)', c: '#facc15' }, { text: '💡 एलईडी ग्लोसाइन बोर्ड व एक्रिलिक 3D लेटरिंग', bg: 'rgba(56,189,248,0.15)', c: '#38bdf8' }, { text: '🚪 दुकान शटर विनाइल पेस्टिंग व वन-वे विजन फिल्म', bg: 'rgba(52,211,153,0.15)', c: '#34d399' }, { text: '🔩 आयरन फ्रेमिंग, ऑन-साइट इंस्टॉलेशन व फिटिंग', bg: 'rgba(192,132,252,0.15)', c: '#c084fc' } ] },
@@ -55,12 +125,12 @@
     '14-1': { title: 'Doorstep Yoga & Physio', hindiTitle: 'प्राकृतिक योग, प्राणायाम व फिजियोथेरेपी केंद्र' },
     '14-2': { title: 'Local Gym Membership Passes', hindiTitle: 'व्यायामशाला, जिम व स्ट्रेंथ ट्रेनिंग पास' },
     '14-3': { title: 'Desi Akhada Nutrition', hindiTitle: 'देसी अखाड़ा पोषण, सत्तू व शुद्ध डाइट सप्लीमेंट' },
-    '15-1': { title: 'Mistry & Home Repair', hindiTitle: 'मिस्त्री, इलेक्ट्रीशियन, प्लंबर व घरेलू मरम्मत' },
-    '15-2': { title: 'Rental Ledger', hindiTitle: 'किराया बहीखाता व किरायेदार प्रबंधन' },
-    '15-3': { title: 'Room & Flat Search', hindiTitle: 'कमरा, फ्लैट व पीजी खोज (0% दलाली)' },
-    '16-1': { title: 'Mistry & Home Repair', hindiTitle: 'मिस्त्री व दैनिक घरेलू मरम्मत सेवाएं' },
-    '16-2': { title: 'Rental Ledger', hindiTitle: 'किराया बहीखाता व किरायेदार प्रबंधन' },
-    '16-3': { title: 'Room & Flat Search', hindiTitle: 'कमरा, फ्लैट व पीजी खोज (0% दलाली)' },
+    '15-1': REAL_DATA_MISTRY_REPAIR,
+    '15-2': REAL_DATA_RENTAL_LEDGER,
+    '15-3': REAL_DATA_ROOM_FLAT_SEARCH,
+    '16-1': { icon: '🛠️', title: 'Mistry & Home Repair', hindiTitle: 'मिस्त्री व दैनिक घरेलू मरम्मत सेवाएं', categoryTag: REAL_DATA_MISTRY_REPAIR.categoryTag, rating: REAL_DATA_MISTRY_REPAIR.rating, reviewCount: REAL_DATA_MISTRY_REPAIR.reviewCount, metaBadge: REAL_DATA_MISTRY_REPAIR.metaBadge, servicesTitle: REAL_DATA_MISTRY_REPAIR.servicesTitle, services: REAL_DATA_MISTRY_REPAIR.services, highlights: REAL_DATA_MISTRY_REPAIR.highlights, btnText: REAL_DATA_MISTRY_REPAIR.btnText },
+    '16-2': REAL_DATA_RENTAL_LEDGER,
+    '16-3': REAL_DATA_ROOM_FLAT_SEARCH,
     '17-1': { title: 'Steam Dry Cleaning & Laundry', hindiTitle: 'स्टीम ड्राई क्लीनिंग, लॉन्ड्री व आयरन सेवा' },
     '17-2': { title: 'Ladies Doorstep Tailoring', hindiTitle: 'लेडीज बुटीक, सिलाई व अल्टरेशन होम पिकअप' },
     '17-3': { title: 'Home Deep Cleaning', hindiTitle: 'घर, सोफा, बाथरूम व पानी टंकी डीप क्लीनिंग' },
@@ -213,6 +283,7 @@
     var paddedSub = ids.paddedId + '-' + subIdx;
     var normSub = ids.normId + '-' + subIdx;
     var fallbackSeed = null;
+    var richRegistryCandidate = null;
 
     if (window.RM_CATALOG_REGISTRY && typeof window.RM_CATALOG_REGISTRY.getSubcategoryData === 'function') {
       var candidates = [
@@ -226,19 +297,20 @@
       for (var i = 0; i < candidates.length; i++) {
         var cand = candidates[i];
         if (cand && !fallbackSeed) fallbackSeed = cand;
-        if (cand && !isGenericSubData(cand)) {
-          return cand;
+        if (cand && !isGenericSubData(cand) && !richRegistryCandidate) {
+          richRegistryCandidate = cand;
         }
       }
     }
 
+    var baseSeed = richRegistryCandidate || fallbackSeed;
     var canonicalEntry = CANONICAL_SUB_MATRIX[paddedSub];
     if (canonicalEntry) {
       var merged = {};
-      if (fallbackSeed) {
-        for (var k in fallbackSeed) {
-          if (Object.prototype.hasOwnProperty.call(fallbackSeed, k)) {
-            merged[k] = fallbackSeed[k];
+      if (baseSeed) {
+        for (var k in baseSeed) {
+          if (Object.prototype.hasOwnProperty.call(baseSeed, k)) {
+            merged[k] = baseSeed[k];
           }
         }
       }
@@ -250,7 +322,7 @@
       return merged;
     }
 
-    return fallbackSeed;
+    return baseSeed;
   }
 
   // Export globally and trigger immediate re-sweep if Card Engine is already active
@@ -261,6 +333,13 @@
     fetchCategoryRegistryData: fetchCategoryRegistryData,
     fetchSubcategoryRegistryData: fetchSubcategoryRegistryData
   };
+
+  if (typeof document !== 'undefined') {
+    document.querySelectorAll('[data-rm-sub-rendered], [data-rm-parent-rendered]').forEach(function (el) {
+      el.removeAttribute('data-rm-sub-rendered');
+      el.removeAttribute('data-rm-parent-rendered');
+    });
+  }
 
   if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
     window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog();
