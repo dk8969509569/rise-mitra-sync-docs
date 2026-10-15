@@ -52,8 +52,50 @@
           sessionStorage.removeItem('sivme_active');
         } catch(e) {}
       }
+      try {
+        if (localStorage.getItem('rm_cache_ver') !== '20261015_v10' && 'caches' in window) {
+          caches.keys().then(function(names) {
+            for (let name of names) caches.delete(name);
+          });
+          localStorage.setItem('rm_cache_ver', '20261015_v10');
+        }
+      } catch(e) {}
     })();
   </script>
+
+  <!-- ZEL 1-Tap Instant Touch & Sub-Container Visibility Lock -->
+  <style id="rm-zel-one-tap-lock">
+    button, a, [onclick], .tactile-25d, #categoryModal [data-cat-id], #categoryModal [id^="sub-"] > div, .rm-service-chip {
+      touch-action: manipulation !important;
+      -webkit-tap-highlight-color: transparent !important;
+      cursor: pointer !important;
+    }
+    .tactile-25d:active {
+      transform: none !important;
+    }
+    #categoryModal.hidden,
+    #rm-fullscreen-view.hidden,
+    #playStoreInstallBanner.hidden,
+    #categoryModal .hidden,
+    #categoryModal [id^="sub-"].hidden,
+    #categoryModal [id^="sub-"][data-rm-collapsed="true"] {
+      display: none !important;
+    }
+    #categoryModal:not(.hidden) {
+      position: fixed !important;
+      inset: 0 !important;
+      z-index: 50 !important;
+      background-color: #0b0f19 !important;
+      display: flex !important;
+      justify-content: center !important;
+    }
+    #rm-fullscreen-view:not(.hidden) {
+      position: fixed !important;
+      inset: 0 !important;
+      z-index: 99999 !important;
+      display: flex !important;
+    }
+  </style>
 </head>
 
 <body class="bg-[#030712] text-slate-100 min-h-screen pb-36 antialiased select-none font-sans">

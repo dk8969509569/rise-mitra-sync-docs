@@ -13,6 +13,60 @@
   'use strict';
 
   var isSweeping = false;
+  var lastParentTapTs = 0;
+  var lastSubTapTs = 0;
+
+  // Helper: Resolve Sub-Container across all ID conventions (sub-c1, sub-c01, sub-g34, sub-1, etc.)
+  function resolveSubContainer(catEl, rawId, cleanNum) {
+    var intNum = parseInt(cleanNum, 10);
+    var paddedNum = (intNum < 10 ? '0' : '') + intNum;
+    return document.getElementById('sub-c' + cleanNum) ||
+           document.getElementById('sub-c' + paddedNum) ||
+           document.getElementById('sub-c' + intNum) ||
+           document.getElementById('sub-g' + cleanNum) ||
+           document.getElementById('sub-g' + paddedNum) ||
+           document.getElementById('sub-g' + intNum) ||
+           document.getElementById('sub-' + rawId) ||
+           document.getElementById('sub-' + cleanNum) ||
+           document.getElementById('sub-' + paddedNum) ||
+           document.getElementById('sub-' + intNum) ||
+           (catEl ? catEl.querySelector('[id^="sub-"]') : null);
+  }
+
+  // Helper: Open Fullscreen Micro-App Viewport on 1-Tap for Sub-Card or Service Chip
+  function openOneTapSubServiceViewport(info, cleanSub, selectedChipText, isGame) {
+    if (cleanSub === '16-2' && typeof window.openFullscreenModule === 'function') {
+      window.openFullscreenModule('16-2');
+      return;
+    }
+    if (cleanSub === '16-3' && typeof window.openFullscreenModule === 'function') {
+      window.openFullscreenModule('16-3');
+      return;
+    }
+
+    var fs = document.getElementById('rm-fullscreen-view');
+    var fsTitle = document.getElementById('fs-module-title');
+    var fsContainer = document.getElementById('rm-module-container');
+    if (!fs || !fsContainer) return;
+
+    if (typeof window.closeFullscreenModule !== 'function') {
+      window.closeFullscreenModule = function () {
+        fs.classList.add('hidden');
+        fs.style.setProperty('display', 'none', 'important');
+      };
+    }
+
+    var mainHeading = selectedChipText || (info && info.title) || ('सेवा ' + cleanSub);
+    var subHeading = selectedChipText
+      ? ((info && info.title ? info.title + ' • ' : '') + ((info && (info.hindiTitle || info.hindi)) || ''))
+      : ((info && (info.hindiTitle || info.hindi)) || 'प्रमाणित व विश्वसनीय सेवा');
+    var badgeIcon = (info && info.icon) || (isGame ? '🎮' : '🛠️');
+    var ratingText = (info && info.rating) || '★ 4.9';
+    var reviewText = (info && info.reviewCount) || (isGame ? '18k+ खिलाड़ी' : '1,500+ समीक्षाएं');
+
+    if (fsTitle) {
+      fsTitle.textContent = badgeIcon + ' ' + cleanSub + '. ' + mainHeading;
+    }
 
   // Auto-load decoupled Canonical 150 Sub-Category Matrix & Sub-Card Renderer Modules
   (function ensureCanonicalMatrixLoaded() {
@@ -123,9 +177,9 @@
       return;
     }
 
-    // Universal Future-Proof Domain Value Pillars (Friendly, Non-Sensitive & High Trust)
+    // Universal Future-Proof Domain Value Pillars
     var universalPillars = [
-      { icon: '🛡️', text: '100% सुरक्षित व प्रमाणित सेवा एवं उत्पाद नेटवर्क', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.12)' },
+      { icon: '🛡️', text: '100% आधार व पुलिस सत्यापित सेवा प्रदाता नेटवर्क', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.12)' },
       { icon: '⚡', text: 'पारदर्शी तय रेट कार्ड, डिजिटल बिलिंग व शून्य छुपा शुल्क', color: '#34d399', bg: 'rgba(52, 211, 153, 0.12)' },
       { icon: '🔒', text: 'Rise Mitra कार्य संतुष्टि गारंटी व प्रत्यक्ष सहायता', color: '#facc15', bg: 'rgba(250, 204, 21, 0.12)' }
     ];
@@ -165,20 +219,20 @@
       return '<div style="font-size:13px;font-weight:700;padding:8px 12px;background:' + p.bg + ';color:' + p.color + ';border:1px solid ' + p.color + '33;border-radius:9px;display:flex;align-items:center;gap:8px;"><span style="font-size:15px;">' + p.icon + '</span><span>' + p.text + '</span></div>';
     }).join('');
 
+    var countText = (subCount && subCount > 0) ? (subCount + ' सेवाएं ') : 'सभी सेवाएं ';
+
     container.innerHTML = [
-      '<!-- Top Row: Left Column (Number Top, Logo Below) + Right Column (Play Store Title, Subtitle, Badges) -->',
+      '<!-- Top Row: Squircle Badge [Icon + Order Inside] + Right Column [Play Store Bold Title & Subtitle] -->',
       '<div style="display: flex; align-items: flex-start; gap: 14px; width: 100%;">',
-      '  <!-- Left Column Stack: Top Big Monospace Number + Bottom Squircle Logo -->',
-      '  <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 6px; flex-shrink: 0; min-width: 58px;">',
-      '    <div style="font-size: 28px; font-weight: 900; color: #38bdf8; font-family: ui-monospace, monospace; line-height: 1; text-align: center; letter-spacing: -0.5px;">' + displayNum + '</div>',
-      '    <div style="width: 54px; height: 54px; border-radius: 16px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid rgba(56, 189, 248, 0.45); box-shadow: 0 4px 12px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">',
-      '      <span style="font-size: 28px; line-height: 1;">' + icon + '</span>',
-      '    </div>',
+      '  <!-- Squircle Badge: Order & Icon strictly INSIDE, zero numbers outside -->',
+      '  <div style="width: 58px; height: 58px; min-width: 58px; border-radius: 16px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 1.5px solid rgba(56, 189, 248, 0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.45); flex-shrink: 0;">',
+      '    <span style="font-size: 24px; line-height: 1;">' + icon + '</span>',
+      '    <span style="font-size: 11px; font-weight: 800; color: #38bdf8; font-family: ui-monospace, monospace; margin-top: 3px; line-height: 1;">' + displayNum + '</span>',
       '  </div>',
-      '  <!-- Right Column Stack: Google Play Store Bold Title, Subtitle & Badges -->',
-      '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0; padding-top: 1px;">',
-      '    <div style="font-size: 22px; font-weight: 900; color: #ffffff; letter-spacing: -0.3px; line-height: 1.25; margin-bottom: 4px; word-break: break-word;">' + title + '</div>',
-      '    <div style="font-size: 14px; font-weight: 600; color: #34d399; line-height: 1.35; margin-bottom: 6px; word-break: break-word;">' + subtitle + '</div>',
+      '  <!-- Right Column: Standard Play Store Bold Title & Clean Subtitle -->',
+      '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0;">',
+      '    <div style="font-size: 21px; font-weight: 900; color: #ffffff; letter-spacing: -0.3px; line-height: 1.25; margin-bottom: 4px; word-break: break-word;">' + title + '</div>',
+      '    <div style="font-size: 13.5px; font-weight: 600; color: #34d399; line-height: 1.35; margin-bottom: 6px; word-break: break-word;">' + subtitle + '</div>',
       '    <!-- Badges Row -->',
       '    <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">',
       '      <span style="font-size: 11.5px; font-weight: 800; color: #facc15; background: rgba(250, 204, 21, 0.12); border: 1px solid rgba(250, 204, 21, 0.3); padding: 2px 7px; border-radius: 5px;">' + rating + '</span>',
@@ -189,7 +243,7 @@
       '</div>',
       '<!-- Row 2: Universal Domain Value Pillars -->',
       '<div style="display: flex; flex-direction: column; gap: 7px; width: 100%; margin-top: 4px;">' + pillarsHtml + '</div>',
-      '<!-- Row 3: Scalable Dropdown Toggle Button (Unlimited Products & Services Future-Ready) -->',
+      '<!-- Row 3: Dropdown Toggle Button -->',
       '<div style="display: flex; justify-content: flex-end; align-items: center; width: 100%; margin-top: 2px;">',
       '  <div class="rm-parent-toggle-pill" style="font-size: 13px; font-weight: 800; color: ' + (isOpen ? '#f87171' : '#34d399') + '; background: ' + (isOpen ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)') + '; border: 1px solid ' + (isOpen ? '#ef4444' : '#10b981') + '; padding: 6px 14px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; touch-action: manipulation;">',
       '    <span>' + (isOpen ? 'समेटें ▲' : 'और देखें ▼') + '</span>',
@@ -246,6 +300,17 @@
         );
         var subCards = sub ? sub.querySelectorAll(':scope > div') : [];
 
+        // Keep sub-container display and hidden class strictly synchronized
+        if (sub) {
+          if (isOpen) {
+            sub.classList.remove('hidden');
+            sub.style.setProperty('display', 'block', 'important');
+          } else {
+            sub.classList.add('hidden');
+            sub.style.setProperty('display', 'none', 'important');
+          }
+        }
+
         if (header) {
           renderParentCard(header, ids.normId, isOpen, subCards.length);
         }
@@ -261,7 +326,7 @@
     }
   }
 
-  // Auto Boot Engine: Polled & Click Delegated (Zero Mutation Observer Loop)
+  // Auto Boot Engine: Polled & 1-Tap Click Delegated (Zero Mutation Observer Loop)
   function boot() {
     sweepCatalog();
     setTimeout(sweepCatalog, 100);
@@ -270,6 +335,50 @@
     setTimeout(sweepCatalog, 1500);
 
     document.addEventListener('click', function (e) {
+      if (e.target.closest('.sivme-notch-pill')) return;
+
+      // Deterministic 1-Tap Parent Category Accordion Toggle
+      var catEl = e.target.closest('[data-cat-id]');
+      if (catEl) {
+        var rawId = catEl.getAttribute('data-cat-id') || '';
+        var cleanNum = rawId.replace(/[^0-9]/g, '');
+        var intNum = parseInt(cleanNum, 10);
+        var normNum = isNaN(intNum) ? cleanNum : String(intNum);
+        var header = catEl.querySelector(':scope > div:first-child');
+        var sub = resolveSubContainer(catEl, rawId, cleanNum);
+
+        if (header && sub && header.contains(e.target) && !sub.contains(e.target)) {
+          var now = Date.now();
+          if (now - lastParentTapTs < 280) {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            return;
+          }
+          lastParentTapTs = now;
+
+          e.stopImmediatePropagation();
+          e.preventDefault();
+
+          var currentlyOpen = !sub.classList.contains('hidden') && window.getComputedStyle(sub).display !== 'none';
+          var nextOpen = !currentlyOpen;
+          var subCards = sub.querySelectorAll(':scope > div');
+
+          if (nextOpen) {
+            sub.classList.remove('hidden');
+            sub.style.setProperty('display', 'block', 'important');
+            subCards.forEach(function (sc, idx) {
+              renderSubCard(sc, normNum, normNum + '-' + (idx + 1));
+            });
+          } else {
+            sub.classList.add('hidden');
+            sub.style.setProperty('display', 'none', 'important');
+          }
+
+          renderParentCard(header, normNum, nextOpen, subCards.length);
+          return;
+        }
+      }
+
       if (e.target.closest('[data-cat-id], #categoryModel, #categoryModal, button')) {
         setTimeout(sweepCatalog, 40);
         setTimeout(sweepCatalog, 250);
