@@ -14,27 +14,82 @@
 
   var isSweeping = false;
 
+  // Helper: Normalize Category ID so "01" and "1" NEVER create two duplicate cards side-by-side
+  function getNormalizedIds(catId) {
+    var rawDigits = String(catId || '').replace(/[^0-9]/g, '');
+    var intNum = parseInt(rawDigits, 10);
+    if (isNaN(intNum) || intNum < 1) intNum = 1;
+    var normId = String(intNum);
+    var paddedId = (intNum < 10 ? '0' : '') + intNum;
+    return {
+      intNum: intNum,
+      normId: normId,
+      paddedId: paddedId,
+      displayNum: paddedId + '.'
+    };
+  }
+
+  // Helper: Fetch Category Data safely across both "01" and "1" registry keys
+  function fetchCategoryRegistryData(ids) {
+    if (!window.RM_CATALOG_REGISTRY || typeof window.RM_CATALOG_REGISTRY.getCategoryData !== 'function') {
+      return null;
+    }
+    return window.RM_CATALOG_REGISTRY.getCategoryData(ids.paddedId) ||
+           window.RM_CATALOG_REGISTRY.getCategoryData(ids.normId) ||
+           null;
+  }
+
+  // Helper: Fetch Subcategory Data safely across both "01-1" and "1-1" registry keys
+  function fetchSubcategoryRegistryData(ids, cleanSub) {
+    if (!window.RM_CATALOG_REGISTRY || typeof window.RM_CATALOG_REGISTRY.getSubcategoryData !== 'function') {
+      return null;
+    }
+    var parts = String(cleanSub || '').split('-');
+    var subIdx = parts[1] || '1';
+    var paddedSub = ids.paddedId + '-' + subIdx;
+    var normSub = ids.normId + '-' + subIdx;
+    return window.RM_CATALOG_REGISTRY.getSubcategoryData(ids.paddedId, paddedSub) ||
+           window.RM_CATALOG_REGISTRY.getSubcategoryData(ids.normId, normSub) ||
+           window.RM_CATALOG_REGISTRY.getSubcategoryData(ids.paddedId, cleanSub) ||
+           window.RM_CATALOG_REGISTRY.getSubcategoryData(ids.normId, cleanSub) ||
+           null;
+  }
+
   // 1. RENDER UNIVERSAL PARENT CARD (TOP-LEFT: NUMBER ON TOP, LOGO BELOW | RIGHT: PLAY STORE TITLE)
   function renderParentCard(headerEl, catId, isOpen, subCount) {
     if (!headerEl) return;
-    var numId = String(catId).replace(/[^0-9]/g, '');
-    var intNum = parseInt(numId, 10);
-    var displayNum = (intNum < 10 ? '0' : '') + intNum + '.';
+    var ids = getNormalizedIds(catId);
+    var numId = ids.normId;
+    var displayNum = ids.displayNum;
+    var canonicalParentId = 'rm-universal-parent-' + numId;
 
-    var targetState = numId + ':' + String(isOpen) + ':' + String(subCount || 0);
-    if (headerEl.getAttribute('data-rm-parent-rendered') === targetState) {
+    // Force column layout on headerEl so duplicate flex-row side-by-side rendering is impossible
+    headerEl.style.setProperty('display', 'flex', 'important');
+    headerEl.style.setProperty('flex-direction', 'column', 'important');
+    headerEl.style.setProperty('align-items', 'stretch', 'important');
+
+    // Remove any legacy duplicate parent card (such as #rm-universal-parent-01 vs #rm-universal-parent-1)
+    Array.from(headerEl.querySelectorAll('[id^="rm-universal-parent-"]')).forEach(function (node) {
+      if (node.id !== canonicalParentId) {
+        node.remove();
+      }
+    });
+
+    var targetState = numId + ':' + String(Boolean(isOpen)) + ':' + String(subCount || 0);
+    var existingContainer = headerEl.querySelector('#' + canonicalParentId);
+    if (existingContainer && headerEl.getAttribute('data-rm-parent-rendered') === targetState) {
       return;
     }
 
-    var regData = (window.RM_CATALOG_REGISTRY && window.RM_CATALOG_REGISTRY.getCategoryData(numId)) || null;
+    var regData = fetchCategoryRegistryData(ids);
 
-    // Standard Google Play Store Authoritative Names (Folder A SSOT)
-    var title = regData ? regData.title : ('Category ' + displayNum);
-    var subtitle = regData ? regData.subtitle : 'दैनिक जनसेवाएं व आधिकारिक सुविधा केंद्र';
-    var icon = regData ? regData.icon : '📦';
-    var rating = regData ? regData.rating : '★ 4.9 (10k+ नागरिक)';
-    var trustBadge = regData ? regData.trustBadge : 'Rise Verified Network';
-    var supportBadge = regData ? regData.supportBadge : '24x7 सहायता केंद्र';
+    // Standard Google Play Store Authoritative Names (Folder A SSOT — 100% Protected Against "undefined")
+    var title = (regData && (regData.title || regData.name)) || ('Category ' + displayNum);
+    var subtitle = (regData && (regData.subtitle || regData.hindiTitle || regData.hindi || regData.desc)) || 'दैनिक जनसेवाएं व आधिकारिक सुविधा केंद्र';
+    var icon = (regData && regData.icon) || '📦';
+    var rating = (regData && regData.rating) || '★ 4.9 (10k+ नागरिक)';
+    var trustBadge = (regData && (regData.trustBadge || regData.badge)) || 'Rise Verified Network';
+    var supportBadge = (regData && regData.supportBadge) || '24x7 सहायता केंद्र';
 
     // Universal Future-Proof Domain Value Pillars (Friendly, Non-Sensitive & High Trust)
     var universalPillars = [
@@ -45,20 +100,20 @@
 
     // Wipe and hide all legacy text nodes and outside stray duplicate numbers (kills 009. 09. ▼)
     Array.from(headerEl.childNodes).forEach(function (node) {
-      if (node.nodeType === 1 && node.id && node.id.indexOf('rm-universal-parent-') !== -1) {
+      if (node.nodeType === 1 && node.id === canonicalParentId) {
         return;
       }
       if (node.nodeType === 1) {
-        node.style.display = 'none';
+        node.style.setProperty('display', 'none', 'important');
       } else if (node.nodeType === 3) {
         node.textContent = '';
       }
     });
 
-    var container = headerEl.querySelector('#rm-universal-parent-' + numId);
+    var container = existingContainer;
     if (!container) {
       container = document.createElement('div');
-      container.id = 'rm-universal-parent-' + numId;
+      container.id = canonicalParentId;
       container.style.cssText = [
         'width: 100% !important',
         'display: flex !important',
@@ -66,7 +121,9 @@
         'gap: 12px !important',
         'padding: 16px 14px 14px 14px !important',
         'box-sizing: border-box !important',
-        'text-align: left !important'
+        'text-align: left !important',
+        'cursor: pointer !important',
+        'touch-action: manipulation !important'
       ].join(';');
 
       headerEl.appendChild(container);
@@ -102,7 +159,7 @@
       '<div style="display: flex; flex-direction: column; gap: 7px; width: 100%; margin-top: 4px;">' + pillarsHtml + '</div>',
       '<!-- Row 3: Scalable Dropdown Toggle Button (Unlimited Products & Services Future-Ready) -->',
       '<div style="display: flex; justify-content: flex-end; align-items: center; width: 100%; margin-top: 2px;">',
-      '  <div style="font-size: 13px; font-weight: 800; color: ' + (isOpen ? '#f87171' : '#34d399') + '; background: ' + (isOpen ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)') + '; border: 1px solid ' + (isOpen ? '#ef4444' : '#10b981') + '; padding: 6px 14px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">',
+      '  <div class="rm-parent-toggle-pill" style="font-size: 13px; font-weight: 800; color: ' + (isOpen ? '#f87171' : '#34d399') + '; background: ' + (isOpen ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)') + '; border: 1px solid ' + (isOpen ? '#ef4444' : '#10b981') + '; padding: 6px 14px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; touch-action: manipulation;">',
       '    <span>' + (isOpen ? 'समेटें ▲' : 'और देखें ▼') + '</span>',
       '  </div>',
       '</div>'
@@ -113,23 +170,29 @@
 
   // Helper: Trigger original hidden button in legacy DOM
   function triggerLegacySubAction(subCardEl, keyword) {
-    if (!subCardEl) return;
+    if (!subCardEl) return false;
     var allButtons = Array.from(subCardEl.querySelectorAll('button, [role="button"], a'));
     var found = allButtons.find(function (b) {
-      return !b.closest('#rm-playstore-sub-' + subCardEl.getAttribute('data-rm-sub-rendered')) &&
+      return !b.closest('[id^="rm-playstore-sub-"]') &&
              (b.textContent || '').indexOf(keyword) !== -1;
     });
     if (found) {
       found.click();
+      return true;
     }
+    return false;
   }
 
   // 2. RENDER SUB-CARD (ZERO TEXT CUTOFF + INTERACTIVE TAP HIGHLIGHT GLOW + 50 CATEGORIES RICH SUPPORT)
   function renderSubCard(subCardEl, catId, subId) {
     if (!subCardEl) return;
-    var numId = String(catId).replace(/[^0-9]/g, '');
-    var cleanSub = String(subId).replace(/^[cg]/, '');
-    var intNum = parseInt(numId, 10);
+    var ids = getNormalizedIds(catId);
+    var numId = ids.normId;
+    var rawSub = String(subId || '').replace(/^[cg]/, '');
+    var subParts = rawSub.split('-');
+    var subIdx = subParts[1] || '1';
+    var cleanSub = ids.paddedId + '-' + subIdx;
+    var intNum = ids.intNum;
     var isGame = intNum >= 34;
 
     if (subCardEl.getAttribute('data-rm-sub-rendered') === cleanSub) {
@@ -158,7 +221,8 @@
       'Rise Mitra कार्य संतुष्टि गारंटी व प्रत्यक्ष सहायता।'
     ];
 
-    var info = (window.RM_CATALOG_REGISTRY && window.RM_CATALOG_REGISTRY.getSubcategoryData(numId, cleanSub)) || {
+    var regSub = fetchSubcategoryRegistryData(ids, cleanSub);
+    var info = regSub || {
       code: '[' + cleanSub + ']',
       icon: isGame ? '🎮' : '🛠️',
       title: isGame ? ('देसी खेल ' + cleanSub) : ('सेवा ' + cleanSub),
@@ -182,19 +246,21 @@
     subCardEl.style.setProperty('gap', '0px', 'important');
     subCardEl.style.setProperty('padding', '12px !important', 'important');
 
-    // Purge conflicting legacy containers
+    var canonicalSubId = 'rm-playstore-sub-' + cleanSub;
+
+    // Purge conflicting legacy or duplicate containers
     Array.from(subCardEl.children).forEach(function (child) {
-      if (child.id && (child.id.indexOf('rm-master-subcard-') !== -1 || child.id.indexOf('subcard-enrich-') !== -1)) {
+      if (child.id && (child.id.indexOf('rm-master-subcard-') !== -1 || child.id.indexOf('subcard-enrich-') !== -1 || (child.id.indexOf('rm-playstore-sub-') === 0 && child.id !== canonicalSubId))) {
         child.remove();
-      } else if (child.id !== 'rm-playstore-sub-' + cleanSub && !child.classList.contains('sivme-notch-pill')) {
-        child.style.display = 'none';
+      } else if (child.id !== canonicalSubId && !child.classList.contains('sivme-notch-pill')) {
+        child.style.setProperty('display', 'none', 'important');
       }
     });
 
-    var container = subCardEl.querySelector('#rm-playstore-sub-' + cleanSub);
+    var container = subCardEl.querySelector('#' + canonicalSubId);
     if (!container) {
       container = document.createElement('div');
-      container.id = 'rm-playstore-sub-' + cleanSub;
+      container.id = canonicalSubId;
       container.style.cssText = [
         'width: 100% !important',
         'display: flex !important',
@@ -206,6 +272,8 @@
         'padding: 14px !important',
         'box-sizing: border-box !important',
         'text-align: left !important',
+        'cursor: pointer !important',
+        'touch-action: manipulation !important',
         'transition: border-color 0.2s ease, box-shadow 0.2s ease !important'
       ].join(';');
 
@@ -224,7 +292,7 @@
 
     var servicesList = info.services || info.chips || defaultChips;
     var servicesHtml = servicesList.map(function (s) {
-      return '<span style="font-size:13px;font-weight:600;padding:5px 10px;background:' + s.bg + ';color:' + s.c + ';border:1.2px solid ' + s.c + '44;border-radius:7px;display:inline-flex;align-items:center;">' + s.text + '</span>';
+      return '<span class="rm-service-chip" style="font-size:13px;font-weight:600;padding:5px 10px;background:' + s.bg + ';color:' + s.c + ';border:1.2px solid ' + s.c + '44;border-radius:7px;display:inline-flex;align-items:center;cursor:pointer;touch-action:manipulation;">' + s.text + '</span>';
     }).join(' ');
 
     var highlightsHtml = (info.highlights || defaultHighlights).map(function (h) {
@@ -246,8 +314,8 @@
       '    <div style="display: flex; align-items: center; gap: 6px;">',
       '      <span style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 4px;">' + (info.categoryTag || (isGame ? 'देसी खेल प्रतियोगिता' : 'Rise Mitra Official')) + '</span>',
       '    </div>',
-      '    <div style="font-size: 20px; font-weight: 900; color: #ffffff; letter-spacing: -0.3px; line-height: 1.25; margin-top: 3px; white-space: normal; word-break: break-word;">' + info.title + '</div>',
-      '    <div style="font-size: 14px; font-weight: 700; color: #34d399; line-height: 1.35; margin-top: 3px; white-space: normal; word-break: break-word;">' + (info.hindiTitle || info.hindi || '') + '</div>',
+      '    <div style="font-size: 20px; font-weight: 900; color: #ffffff; letter-spacing: -0.3px; line-height: 1.25; margin-top: 3px; white-space: normal; word-break: break-word;">' + (info.title || ('सेवा ' + cleanSub)) + '</div>',
+      '    <div style="font-size: 14px; font-weight: 700; color: #34d399; line-height: 1.35; margin-top: 3px; white-space: normal; word-break: break-word;">' + (info.hindiTitle || info.hindi || 'प्रमाणित व विश्वसनीय सेवा') + '</div>',
       '  </div>',
       '</div>',
       '<!-- Play Store Rating & Stats Strip -->',
@@ -294,8 +362,10 @@
     }
     if (openBtn) {
       openBtn.onclick = function (e) {
-        e.stopPropagation();
-        triggerLegacySubAction(subCardEl, 'खोलें') || triggerLegacySubAction(subCardEl, 'खेलें') || triggerLegacySubAction(subCardEl, 'संपर्क') || triggerLegacySubAction(subCardEl, 'उपलब्ध');
+        triggerLegacySubAction(subCardEl, 'खोलें') ||
+        triggerLegacySubAction(subCardEl, 'खेलें') ||
+        triggerLegacySubAction(subCardEl, 'संपर्क') ||
+        triggerLegacySubAction(subCardEl, 'उपलब्ध');
       };
     }
 
@@ -312,26 +382,34 @@
       cats.forEach(function (catEl) {
         var rawId = catEl.getAttribute('data-cat-id');
         if (!rawId) return;
-        var cleanNum = rawId.replace(/[^0-9]/g, '');
+        var ids = getNormalizedIds(rawId);
 
         var header = catEl.querySelector(':scope > div:first-child');
-        
-        // Critical ZEL Fix: Detects both sub-c (Services) and sub-g (Games) containers
-        var sub = document.getElementById('sub-c' + cleanNum) || 
-                  document.getElementById('sub-g' + cleanNum) || 
-                  document.getElementById('sub-' + rawId) || 
-                  document.getElementById('sub-' + cleanNum);
-                  
-        var isOpen = sub && !sub.classList.contains('hidden') && sub.style.display !== 'none';
+
+        // Critical ZEL Fix: Detects both sub-c (Services) and sub-g (Games) across "1" and "01" formats
+        var sub = document.getElementById('sub-c' + ids.normId) ||
+                  document.getElementById('sub-c' + ids.paddedId) ||
+                  document.getElementById('sub-g' + ids.normId) ||
+                  document.getElementById('sub-g' + ids.paddedId) ||
+                  document.getElementById('sub-' + rawId) ||
+                  document.getElementById('sub-' + ids.normId) ||
+                  document.getElementById('sub-' + ids.paddedId);
+
+        var isOpen = Boolean(
+          sub &&
+          !sub.classList.contains('hidden') &&
+          sub.getAttribute('data-rm-collapsed') !== 'true' &&
+          window.getComputedStyle(sub).display !== 'none'
+        );
         var subCards = sub ? sub.querySelectorAll(':scope > div') : [];
 
         if (header) {
-          renderParentCard(header, cleanNum, isOpen, subCards.length);
+          renderParentCard(header, ids.normId, isOpen, subCards.length);
         }
 
         if (sub && isOpen) {
           subCards.forEach(function (sc, idx) {
-            renderSubCard(sc, cleanNum, cleanNum + '-' + (idx + 1));
+            renderSubCard(sc, ids.normId, ids.paddedId + '-' + (idx + 1));
           });
         }
       });
