@@ -98,7 +98,7 @@
     if (!window.RM_CANONICAL_SUB_MATRIX && !document.getElementById('rm-canonical-sub-matrix-script')) {
       var s1 = document.createElement('script');
       s1.id = 'rm-canonical-sub-matrix-script';
-      s1.src = '/js/universal-catalog/canonical-sub-matrix.js?v=20261015_v18';
+      s1.src = '/js/universal-catalog/canonical-sub-matrix.js?v=20261015_v25';
       s1.async = false;
       s1.onload = function () { sweepCatalog(); };
       head.appendChild(s1);
@@ -106,7 +106,7 @@
     if (!window.RM_SUB_CARD_RENDERER && !document.getElementById('rm-sub-card-renderer-script')) {
       var s2 = document.createElement('script');
       s2.id = 'rm-sub-card-renderer-script';
-      s2.src = '/js/universal-catalog/sub-card-renderer.js?v=20261015_v18';
+      s2.src = '/js/universal-catalog/sub-card-renderer.js?v=20261015_v25';
       s2.async = false;
       s2.onload = function () { sweepCatalog(); };
       head.appendChild(s2);
@@ -177,6 +177,7 @@
     headerEl.style.setProperty('display', 'flex', 'important');
     headerEl.style.setProperty('flex-direction', 'column', 'important');
     headerEl.style.setProperty('align-items', 'stretch', 'important');
+    headerEl.removeAttribute('onclick');
 
     // Remove any legacy duplicate parent card (such as #rm-universal-parent-01 vs #rm-universal-parent-1)
     Array.from(headerEl.querySelectorAll('[id^="rm-universal-parent-"]')).forEach(function (node) {
@@ -319,6 +320,7 @@
     try {
       var modal = document.getElementById('categoryModel') || document.getElementById('categoryModal') || document.body;
       var cats = modal.querySelectorAll('[data-cat-id]');
+      var stateMap = window.__RM_OPEN_CAT_STATE || null;
       cats.forEach(function (catEl) {
         var rawId = catEl.getAttribute('data-cat-id');
         if (!rawId) return;
@@ -336,12 +338,14 @@
                   document.getElementById('sub-' + ids.paddedId) ||
                   resolveSubContainer(catEl, rawId, ids.normId);
 
-        var isOpen = Boolean(
-          sub &&
-          !sub.classList.contains('hidden') &&
-          sub.getAttribute('data-rm-collapsed') !== 'true' &&
-          window.getComputedStyle(sub).display !== 'none'
-        );
+        var isOpen = (stateMap && Object.prototype.hasOwnProperty.call(stateMap, ids.normId))
+          ? Boolean(stateMap[ids.normId])
+          : Boolean(
+              sub &&
+              !sub.classList.contains('hidden') &&
+              sub.getAttribute('data-rm-collapsed') !== 'true' &&
+              window.getComputedStyle(sub).display !== 'none'
+            );
         var subCards = sub ? sub.querySelectorAll(':scope > div') : [];
 
         // Keep sub-container display and hidden class strictly synchronized
@@ -382,6 +386,9 @@
 
     document.addEventListener('click', function (e) {
       if (e.target.closest('.sivme-notch-pill')) return;
+
+      // Skip duplicate toggle if one-tap-shell-bridge already owns window.__RM_OPEN_CAT_STATE
+      if (window.__RM_OPEN_CAT_STATE) return;
 
       // Deterministic 1-Tap Parent Category Accordion Toggle
       var catEl = e.target.closest('[data-cat-id]');
