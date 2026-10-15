@@ -3,13 +3,18 @@
  * MODULE        : Decoupled Shell Controller, 1-Tap Catalog Sync, Cache Sentinel & SIVME Loader
  * GOVERNANCE    : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  * REPO TARGET   : public/js/one-tap-shell-bridge.js (pre-main staging verified)
+ * DUAL-FOLDER REFS:
+ *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
+ *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
  */
 
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261015_v23';
+  var CACHE_VERSION = '20261015_v24';
   var lastActionTs = 0;
+  var lastTouchTs = 0;
+  var lastModalOpenTs = 0;
   var touchStartX = 0;
   var touchStartY = 0;
   var touchStartTime = 0;
@@ -189,6 +194,7 @@
   window.openCatalogModal = function () {
     var m = document.getElementById('categoryModal');
     if (!m) return;
+    lastModalOpenTs = Date.now();
     m.classList.remove('hidden');
     m.style.setProperty('display', 'flex', 'important');
     syncAndHydrateCatalogCards();
@@ -199,6 +205,7 @@
   };
 
   window.closeCatalogModal = function () {
+    if (Date.now() - lastModalOpenTs < 450) return;
     var m = document.getElementById('categoryModal');
     if (!m) return;
     m.classList.add('hidden');
@@ -206,8 +213,17 @@
   };
 
   window.toggleMenuDrawer = function (open) {
-    if (open) window.openCatalogModal();
-    else window.closeCatalogModal();
+    var m = document.getElementById('categoryModal');
+    if (open === true) {
+      window.openCatalogModal();
+    } else if (open === false) {
+      lastModalOpenTs = 0;
+      window.closeCatalogModal();
+    } else if (m && (m.classList.contains('hidden') || window.getComputedStyle(m).display === 'none')) {
+      window.openCatalogModal();
+    } else {
+      window.closeCatalogModal();
+    }
   };
 
   window.closeFullscreenModule = forceCloseFullscreenViewport;
@@ -229,14 +245,27 @@
     }
   }
 
-  // 5. DETERMINISTIC 1-TAP ACCORDION & SUB-SERVICE CLICK CONTROLLER (CASE 1 & CASE 2)
+  // 5. DETERMINISTIC 1-TAP ACCORDION & SUB-SERVICE CLICK CONTROLLER (CASE 0, HOME, CASE 1 & CASE 2)
   function handleDeterministicOneTap(e) {
-    var target = e.target;
+    var target = e.target && e.target.nodeType === 1 ? e.target : (e.target ? e.target.parentElement : null);
     if (!target || typeof target.closest !== 'function') return;
+    if (target.closest('input, textarea, select, .sivme-notch-pill')) return;
+
+    var now = Date.now();
+
+    // Ghost-Click Shield: Prevent synthetic click from undoing touchend action within 650ms
+    if (e.type === 'click' && (now - lastTouchTs < 650)) {
+      e.stopImmediatePropagation();
+      e.stopPropagation();
+      if (e.cancelable) e.preventDefault();
+      return;
+    }
 
     // PRIORITY 0: Instant 1-Tap Close on Fullscreen Top-Right ✕, Top-Left ‹ वापस, or ‹ कैटलॉग पर वापस
     var fsCloseBtn = target.closest('#rm-fullscreen-view [onclick*="closeFullscreenModule"]');
     if (fsCloseBtn) {
+      if (e.type === 'touchend') lastTouchTs = now;
+      lastActionTs = now;
       e.stopImmediatePropagation();
       e.stopPropagation();
       if (e.cancelable) e.preventDefault();
@@ -249,17 +278,68 @@
           catModal.style.setProperty('display', 'flex', 'important');
         }
       } else if (btnTxt === '✕' || btnTxt === '×' || btnTxt === 'X') {
+        lastModalOpenTs = 0;
         window.closeCatalogModal();
       }
       return;
     }
 
     var modal = document.getElementById('categoryModal');
-    if (!modal || modal.classList.contains('hidden') || !modal.contains(target)) return;
-    if (target.closest('.sivme-notch-pill')) return;
-    if (target.closest('[onclick*="closeCatalogModal"], #rm-tier1-toggle, #rm-tier2-toggle')) return;
+    var isModalOpen = Boolean(modal && !modal.classList.contains('hidden') && window.getComputedStyle(modal).display !== 'none');
 
-    var now = Date.now();
+    // PRIORITY 0.5: HOME SCREEN 1-TAP OPEN FOR "RM WORLD DIRECTORY" (☰ / खोलें ›) & PLAY BANNER DISMISS
+    if (!isModalOpen) {
+      var banner = document.getElementById('playStoreInstallBanner');
+      if (banner && banner.contains(target)) {
+        var bBtn = target.closest('button, [onclick]');
+        var bTxt = bBtn ? (bBtn.textContent || '').trim() : '';
+        if (bTxt.indexOf('बाद में') !== -1 || bTxt === '✕' || bTxt === '×' || (bBtn && (bBtn.getAttribute('onclick') || '').indexOf('dismiss') !== -1)) {
+          if (e.type === 'touchend') lastTouchTs = now;
+          lastActionTs = now;
+          e.stopImmediatePropagation();
+          e.stopPropagation();
+          if (e.cancelable) e.preventDefault();
+          window.dismissPlayBanner();
+          return;
+        }
+      }
+
+      var dirTrigger = target.closest('#openCatalogBtn, #rm-menu-btn, [onclick*="openCatalogModal"], [onclick*="toggleMenuDrawer"], [onclick*="categoryModal"]');
+      if (!dirTrigger) {
+        var dirCard = target.closest('.tactile-25d, div');
+        if (dirCard && dirCard.textContent && dirCard.textContent.indexOf('RM World Directory') !== -1 && dirCard.textContent.length < 240) {
+          dirTrigger = dirCard;
+        }
+      }
+      if (dirTrigger) {
+        if (e.type === 'touchend') lastTouchTs = now;
+        lastActionTs = now;
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        if (e.cancelable) e.preventDefault();
+        window.openCatalogModal();
+        return;
+      }
+      return;
+    }
+
+    if (!modal || !modal.contains(target)) return;
+
+    // Instant 1-Tap Close on Category Modal Top-Right '✕'
+    var modalCloseBtn = target.closest('[onclick*="closeCatalogModal"]');
+    if (modalCloseBtn) {
+      if (e.type === 'touchend') lastTouchTs = now;
+      lastActionTs = now;
+      lastModalOpenTs = 0;
+      e.stopImmediatePropagation();
+      e.stopPropagation();
+      if (e.cancelable) e.preventDefault();
+      window.closeCatalogModal();
+      return;
+    }
+
+    if (target.closest('#rm-tier1-toggle, #rm-tier2-toggle')) return;
+
     var catEl = target.closest('[data-cat-id]');
 
     // CASE 1: 1-Tap on Parent Category Card Header or "समेटें ▲ / और देखें ▼"
@@ -278,6 +358,7 @@
           if (e.cancelable) e.preventDefault();
           return;
         }
+        if (e.type === 'touchend') lastTouchTs = now;
         lastActionTs = now;
 
         e.stopImmediatePropagation();
@@ -329,6 +410,7 @@
         if (e.cancelable) e.preventDefault();
         return;
       }
+      if (e.type === 'touchend') lastTouchTs = now;
       lastActionTs = now;
 
       var subCard = target.closest('[id^="sub-"] > div');
