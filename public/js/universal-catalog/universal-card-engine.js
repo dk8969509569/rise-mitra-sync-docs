@@ -35,6 +35,10 @@
 
   // Helper: Open Fullscreen Micro-App Viewport on 1-Tap for Sub-Card or Service Chip
   function openOneTapSubServiceViewport(info, cleanSub, selectedChipText, isGame) {
+    if (window.RM_FULLSCREEN_MICROAPP_CONTROLLER && typeof window.RM_FULLSCREEN_MICROAPP_CONTROLLER.openOneTapSubServiceViewport === 'function') {
+      window.RM_FULLSCREEN_MICROAPP_CONTROLLER.openOneTapSubServiceViewport(info, cleanSub, selectedChipText, isGame);
+      return;
+    }
     if (cleanSub === '16-2' && typeof window.openFullscreenModule === 'function') {
       window.openFullscreenModule('16-2');
       return;
@@ -67,6 +71,26 @@
     if (fsTitle) {
       fsTitle.textContent = badgeIcon + ' ' + cleanSub + '. ' + mainHeading;
     }
+
+    fsContainer.innerHTML = [
+      '<div style="padding: 18px 14px; color: #f8fafc; font-family: system-ui, sans-serif;">',
+      '  <div style="background: linear-gradient(135deg, #0f172a, #1e293b); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 16px; padding: 18px; margin-bottom: 16px;">',
+      '    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">',
+      '      <span style="background: rgba(56, 189, 248, 0.16); color: #38bdf8; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 800;">कोड: ' + cleanSub + '</span>',
+      '      <span style="color: #facc15; font-size: 12.5px; font-weight: 800;">' + ratingText + ' (' + reviewText + ')</span>',
+      '    </div>',
+      '    <div style="font-size: 20px; font-weight: 900; color: #ffffff; margin-bottom: 4px;">' + badgeIcon + ' ' + mainHeading + '</div>',
+      '    <div style="font-size: 13.5px; font-weight: 600; color: #34d399;">' + subHeading + '</div>',
+      '  </div>',
+      '  <button type="button" onclick="window.closeFullscreenModule && window.closeFullscreenModule()" style="width: 100%; padding: 13px; border-radius: 12px; border: 1px solid rgba(148, 163, 184, 0.3); background: #1e293b; color: #f8fafc; font-size: 14px; font-weight: 800; cursor: pointer;">← वापस कैटलॉग पर जाएं</button>',
+      '</div>'
+    ].join('');
+
+    fs.classList.remove('hidden');
+    fs.style.setProperty('display', 'flex', 'important');
+  }
+
+  window.openOneTapSubServiceViewport = openOneTapSubServiceViewport;
 
   // Auto-load decoupled Canonical 150 Sub-Category Matrix & Sub-Card Renderer Modules
   (function ensureCanonicalMatrixLoaded() {
@@ -163,9 +187,28 @@
 
     var regData = fetchCategoryRegistryData(ids);
 
+    // Preserve DOM Title/Subtitle before hiding legacy child nodes if registry is still loading
+    var domTitle = headerEl.getAttribute('data-rm-saved-title') || '';
+    var domSubtitle = headerEl.getAttribute('data-rm-saved-subtitle') || '';
+    if (!domTitle) {
+      var rawTitleNode = headerEl.querySelector('.font-bold, h3, h4, .text-base');
+      if (rawTitleNode && rawTitleNode.textContent) {
+        domTitle = rawTitleNode.textContent.replace(/^\d+\.?\s*/, '').trim();
+        if (domTitle) headerEl.setAttribute('data-rm-saved-title', domTitle);
+      }
+    }
+    if (!domSubtitle) {
+      var fullHeaderTxt = headerEl.textContent || '';
+      var hiMatch = fullHeaderTxt.match(/\(([^)]+[\u0900-\u097F][^)]*)\)/);
+      if (hiMatch && hiMatch[1]) {
+        domSubtitle = hiMatch[1].trim();
+        headerEl.setAttribute('data-rm-saved-subtitle', domSubtitle);
+      }
+    }
+
     // Standard Google Play Store Authoritative Names (Folder A SSOT — 100% Protected Against "undefined")
-    var title = (regData && (regData.title || regData.name)) || ('Category ' + displayNum);
-    var subtitle = (regData && (regData.subtitle || regData.hindiTitle || regData.hindi || regData.desc)) || 'दैनिक जनसेवाएं व आधिकारिक सुविधा केंद्र';
+    var title = (regData && (regData.title || regData.name)) || domTitle || ('Category ' + displayNum);
+    var subtitle = (regData && (regData.subtitle || regData.hindiTitle || regData.hindi || regData.desc)) || domSubtitle || 'दैनिक जनसेवाएं व आधिकारिक सुविधा केंद्र';
     var icon = (regData && regData.icon) || '📦';
     var rating = (regData && regData.rating) || '★ 4.9 (10k+ नागरिक)';
     var trustBadge = (regData && (regData.trustBadge || regData.badge)) || 'Rise Verified Network';
@@ -290,7 +333,8 @@
                   document.getElementById('sub-g' + ids.paddedId) ||
                   document.getElementById('sub-' + rawId) ||
                   document.getElementById('sub-' + ids.normId) ||
-                  document.getElementById('sub-' + ids.paddedId);
+                  document.getElementById('sub-' + ids.paddedId) ||
+                  resolveSubContainer(catEl, rawId, ids.normId);
 
         var isOpen = Boolean(
           sub &&
@@ -304,9 +348,11 @@
         if (sub) {
           if (isOpen) {
             sub.classList.remove('hidden');
+            sub.setAttribute('data-rm-collapsed', 'false');
             sub.style.setProperty('display', 'block', 'important');
           } else {
             sub.classList.add('hidden');
+            sub.setAttribute('data-rm-collapsed', 'true');
             sub.style.setProperty('display', 'none', 'important');
           }
         }
@@ -341,11 +387,10 @@
       var catEl = e.target.closest('[data-cat-id]');
       if (catEl) {
         var rawId = catEl.getAttribute('data-cat-id') || '';
-        var cleanNum = rawId.replace(/[^0-9]/g, '');
-        var intNum = parseInt(cleanNum, 10);
-        var normNum = isNaN(intNum) ? cleanNum : String(intNum);
+        var ids = getNormalizedIds(rawId);
+        var normNum = ids.normId;
         var header = catEl.querySelector(':scope > div:first-child');
-        var sub = resolveSubContainer(catEl, rawId, cleanNum);
+        var sub = resolveSubContainer(catEl, rawId, ids.normId);
 
         if (header && sub && header.contains(e.target) && !sub.contains(e.target)) {
           var now = Date.now();
@@ -359,18 +404,22 @@
           e.stopImmediatePropagation();
           e.preventDefault();
 
-          var currentlyOpen = !sub.classList.contains('hidden') && window.getComputedStyle(sub).display !== 'none';
+          var currentlyOpen = !sub.classList.contains('hidden') &&
+                              sub.getAttribute('data-rm-collapsed') !== 'true' &&
+                              window.getComputedStyle(sub).display !== 'none';
           var nextOpen = !currentlyOpen;
           var subCards = sub.querySelectorAll(':scope > div');
 
           if (nextOpen) {
             sub.classList.remove('hidden');
+            sub.setAttribute('data-rm-collapsed', 'false');
             sub.style.setProperty('display', 'block', 'important');
             subCards.forEach(function (sc, idx) {
-              renderSubCard(sc, normNum, normNum + '-' + (idx + 1));
+              renderSubCard(sc, normNum, ids.paddedId + '-' + (idx + 1));
             });
           } else {
             sub.classList.add('hidden');
+            sub.setAttribute('data-rm-collapsed', 'true');
             sub.style.setProperty('display', 'none', 'important');
           }
 
@@ -395,6 +444,7 @@
   window.RM_UNIVERSAL_CARD_ENGINE = {
     renderParentCard: renderParentCard,
     renderSubCard: renderSubCard,
-    sweepCatalog: sweepCatalog
+    sweepCatalog: sweepCatalog,
+    openOneTapSubServiceViewport: openOneTapSubServiceViewport
   };
 })();
