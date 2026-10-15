@@ -8,8 +8,16 @@
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261015_v11';
+  var CACHE_VERSION = '20261015_v12';
   var lastActionTs = 0;
+  var touchStartX = 0;
+  var touchStartY = 0;
+  var touchStartTime = 0;
+  var isSyncingDOM = false;
+
+  // Persistent open state map so background 120ms re-renders never close an opened category
+  var openStateMap = { '15': true, '16': true };
+  window.__RM_OPEN_CAT_STATE = openStateMap;
 
   // 1. AUTO-PURGE STALE SIVME FLAGS & STALE CACHE ON NORMAL PUBLIC LAUNCH
   (function purgeStaleState() {
@@ -47,10 +55,15 @@
       '  touch-action: manipulation !important;',
       '  -webkit-tap-highlight-color: transparent !important;',
       '  cursor: pointer !important;',
+      '  user-select: none !important;',
+      '  -webkit-user-select: none !important;',
       '}',
       '.tactile-25d:active { transform: none !important; }',
       '#categoryModal.hidden, #rm-fullscreen-view.hidden, #playStoreInstallBanner.hidden, #categoryModal .hidden, #categoryModal [id^="sub-"].hidden, #categoryModal [id^="sub-"][data-rm-collapsed="true"] {',
       '  display: none !important;',
+      '}',
+      '#categoryModal [id^="sub-"][data-rm-collapsed="false"] {',
+      '  display: block !important;',
       '}',
       '#categoryModal:not(.hidden) {',
       '  position: fixed !important; inset: 0 !important; z-index: 50 !important;',
@@ -63,15 +76,89 @@
     document.head.appendChild(style);
   })();
 
+  // Helper: Resolve sub-container across all ID formats (sub-c01, sub-c1, sub-g34, etc.)
+  function resolveCategorySubContainer(catEl, rawId, cleanNum) {
+    var intNum = parseInt(cleanNum, 10);
+    var paddedNum = (intNum < 10 ? '0' : '') + intNum;
+    var normNum = isNaN(intNum) ? cleanNum : String(intNum);
+    return document.getElementById('sub-c' + cleanNum) ||
+           document.getElementById('sub-c' + paddedNum) ||
+           document.getElementById('sub-c' + normNum) ||
+           document.getElementById('sub-g' + cleanNum) ||
+           document.getElementById('sub-g' + paddedNum) ||
+           document.getElementById('sub-g' + normNum) ||
+           document.getElementById('sub-' + rawId) ||
+           document.getElementById('sub-' + cleanNum) ||
+           document.getElementById('sub-' + paddedNum) ||
+           (catEl ? catEl.querySelector('[id^="sub-"]') : null);
+  }
+
+  // Helper: Hydrate Play Store Cards & enforce openStateMap after legacy 20ms/120ms renders
+  function syncAndHydrateCatalogCards() {
+    if (isSyncingDOM) return;
+    isSyncingDOM = true;
+    try {
+      var modal = document.getElementById('categoryModal');
+      if (!modal) return;
+
+      if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
+        window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog();
+      }
+
+      var cats = modal.querySelectorAll('[data-cat-id]');
+      cats.forEach(function (catEl) {
+        var rawId = catEl.getAttribute('data-cat-id') || '';
+        var cleanNum = rawId.replace(/[^0-9]/g, '');
+        if (!cleanNum) return;
+        var intNum = parseInt(cleanNum, 10);
+        var normNum = isNaN(intNum) ? cleanNum : String(intNum);
+
+        var headerEl = catEl.querySelector(':scope > div:first-child');
+        if (headerEl && headerEl.hasAttribute('onclick')) {
+          headerEl.removeAttribute('onclick');
+        }
+
+        var subContainer = resolveCategorySubContainer(catEl, rawId, cleanNum);
+        if (!subContainer) return;
+
+        var isOpen = Boolean(openStateMap[normNum]);
+        var subCards = subContainer.querySelectorAll(':scope > div');
+
+        if (isOpen) {
+          subContainer.classList.remove('hidden');
+          subContainer.setAttribute('data-rm-collapsed', 'false');
+          subContainer.style.setProperty('display', 'block', 'important');
+          if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard === 'function') {
+            subCards.forEach(function (sc, idx) {
+              window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, normNum, normNum + '-' + (idx + 1));
+            });
+          }
+        } else {
+          subContainer.classList.add('hidden');
+          subContainer.setAttribute('data-rm-collapsed', 'true');
+          subContainer.style.setProperty('display', 'none', 'important');
+        }
+
+        if (headerEl && window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard === 'function') {
+          window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard(headerEl, normNum, isOpen, subCards.length || 3);
+        }
+      });
+    } finally {
+      isSyncingDOM = false;
+    }
+  }
+
   // 3. GLOBAL MODAL & DRAWER DISPATCHERS (100% ZEL PRESERVED)
   window.openCatalogModal = function () {
     var m = document.getElementById('categoryModal');
     if (!m) return;
     m.classList.remove('hidden');
     m.style.setProperty('display', 'flex', 'important');
-    if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
-      setTimeout(window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog, 10);
-    }
+    syncAndHydrateCatalogCards();
+    setTimeout(syncAndHydrateCatalogCards, 10);
+    setTimeout(syncAndHydrateCatalogCards, 50);
+    setTimeout(syncAndHydrateCatalogCards, 140);
+    setTimeout(syncAndHydrateCatalogCards, 260);
   };
 
   window.closeCatalogModal = function () {
@@ -106,7 +193,7 @@
     };
   }
 
-  // 4. FULLSCREEN 1-TAP SERVICE LAUNCHER
+  // 4. FULLSCREEN 1-TAP SERVICE LAUNCHER (100% ZEL PRESERVED)
   function launchOneTapServiceScreen(titleText, subtitleText, subCode) {
     var fs = document.getElementById('rm-fullscreen-view');
     var fsTitle = document.getElementById('fs-module-title');
@@ -154,46 +241,47 @@
     fs.style.setProperty('z-index', '99999', 'important');
   }
 
-  // 5. DETERMINISTIC 1-TAP ACCORDION & SUB-SERVICE CLICK CONTROLLER
-  document.addEventListener('click', function (e) {
+  // 5. DETERMINISTIC 1-TAP ACCORDION & SUB-SERVICE CLICK CONTROLLER (CASE 1 & CASE 2)
+  function handleDeterministicOneTap(e) {
+    var target = e.target;
+    if (!target || typeof target.closest !== 'function') return;
+
     var modal = document.getElementById('categoryModal');
-    if (!modal || modal.classList.contains('hidden') || !modal.contains(e.target)) return;
-    if (e.target.closest('.sivme-notch-pill')) return;
+    if (!modal || modal.classList.contains('hidden') || !modal.contains(target)) return;
+    if (target.closest('.sivme-notch-pill')) return;
+    if (target.closest('[onclick*="closeCatalogModal"], #rm-tier1-toggle, #rm-tier2-toggle')) return;
 
     var now = Date.now();
-    var catEl = e.target.closest('[data-cat-id]');
+    var catEl = target.closest('[data-cat-id]');
 
     // CASE 1: 1-Tap on Parent Category Card Header or "3 सेवाएं देखें ▼ / 3 सेवाएं छुपाएं ▲"
     if (catEl) {
       var rawId = catEl.getAttribute('data-cat-id') || '';
       var cleanNum = rawId.replace(/[^0-9]/g, '');
       var intNum = parseInt(cleanNum, 10);
-      var paddedNum = (intNum < 10 ? '0' : '') + intNum;
       var normNum = isNaN(intNum) ? cleanNum : String(intNum);
 
-      var subContainer = document.getElementById('sub-c' + cleanNum) ||
-                         document.getElementById('sub-c' + paddedNum) ||
-                         document.getElementById('sub-c' + normNum) ||
-                         document.getElementById('sub-g' + cleanNum) ||
-                         document.getElementById('sub-g' + paddedNum) ||
-                         document.getElementById('sub-g' + normNum) ||
-                         document.getElementById('sub-' + rawId) ||
-                         document.getElementById('sub-' + cleanNum);
+      var subContainer = resolveCategorySubContainer(catEl, rawId, cleanNum);
 
-      if (subContainer && !subContainer.contains(e.target)) {
-        if (now - lastActionTs < 300) {
+      if (subContainer && !subContainer.contains(target)) {
+        if (now - lastActionTs < 380) {
           e.stopImmediatePropagation();
-          e.preventDefault();
+          e.stopPropagation();
+          if (e.cancelable) e.preventDefault();
           return;
         }
         lastActionTs = now;
 
         e.stopImmediatePropagation();
-        e.preventDefault();
+        e.stopPropagation();
+        if (e.cancelable) e.preventDefault();
 
         var isCurrentlyOpen = !subContainer.classList.contains('hidden') &&
                               subContainer.getAttribute('data-rm-collapsed') !== 'true' &&
                               window.getComputedStyle(subContainer).display !== 'none';
+
+        var nextOpen = !isCurrentlyOpen;
+        openStateMap[normNum] = nextOpen;
 
         if (isCurrentlyOpen) {
           subContainer.classList.add('hidden');
@@ -222,30 +310,47 @@
     }
 
     // CASE 2: 1-Tap inside Sub-Category Card (e.g., "01-1. Flex Banner & Glow Sign Boards" or its 4 service boxes)
-    var subWrapper = e.target.closest('[id^="sub-"]');
+    var subWrapper = target.closest('[id^="sub-"]');
     if (subWrapper) {
-      var actBtn = e.target.closest('.rm-act-pin, .rm-act-vid, .rm-act-video');
+      var actBtn = target.closest('.rm-act-pin, .rm-act-vid, .rm-act-video');
       if (actBtn) return;
 
-      if (now - lastActionTs < 300) return;
+      if (now - lastActionTs < 380) {
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        if (e.cancelable) e.preventDefault();
+        return;
+      }
       lastActionTs = now;
 
-      var subCard = e.target.closest('[id^="sub-"] > div');
+      var subCard = target.closest('[id^="sub-"] > div');
       if (!subCard) return;
 
       var subIdMatch = (subCard.textContent || '').match(/\b(\d{1,2}-\d)\s*\./);
       var subCode = subIdMatch ? subIdMatch[1] : (subCard.getAttribute('data-rm-sub-rendered') || '01-1');
 
       if (subCode === '16-2' && typeof window.openFullscreenModule === 'function') {
-        window.openFullscreenModule('16-2');
+        e.stopImmediatePropagation();
+        if (e.cancelable) e.preventDefault();
+        if (typeof window.handleLaunchCategory === 'function') {
+          window.handleLaunchCategory('c16', '16-2');
+        } else {
+          window.openFullscreenModule('16-2');
+        }
         return;
       }
       if (subCode === '16-3' && typeof window.openFullscreenModule === 'function') {
-        window.openFullscreenModule('16-3');
+        e.stopImmediatePropagation();
+        if (e.cancelable) e.preventDefault();
+        if (typeof window.handleLaunchCategory === 'function') {
+          window.handleLaunchCategory('c16', '16-3');
+        } else {
+          window.openFullscreenModule('16-3');
+        }
         return;
       }
 
-      var tappedNode = e.target.closest('.rm-service-chip, div, span, button');
+      var tappedNode = target.closest('.rm-service-chip, div, span, button');
       var tappedText = tappedNode ? (tappedNode.textContent || '').trim() : '';
       var headingEl = subCard.querySelector('h3, h4, [style*="font-size: 20"], [style*="font-size: 18"], [style*="font-size: 19"], .font-black, .font-bold');
       var cardTitle = headingEl ? headingEl.textContent.trim() : 'सत्यापित सेवा';
@@ -263,10 +368,58 @@
       var finalSubtitle = isServicePill ? cardTitle : 'Rise Mitra सत्यापित सेवा व बुकिंग पोर्टल';
 
       e.stopImmediatePropagation();
-      e.preventDefault();
+      e.stopPropagation();
+      if (e.cancelable) e.preventDefault();
       launchOneTapServiceScreen(finalTitle, finalSubtitle, subCode);
     }
-  }, true);
+  }
+
+  // Bind on window capture phase so it runs before all document-level listeners
+  window.addEventListener('touchstart', function (e) {
+    if (!e.touches || e.touches.length !== 1) return;
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    touchStartTime = Date.now();
+  }, { capture: true, passive: true });
+
+  window.addEventListener('touchend', function (e) {
+    if (!e.changedTouches || e.changedTouches.length !== 1) return;
+    var dx = Math.abs(e.changedTouches[0].clientX - touchStartX);
+    var dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
+    var dt = Date.now() - touchStartTime;
+    if (dx < 18 && dy < 18 && dt < 500) {
+      handleDeterministicOneTap(e);
+    }
+  }, { capture: true, passive: false });
+
+  window.addEventListener('click', handleDeterministicOneTap, true);
+  document.addEventListener('click', handleDeterministicOneTap, true);
+
+  // Auto-upgrade any raw cards injected by 20ms/120ms timers in catalog-sivme-render-engine.js
+  function attachCatalogHydrationObserver() {
+    var modal = document.getElementById('categoryModal');
+    if (!modal || typeof MutationObserver === 'undefined') return;
+    var obs = new MutationObserver(function () {
+      if (isSyncingDOM) return;
+      var rawHeader = modal.querySelector('[data-cat-id] > div:first-child:not([data-rm-parent-rendered])');
+      if (rawHeader) {
+        syncAndHydrateCatalogCards();
+      }
+    });
+    obs.observe(modal, { childList: true, subtree: true });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () {
+      attachCatalogHydrationObserver();
+      setTimeout(syncAndHydrateCatalogCards, 60);
+      setTimeout(syncAndHydrateCatalogCards, 180);
+    });
+  } else {
+    attachCatalogHydrationObserver();
+    setTimeout(syncAndHydrateCatalogCards, 60);
+    setTimeout(syncAndHydrateCatalogCards, 180);
+  }
 
   // 6. SERVICE WORKER AUTO-UPDATE SENTINEL
   if ('serviceWorker' in navigator) {
