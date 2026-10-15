@@ -8,7 +8,7 @@
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261015_v12';
+  var CACHE_VERSION = '20261015_v21';
   var lastActionTs = 0;
   var touchStartX = 0;
   var touchStartY = 0;
@@ -75,6 +75,15 @@
     ].join('\n');
     document.head.appendChild(style);
   })();
+
+  // Helper: Force-close Fullscreen Viewport reliably (clears inline display:flex !important so Top-Right X works)
+  function forceCloseFullscreenViewport() {
+    var fs = document.getElementById('rm-fullscreen-view');
+    if (fs) {
+      fs.classList.add('hidden');
+      fs.style.setProperty('display', 'none', 'important');
+    }
+  }
 
   // Helper: Resolve sub-container across all ID formats (sub-c01, sub-c1, sub-g34, etc.)
   function resolveCategorySubContainer(catEl, rawId, cleanNum) {
@@ -173,15 +182,7 @@
     else window.closeCatalogModal();
   };
 
-  if (typeof window.closeFullscreenModule !== 'function') {
-    window.closeFullscreenModule = function () {
-      var fs = document.getElementById('rm-fullscreen-view');
-      if (fs) {
-        fs.classList.add('hidden');
-        fs.style.setProperty('display', 'none', 'important');
-      }
-    };
-  }
+  window.closeFullscreenModule = forceCloseFullscreenViewport;
 
   if (typeof window.dismissPlayBanner !== 'function') {
     window.dismissPlayBanner = function () {
@@ -199,6 +200,8 @@
     var fsTitle = document.getElementById('fs-module-title');
     var fsContainer = document.getElementById('rm-module-container');
     if (!fs || !fsContainer) return;
+
+    window.closeFullscreenModule = forceCloseFullscreenViewport;
 
     if (fsTitle) {
       fsTitle.textContent = (subCode ? subCode + ' • ' : '') + titleText;
@@ -245,6 +248,16 @@
   function handleDeterministicOneTap(e) {
     var target = e.target;
     if (!target || typeof target.closest !== 'function') return;
+
+    // PRIORITY 0: Instant 1-Tap Close on Fullscreen Top-Right ✕, Top-Left ‹ वापस, or ‹ कैटलॉग पर वापस
+    var fsCloseBtn = target.closest('#rm-fullscreen-view [onclick*="closeFullscreenModule"]');
+    if (fsCloseBtn) {
+      e.stopImmediatePropagation();
+      e.stopPropagation();
+      if (e.cancelable) e.preventDefault();
+      forceCloseFullscreenViewport();
+      return;
+    }
 
     var modal = document.getElementById('categoryModal');
     if (!modal || modal.classList.contains('hidden') || !modal.contains(target)) return;
@@ -326,26 +339,44 @@
       var subCard = target.closest('[id^="sub-"] > div');
       if (!subCard) return;
 
+      var rawRenderedAttr = (subCard.getAttribute('data-rm-sub-rendered') || '').split(':')[0];
       var subIdMatch = (subCard.textContent || '').match(/\b(\d{1,2}-\d)\s*\./);
-      var subCode = subIdMatch ? subIdMatch[1] : (subCard.getAttribute('data-rm-sub-rendered') || '01-1');
+      var subCode = subIdMatch ? subIdMatch[1] : (rawRenderedAttr || '01-1');
 
-      if (subCode === '16-2' && typeof window.openFullscreenModule === 'function') {
+      // Route 15-2 / 16-2 (Rental Ledger) & 15-3 / 16-3 (Room & Flat Search) to their Complete Micro-Apps!
+      if ((subCode === '15-2' || subCode === '16-2') && typeof window.openFullscreenModule === 'function') {
         e.stopImmediatePropagation();
+        e.stopPropagation();
         if (e.cancelable) e.preventDefault();
+        window.closeFullscreenModule = forceCloseFullscreenViewport;
         if (typeof window.handleLaunchCategory === 'function') {
           window.handleLaunchCategory('c16', '16-2');
         } else {
           window.openFullscreenModule('16-2');
         }
+        var fs162 = document.getElementById('rm-fullscreen-view');
+        if (fs162) {
+          fs162.classList.remove('hidden');
+          fs162.style.setProperty('display', 'flex', 'important');
+          fs162.style.setProperty('z-index', '99999', 'important');
+        }
         return;
       }
-      if (subCode === '16-3' && typeof window.openFullscreenModule === 'function') {
+      if ((subCode === '15-3' || subCode === '16-3') && typeof window.openFullscreenModule === 'function') {
         e.stopImmediatePropagation();
+        e.stopPropagation();
         if (e.cancelable) e.preventDefault();
+        window.closeFullscreenModule = forceCloseFullscreenViewport;
         if (typeof window.handleLaunchCategory === 'function') {
           window.handleLaunchCategory('c16', '16-3');
         } else {
           window.openFullscreenModule('16-3');
+        }
+        var fs163 = document.getElementById('rm-fullscreen-view');
+        if (fs163) {
+          fs163.classList.remove('hidden');
+          fs163.style.setProperty('display', 'flex', 'important');
+          fs163.style.setProperty('z-index', '99999', 'important');
         }
         return;
       }
@@ -353,19 +384,40 @@
       var tappedNode = target.closest('.rm-service-chip, div, span, button');
       var tappedText = tappedNode ? (tappedNode.textContent || '').trim() : '';
       var headingEl = subCard.querySelector('h3, h4, [style*="font-size: 20"], [style*="font-size: 18"], [style*="font-size: 19"], .font-black, .font-bold');
-      var cardTitle = headingEl ? headingEl.textContent.trim() : 'सत्यापित सेवा';
+      var matrix = window.RM_CANONICAL_SUB_MATRIX || {};
+      var matrixEntry = matrix[subCode] || null;
+      var cardTitle = (matrixEntry && matrixEntry.title) || (headingEl ? headingEl.textContent.trim() : 'सत्यापित सेवा');
+      if (/^\[\d{1,2}-\d\]$/.test(cardTitle) && matrixEntry && matrixEntry.title) {
+        cardTitle = matrixEntry.title;
+      }
 
-      var isServicePill = tappedText.length > 4 &&
+      var isServicePill = Boolean(target.closest('.rm-service-chip')) || (
+                          tappedText.length > 4 &&
                           tappedText.length < 95 &&
                           tappedNode !== subCard &&
                           tappedText.indexOf(subCode) === -1 &&
                           tappedText.indexOf('उपलब्ध') === -1 &&
                           tappedText.indexOf('प्रतिष्ठान') === -1 &&
                           tappedText.indexOf('खोलें') === -1 &&
-                          tappedText.indexOf('खेलें') === -1;
+                          tappedText.indexOf('खेलें') === -1);
+
+      if (window.RM_SUB_CARD_RENDERER && typeof window.RM_SUB_CARD_RENDERER.openSmoothSubServiceScreen === 'function' && matrixEntry) {
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        if (e.cancelable) e.preventDefault();
+        window.RM_SUB_CARD_RENDERER.openSmoothSubServiceScreen(
+          matrixEntry,
+          subCode,
+          cardTitle,
+          matrixEntry.hindiTitle || 'Rise Mitra सत्यापित सेवा व बुकिंग पोर्टल',
+          isServicePill ? tappedText : null,
+          parseInt(subCode.split('-')[0], 10) >= 34
+        );
+        return;
+      }
 
       var finalTitle = isServicePill ? tappedText : cardTitle;
-      var finalSubtitle = isServicePill ? cardTitle : 'Rise Mitra सत्यापित सेवा व बुकिंग पोर्टल';
+      var finalSubtitle = isServicePill ? cardTitle : ((matrixEntry && matrixEntry.hindiTitle) || 'Rise Mitra सत्यापित सेवा व बुकिंग पोर्टल');
 
       e.stopImmediatePropagation();
       e.stopPropagation();
@@ -411,11 +463,13 @@
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () {
+      window.closeFullscreenModule = forceCloseFullscreenViewport;
       attachCatalogHydrationObserver();
       setTimeout(syncAndHydrateCatalogCards, 60);
       setTimeout(syncAndHydrateCatalogCards, 180);
     });
   } else {
+    window.closeFullscreenModule = forceCloseFullscreenViewport;
     attachCatalogHydrationObserver();
     setTimeout(syncAndHydrateCatalogCards, 60);
     setTimeout(syncAndHydrateCatalogCards, 180);
