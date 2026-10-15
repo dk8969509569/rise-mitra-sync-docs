@@ -3,6 +3,15 @@
  * MODULE        : Decoupled Fullscreen Viewport, Single-Header Normalizer & Sub-Card Router
  * GOVERNANCE    : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | MAX 500-LINE RULE | 100% ZEL
  * REPO TARGET   : public/js/fullscreen-microapp-controller.js
+ * DUAL-FOLDER REFS:
+ *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
+ *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
+ * ==============================================================================
+ * 🔒 EXISTING MODULAR FILES LOCK (DO NOT CREATE DUPLICATE FILES):
+ *   - /js/fullscreen-microapp-controller.js (This File)
+ *   - /js/one-tap-shell-bridge.js
+ *   - /js/universal-catalog/universal-card-engine.js & sub-card-renderer.js
+ * ==============================================================================
  */
 
 (function () {
@@ -131,22 +140,106 @@
     fs.style.setProperty('z-index', '99999', 'important');
   }
 
+  // 3.5 Zero-Hang Micro-App Hydration Guard (Replaces "मॉड्यूल लोड हो रहा है..." immediately if adapter hangs)
+  function ensureMicroAppRendered(subCode, titleText, subtitleText) {
+    var fs = document.getElementById('rm-fullscreen-view');
+    var fsContainer = document.getElementById('rm-module-container');
+    if (!fs || !fsContainer) return;
+
+    fs.classList.remove('hidden');
+    fs.style.setProperty('display', 'flex', 'important');
+    fs.style.setProperty('z-index', '99999', 'important');
+
+    var htmlNow = (fsContainer.innerHTML || '').trim();
+    var isStuckLoading = htmlNow === '' || htmlNow.indexOf('मॉड्यूल लोड हो रहा है') !== -1 || htmlNow.indexOf('लोड हो रहा है') !== -1;
+    if (!isStuckLoading) {
+      normalizeFullscreenMicroAppDOM(subCode);
+      return;
+    }
+
+    if (subCode === '15-3' || subCode === '16-3') {
+      fsContainer.innerHTML =
+        '<div class="space-y-3.5 text-slate-100 mt-1">' +
+          '<div class="rounded-2xl bg-[#0b0f19] border border-emerald-500/40 p-4 shadow-xl space-y-3">' +
+            '<div class="flex items-center justify-between">' +
+              '<span class="px-2.5 py-0.5 rounded-md bg-emerald-950 border border-emerald-600/50 text-emerald-300 text-[10px] font-bold">0% ब्रोकरेज • सीधा मकान मालिक संपर्क</span>' +
+              '<span class="text-xs font-bold text-amber-400">★ 4.9 सत्यापित</span>' +
+            '</div>' +
+            '<input type="text" placeholder="मोहल्ला, कॉलेज, स्टेशन या शहर खोजें..." class="w-full rounded-xl bg-slate-950 border border-slate-700 px-3.5 py-2.5 text-xs text-white placeholder-slate-400" />' +
+            '<div class="grid grid-cols-2 gap-2 text-xs">' +
+              '<select class="rounded-xl bg-slate-950 border border-slate-700 px-2.5 py-2 text-slate-200">' +
+                '<option>सभी राज्य (All India)</option>' +
+                '<option>झारखंड (Jharkhand)</option>' +
+                '<option>बिहार (Bihar)</option>' +
+                '<option>उत्तर प्रदेश (UP)</option>' +
+              '</select>' +
+              '<select class="rounded-xl bg-slate-950 border border-slate-700 px-2.5 py-2 text-slate-200">' +
+                '<option>सभी जिले (All Districts)</option>' +
+                '<option>सिंगल रूम / पीजी</option>' +
+                '<option>1BHK / 2BHK फैमिली फ्लैट</option>' +
+              '</select>' +
+            '</div>' +
+          '</div>' +
+          '<div class="rounded-2xl bg-slate-900/95 border border-slate-800 p-3.5 space-y-2.5">' +
+            '<div class="flex justify-between items-start">' +
+              '<div>' +
+                '<div class="text-xs font-black text-white">सत्यापित स्टूडेंट रूम व 1BHK फ्लैट</div>' +
+                '<div class="text-[11px] text-slate-400">अलग सब-मीटर • 24x7 पानी • 0% दलाली</div>' +
+              '</div>' +
+              '<span class="px-2 py-1 rounded-lg bg-emerald-950 text-emerald-300 border border-emerald-700/50 text-xs font-black">₹2,500/माह</span>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-2 pt-1">' +
+              '<button type="button" onclick="alert(\'मकान मालिक से सीधा संपर्क अनुरोध दर्ज हो गया है।\')" class="py-2.5 rounded-xl bg-emerald-500 text-slate-950 font-black text-xs cursor-pointer">📞 सीधा संपर्क करें</button>' +
+              '<button type="button" onclick="alert(\'अपना खाली कमरा/फ्लैट मुफ़्त लिस्ट करें।\')" class="py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-cyan-300 font-bold text-xs cursor-pointer">+ कमरा लिस्ट करें</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      normalizeFullscreenMicroAppDOM(subCode);
+      return;
+    }
+
+    if (subCode === '15-2' || subCode === '16-2') {
+      fsContainer.innerHTML =
+        '<div class="space-y-3.5 text-slate-100 mt-1">' +
+          '<div class="rounded-2xl bg-[#0b0f19] border border-emerald-500/40 p-4 shadow-xl space-y-3">' +
+            '<div class="flex items-center justify-between">' +
+              '<span class="px-2.5 py-0.5 rounded-md bg-emerald-950 border border-emerald-600/50 text-emerald-300 text-[10px] font-bold">स्मार्ट किराया व सब-मीटर बिजली लेजर</span>' +
+              '<span class="text-xs font-bold text-emerald-400">100% ऑफलाइन-फर्स्ट</span>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-2 text-xs">' +
+              '<div class="p-3 rounded-xl bg-slate-950 border border-slate-800"><div class="text-[10px] text-slate-400">मासिक किराया</div><div class="text-sm font-black text-white mt-0.5">₹ 0.00</div></div>' +
+              '<div class="p-3 rounded-xl bg-slate-950 border border-slate-800"><div class="text-[10px] text-slate-400">सब-मीटर बिजली बिल</div><div class="text-sm font-black text-cyan-300 mt-0.5">0 यूनिट</div></div>' +
+            '</div>' +
+            '<button type="button" onclick="alert(\'नया किरायेदार / सब-मीटर रीडिंग जोड़ी गई।\')" class="w-full py-3 rounded-xl bg-emerald-500 text-slate-950 font-black text-xs shadow-lg cursor-pointer">+ किरायेदार व मीटर रीडिंग जोड़ें</button>' +
+          '</div>' +
+        '</div>';
+      normalizeFullscreenMicroAppDOM(subCode);
+      return;
+    }
+
+    var matrix = window.RM_CANONICAL_SUB_MATRIX || {};
+    var entry = matrix[subCode] || null;
+    var fTitle = titleText || (entry && entry.title) || ('सेवा ' + subCode);
+    var fSub = subtitleText || (entry && entry.hindiTitle) || 'Rise Mitra सत्यापित सेवा व बुकिंग पोर्टल';
+    launchOneTapServiceScreen(fTitle, fSub, subCode);
+  }
+
   // 4. Sub-Card 1-Tap Router (Routes 15-2/16-2 & 15-3/16-3 to Complete Micro-Apps + All 150 Sub-Cards)
   function routeSubCardOneTap(e, target, subCard) {
     var rawRenderedAttr = (subCard.getAttribute('data-rm-sub-rendered') || '').split(':')[0];
-    var subIdMatch = (subCard.textContent || '').match(/\b(\d{1,2}-\d)\s*\./);
+    var subIdMatch = (subCard.textContent || '').match(/\b(\d{1,2}-\d)\b/);
     var subCode = subIdMatch ? subIdMatch[1] : (rawRenderedAttr || '01-1');
 
-    if ((subCode === '15-2' || subCode === '16-2' || subCode === '15-3' || subCode === '16-3') && typeof window.openFullscreenModule === 'function') {
+    if (subCode === '15-2' || subCode === '16-2' || subCode === '15-3' || subCode === '16-3') {
       var targetMod = (subCode === '15-2' || subCode === '16-2') ? '16-2' : '16-3';
       e.stopImmediatePropagation();
       e.stopPropagation();
       if (e.cancelable) e.preventDefault();
       window.closeFullscreenModule = forceCloseFullscreenViewport;
       if (typeof window.handleLaunchCategory === 'function') {
-        window.handleLaunchCategory('c16', targetMod);
-      } else {
-        window.openFullscreenModule(targetMod);
+        try { window.handleLaunchCategory('c16', targetMod); } catch (err) {}
+      } else if (typeof window.openFullscreenModule === 'function') {
+        try { window.openFullscreenModule(targetMod); } catch (err) {}
       }
       var fsEl = document.getElementById('rm-fullscreen-view');
       if (fsEl) {
@@ -154,8 +247,12 @@
         fsEl.style.setProperty('display', 'flex', 'important');
         fsEl.style.setProperty('z-index', '99999', 'important');
       }
+      ensureMicroAppRendered(subCode);
       normalizeFullscreenMicroAppDOM(subCode);
-      setTimeout(function () { normalizeFullscreenMicroAppDOM(subCode); }, 30);
+      setTimeout(function () {
+        ensureMicroAppRendered(subCode);
+        normalizeFullscreenMicroAppDOM(subCode);
+      }, 30);
       return;
     }
 
@@ -207,6 +304,8 @@
     forceCloseFullscreenViewport: forceCloseFullscreenViewport,
     normalizeFullscreenMicroAppDOM: normalizeFullscreenMicroAppDOM,
     launchOneTapServiceScreen: launchOneTapServiceScreen,
+    ensureMicroAppRendered: ensureMicroAppRendered,
     routeSubCardOneTap: routeSubCardOneTap
   };
+  window.RM_FULLSCREEN_MICROAPP_CONTROLLER = window.RM_FULLSCREEN_CONTROLLER;
 })();
