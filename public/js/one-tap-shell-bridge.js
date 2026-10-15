@@ -8,7 +8,7 @@
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261015_v21';
+  var CACHE_VERSION = '20261015_v22';
   var lastActionTs = 0;
   var touchStartX = 0;
   var touchStartY = 0;
@@ -71,6 +71,14 @@
       '}',
       '#rm-fullscreen-view:not(.hidden) {',
       '  position: fixed !important; inset: 0 !important; z-index: 99999 !important; display: flex !important;',
+      '}',
+      '#fs-module-title {',
+      '  margin: 0 10px !important; font-size: 14px !important; font-weight: 800 !important;',
+      '  white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important;',
+      '  text-align: center !important; flex: 1 !important;',
+      '}',
+      '#rm-module-container select {',
+      '  font-size: 12.5px !important; padding-right: 24px !important; text-overflow: ellipsis !important;',
       '}'
     ].join('\n');
     document.head.appendChild(style);
@@ -83,6 +91,70 @@
       fs.classList.add('hidden');
       fs.style.setProperty('display', 'none', 'important');
     }
+  }
+
+  // Helper: Normalize Fullscreen Micro-App DOM (Eliminates Double Name, Maps 16-2/16-3 -> 15-2/15-3 & Fixes Dropdown Clipping)
+  function normalizeFullscreenMicroAppDOM(displayCode) {
+    var fs = document.getElementById('rm-fullscreen-view');
+    var fsTitle = document.getElementById('fs-module-title');
+    var fsContainer = document.getElementById('rm-module-container');
+    if (!fs || !fsContainer) return;
+
+    var is15Series = String(displayCode || '').indexOf('15-') === 0;
+    var codePrefix = is15Series ? '15' : '16';
+
+    if (fsTitle) {
+      if (displayCode === '15-2' || displayCode === '16-2') {
+        fsTitle.textContent = '📒 ' + codePrefix + '-2 • किराया बहीखाता';
+      } else if (displayCode === '15-3' || displayCode === '16-3') {
+        fsTitle.textContent = '🏢 ' + codePrefix + '-3 • कमरा व फ्लैट खोज';
+      } else if (displayCode === '15-1' || displayCode === '16-1') {
+        fsTitle.textContent = '🛠️ ' + codePrefix + '-1 • मिस्त्री व होम रिपेयर';
+      }
+    }
+
+    var headings = fsContainer.querySelectorAll('h1, h2, h3, .text-lg, .text-xl, .font-black, .font-bold');
+    headings.forEach(function (h) {
+      var txt = (h.textContent || '').trim();
+      if (
+        txt.indexOf('16-2. किराया बहीखाता') !== -1 ||
+        txt.indexOf('15-2. किराया बहीखाता') !== -1 ||
+        txt.indexOf('16-3. किराया खोज व आवास डायरेक्टरी') !== -1 ||
+        txt.indexOf('15-3. किराया खोज व आवास डायरेक्टरी') !== -1 ||
+        txt.indexOf('16-1.') !== -1
+      ) {
+        var bannerCard = h.closest('.rounded-2xl, .rounded-xl');
+        if ((bannerCard && bannerCard === fsContainer.firstElementChild) || (bannerCard && bannerCard.parentElement === fsContainer.firstElementChild)) {
+          bannerCard.style.setProperty('display', 'none', 'important');
+        } else {
+          h.style.setProperty('display', 'none', 'important');
+        }
+      }
+    });
+
+    if (is15Series) {
+      var walker = document.createTreeWalker(fsContainer, NodeFilter.SHOW_TEXT, null, false);
+      var textNode;
+      while ((textNode = walker.nextNode())) {
+        if (textNode.nodeValue && (textNode.nodeValue.indexOf('16-2') !== -1 || textNode.nodeValue.indexOf('16-3') !== -1 || textNode.nodeValue.indexOf('16-1') !== -1)) {
+          textNode.nodeValue = textNode.nodeValue
+            .replace(/16-1/g, '15-1')
+            .replace(/16-2/g, '15-2')
+            .replace(/16-3/g, '15-3');
+        }
+      }
+    }
+
+    fsContainer.querySelectorAll('option').forEach(function (opt) {
+      var t = (opt.textContent || '').trim();
+      if (t.indexOf('Auto-Publish') !== -1 && t.length > 34) {
+        opt.textContent = '⚡ Auto-Publish (खाली होते ही स्वतः लाइव)';
+      } else if (t.indexOf('सभी जिले') !== -1) {
+        opt.textContent = 'सभी जिले (All Districts)';
+      } else if (t.indexOf('सभी राज्य') !== -1) {
+        opt.textContent = 'सभी राज्य (All India)';
+      }
+    });
   }
 
   // Helper: Resolve sub-container across all ID formats (sub-c01, sub-c1, sub-g34, etc.)
@@ -221,7 +293,7 @@
         '</div>' +
         '<div class="space-y-2 text-xs text-slate-300">' +
           '<div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between">' +
-            '<span>🛡️ 100% आधार व पुलिस सत्यापित सेवा प्रदाता नेटवर्क</span>' +
+            '<span>🛡️ 100% पहचान व पुलिस सत्यापित सेवा प्रदाता नेटवर्क</span>' +
             '<span class="text-emerald-400 font-bold">सक्रिय</span>' +
           '</div>' +
           '<div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between">' +
@@ -255,7 +327,17 @@
       e.stopImmediatePropagation();
       e.stopPropagation();
       if (e.cancelable) e.preventDefault();
+      var btnTxt = (fsCloseBtn.textContent || '').trim();
       forceCloseFullscreenViewport();
+      if (btnTxt.indexOf('वापस') !== -1) {
+        var catModal = document.getElementById('categoryModal');
+        if (catModal) {
+          catModal.classList.remove('hidden');
+          catModal.style.setProperty('display', 'flex', 'important');
+        }
+      } else if (btnTxt === '✕' || btnTxt === '×' || btnTxt === 'X') {
+        window.closeCatalogModal();
+      }
       return;
     }
 
@@ -360,6 +442,8 @@
           fs162.style.setProperty('display', 'flex', 'important');
           fs162.style.setProperty('z-index', '99999', 'important');
         }
+        normalizeFullscreenMicroAppDOM(subCode);
+        setTimeout(function () { normalizeFullscreenMicroAppDOM(subCode); }, 30);
         return;
       }
       if ((subCode === '15-3' || subCode === '16-3') && typeof window.openFullscreenModule === 'function') {
@@ -378,6 +462,8 @@
           fs163.style.setProperty('display', 'flex', 'important');
           fs163.style.setProperty('z-index', '99999', 'important');
         }
+        normalizeFullscreenMicroAppDOM(subCode);
+        setTimeout(function () { normalizeFullscreenMicroAppDOM(subCode); }, 30);
         return;
       }
 
