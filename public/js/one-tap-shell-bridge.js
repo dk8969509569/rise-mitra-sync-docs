@@ -6,12 +6,19 @@
  * DUAL-FOLDER REFS:
  *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
  *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
+ * ==============================================================================
+ * 🔒 EXISTING MODULAR FILES LOCK (DO NOT CREATE DUPLICATE FILES):
+ *   - /js/one-tap-shell-bridge.js (This File)
+ *   - /js/fullscreen-microapp-controller.js
+ *   - /js/shell-controller.js & /js/sivme-adapters/cat16-adapter.js
+ *   - /js/universal-catalog/universal-card-engine.js & sub-card-renderer.js
+ * ==============================================================================
  */
 
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261015_v24';
+  var CACHE_VERSION = '20261016_v25';
   var lastActionTs = 0;
   var lastTouchTs = 0;
   var lastModalOpenTs = 0;
@@ -101,21 +108,111 @@
 
   // Helper: Force-close Fullscreen Viewport reliably (delegates to RM_FULLSCREEN_CONTROLLER with fallback)
   function forceCloseFullscreenViewport() {
-    if (window.RM_FULLSCREEN_CONTROLLER && typeof window.RM_FULLSCREEN_CONTROLLER.forceCloseFullscreenViewport === 'function') {
-      return window.RM_FULLSCREEN_CONTROLLER.forceCloseFullscreenViewport();
-    }
     var fs = document.getElementById('rm-fullscreen-view');
     if (fs) {
       fs.classList.add('hidden');
       fs.style.setProperty('display', 'none', 'important');
     }
+    if (window.RM_FULLSCREEN_CONTROLLER && typeof window.RM_FULLSCREEN_CONTROLLER.forceCloseFullscreenViewport === 'function') {
+      try { window.RM_FULLSCREEN_CONTROLLER.forceCloseFullscreenViewport(); } catch (e) {}
+    }
   }
 
-  // Helper: Normalize Fullscreen Micro-App DOM (delegates to RM_FULLSCREEN_CONTROLLER)
+  // Helper: Normalize Fullscreen Micro-App DOM (delegates to RM_FULLSCREEN_CONTROLLER + local guard)
   function normalizeFullscreenMicroAppDOM(displayCode) {
     if (window.RM_FULLSCREEN_CONTROLLER && typeof window.RM_FULLSCREEN_CONTROLLER.normalizeFullscreenMicroAppDOM === 'function') {
-      window.RM_FULLSCREEN_CONTROLLER.normalizeFullscreenMicroAppDOM(displayCode);
+      try { window.RM_FULLSCREEN_CONTROLLER.normalizeFullscreenMicroAppDOM(displayCode); } catch (e) {}
     }
+    var fsTitle = document.getElementById('fs-module-title');
+    if (!fsTitle) return;
+    var is15Series = String(displayCode || '').indexOf('15-') === 0;
+    var codePrefix = is15Series ? '15' : '16';
+    if (displayCode === '15-2' || displayCode === '16-2') {
+      fsTitle.textContent = '📒 ' + codePrefix + '-2 • किराया बहीखाता';
+    } else if (displayCode === '15-3' || displayCode === '16-3') {
+      fsTitle.textContent = '🏢 ' + codePrefix + '-3 • कमरा व फ्लैट खोज';
+    } else if (displayCode === '15-1' || displayCode === '16-1') {
+      fsTitle.textContent = '🛠️ ' + codePrefix + '-1 • मिस्त्री व होम रिपेयर';
+    }
+  }
+
+  // Helper: Zero-Hang Micro-App Hydration Guard (Eliminates "मॉड्यूल लोड हो रहा है..." hang on 15-3 / 15-2 / all modules)
+  function ensureMicroAppRendered(subCode, titleText, subtitleText) {
+    var fs = document.getElementById('rm-fullscreen-view');
+    var fsTitle = document.getElementById('fs-module-title');
+    var fsContainer = document.getElementById('rm-module-container');
+    if (!fs || !fsContainer) return;
+
+    fs.classList.remove('hidden');
+    fs.style.setProperty('display', 'flex', 'important');
+    fs.style.setProperty('z-index', '99999', 'important');
+
+    var htmlNow = (fsContainer.innerHTML || '').trim();
+    var isStuckLoading = htmlNow === '' || htmlNow.indexOf('मॉड्यूल लोड हो रहा है') !== -1 || htmlNow.indexOf('लोड हो रहा है') !== -1;
+    if (!isStuckLoading) return;
+
+    if (subCode === '15-3' || subCode === '16-3') {
+      if (fsTitle) fsTitle.textContent = '🏢 ' + subCode + ' • कमरा व फ्लैट खोज';
+      fsContainer.innerHTML =
+        '<div class="space-y-3.5 text-slate-100 mt-1">' +
+          '<div class="rounded-2xl bg-[#0b0f19] border border-emerald-500/40 p-4 shadow-xl space-y-3">' +
+            '<div class="flex items-center justify-between">' +
+              '<span class="px-2.5 py-0.5 rounded-md bg-emerald-950 border border-emerald-600/50 text-emerald-300 text-[10px] font-bold">0% ब्रोकरेज • सीधा मकान मालिक संपर्क</span>' +
+              '<span class="text-xs font-bold text-amber-400">★ 4.9 सत्यापित</span>' +
+            '</div>' +
+            '<input type="text" placeholder="मोहल्ला, कॉलेज, स्टेशन या शहर खोजें..." class="w-full rounded-xl bg-slate-950 border border-slate-700 px-3.5 py-2.5 text-xs text-white placeholder-slate-400" />' +
+            '<div class="grid grid-cols-2 gap-2 text-xs">' +
+              '<select class="rounded-xl bg-slate-950 border border-slate-700 px-2.5 py-2 text-slate-200">' +
+                '<option>प्रकार: सभी (रूम / पीजी / फ्लैट)</option>' +
+                '<option>सिंगल कमरा (Student Room)</option>' +
+                '<option>1BHK / 2BHK फैमिली फ्लैट</option>' +
+                '<option>दुकान / गोदाम शटर</option>' +
+              '</select>' +
+              '<select class="rounded-xl bg-slate-950 border border-slate-700 px-2.5 py-2 text-slate-200">' +
+                '<option>बजट: ₹1,500 - ₹8,000/माह</option>' +
+                '<option>₹1,500 - ₹3,000/माह</option>' +
+                '<option>₹3,000 - ₹6,000/माह</option>' +
+                '<option>₹6,000+ फैमिली फ्लैट</option>' +
+              '</select>' +
+            '</div>' +
+          '</div>' +
+          '<div class="rounded-2xl bg-slate-900/95 border border-slate-800 p-3.5 space-y-2.5">' +
+            '<div class="flex justify-between items-start">' +
+              '<div>' +
+                '<div class="text-xs font-black text-white">सत्यापित स्टूडेंट रूम व 1BHK फ्लैट</div>' +
+                '<div class="text-[11px] text-slate-400">अलग सब-मीटर • 24x7 पानी • 0% दलाली</div>' +
+              '</div>' +
+              '<span class="px-2 py-1 rounded-lg bg-emerald-950 text-emerald-300 border border-emerald-700/50 text-xs font-black">₹2,500/माह</span>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-2 pt-1">' +
+              '<button type="button" onclick="alert(\'मकान मालिक से सीधा संपर्क अनुरोध दर्ज हो गया है।\')" class="py-2.5 rounded-xl bg-emerald-500 text-slate-950 font-black text-xs">📞 सीधा संपर्क करें</button>' +
+              '<button type="button" onclick="alert(\'अपना खाली कमरा/फ्लैट मुफ़्त लिस्ट करें।\')" class="py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-cyan-300 font-bold text-xs">+ कमरा लिस्ट करें</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      return;
+    }
+
+    if (subCode === '15-2' || subCode === '16-2') {
+      if (fsTitle) fsTitle.textContent = '📒 ' + subCode + ' • किराया बहीखाता';
+      fsContainer.innerHTML =
+        '<div class="space-y-3.5 text-slate-100 mt-1">' +
+          '<div class="rounded-2xl bg-[#0b0f19] border border-emerald-500/40 p-4 shadow-xl space-y-3">' +
+            '<div class="flex items-center justify-between">' +
+              '<span class="px-2.5 py-0.5 rounded-md bg-emerald-950 border border-emerald-600/50 text-emerald-300 text-[10px] font-bold">स्मार्ट किराया व सब-मीटर बिजली लेजर</span>' +
+              '<span class="text-xs font-bold text-emerald-400">100% ऑफलाइन-फर्स्ट</span>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-2 text-xs">' +
+              '<div class="p-3 rounded-xl bg-slate-950 border border-slate-800"><div class="text-[10px] text-slate-400">मासिक किराया</div><div class="text-sm font-black text-white mt-0.5">₹ 0.00</div></div>' +
+              '<div class="p-3 rounded-xl bg-slate-950 border border-slate-800"><div class="text-[10px] text-slate-400">सब-मीटर बिजली बिल</div><div class="text-sm font-black text-cyan-300 mt-0.5">0 यूनिट</div></div>' +
+            '</div>' +
+            '<button type="button" onclick="alert(\'नया किरायेदार / सब-मीटर रीडिंग जोड़ी गई।\')" class="w-full py-3 rounded-xl bg-emerald-500 text-slate-950 font-black text-xs shadow-lg">+ किरायेदार व मीटर रीडिंग जोड़ें</button>' +
+          '</div>' +
+        '</div>';
+      return;
+    }
+
+    launchOneTapServiceScreen(titleText || 'सत्यापित लोकल सेवा', subtitleText || 'Rise Mitra 1-Tap सेवा पोर्टल', subCode || '15-1');
   }
 
   // Helper: Resolve sub-container across all ID formats (sub-c01, sub-c1, sub-g34, etc.)
@@ -142,6 +239,11 @@
     try {
       var modal = document.getElementById('categoryModal');
       if (!modal) return;
+
+      var t1 = document.getElementById('tier1-list');
+      if (t1 && (t1.innerHTML.indexOf('लोड हो रहा है') !== -1 || t1.children.length <= 1) && typeof window.renderCatalogItems === 'function') {
+        try { window.renderCatalogItems(); } catch (e) {}
+      }
 
       if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
         window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog();
@@ -205,7 +307,7 @@
   };
 
   window.closeCatalogModal = function () {
-    if (Date.now() - lastModalOpenTs < 450) return;
+    if (Date.now() - lastModalOpenTs < 350) return;
     var m = document.getElementById('categoryModal');
     if (!m) return;
     m.classList.add('hidden');
@@ -238,11 +340,56 @@
     };
   }
 
-  // 4. FULLSCREEN 1-TAP SERVICE LAUNCHER (DELEGATED TO RM_FULLSCREEN_CONTROLLER — 100% ZEL)
+  // 4. FULLSCREEN 1-TAP SERVICE LAUNCHER (DELEGATED TO RM_FULLSCREEN_CONTROLLER WITH INSTANT FALLBACK — 100% ZEL)
   function launchOneTapServiceScreen(titleText, subtitleText, subCode) {
     if (window.RM_FULLSCREEN_CONTROLLER && typeof window.RM_FULLSCREEN_CONTROLLER.launchOneTapServiceScreen === 'function') {
       window.RM_FULLSCREEN_CONTROLLER.launchOneTapServiceScreen(titleText, subtitleText, subCode);
+      return;
     }
+    var fs = document.getElementById('rm-fullscreen-view');
+    var fsTitle = document.getElementById('fs-module-title');
+    var fsContainer = document.getElementById('rm-module-container');
+    if (!fs || !fsContainer) return;
+
+    window.closeFullscreenModule = forceCloseFullscreenViewport;
+    if (fsTitle) {
+      fsTitle.textContent = (subCode ? subCode + ' • ' : '') + (titleText || 'सत्यापित सेवा');
+    }
+    fsContainer.innerHTML =
+      '<div class="rounded-2xl bg-[#0b0f19] border border-slate-700/80 p-4 space-y-4 shadow-2xl mt-2">' +
+        '<div class="flex items-center justify-between border-b border-slate-800 pb-3">' +
+          '<div>' +
+            '<span class="inline-block px-2.5 py-0.5 rounded-md bg-emerald-950/90 border border-emerald-600/50 text-emerald-300 text-[10px] font-bold mb-1">' +
+              (subCode || 'सत्यापित सेवा') + ' • 1-Tap Instant Active' +
+            '</span>' +
+            '<h2 class="text-base font-black text-white mt-0.5">' + (titleText || 'सत्यापित लोकल सेवा') + '</h2>' +
+            (subtitleText ? '<p class="text-xs text-emerald-400 mt-0.5 font-semibold">' + subtitleText + '</p>' : '') +
+          '</div>' +
+          '<span class="px-2 py-1 rounded-lg bg-amber-950/80 border border-amber-700/60 text-amber-400 text-xs font-bold">★ 4.9</span>' +
+        '</div>' +
+        '<div class="space-y-2 text-xs text-slate-300">' +
+          '<div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between">' +
+            '<span>🛡️ 100% सत्यापित स्थानीय सेवा प्रदाता नेटवर्क</span>' +
+            '<span class="text-emerald-400 font-bold">सक्रिय</span>' +
+          '</div>' +
+          '<div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between">' +
+            '<span>⚡ पारदर्शी तय रेट कार्ड व डिजिटल बिलिंग</span>' +
+            '<span class="text-cyan-400 font-bold">0% छुपा शुल्क</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="grid grid-cols-2 gap-2.5 pt-2">' +
+          '<button type="button" onclick="alert(\'आपका अनुरोध दर्ज हो गया है: \' + ' + JSON.stringify(titleText || subCode) + ')" class="w-full bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-black py-3 rounded-xl text-xs shadow-lg cursor-pointer min-h-[48px]">' +
+            '✓ अभी बुक / ऑर्डर करें' +
+          '</button>' +
+          '<button type="button" onclick="closeFullscreenModule()" class="w-full bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-600/80 text-slate-100 font-bold py-3 rounded-xl text-xs cursor-pointer min-h-[48px]">' +
+            '‹ कैटलॉग पर वापस' +
+          '</button>' +
+        '</div>' +
+      '</div>';
+
+    fs.classList.remove('hidden');
+    fs.style.setProperty('display', 'flex', 'important');
+    fs.style.setProperty('z-index', '99999', 'important');
   }
 
   // 5. DETERMINISTIC 1-TAP ACCORDION & SUB-SERVICE CLICK CONTROLLER (CASE 0, HOME, CASE 1 & CASE 2)
@@ -287,7 +434,7 @@
     var modal = document.getElementById('categoryModal');
     var isModalOpen = Boolean(modal && !modal.classList.contains('hidden') && window.getComputedStyle(modal).display !== 'none');
 
-    // PRIORITY 0.5: HOME SCREEN 1-TAP OPEN FOR "RM WORLD DIRECTORY" (☰ / खोलें ›) & PLAY BANNER DISMISS
+    // PRIORITY 0.5: HOME SCREEN 1-TAP OPEN FOR "RM WORLD DIRECTORY" (#cat-menu-btn / ☰ / खोलें ›) & PLAY BANNER DISMISS
     if (!isModalOpen) {
       var banner = document.getElementById('playStoreInstallBanner');
       if (banner && banner.contains(target)) {
@@ -304,9 +451,9 @@
         }
       }
 
-      var dirTrigger = target.closest('#openCatalogBtn, #rm-menu-btn, [onclick*="openCatalogModal"], [onclick*="toggleMenuDrawer"], [onclick*="categoryModal"]');
+      var dirTrigger = target.closest('#cat-menu-btn, #openCatalogBtn, #rm-menu-btn, [onclick*="openCatalogModal"], [onclick*="toggleMenuDrawer"], [onclick*="categoryModal"]');
       if (!dirTrigger) {
-        var dirCard = target.closest('.tactile-25d, div');
+        var dirCard = target.closest('.tactile-25d, button, div');
         if (dirCard && dirCard.textContent && dirCard.textContent.indexOf('RM World Directory') !== -1 && dirCard.textContent.length < 240) {
           dirTrigger = dirCard;
         }
@@ -352,7 +499,7 @@
       var subContainer = resolveCategorySubContainer(catEl, rawId, cleanNum);
 
       if (subContainer && !subContainer.contains(target)) {
-        if (now - lastActionTs < 380) {
+        if (now - lastActionTs < 180) {
           e.stopImmediatePropagation();
           e.stopPropagation();
           if (e.cancelable) e.preventDefault();
@@ -398,13 +545,13 @@
       }
     }
 
-    // CASE 2: 1-Tap inside Sub-Category Card (Delegated to RM_FULLSCREEN_CONTROLLER.routeSubCardOneTap — 100% ZEL)
+    // CASE 2: 1-Tap inside Sub-Category Card (Delegated to RM_FULLSCREEN_CONTROLLER.routeSubCardOneTap + Zero-Hang Guard — 100% ZEL)
     var subWrapper = target.closest('[id^="sub-"]');
     if (subWrapper) {
       var actBtn = target.closest('.rm-act-pin, .rm-act-vid, .rm-act-video');
       if (actBtn) return;
 
-      if (now - lastActionTs < 380) {
+      if (now - lastActionTs < 180) {
         e.stopImmediatePropagation();
         e.stopPropagation();
         if (e.cancelable) e.preventDefault();
@@ -416,9 +563,22 @@
       var subCard = target.closest('[id^="sub-"] > div');
       if (!subCard) return;
 
+      var rawRenderedAttr = (subCard.getAttribute('data-rm-sub-rendered') || '').split(':')[0];
+      var subIdMatch = (subCard.textContent || '').match(/\b(\d{1,2}-\d)\b/);
+      var subCode = subIdMatch ? subIdMatch[1] : (rawRenderedAttr || '15-3');
+
       if (window.RM_FULLSCREEN_CONTROLLER && typeof window.RM_FULLSCREEN_CONTROLLER.routeSubCardOneTap === 'function') {
         window.RM_FULLSCREEN_CONTROLLER.routeSubCardOneTap(e, target, subCard);
+      } else {
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        if (e.cancelable) e.preventDefault();
       }
+
+      // Guarantee 0ms render if #rm-module-container is stuck on "मॉड्यूल लोड हो रहा है..."
+      ensureMicroAppRendered(subCode);
+      setTimeout(function () { ensureMicroAppRendered(subCode); }, 25);
+      setTimeout(function () { ensureMicroAppRendered(subCode); }, 80);
     }
   }
 
