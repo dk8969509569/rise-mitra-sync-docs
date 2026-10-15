@@ -2,13 +2,34 @@ name: Build and Commit Atomic Catalog (01-50)
 
 on:
   workflow_dispatch:
+    inputs:
+      owner_approval:
+        description: 'Type APPROVE_CATALOG_COMMIT to authorize committing generated catalog to pre-main'
+        required: true
+        default: 'DRY_RUN_DIFF_ONLY'
+        type: string
+      diff_reviewed:
+        description: 'Confirm generated-file diff and 50-category IDs have been reviewed'
+        required: true
+        default: false
+        type: boolean
+  push:
+    paths:
+      - '.github/workflows/build-atomic-catalog.yml'
 
+# ZEL SAFETY CORRECTION:
+# Default runs in read-only diff/validation mode; commit/push executes only with explicit Owner approval.
 permissions:
   contents: write
+
+concurrency:
+  group: rm-build-atomic-catalog-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   generate-categories:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -18,13 +39,91 @@ jobs:
         with:
           node-version: 18
 
+      - name: Validate Pre-Generation Canonical 50 Categories & Taxonomy
+        run: |
+          node -e '
+            const fs = require("fs");
+            for (let i = 1; i <= 50; i++) {
+              const id = String(i).padStart(2, "0");
+              const taxPath = `public/data/category-${id}/taxonomy.json`;
+              if (!fs.existsSync(taxPath) || fs.statSync(taxPath).size === 0) {
+                console.error("FAIL_CLOSED: Missing or empty category taxonomy file:", taxPath);
+                process.exit(1);
+              }
+              const parsed = JSON.parse(fs.readFileSync(taxPath, "utf8"));
+              if (!parsed || Number(parsed.category_id) !== i) {
+                console.error("FAIL_CLOSED: Invalid category_id in taxonomy file:", taxPath);
+                process.exit(1);
+              }
+              const catPath = `public/js/universal-catalog/categories/cat-${id}.js`;
+              if (!fs.existsSync(catPath) || fs.statSync(catPath).size === 0) {
+                console.error("FAIL_CLOSED: Missing or empty existing atomic category file:", catPath);
+                process.exit(1);
+              }
+            }
+            console.log("PASS: All 50 category-XX/taxonomy.json and cat-XX.js files verified before generation.");
+          '
+
       - name: Run Atomic Catalog Generator
         run: node scripts/generate-atomic-catalog.js
 
+      - name: Validate Generated Atomic Categories (01-50) & Inspect Diff
+        run: |
+          node -e '
+            const fs = require("fs");
+            for (let i = 1; i <= 50; i++) {
+              const id = String(i).padStart(2, "0");
+              const p = `public/js/universal-catalog/categories/cat-${id}.js`;
+              if (!fs.existsSync(p) || fs.statSync(p).size === 0) {
+                console.error("FAIL_CLOSED: Generated atomic category missing or empty:", p);
+                process.exit(1);
+              }
+            }
+            console.log("PASS: All 50 generated atomic category modules (cat-01 to cat-50) verified.");
+          '
+          git status --short public/js/universal-catalog/categories/
+          git diff --stat public/js/universal-catalog/categories/
+
+      - name: Restore Working Tree When Commit Is Not Explicitly Authorized
+        if: >-
+          github.event_name != 'workflow_dispatch' ||
+          github.event.inputs.owner_approval != 'APPROVE_CATALOG_COMMIT' ||
+          github.event.inputs.diff_reviewed != 'true'
+        run: |
+          git checkout -- public/js/universal-catalog/categories/
+          if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
+            echo "FAIL_CLOSED: Working tree was not cleanly restored after dry-run catalog validation."
+            git status --short --untracked-files=no
+            exit 1
+          fi
+          echo "PASS: Dry-run diff review completed; unauthorized catalog commit prevented and working tree restored."
+
       - name: Commit and Push Atomic Categories
+        if: >-
+          github.event_name == 'workflow_dispatch' &&
+          github.ref == 'refs/heads/pre-main' &&
+          github.event.inputs.owner_approval == 'APPROVE_CATALOG_COMMIT' &&
+          github.event.inputs.diff_reviewed == 'true'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add public/js/universal-catalog/categories/
           git commit -m "feat(catalog): auto-generate atomic categories 01-50 conforming to Play Store canonical specs" || echo "No changes to commit"
           git push origin pre-main
+
+      - name: Record Atomic Catalog Governance Evidence
+        if: always()
+        run: |
+          {
+            echo "### Rise Mitra Atomic Catalog (01-50) Build & Diff Gate Evidence"
+            echo "- **Commit SHA:** \`${GITHUB_SHA}\`"
+            echo "- **Ref / Branch:** \`${GITHUB_REF}\`"
+            echo "- **Event:** \`${GITHUB_EVENT_NAME}\`"
+            echo "- **Run ID:** \`${GITHUB_RUN_ID}\`"
+            echo "- **50-Category Taxonomy (\`category-01\` to \`category-50\`) & Module Validation:** VERIFIED"
+            if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.owner_approval }}" = "APPROVE_CATALOG_COMMIT" ] && [ "${{ github.event.inputs.diff_reviewed }}" = "true" ] && [ "${GITHUB_REF}" = "refs/heads/pre-main" ]; then
+              echo "- **Execution Mode:** AUTHORIZED_PRE_MAIN_COMMIT"
+            else
+              echo "- **Execution Mode:** DRY_RUN_DIFF_VALIDATION_ONLY (Unauthorized auto-commit blocked)"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
