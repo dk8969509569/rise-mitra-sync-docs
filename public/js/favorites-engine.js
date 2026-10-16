@@ -1,18 +1,20 @@
 /**
  * ==============================================================================
- * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & SSOT LOCK:
- *   - MODULE NAME    : Universal Favorites Shortcuts Engine (Phase 5 Architecture v1.2)
+ * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
+ *   - MODULE NAME    : RM Favorites Part-2 — Tap-Safe UI Renderer & Pin Controller v1.4
  *   - REPO TARGET    : public/js/favorites-engine.js
  *   - SURFACE TARGET : SURFACE-A ONLY (Customer PWA Home Grid & Catalog Modal Pin Sync)
  *   - HOST BINDING   : Surface-A (public/index.html) | Surface-B (public/owner-console.html)
- *   - SIZE BUDGET    : Target <= 420 Logical Lines (Surface-A <= 120 KB Gzipped | 0% Secrets)
- *   - GOVERNANCE     : 100% ZEL (Zero Element Loss) | Fail-Closed | Modular Isolation
+ *   - SIZE BUDGET    : Target <= 300 Logical Lines (Surface-A <= 120 KB Gzipped | 0% Secrets)
+ *   - GOVERNANCE     : 100% ZEL (Zero Element Loss) | Fail-Closed | Modular Sandbox Isolation
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
  * ==============================================================================
  * 2. EXISTING MODULAR FILES LOCK (ZERO DUPLICATE IMPLEMENTATION):
+ *   - public/js/favorites-engine.js (This File: Part-2 UI Renderer, Pin Sync & Controller)
+ *   - public/js/favorites-data-extractor.js (Part-1: CANONICAL_SUBCATS 01-1..33-3 & Extractor)
  *   - public/js/one-tap-shell-bridge.js (Master 1-Tap Router & Modal Controller — Surface-A)
- *   - public/js/one-tap-catalog-hydrator.js (Catalog Card Hydration & Fullscreen Viewport — Surface-A)
+ *   - public/js/one-tap-catalog-hydrator.js (Catalog Card Hydration & Fullscreen Viewport)
  *   - public/js/universal-catalog/catalog-loader.js (Dynamic Atomic Category & Tier-2 Games Loader)
  *   - public/js/universal-catalog/games-entertainment-bridge.js (Play Store Taxonomy Bridge 33-50)
  * ==============================================================================
@@ -23,9 +25,9 @@
  *        Unpinning is EXCLUSIVELY allowed from inside the Catalog Modal ([✓ पिन किया]).
  *     2. BILINGUAL TYPOGRAPHY: Line 1 English Roman (Bold) | Line 2 Hindi Subtitle.
  *     3. TOP ROW GEOMETRY: Left Cyan Sequence Number (18px) | Right 40px Squircle Icon.
- *   - ALLOWED ON SURFACE-A   : Persistent localStorage favorites read/write, natural sequence
- *                              sort (01-1 to 50-3), tap-safe home grid rendering, and catalog
- *                              pin button state synchronization.
+ *   - ALLOWED ON SURFACE-A   : Auto-loading Part-1 favorites-data-extractor.js, persistent
+ *                              localStorage read/write, natural sequence sort (01-1 to 50-3),
+ *                              tap-safe home grid rendering, and catalog pin button sync.
  *   - ALLOWED ON SURFACE-B   : Passive no-op if SIVME HUD is clicked; never blocks Owner HUD.
  *   - FORBIDDEN IN THIS FILE : Cross-surface DOM/secret leakage, rendering ✕ buttons on home
  *                              cards, or wiping user pinned data on schema updates.
@@ -35,7 +37,8 @@
  *                           window.unpinFavoriteItem, window.RM_UserPinnedShortcuts,
  *                           window.RM_FavoritesEngine, window.renderFavorites,
  *                           window.updatePinButtonsUI, localStorage['rm_user_pinned_shortcuts_v1']
- *   - CALLS EXTERNAL APIs : window.toggleMenuDrawer, window.renderCatalogItems
+ *   - CALLS EXTERNAL APIs : window.RM_FAVORITES_DATA.*, window.toggleMenuDrawer,
+ *                           window.renderCatalogItems
  * ==============================================================================
  * 5. DOM ATTRIBUTE & SELECTOR CONTRACT (ZERO-COLLISION DOM RULE):
  *   - SURFACE-A SELECTORS : #userPinnedFavoritesSection, #userPinnedFavoritesGrid,
@@ -48,12 +51,12 @@
  *   - SCROLL SAFETY : Passive lifecycle rehydration on DOMContentLoaded, pageshow, and focus.
  *   - DOM SAFETY    : Scoped updates to favorites grid and pin buttons without full-DOM mutation loops.
  * ==============================================================================
- * 7. 100% ZEL FUNCTION MANIFEST:
- *   1. getSeqFromElement       2. getPinned               3. savePinned
- *   4. toggleServicePin        5. togglePinService        6. unpinFavoriteItem
- *   7. updatePinButtonsUI      8. ensureMountSection      9. handleCardClick
- *   10. renderFavorites        11. findSubcardElement     12. extractSubcardData
- *   13. rehydrateEngine
+ * 7. 100% ZEL FUNCTION MANIFEST (ALL 14 FUNCTIONS + 7 LIFECYCLE LISTENERS INTACT):
+ *   1. ensureFavoritesDataModuleLoaded  2. getCanonicalSubcats    3. getSeqFromElement
+ *   4. getPinned                        5. savePinned             6. toggleServicePin
+ *   7. togglePinService                 8. unpinFavoriteItem      9. updatePinButtonsUI
+ *   10. ensureMountSection              11. handleCardClick       12. renderFavorites
+ *   13. findSubcardElement              14. extractSubcardData    15. rehydrateEngine
  *   + Listeners: click (capture pin), DOMContentLoaded, pageshow, focus,
  *                visibilitychange, storage, rm:favorites:changed, click (UI sync)
  * ==============================================================================
@@ -65,64 +68,28 @@
   const STORAGE_KEY = 'rm_user_pinned_shortcuts_v1';
 
   // ==============================================================================
-  // 1. UNIVERSAL CANONICAL SUB-CATEGORY REGISTRY (100% SSOT INTACT)
+  // 1. MODULAR PART-1 BRIDGE & CANONICAL SUB-CATEGORY RESOLVER (100% SSOT INTACT)
   // ==============================================================================
-  const CANONICAL_SUBCATS = {
-    // 01. Tribal Arts & Handloom (Products)
-    '01-1': { seq: '01-1', tag: 'Handloom', icon: '🥻', title: 'Tussar Silk & Handloom', hiTitle: 'तसर सिल्क, खादी व हथकरघा वस्त्र' },
-    '01-2': { seq: '01-2', tag: 'Tribal Art', icon: '🏺', title: 'Dokra & Tribal Artifacts', hiTitle: 'डोकरा धातु कला व जनजातीय हस्तशिल्प' },
-    '01-3': { seq: '01-3', tag: 'Pottery', icon: '🧱', title: 'Terracotta & Pottery', hiTitle: 'टेराकोटा, मूर्तिकला व मिट्टी बर्तन' },
-    
-    // 02. Auto & Vehicles (Services)
-    '02-1': { seq: '02-1', tag: 'Bike Service', icon: '🛵', title: 'Bike & Scooter Service', hiTitle: 'बाइक व स्कूटर सर्विस' },
-    '02-2': { seq: '02-2', tag: 'Car Service', icon: '🚗', title: 'Car Repair & Washing', hiTitle: 'कार रिपेयर व वाशिंग' },
-    '02-3': { seq: '02-3', tag: 'Transport', icon: '🛺', title: 'Auto & Commercial Transport', hiTitle: 'ऑटो, टैक्सी व कमर्शियल वाहन' },
+  function getCanonicalSubcats() {
+    return (window.RM_FAVORITES_DATA && window.RM_FAVORITES_DATA.CANONICAL_SUBCATS) || {};
+  }
 
-    // 03. Beauty & Salon (Services)
-    '03-1': { seq: '03-1', tag: 'Grooming', icon: '💇‍♂️', title: "Men's Grooming", hiTitle: 'मेंस सैलून व हेयर स्टाइलिंग' },
-    '03-2': { seq: '03-2', tag: 'Parlour', icon: '💅', title: "Women's Parlour", hiTitle: 'महिला ब्यूटी पार्लर व ब्राइडल मेकअप' },
-    '03-3': { seq: '03-3', tag: 'Wellness', icon: '🌿', title: 'Ayurvedic Spa & Wellness', hiTitle: 'आयुर्वेदिक स्पा व थेरेपी' },
-
-    // 04. Education & Study (Products & Utilities)
-    '04-1': { seq: '04-1', tag: 'Library', icon: '🔔', title: 'Study Library & Reading Rooms', hiTitle: 'वाचनालय व शांत अध्ययन कक्ष' },
-    '04-2': { seq: '04-2', tag: 'Books', icon: '📚', title: 'Competitive Books & Notes', hiTitle: 'प्रतियोगी पुस्तकें व स्टडी नोट्स' },
-
-    // 06. Comics & Entertainment (Products & Media)
-    '06-1': { seq: '06-1', tag: 'Comics', icon: '🦸', title: 'Classic Indian Comics', hiTitle: 'अमर चित्र कथा, चाचा चौधरी व सुपरहीरो' },
-    '06-2': { seq: '06-2', tag: 'Webtoons', icon: '📱', title: 'Manga & Webtoons', hiTitle: 'डिजिटल मांगा व रंगीन वेबटून' },
-
-    // 07. Government & Form Services (Citizen Utilities)
-    '07-1': { seq: '07-1', tag: 'Digital Seva', icon: '📄', title: 'CSC & Digital Seva Kendra', hiTitle: 'डिजिटल सेवा व सरकारी प्रमाण पत्र' },
-    '07-2': { seq: '07-2', tag: 'Online Forms', icon: '📝', title: 'Online Forms & Admissions', hiTitle: 'ऑनलाइन आवेदन व प्रवेश फॉर्म' },
-
-    // 08. Electronics & Appliances (Services & Repairs)
-    '08-1': { seq: '08-1', tag: 'Gadget Care', icon: '📱', title: 'Smartphone & Gadget Care', hiTitle: 'स्मार्टफोन, लैपटॉप व स्क्रीन रिपेयर' },
-    '08-2': { seq: '08-2', tag: 'Appliances', icon: '⚡', title: 'Electrical & Appliances', hiTitle: 'घरेलू बिजली उपकरण व वायरिंग' },
-
-    // 14. Food & Daily Dining (Products)
-    '14-1': { seq: '14-1', tag: 'Dining', icon: '🍲', title: 'Local Dhaba & Tiffin', hiTitle: 'पारंपरिक भोजन व टिफिन सेवा' },
-    '14-2': { seq: '14-2', tag: 'Snacks', icon: '☕', title: 'Tea, Snacks & Street Food', hiTitle: 'चाय, नाश्ता व स्ट्रीट फूड' },
-
-    // 16. House & Home Care (Services & Utilities)
-    '16-1': { seq: '16-1', tag: 'Home Repair', icon: '🛠️', title: 'Mistry & Home Repair', hiTitle: 'मिस्त्री व दैनिक घरेलू मरम्मत सेवाएं' },
-    '16-2': { seq: '16-2', tag: 'Rent Ledger', icon: '📋', title: 'Rental Ledger', hiTitle: 'किराया बहीखाता व किरायेदार प्रबंधन' },
-    '16-3': { seq: '16-3', tag: 'Room Search', icon: '🏠', title: 'Room & Flat Search', hiTitle: 'कमरा, फ्लैट व पीजी खोज (0% दलाली)' },
-
-    // 20. Medical & Health (Products & Care)
-    '20-1': { seq: '20-1', tag: 'Pharmacy', icon: '💊', title: 'Pharmacy & Medicines', hiTitle: 'दवाइयां व जेनेरिक मेडिकल स्टोर' },
-    '20-2': { seq: '20-2', tag: 'Clinic', icon: '🩺', title: 'Doctor Consultation & Clinic', hiTitle: 'डॉक्टर परामर्श व प्राथमिक क्लिनिक' },
-
-    // 27. Shopping & Retail (Products)
-    '27-1': { seq: '27-1', tag: 'Grocery', icon: '🛒', title: 'Kirana & Daily Grocery', hiTitle: 'किराना दुकान व दैनिक घरेलू राशन' },
-    '27-2': { seq: '27-2', tag: 'Fashion', icon: '👔', title: 'Clothing & Local Fashion', hiTitle: 'कपड़े, रेडीमेड गारमेंट्स व परिधान' },
-
-    // 33. Revenue & Social Welfare (Citizen Services)
-    '33-1': { seq: '33-1', tag: 'Panchayat', icon: '🏛️', title: 'Panchayat & Block Office', hiTitle: 'पंचायत व प्रखंड जनसुविधा' },
-    '33-2': { seq: '33-2', tag: 'Welfare', icon: '👵', title: 'Pensions & Women Welfare', hiTitle: 'सामाजिक सुरक्षा व पेंशन योजनाएं' },
-    '33-3': { seq: '33-3', tag: 'Land Records', icon: '📜', title: 'Land Revenue & Khatiyan', hiTitle: 'राजस्व सेवाएं व भू-अभिलेख' }
-  };
+  (function ensureFavoritesDataModuleLoaded() {
+    if (window.RM_FAVORITES_DATA || document.getElementById('rm-favorites-data-extractor-script')) return;
+    var s = document.createElement('script');
+    s.id = 'rm-favorites-data-extractor-script';
+    s.src = '/js/favorites-data-extractor.js?v=' + (window.__RM_ACTIVE_CACHE_VER || '20261017_v42');
+    s.async = false;
+    s.onload = function () {
+      rehydrateEngine();
+    };
+    (document.head || document.documentElement).appendChild(s);
+  })();
 
   function getSeqFromElement(el) {
+    if (window.RM_FAVORITES_DATA && typeof window.RM_FAVORITES_DATA.getSeqFromElement === 'function') {
+      return window.RM_FAVORITES_DATA.getSeqFromElement(el);
+    }
     if (!el) return '';
     const text = el.textContent || '';
     const m = text.match(/\b(\d{1,2})\s*-\s*(\d{1,2})\b/);
@@ -138,12 +105,16 @@
   // 2. BULLETPROOF PERSISTENCE & TOLERANT STORAGE (ZERO DATA LOSS)
   // ==============================================================================
   function getPinned() {
+    if (window.RM_FAVORITES_DATA && typeof window.RM_FAVORITES_DATA.getPinned === 'function') {
+      return window.RM_FAVORITES_DATA.getPinned();
+    }
     try {
       const dataStr = localStorage.getItem(STORAGE_KEY);
       if (!dataStr) return [];
       let raw = JSON.parse(dataStr);
       if (!Array.isArray(raw)) return [];
 
+      const CANONICAL_SUBCATS = getCanonicalSubcats();
       let updated = false;
       raw = raw.map(item => {
         if (!item || typeof item !== 'object') return null;
@@ -187,7 +158,7 @@
         localStorage.setItem(STORAGE_KEY, JSON.stringify(raw));
       }
       return raw;
-    } catch(e) {
+    } catch (e) {
       console.warn('RM Favorites Storage Read Warning:', e);
       return [];
     }
@@ -197,7 +168,7 @@
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
       window.dispatchEvent(new CustomEvent('rm:favorites:changed', { detail: { list } }));
-    } catch(e) {
+    } catch (e) {
       console.warn('RM Favorites Storage Write Warning:', e);
     }
     renderFavorites();
@@ -205,7 +176,7 @@
   }
 
   // Canonical User Pin/Unpin Toggle (Catalog Modal Controls Only)
-  window.toggleServicePin = function(id, title, hiTitle, seq, icon, tag) {
+  window.toggleServicePin = function (id, title, hiTitle, seq, icon, tag) {
     let list = getPinned();
     const targetSeq = seq || id;
     const existingIndex = list.findIndex(item => (targetSeq && (item.seq === targetSeq || item.code === targetSeq)) || item.id === id);
@@ -214,6 +185,7 @@
       list.splice(existingIndex, 1);
     } else {
       const s = targetSeq || '⭐';
+      const CANONICAL_SUBCATS = getCanonicalSubcats();
       const c = CANONICAL_SUBCATS[s];
       list.push({
         id: id || `fav-${s}`,
@@ -230,13 +202,13 @@
     savePinned(list);
   };
 
-  window.togglePinService = function(code, icon, enTitle, hiTitle, event) {
+  window.togglePinService = function (code, icon, enTitle, hiTitle, event) {
     if (event) event.stopPropagation();
     window.toggleServicePin(`fav-${code}`, enTitle, hiTitle, code, icon);
   };
 
   // Programmatic unpin handler (Only triggered via Catalog Modal)
-  window.unpinFavoriteItem = function(seqOrCode, event) {
+  window.unpinFavoriteItem = function (seqOrCode, event) {
     if (event && typeof event.preventDefault === 'function') {
       event.preventDefault();
       event.stopPropagation();
@@ -259,8 +231,8 @@
       if (text.includes('पिन') || text.includes('Pin')) {
         const card = findSubcardElement(btn);
         const seq = getSeqFromElement(card);
-        const isPinned = list.some(item => 
-          (seq && (item.seq === seq || item.code === seq)) || 
+        const isPinned = list.some(item =>
+          (seq && (item.seq === seq || item.code === seq)) ||
           (card && (item.id === card.id || item.id === card.getAttribute('data-cat-id')))
         );
 
@@ -395,9 +367,12 @@
   }
 
   // ==============================================================================
-  // 5. SPACE-TOLERANT DEEP CONTAINER FINDER
+  // 5. SPACE-TOLERANT DEEP CONTAINER FINDER (DELEGATED + 100% ZEL LOCAL FALLBACK)
   // ==============================================================================
   function findSubcardElement(btn) {
+    if (window.RM_FAVORITES_DATA && typeof window.RM_FAVORITES_DATA.findSubcardElement === 'function') {
+      return window.RM_FAVORITES_DATA.findSubcardElement(btn);
+    }
     let curr = btn.parentElement;
     while (curr && curr !== document.body && curr.id !== 'categoryModal') {
       const seq = getSeqFromElement(curr);
@@ -414,13 +389,17 @@
   }
 
   // ==============================================================================
-  // 6. CANONICAL-FIRST DATA EXTRACTOR
+  // 6. CANONICAL-FIRST DATA EXTRACTOR (DELEGATED + 100% ZEL LOCAL FALLBACK)
   // ==============================================================================
   function extractSubcardData(card) {
+    if (window.RM_FAVORITES_DATA && typeof window.RM_FAVORITES_DATA.extractSubcardData === 'function') {
+      return window.RM_FAVORITES_DATA.extractSubcardData(card);
+    }
     if (!card) return null;
     const seq = getSeqFromElement(card);
     if (!seq) return null;
 
+    const CANONICAL_SUBCATS = getCanonicalSubcats();
     if (CANONICAL_SUBCATS[seq]) {
       const c = CANONICAL_SUBCATS[seq];
       return { id: `fav-${seq}`, seq: c.seq, tag: c.tag, icon: c.icon, title: c.title, hiTitle: c.hiTitle };
@@ -432,8 +411,8 @@
 
     for (let el of textEls) {
       const txt = el.textContent.trim();
-      if (/[a-zA-Z]{3,}/.test(txt) && 
-          !txt.includes('Live') && !txt.includes('Verified') && 
+      if (/[a-zA-Z]{3,}/.test(txt) &&
+          !txt.includes('Live') && !txt.includes('Verified') &&
           !txt.includes('Protect') && !txt.includes('Play') &&
           !txt.includes('Reviews') && !txt.includes('Min')) {
         title = txt.replace(/^\d{1,2}\s*-\s*\d{1,2}\.?\s*/, '').trim();
@@ -449,9 +428,9 @@
     if (!hiTitle) {
       for (let el of textEls) {
         const txt = el.textContent.trim();
-        if (/[\u0900-\u097F]{4,}/.test(txt) && 
-            !txt.includes('पिन') && !txt.includes('खोलें') && 
-            !txt.includes('वीडियो') && !txt.includes('ग्राहक') && 
+        if (/[\u0900-\u097F]{4,}/.test(txt) &&
+            !txt.includes('पिन') && !txt.includes('खोलें') &&
+            !txt.includes('वीडियो') && !txt.includes('ग्राहक') &&
             !txt.includes('सत्यापित') && !txt.includes('समीक्षाएं')) {
           hiTitle = txt;
           break;
@@ -493,7 +472,7 @@
   // ==============================================================================
   // 7. EVENT LISTENER BINDING (STRICT CLICK INTERCEPTION + SURFACE-B SIVME SAFE)
   // ==============================================================================
-  document.addEventListener('click', function(e) {
+  document.addEventListener('click', function (e) {
     if (e.target && e.target.closest && e.target.closest('.sivme-notch-pill, #sivme-hud, [data-sivme]')) {
       return;
     }
@@ -537,17 +516,17 @@
 
   window.addEventListener('pageshow', rehydrateEngine);
   window.addEventListener('focus', rehydrateEngine);
-  document.addEventListener('visibilitychange', function() {
+  document.addEventListener('visibilitychange', function () {
     if (!document.hidden) rehydrateEngine();
   });
 
-  window.addEventListener('storage', function(e) {
+  window.addEventListener('storage', function (e) {
     if (!e || e.key === STORAGE_KEY) rehydrateEngine();
   });
 
   window.addEventListener('rm:favorites:changed', rehydrateEngine);
 
-  document.addEventListener('click', function(e) {
+  document.addEventListener('click', function (e) {
     const target = e.target.closest ? e.target.closest('button, [onclick*="toggle"], [id*="toggle"], #cat-menu-btn') : null;
     if (target) {
       setTimeout(updatePinButtonsUI, 150);
