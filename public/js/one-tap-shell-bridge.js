@@ -10,15 +10,23 @@
  * 🔒 EXISTING MODULAR FILES LOCK (3-FILE SPLIT — ZERO DUPLICATE IMPLEMENTATION):
  *   - /js/one-tap-shell-bridge.js (This File: Part-2 Slim Controller — ~240 Lines)
  *   - /js/one-tap-catalog-hydrator.js (Part-1: SubContainer Resolver, Card Hydrator & Modal APIs)
+ *   - /js/one-tap-catalog-dom-engine.js (Part-1B: Accordion State, Pill Sync & Shield Engine)
  *   - /js/one-tap-subcard-router.js (Part-3: Priority 0 Fullscreen Close, Case 2 & 32-3 DOM Repair)
  *   - /js/fullscreen-microapp-controller.js (Dedicated 15-3/15-2 & Fullscreen UI)
+ * ==============================================================================
+ * 🔒 TOP-HEADER FILE SCOPE LOCK (ANTI-CONFLICT GOVERNANCE RULE):
+ *   ✅ ALLOWED IN THIS FILE   : Parallel module bootstrapping, touchstart/touchend/click
+ *                               capture, touchSeq lock & 0ms 1-Tap dispatch.
+ *   🚫 FORBIDDEN IN THIS FILE : Large HTML card templates (belongs in universal-card-engine.js)
+ *                               or CSS stylesheet injection (belongs in one-tap-catalog-hydrator.js).
  * ==============================================================================
  */
 
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261016_v38';
+  var CACHE_VERSION = '20261017_v41';
+  window.__RM_ACTIVE_CACHE_VER = CACHE_VERSION;
   var lastActionTs = 0;
   var lastTouchTs = 0;
   var lastModalOpenTs = 0;
@@ -29,14 +37,17 @@
   var handledTouchSeq = -1;
   var isSyntheticHomeClick = false;
 
-  // Shared persistent open state map across Part-1, Part-2 & Part-3
+  // Shared persistent open state map across Part-1, Part-1B, Part-2 & Part-3
   var openStateMap = window.__RM_OPEN_CAT_STATE || { '15': true, '16': true };
   window.__RM_OPEN_CAT_STATE = openStateMap;
 
-  // Auto-load decoupled Fullscreen Controller, Part-1 Hydrator & Part-3 SubCard Router
+  // Auto-load decoupled Fullscreen Controller, Part-1 Hydrator, Part-1B DOM Engine, Sub-Matrix & Part-3 SubCard Router in Parallel
   (function ensureFullscreenControllerLoaded() {
     var modules = [
+      { id: 'rm-canonical-sub-matrix-script', src: '/js/universal-catalog/canonical-sub-matrix.js' },
+      { id: 'rm-sub-card-renderer-script', src: '/js/universal-catalog/sub-card-renderer.js' },
       { id: 'rm-fs-microapp-controller-script', src: '/js/fullscreen-microapp-controller.js' },
+      { id: 'rm-catalog-dom-engine-script', src: '/js/one-tap-catalog-dom-engine.js' },
       { id: 'rm-catalog-hydrator-script', src: '/js/one-tap-catalog-hydrator.js' },
       { id: 'rm-subcard-router-script', src: '/js/one-tap-subcard-router.js' }
     ];
@@ -51,7 +62,7 @@
     }
   })();
 
-  // Delegated Helper APIs (Single Canonical Implementation in Part-1 & Part-3 per SSOT Rule 04)
+  // Delegated Helper APIs (Single Canonical Implementation in Part-1, Part-1B & Part-3 per SSOT Rule 04)
   function forceCloseFullscreenViewport() {
     if (window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.forceCloseFullscreenViewport === 'function') {
       return window.RM_SUBCARD_ROUTER.forceCloseFullscreenViewport();
@@ -73,10 +84,19 @@
   }
 
   function resolveCategorySubContainer(catEl, rawId, cleanNum) {
+    if (window.RM_CATALOG_DOM_ENGINE && typeof window.RM_CATALOG_DOM_ENGINE.resolveCategorySubContainer === 'function') {
+      return window.RM_CATALOG_DOM_ENGINE.resolveCategorySubContainer(catEl, rawId, cleanNum);
+    }
     if (window.RM_CATALOG_HYDRATOR && typeof window.RM_CATALOG_HYDRATOR.resolveCategorySubContainer === 'function') {
       return window.RM_CATALOG_HYDRATOR.resolveCategorySubContainer(catEl, rawId, cleanNum);
     }
-    return catEl ? catEl.querySelector('[id^="sub-"]') : null;
+    var intNum = parseInt(cleanNum, 10);
+    var paddedNum = (intNum < 10 ? '0' : '') + intNum;
+    return (catEl ? catEl.querySelector('[id^="sub-"]') : null) ||
+           document.getElementById('sub-c' + paddedNum) ||
+           document.getElementById('sub-c' + cleanNum) ||
+           document.getElementById('sub-g' + paddedNum) ||
+           document.getElementById('sub-g' + cleanNum);
   }
 
   // Early-Tap Safe Fallbacks before Part-1 script finishes loading
@@ -88,7 +108,9 @@
       window.__RM_LAST_MODAL_OPEN_TS = lastModalOpenTs;
       m.classList.remove('hidden');
       m.style.setProperty('display', 'flex', 'important');
-      if (window.RM_CATALOG_HYDRATOR && typeof window.RM_CATALOG_HYDRATOR.syncAndHydrateCatalogCards === 'function') {
+      if (window.RM_CATALOG_DOM_ENGINE && typeof window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards === 'function') {
+        window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards();
+      } else if (window.RM_CATALOG_HYDRATOR && typeof window.RM_CATALOG_HYDRATOR.syncAndHydrateCatalogCards === 'function') {
         window.RM_CATALOG_HYDRATOR.syncAndHydrateCatalogCards();
       }
     };
@@ -281,7 +303,7 @@
       return;
     }
 
-    // CASE 1: Parent Category Card 1-Tap (01 to 50 including 33 Action Games) via Part-1 Hydrator
+    // CASE 1: Parent Category Card 1-Tap (01 to 50 including 02 Auto & 33 Action Games) via Part-1B DOM Engine / Part-1 Hydrator
     var catEl = target.closest('[data-cat-id]');
     if (!catEl) {
       var fallbackCard = target.closest('#tier1-list > div, #tier2-list > div');
@@ -321,12 +343,38 @@
       openStateMap[cleanNum] = nextOpen;
       openStateMap[paddedNum] = nextOpen;
 
-      if (window.RM_CATALOG_HYDRATOR && typeof window.RM_CATALOG_HYDRATOR.applyCategoryOpenState === 'function') {
+      if (window.RM_CATALOG_DOM_ENGINE && typeof window.RM_CATALOG_DOM_ENGINE.applyCategoryOpenState === 'function') {
+        window.RM_CATALOG_DOM_ENGINE.applyCategoryOpenState(catEl, rawId, cleanNum, nextOpen);
+      } else if (window.RM_CATALOG_HYDRATOR && typeof window.RM_CATALOG_HYDRATOR.applyCategoryOpenState === 'function') {
         window.RM_CATALOG_HYDRATOR.applyCategoryOpenState(catEl, rawId, cleanNum, nextOpen);
       } else if (subContainer) {
         subContainer.classList.toggle('hidden', !nextOpen);
         subContainer.setAttribute('data-rm-collapsed', nextOpen ? 'false' : 'true');
         subContainer.style.setProperty('display', nextOpen ? 'block' : 'none', 'important');
+      }
+
+      // Anti-Conflict Direct 0ms Sync: Ensure subContainer visibility, .rm-parent-toggle-pill & Play Store Sub-Cards ALWAYS match nextOpen
+      if (subContainer) {
+        subContainer.classList.toggle('hidden', !nextOpen);
+        subContainer.setAttribute('data-rm-collapsed', nextOpen ? 'false' : 'true');
+        subContainer.style.setProperty('display', nextOpen ? 'block' : 'none', 'important');
+      }
+      var visiblePill = catEl.querySelector('.rm-parent-toggle-pill');
+      if (visiblePill) {
+        visiblePill.style.setProperty('color', nextOpen ? '#f87171' : '#34d399', 'important');
+        visiblePill.style.setProperty('background', nextOpen ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)', 'important');
+        visiblePill.style.setProperty('border-color', nextOpen ? '#ef4444' : '#10b981', 'important');
+        var pSpan = visiblePill.querySelector('span') || visiblePill;
+        pSpan.textContent = nextOpen ? 'समेटें ▲' : 'और देखें ▼';
+      }
+      if (nextOpen && subContainer && window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard === 'function') {
+        var subCards = subContainer.querySelectorAll(':scope > div');
+        subCards.forEach(function (sc, idx) {
+          sc.style.setProperty('padding', '0px', 'important');
+          sc.style.setProperty('border', 'none', 'important');
+          sc.style.setProperty('background', 'transparent', 'important');
+          window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, normNum, paddedNum + '-' + (idx + 1));
+        });
       }
     }
   }
