@@ -1,31 +1,58 @@
 /**
- * RISE MITRA — PART 2: MODULAR 1-TAP SHELL BRIDGE & DETERMINISTIC CONTROLLER (SLIM <=300L ZEL)
- * MODULE        : Decoupled 1-Tap Controller (Calls Part-1 Hydrator & Part-3 SubCard Router APIs)
- * GOVERNANCE    : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
- * REPO TARGET   : public/js/one-tap-shell-bridge.js (Target <= 300 Lines per SSOT Rule 04)
- * DUAL-FOLDER REFS:
- *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
- *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
  * ==============================================================================
- * 🔒 EXISTING MODULAR FILES LOCK (3-FILE SPLIT — ZERO DUPLICATE IMPLEMENTATION):
+ * 📌 1. FILE IDENTITY, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
+ *   - MODULE NAME : RISE MITRA — PART 2: MODULAR 1-TAP SHELL BRIDGE & DETERMINISTIC CONTROLLER (SLIM <=300L ZEL)
+ *   - MODULE ROLE : Decoupled 1-Tap Controller (Calls Part-1 Hydrator & Part-3 SubCard Router APIs)
+ *   - GOVERNANCE  : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
+ *   - REPO TARGET : public/js/one-tap-shell-bridge.js (Target <= 300 Lines per SSOT Rule 04)
+ *   - DUAL-FOLDER REFS:
+ *       Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
+ *       Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
+ * ==============================================================================
+ * 🔒 2. EXISTING MODULAR FILES LOCK (3-FILE SPLIT — ZERO DUPLICATE IMPLEMENTATION):
  *   - /js/one-tap-shell-bridge.js (This File: Part-2 Slim Controller — ~240 Lines)
  *   - /js/one-tap-catalog-hydrator.js (Part-1: SubContainer Resolver, Card Hydrator & Modal APIs)
  *   - /js/one-tap-catalog-dom-engine.js (Part-1B: Accordion State, Pill Sync & Shield Engine)
  *   - /js/one-tap-subcard-router.js (Part-3: Priority 0 Fullscreen Close, Case 2 & 32-3 DOM Repair)
+ *   - /js/universal-catalog/universal-card-engine.js (Root Parent/Sub-Card HTML Renderer)
  *   - /js/fullscreen-microapp-controller.js (Dedicated 15-3/15-2 & Fullscreen UI)
  * ==============================================================================
- * 🔒 TOP-HEADER FILE SCOPE LOCK (ANTI-CONFLICT GOVERNANCE RULE):
- *   ✅ ALLOWED IN THIS FILE   : Parallel module bootstrapping, touchstart/touchend/click
- *                               capture, touchSeq lock & 0ms 1-Tap dispatch.
+ * 🛡️ 3. TOP-HEADER FILE SCOPE LOCK (ANTI-CONFLICT GOVERNANCE RULE):
+ *   ✅ ALLOWED IN THIS FILE   : Parallel module bootstrapping, touchstart/touchmove/touchend/click
+ *                               capture, touchSeq tracking & 0ms 1-Tap dispatch.
  *   🚫 FORBIDDEN IN THIS FILE : Large HTML card templates (belongs in universal-card-engine.js)
  *                               or CSS stylesheet injection (belongs in one-tap-catalog-hydrator.js).
+ * ==============================================================================
+ * 🌐 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
+ *   - WRITES GLOBAL STATE : window.__RM_ACTIVE_CACHE_VER, window.__RM_OPEN_CAT_STATE,
+ *                           window.__RM_LAST_MODAL_OPEN_TS
+ *   - CALLS EXTERNAL APIs : window.RM_CATALOG_DOM_ENGINE.*, window.RM_CATALOG_HYDRATOR.*,
+ *                           window.RM_SUBCARD_ROUTER.*, window.RM_UNIVERSAL_CARD_ENGINE.*
+ * ==============================================================================
+ * 🏷️ 5. DOM ATTRIBUTE & SELECTOR CONTRACT (ZERO-COLLISION DOM RULE):
+ *   - PARENT CARD MARKER  : [data-cat-id] -> sets data-rm-parent-rendered="1"
+ *   - SUB-CONTAINER STATE : [id^="sub-"] -> sets data-rm-collapsed="true|false"
+ *   - VISIBLE PILL TARGET : .rm-parent-toggle-pill ("समेटें ▲" Red / "और देखें ▼" Green)
+ * ==============================================================================
+ * ❄️ 6. ANTI-FREEZE, EVENT LISTENER & TIMER OWNERSHIP LOCK:
+ *   - CLICK SAFETY  : Only suppress synthetic click within 420ms of a real handled touchend.
+ *                     NEVER permanently block clicks with handledTouchSeq === touchSeq!
+ *   - SCROLL SAFETY : Track touchmove (> 12px) via touchMoved so scrolling never triggers cards.
+ *   -P0 GUARD       : Only run Priority 0 Fullscreen Close when #rm-fullscreen-view is open.
+ * ==============================================================================
+ * 📋 7. 100% ZEL FUNCTION MANIFEST (8 MANDATORY FUNCTIONS + 5 LISTENERS):
+ *   1. ensureFullscreenControllerLoaded  2. forceCloseFullscreenViewport
+ *   3. ensureMicroAppRendered            4. repairFullscreenSubServiceDOM
+ *   5. resolveCategorySubContainer       6. window.openCatalogModal
+ *   7. window.closeCatalogModal          8. handleDeterministicOneTap
+ *   + Listeners: touchstart, touchmove, touchend, window.click, document.click
  * ==============================================================================
  */
 
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261017_v41';
+  var CACHE_VERSION = '20261017_v42';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VERSION;
   var lastActionTs = 0;
   var lastTouchTs = 0;
@@ -33,6 +60,7 @@
   var touchStartX = 0;
   var touchStartY = 0;
   var touchStartTime = 0;
+  var touchMoved = false;
   var touchSeq = 0;
   var handledTouchSeq = -1;
   var isSyntheticHomeClick = false;
@@ -135,7 +163,8 @@
     if (target.closest('input, textarea, select, option, .sivme-notch-pill, #sivme-hud, #sivme-drawer')) return;
 
     var now = Date.now();
-    if (e.type === 'click' && ((touchSeq > 0 && handledTouchSeq === touchSeq) || (now - lastTouchTs < 950))) {
+    // Anti-Freeze Guard: Only suppress synthetic click within 420ms of an actual handled touchend
+    if (e.type === 'click' && (now - lastTouchTs < 420)) {
       e.__rmHandled = true;
       e.stopImmediatePropagation();
       e.stopPropagation();
@@ -143,8 +172,10 @@
       return;
     }
 
-    // PRIORITY 0: Fullscreen Close (‹ वापस, ‹ कैटलॉग पर वापस, ✕) via Part-3 Router
-    if (window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.handleFullscreenCloseOneTap === 'function') {
+    // PRIORITY 0: Fullscreen Close (‹ वापस, ‹ कैटलॉग पर वापस, ✕) via Part-3 Router (ONLY when Fullscreen is open)
+    var fsView = document.getElementById('rm-fullscreen-view');
+    var isFsOpen = Boolean(fsView && !fsView.classList.contains('hidden') && fsView.style.display !== 'none');
+    if (isFsOpen && window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.handleFullscreenCloseOneTap === 'function') {
       if (window.RM_SUBCARD_ROUTER.handleFullscreenCloseOneTap(e, target)) {
         e.__rmHandled = true;
         handledTouchSeq = touchSeq;
@@ -218,7 +249,14 @@
 
     if (!modal || !modal.contains(target)) return;
 
-    var modalCloseBtn = target.closest('[onclick*="closeCatalogModal"], #closeCatalogBtn');
+    var modalCloseBtn = target.closest('[onclick*="closeCatalogModal"], [onclick*="toggleMenuDrawer"], #closeCatalogBtn');
+    if (!modalCloseBtn && !target.closest('[data-cat-id]') && !target.closest('[id^="sub-"]')) {
+      var candClose = target.closest('button, a, div');
+      var cTxt = candClose ? (candClose.textContent || '').trim() : '';
+      if (cTxt === '✕' || cTxt === '×' || cTxt === 'X' || cTxt === '✖') {
+        modalCloseBtn = candClose;
+      }
+    }
     if (modalCloseBtn) {
       e.__rmHandled = true;
       handledTouchSeq = touchSeq;
@@ -373,15 +411,19 @@
           sc.style.setProperty('padding', '0px', 'important');
           sc.style.setProperty('border', 'none', 'important');
           sc.style.setProperty('background', 'transparent', 'important');
-          window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, normNum, paddedNum + '-' + (idx + 1));
+          var subCode = paddedNum + '-' + (idx + 1);
+          if (!sc.hasAttribute('data-rm-sub-rendered') || (sc.textContent || '').indexOf('[' + subCode + ']') !== -1) {
+            window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, normNum, subCode);
+          }
         });
       }
     }
   }
 
   window.addEventListener('touchstart', function (e) {
-    if (!e.touches || e.touches.length !== 1) return;
+    if (!e.touches || e.touches.length === 0) return;
     touchSeq++;
+    touchMoved = false;
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
     touchStartTime = Date.now();
@@ -389,16 +431,26 @@
     if (m && e.target && m.contains(e.target)) {
       var el = e.target;
       while (el && el !== m) {
-        if (el.hasAttribute && el.hasAttribute('onclick') && (el.getAttribute('onclick') || '').indexOf('closeCatalogModal') === -1) {
-          el.removeAttribute('onclick');
+        if (el.hasAttribute && el.hasAttribute('onclick')) {
+          var oc = el.getAttribute('onclick') || '';
+          if (oc.indexOf('closeCatalogModal') === -1 && oc.indexOf('toggleMenuDrawer') === -1) {
+            el.removeAttribute('onclick');
+          }
         }
         el = el.parentElement;
       }
     }
   }, { capture: true, passive: true });
 
+  window.addEventListener('touchmove', function (e) {
+    if (!e.touches || e.touches.length === 0 || touchMoved) return;
+    if (Math.abs(e.touches[0].clientX - touchStartX) > 12 || Math.abs(e.touches[0].clientY - touchStartY) > 12) {
+      touchMoved = true;
+    }
+  }, { capture: true, passive: true });
+
   window.addEventListener('touchend', function (e) {
-    if (!e.changedTouches || e.changedTouches.length !== 1) return;
+    if (touchMoved || !e.changedTouches || e.changedTouches.length === 0) return;
     var dx = Math.abs(e.changedTouches[0].clientX - touchStartX);
     var dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
     var dt = Date.now() - touchStartTime;
