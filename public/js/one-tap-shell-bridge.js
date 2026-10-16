@@ -18,7 +18,7 @@
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261016_v34';
+  var CACHE_VERSION = '20261016_v35';
   var lastActionTs = 0;
   var lastTouchTs = 0;
   var lastModalOpenTs = 0;
@@ -210,7 +210,12 @@
       }
     }
     if (tierToggleBtn) {
-      if (now - lastActionTs < 80) return;
+      if (now - lastActionTs < 80) {
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        if (e.cancelable) e.preventDefault();
+        return;
+      }
       if (e.type === 'touchend') lastTouchTs = now;
       lastActionTs = now;
       e.stopImmediatePropagation();
@@ -233,7 +238,12 @@
     var subWrapper = target.closest('[id^="sub-"]');
     if (subWrapper) {
       if (target.closest('.rm-act-pin, .rm-act-vid, .rm-act-video')) return;
-      if (now - lastActionTs < 80) return;
+      if (now - lastActionTs < 80) {
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        if (e.cancelable) e.preventDefault();
+        return;
+      }
       if (e.type === 'touchend') lastTouchTs = now;
       lastActionTs = now;
       if (window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.handleSubCardOneTap === 'function') {
@@ -252,7 +262,12 @@
       }
     }
     if (catEl) {
-      if (now - lastActionTs < 80) return;
+      if (now - lastActionTs < 80) {
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        if (e.cancelable) e.preventDefault();
+        return;
+      }
       if (e.type === 'touchend') lastTouchTs = now;
       lastActionTs = now;
       e.stopImmediatePropagation();
@@ -274,6 +289,10 @@
 
       if (window.RM_CATALOG_HYDRATOR && typeof window.RM_CATALOG_HYDRATOR.applyCategoryOpenState === 'function') {
         window.RM_CATALOG_HYDRATOR.applyCategoryOpenState(catEl, rawId, cleanNum, nextOpen);
+      } else if (subContainer) {
+        subContainer.classList.toggle('hidden', !nextOpen);
+        subContainer.setAttribute('data-rm-collapsed', nextOpen ? 'false' : 'true');
+        subContainer.style.setProperty('display', nextOpen ? 'block' : 'none', 'important');
       }
     }
   }
