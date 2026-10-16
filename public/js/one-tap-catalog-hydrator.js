@@ -11,7 +11,7 @@
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261016_v31';
+  var CACHE_VERSION = '20261016_v34';
   var isSyncingDOM = false;
 
   // Shared state across Part 1 (Hydrator) and Part 2 (1-Tap Bridge)
@@ -116,9 +116,10 @@
     }
   }
 
-  // Helper: Resolve sub-container across all 10 ID formats + sibling check + auto-create fallback for Games 33-50
+  // Helper: Resolve sub-container across all 10 ID formats + validated sibling check + auto-create fallback for Games 33-50
   function resolveCategorySubContainer(catEl, rawId, cleanNum) {
-    if (catEl && catEl.__rmSubBox && document.body.contains(catEl.__rmSubBox)) {
+    if (catEl && catEl.__rmSubBox && document.body.contains(catEl.__rmSubBox) &&
+        catEl.__rmSubBox.id && catEl.__rmSubBox.id.indexOf('sub-') === 0) {
       return catEl.__rmSubBox;
     }
     var intNum = parseInt(cleanNum, 10);
@@ -149,7 +150,8 @@
         catEl.__rmSubBox = nextSib;
         return nextSib;
       }
-      if (catEl.children.length > 1 && catEl.children[1].tagName === 'DIV') {
+      if (catEl.children.length > 1 && catEl.children[1].tagName === 'DIV' &&
+          catEl.children[1].id && catEl.children[1].id.indexOf('sub-') === 0) {
         catEl.__rmSubBox = catEl.children[1];
         return catEl.children[1];
       }
@@ -179,7 +181,7 @@
       var shielded = function () {
         var t1 = document.getElementById('tier1-list');
         var t2 = document.getElementById('tier2-list');
-        var alreadyHydrated = t1 && t2 && t1.children.length >= 10 && t2.children.length >= 1 &&
+        var alreadyHydrated = t1 && t2 && t1.children.length >= 25 && t2.children.length >= 15 &&
                               t1.innerHTML.indexOf('लोड हो रहा है') === -1;
         if (alreadyHydrated) return;
         return origRender.apply(this, arguments);
@@ -198,7 +200,7 @@
     var subContainer = resolveCategorySubContainer(catEl, rawId, cleanNum);
     if (!subContainer) return false;
 
-    var headerEl = (catEl.children && catEl.children.length > 1 && catEl.contains(subContainer))
+    var headerEl = (catEl.children && catEl.children.length > 1 && catEl.contains(subContainer) && catEl.children[0] !== subContainer)
       ? catEl.children[0]
       : (catEl.querySelector(':scope > div:first-child') || catEl);
 
@@ -236,7 +238,7 @@
     var pills = headerEl ? headerEl.querySelectorAll('button, span, div') : catEl.querySelectorAll('button, span, div');
     for (var i = 0; i < pills.length; i++) {
       var p = pills[i];
-      if (p.children.length === 0 && p.textContent) {
+      if (!subContainer.contains(p) && p.children.length === 0 && p.textContent) {
         var txt = p.textContent.trim();
         if (isOpen && (txt.indexOf('और देखें') !== -1 || txt.indexOf('विकल्प') !== -1 || txt.indexOf('सेवाएं') !== -1 || txt.indexOf('▼') !== -1)) {
           p.textContent = 'समेटें ▲';
@@ -257,7 +259,9 @@
       if (!modal) return;
 
       var t1 = document.getElementById('tier1-list');
-      if (t1 && (t1.innerHTML.indexOf('लोड हो रहा है') !== -1 || t1.children.length <= 1) && typeof window.renderCatalogItems === 'function') {
+      var t2 = document.getElementById('tier2-list');
+      if (((t1 && (t1.innerHTML.indexOf('लोड हो रहा है') !== -1 || t1.children.length < 25)) ||
+           (t2 && t2.children.length < 15)) && typeof window.renderCatalogItems === 'function') {
         try { window.renderCatalogItems(); } catch (e) {}
       }
 
