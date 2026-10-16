@@ -18,13 +18,15 @@
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261016_v37';
+  var CACHE_VERSION = '20261016_v38';
   var lastActionTs = 0;
   var lastTouchTs = 0;
   var lastModalOpenTs = 0;
   var touchStartX = 0;
   var touchStartY = 0;
   var touchStartTime = 0;
+  var touchSeq = 0;
+  var handledTouchSeq = -1;
   var isSyntheticHomeClick = false;
 
   // Shared persistent open state map across Part-1, Part-2 & Part-3
@@ -111,7 +113,7 @@
     if (target.closest('input, textarea, select, option, .sivme-notch-pill, #sivme-hud, #sivme-drawer')) return;
 
     var now = Date.now();
-    if (e.type === 'click' && (now - lastTouchTs < 650)) {
+    if (e.type === 'click' && ((touchSeq > 0 && handledTouchSeq === touchSeq) || (now - lastTouchTs < 950))) {
       e.__rmHandled = true;
       e.stopImmediatePropagation();
       e.stopPropagation();
@@ -123,6 +125,7 @@
     if (window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.handleFullscreenCloseOneTap === 'function') {
       if (window.RM_SUBCARD_ROUTER.handleFullscreenCloseOneTap(e, target)) {
         e.__rmHandled = true;
+        handledTouchSeq = touchSeq;
         if (e.type === 'touchend') lastTouchTs = now;
         lastActionTs = now;
         return;
@@ -140,6 +143,7 @@
         var bTxt = bBtn ? (bBtn.textContent || '').trim() : '';
         if (bTxt.indexOf('बाद में') !== -1 || bTxt === '✕' || bTxt === '×' || (bBtn && (bBtn.getAttribute('onclick') || '').indexOf('dismiss') !== -1)) {
           e.__rmHandled = true;
+          handledTouchSeq = touchSeq;
           if (e.type === 'touchend') lastTouchTs = now;
           lastActionTs = now;
           e.stopImmediatePropagation();
@@ -163,6 +167,7 @@
       }
       if (dirTrigger) {
         e.__rmHandled = true;
+        handledTouchSeq = touchSeq;
         if (e.type === 'touchend') lastTouchTs = now;
         lastActionTs = now;
         e.stopImmediatePropagation();
@@ -176,6 +181,7 @@
         var homeActionBtn = target.closest('button[onclick], a[onclick], [onclick]');
         if (homeActionBtn && typeof homeActionBtn.click === 'function') {
           e.__rmHandled = true;
+          handledTouchSeq = touchSeq;
           if (e.cancelable) e.preventDefault();
           isSyntheticHomeClick = true;
           try { homeActionBtn.click(); } catch (err) {}
@@ -193,6 +199,7 @@
     var modalCloseBtn = target.closest('[onclick*="closeCatalogModal"], #closeCatalogBtn');
     if (modalCloseBtn) {
       e.__rmHandled = true;
+      handledTouchSeq = touchSeq;
       if (e.type === 'touchend') lastTouchTs = now;
       lastActionTs = now;
       lastModalOpenTs = 0;
@@ -228,6 +235,7 @@
     }
     if (tierToggleBtn) {
       e.__rmHandled = true;
+      handledTouchSeq = touchSeq;
       if (now - lastActionTs < 80) {
         e.stopImmediatePropagation();
         e.stopPropagation();
@@ -243,8 +251,9 @@
       var listId = (tierToggleBtn.id === 'rm-tier1-toggle' || (tierToggleBtn.textContent || '').indexOf('आजीविका') !== -1) ? 'tier1-list' : 'tier2-list';
       var listEl = document.getElementById(listId);
       if (listEl) {
-        var isHidden = listEl.classList.contains('hidden') || listEl.style.display === 'none' || window.getComputedStyle(listEl).display === 'none' || listEl.offsetHeight < 5;
+        var isHidden = listEl.classList.contains('hidden') || listEl.getAttribute('data-rm-collapsed') === 'true' || listEl.style.display === 'none' || window.getComputedStyle(listEl).display === 'none' || listEl.offsetHeight < 5;
         listEl.classList.toggle('hidden', !isHidden);
+        listEl.setAttribute('data-rm-collapsed', isHidden ? 'false' : 'true');
         listEl.style.setProperty('display', isHidden ? 'block' : 'none', 'important');
         var arrow = tierToggleBtn.querySelector('.acc-arrow') || tierToggleBtn.lastElementChild;
         if (arrow && arrow.children.length === 0) arrow.textContent = isHidden ? '▼' : '▶';
@@ -257,6 +266,7 @@
     if (subWrapper) {
       if (target.closest('.rm-act-pin, .rm-act-vid, .rm-act-video')) return;
       e.__rmHandled = true;
+      handledTouchSeq = touchSeq;
       if (now - lastActionTs < 80) {
         e.stopImmediatePropagation();
         e.stopPropagation();
@@ -282,6 +292,7 @@
     }
     if (catEl) {
       e.__rmHandled = true;
+      handledTouchSeq = touchSeq;
       if (now - lastActionTs < 80) {
         e.stopImmediatePropagation();
         e.stopPropagation();
@@ -302,7 +313,7 @@
 
       var subContainer = resolveCategorySubContainer(catEl, rawId, cleanNum);
       var isCurrentlyOpen = subContainer
-        ? (!subContainer.classList.contains('hidden') && subContainer.getAttribute('data-rm-collapsed') !== 'true' && subContainer.style.display !== 'none' && window.getComputedStyle(subContainer).display !== 'none' && subContainer.offsetHeight > 5)
+        ? (subContainer.getAttribute('data-rm-collapsed') === 'false' || (!subContainer.classList.contains('hidden') && subContainer.getAttribute('data-rm-collapsed') !== 'true' && subContainer.style.display !== 'none' && window.getComputedStyle(subContainer).display !== 'none' && subContainer.offsetHeight > 5))
         : Boolean(openStateMap[normNum]);
 
       var nextOpen = !isCurrentlyOpen;
@@ -322,6 +333,7 @@
 
   window.addEventListener('touchstart', function (e) {
     if (!e.touches || e.touches.length !== 1) return;
+    touchSeq++;
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
     touchStartTime = Date.now();
