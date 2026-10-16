@@ -11,8 +11,9 @@
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261016_v35';
+  var CACHE_VERSION = '20261016_v36';
   var isSyncingDOM = false;
+  var hasRenderedCatalogOnce = false;
 
   // Shared state across Part 1 (Hydrator) and Part 2 (1-Tap Bridge)
   var openStateMap = window.__RM_OPEN_CAT_STATE || { '15': true, '16': true };
@@ -77,7 +78,7 @@
       '#rm-fullscreen-view:not(.hidden) { position: fixed !important; inset: 0 !important; z-index: 99999 !important; display: flex !important; background-color: #0b0f19 !important; }',
       '#fs-module-title { margin: 0 10px !important; font-size: 14px !important; font-weight: 800 !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; text-align: center !important; flex: 1 !important; }',
       '#rm-module-container select { font-size: 12.5px !important; padding-right: 24px !important; text-overflow: ellipsis !important; }',
-      '#rm-module-container select:empty { display: none !important; }'
+      '#rm-module-container select:empty, #rm-module-container div:empty:not([class*="h-"]):not([class*="w-"]) { display: none !important; }'
     ].join('\n');
     document.head.appendChild(style);
   })();
@@ -184,9 +185,10 @@
       var shielded = function () {
         var t1 = document.getElementById('tier1-list');
         var t2 = document.getElementById('tier2-list');
-        var alreadyHydrated = t1 && t2 && t1.children.length >= 25 && t2.children.length >= 15 &&
-                              t1.innerHTML.indexOf('लोड हो रहा है') === -1;
+        var alreadyHydrated = hasRenderedCatalogOnce || (t1 && t2 && t1.children.length >= 25 && t2.children.length >= 1 &&
+                              t1.innerHTML.indexOf('लोड हो रहा है') === -1);
         if (alreadyHydrated) return;
+        hasRenderedCatalogOnce = true;
         return origRender.apply(this, arguments);
       };
       shielded.__rmShielded = true;
@@ -279,8 +281,9 @@
 
       var t1 = document.getElementById('tier1-list');
       var t2 = document.getElementById('tier2-list');
-      if (((t1 && (t1.innerHTML.indexOf('लोड हो रहा है') !== -1 || t1.children.length < 25)) ||
-           (t2 && t2.children.length < 15)) && typeof window.renderCatalogItems === 'function') {
+      if (!hasRenderedCatalogOnce && ((t1 && (t1.innerHTML.indexOf('लोड हो रहा है') !== -1 || t1.children.length < 25)) ||
+           (t2 && t2.children.length < 1)) && typeof window.renderCatalogItems === 'function') {
+        hasRenderedCatalogOnce = true;
         try { window.renderCatalogItems(); } catch (e) {}
       }
 
@@ -292,6 +295,8 @@
       }
 
       var cats = modal.querySelectorAll('[data-cat-id]');
+      if (cats.length > 0) hasRenderedCatalogOnce = true;
+
       cats.forEach(function (catEl) {
         if (catEl.classList.contains('hidden')) catEl.classList.remove('hidden');
         if (catEl.style.display === 'none') catEl.style.removeProperty('display');
