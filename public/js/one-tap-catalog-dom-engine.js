@@ -6,6 +6,13 @@
  * DUAL-FOLDER REFS:
  *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
  *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
+ * ==============================================================================
+ * 🔒 TOP-HEADER FILE SCOPE LOCK (ANTI-CONFLICT GOVERNANCE RULE):
+ *   ✅ ALLOWED IN THIS FILE   : SubContainer resolution, 0ms Accordion Open/Close DOM state,
+ *                               .rm-parent-toggle-pill sync & Destruction Shields.
+ *   🚫 FORBIDDEN IN THIS FILE : Global touchend/click listeners (belongs in one-tap-shell-bridge.js)
+ *                               or Modal open/close dispatchers (belongs in one-tap-catalog-hydrator.js).
+ * ==============================================================================
  */
 
 (function () {
@@ -77,55 +84,60 @@
   function enforceTopLeftLargeNumbering(catEl, subContainer, paddedNum) {
     if (!catEl) return;
 
-    var allEls = catEl.querySelectorAll('span, div');
-    var tinyNumEl = null;
-    for (var i = 0; i < allEls.length; i++) {
-      var el = allEls[i];
-      if (subContainer && subContainer.contains(el)) continue;
-      if (el.classList && el.classList.contains('rm-toplevel-num-badge')) continue;
-      if (el.children.length === 0 && el.textContent) {
-        var t = el.textContent.trim();
-        if (/^0?[1-9]\d?\s*\.?$/.test(t)) {
-          tinyNumEl = el;
-          break;
-        }
-      }
-    }
-
-    if (tinyNumEl) {
-      var iconBox = tinyNumEl.parentElement;
-      tinyNumEl.style.setProperty('display', 'none', 'important');
-      if (iconBox && iconBox !== catEl) {
-        for (var c = 0; c < iconBox.children.length; c++) {
-          var ch = iconBox.children[c];
-          if (ch !== tinyNumEl && !ch.classList.contains('rm-toplevel-num-badge')) {
-            ch.style.setProperty('font-size', '26px', 'important');
-            ch.style.setProperty('line-height', '1', 'important');
-          }
-        }
-        var parentRow = iconBox.parentElement;
-        if (parentRow && !parentRow.querySelector('.rm-toplevel-num-badge')) {
-          var leftCol = document.createElement('div');
-          leftCol.className = 'flex flex-col items-start shrink-0';
-          leftCol.style.setProperty('display', 'flex', 'important');
-          leftCol.style.setProperty('flex-direction', 'column', 'important');
-          leftCol.style.setProperty('align-items', 'flex-start', 'important');
-
-          var bigBadge = document.createElement('div');
-          bigBadge.className = 'rm-toplevel-num-badge';
-          bigBadge.textContent = paddedNum + '.';
-
-          parentRow.insertBefore(leftCol, iconBox);
-          leftCol.appendChild(bigBadge);
-          leftCol.appendChild(iconBox);
-        }
+    // Anti-Conflict Fast Guard: If universal-card-engine.js already rendered .rm-toplevel-num-badge at root, skip redundant parent DOM scan
+    var existingBadge = catEl.querySelector('.rm-toplevel-num-badge');
+    if (existingBadge) {
+      if (existingBadge.textContent !== paddedNum + '.') {
+        existingBadge.textContent = paddedNum + '.';
       }
     } else {
-      var existingBadge = catEl.querySelector('.rm-toplevel-num-badge');
-      if (existingBadge) existingBadge.textContent = paddedNum + '.';
+      var allEls = catEl.querySelectorAll('span, div');
+      var tinyNumEl = null;
+      for (var i = 0; i < allEls.length; i++) {
+        var el = allEls[i];
+        if (subContainer && subContainer.contains(el)) continue;
+        if (el.classList && el.classList.contains('rm-toplevel-num-badge')) continue;
+        if (el.children.length === 0 && el.textContent) {
+          var t = el.textContent.trim();
+          if (/^0?[1-9]\d?\s*\.?$/.test(t)) {
+            tinyNumEl = el;
+            break;
+          }
+        }
+      }
+
+      if (tinyNumEl) {
+        var iconBox = tinyNumEl.parentElement;
+        tinyNumEl.style.setProperty('display', 'none', 'important');
+        if (iconBox && iconBox !== catEl) {
+          for (var c = 0; c < iconBox.children.length; c++) {
+            var ch = iconBox.children[c];
+            if (ch !== tinyNumEl && !ch.classList.contains('rm-toplevel-num-badge')) {
+              ch.style.setProperty('font-size', '26px', 'important');
+              ch.style.setProperty('line-height', '1', 'important');
+            }
+          }
+          var parentRow = iconBox.parentElement;
+          if (parentRow && !parentRow.querySelector('.rm-toplevel-num-badge')) {
+            var leftCol = document.createElement('div');
+            leftCol.className = 'flex flex-col items-start shrink-0';
+            leftCol.style.setProperty('display', 'flex', 'important');
+            leftCol.style.setProperty('flex-direction', 'column', 'important');
+            leftCol.style.setProperty('align-items', 'flex-start', 'important');
+
+            var bigBadge = document.createElement('div');
+            bigBadge.className = 'rm-toplevel-num-badge';
+            bigBadge.textContent = paddedNum + '.';
+
+            parentRow.insertBefore(leftCol, iconBox);
+            leftCol.appendChild(bigBadge);
+            leftCol.appendChild(iconBox);
+          }
+        }
+      }
     }
 
-    if (subContainer) {
+    if (subContainer && subContainer.getAttribute('data-rm-collapsed') === 'false') {
       var subCards = subContainer.querySelectorAll(':scope > div');
       for (var s = 0; s < subCards.length; s++) {
         var sc = subCards[s];
@@ -181,12 +193,16 @@
       if (typeof window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard === 'function' && !window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard.__rmShielded) {
         var origRenderParent = window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard;
         var shieldedRenderParent = function (targetEl, catId, isOpen, subCount) {
-          if (targetEl && (targetEl.hasAttribute('data-rm-parent-rendered') ||
-              (targetEl.parentElement && targetEl.parentElement.hasAttribute('data-rm-parent-rendered')) ||
-              (targetEl.textContent && (targetEl.textContent.indexOf('और देखें') !== -1 || targetEl.textContent.indexOf('समेटें') !== -1)))) {
+          var clean = String(catId || '').replace(/[^0-9]/g, '');
+          var norm = clean ? String(parseInt(clean, 10)) : '';
+          var syncedOpen = (norm && Object.prototype.hasOwnProperty.call(openStateMap, norm))
+            ? Boolean(openStateMap[norm])
+            : Boolean(isOpen);
+          if (targetEl && targetEl.querySelector('[id^="rm-universal-parent-"]') && targetEl.__rmLastOpen === syncedOpen) {
             return;
           }
-          return origRenderParent.call(this, targetEl, catId, isOpen, subCount);
+          if (targetEl) targetEl.__rmLastOpen = syncedOpen;
+          return origRenderParent.call(this, targetEl, catId, syncedOpen, subCount);
         };
         shieldedRenderParent.__rmShielded = true;
         window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard = shieldedRenderParent;
@@ -235,9 +251,9 @@
       subCards = subContainer.querySelectorAll(':scope > div');
     }
 
-    var isAlreadyPlayStoreCard = catEl.hasAttribute('data-rm-parent-rendered') ||
-      (headerEl && headerEl.hasAttribute('data-rm-parent-rendered')) ||
-      (catEl.textContent && (catEl.textContent.indexOf('Verified') !== -1 || catEl.textContent.indexOf('और देखें') !== -1 || catEl.textContent.indexOf('समेटें') !== -1));
+    var isAlreadyPlayStoreCard = Boolean(catEl.querySelector('[id^="rm-universal-parent-"]')) ||
+      catEl.hasAttribute('data-rm-parent-rendered') ||
+      (headerEl && headerEl.hasAttribute('data-rm-parent-rendered'));
 
     if (!isAlreadyPlayStoreCard && headerEl &&
         window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard === 'function') {
@@ -253,13 +269,20 @@
       }
     }
 
-    if (isOpen && !subContainer.__rmSubsHydrated) {
+    // Anti-Conflict Sub-Card Hydration: Re-hydrates if legacy [01-1] bracket text is still visible
+    if (isOpen) {
+      var allSubsClean = true;
       subCards.forEach(function (sc, idx) {
         var subCode = paddedNum + '-' + (idx + 1);
-        if (!sc.hasAttribute('data-rm-sub-rendered') &&
+        var hasRawBracket = (sc.textContent || '').indexOf('[' + subCode + ']') !== -1;
+        if ((!sc.hasAttribute('data-rm-sub-rendered') || hasRawBracket) &&
             window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard === 'function') {
           try { window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, normNum, subCode); } catch (e) {}
-          sc.setAttribute('data-rm-sub-rendered', subCode);
+          if ((sc.textContent || '').indexOf('[' + subCode + ']') === -1) {
+            sc.setAttribute('data-rm-sub-rendered', subCode);
+          } else {
+            allSubsClean = false;
+          }
         }
         if (!sc.innerHTML || sc.innerHTML.trim() === '') {
           var matrix = window.RM_CANONICAL_SUB_MATRIX || {};
@@ -273,31 +296,43 @@
           sc.setAttribute('data-rm-sub-rendered', subCode);
         }
       });
-      subContainer.__rmSubsHydrated = true;
+      subContainer.__rmSubsHydrated = allSubsClean;
     }
 
     enforceTopLeftLargeNumbering(catEl, subContainer, paddedNum);
 
-    var pill = catEl.__rmPillEl;
-    if (!pill || !catEl.contains(pill) || subContainer.contains(pill)) {
-      pill = null;
-      var pills = catEl.querySelectorAll('button, span, div');
-      for (var i = 0; i < pills.length; i++) {
-        var p = pills[i];
-        if (!subContainer.contains(p) && p.children.length === 0 && p.textContent) {
-          var txt = p.textContent.trim();
-          if (txt.indexOf('और देखें') !== -1 || txt.indexOf('समेटें') !== -1 || txt.indexOf('विकल्प') !== -1 || txt.indexOf('सेवाएं') !== -1 || txt.indexOf('छुपाएं') !== -1) {
-            pill = p;
-            catEl.__rmPillEl = p;
-            break;
+    // Anti-Conflict Pill Sync: Directly sync visible .rm-parent-toggle-pill first so hidden legacy spans never cause inverted button state
+    var visiblePillBox = catEl.querySelector('.rm-parent-toggle-pill');
+    if (visiblePillBox) {
+      visiblePillBox.style.setProperty('color', isOpen ? '#f87171' : '#34d399', 'important');
+      visiblePillBox.style.setProperty('background', isOpen ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)', 'important');
+      visiblePillBox.style.setProperty('border-color', isOpen ? '#ef4444' : '#10b981', 'important');
+      var innerSpan = visiblePillBox.querySelector('span') || visiblePillBox;
+      innerSpan.textContent = isOpen ? 'समेटें ▲' : 'और देखें ▼';
+      catEl.__rmPillEl = innerSpan;
+    } else {
+      var pill = catEl.__rmPillEl;
+      if (!pill || !catEl.contains(pill) || subContainer.contains(pill)) {
+        pill = null;
+        var pills = catEl.querySelectorAll('button, span, div');
+        for (var i = 0; i < pills.length; i++) {
+          var p = pills[i];
+          if (!subContainer.contains(p) && p.children.length === 0 && p.textContent && p.offsetParent !== null) {
+            var txt = p.textContent.trim();
+            if (txt.indexOf('और देखें') !== -1 || txt.indexOf('समेटें') !== -1 || txt.indexOf('विकल्प') !== -1 || txt.indexOf('सेवाएं') !== -1 || txt.indexOf('छुपाएं') !== -1) {
+              pill = p;
+              catEl.__rmPillEl = p;
+              break;
+            }
           }
         }
       }
+      if (pill) {
+        if (pill.hasAttribute('onclick')) pill.removeAttribute('onclick');
+        pill.textContent = isOpen ? 'समेटें ▲' : 'और देखें ▼';
+      }
     }
-    if (pill) {
-      if (pill.hasAttribute('onclick')) pill.removeAttribute('onclick');
-      pill.textContent = isOpen ? 'समेटें ▲' : 'और देखें ▼';
-    }
+
     catEl.__rmHydratedOpen = isOpen;
     return true;
   }
@@ -318,7 +353,7 @@
         try { window.renderCatalogItems(); } catch (e) {}
       }
 
-      var needsInitialSweep = Boolean(modal.querySelector('[data-cat-id] > div:first-child:not([data-rm-parent-rendered])'));
+      var needsInitialSweep = Boolean(modal.querySelector('[data-cat-id]:not([data-rm-parent-rendered])'));
       if (needsInitialSweep && window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
         try { window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog(); } catch (e) {}
       }
@@ -335,11 +370,9 @@
         if (!cleanNum) return;
         var intNum = parseInt(cleanNum, 10);
         var normNum = isNaN(intNum) ? cleanNum : String(intNum);
-        var paddedNum = (intNum < 10 ? '0' : '') + intNum;
         var isOpen = Boolean(openStateMap[normNum]);
 
         if (!needsInitialSweep && catEl.__rmHydratedOpen === isOpen && catEl.hasAttribute('data-rm-parent-rendered')) {
-          enforceTopLeftLargeNumbering(catEl, catEl.__rmSubBox, paddedNum);
           return;
         }
         applyCategoryOpenState(catEl, rawId, cleanNum, isOpen);
