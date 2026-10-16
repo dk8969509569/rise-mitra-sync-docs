@@ -7,6 +7,14 @@
  * DUAL-FOLDER REFS:
  *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
  *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
+ * ==============================================================================
+ * 🔒 TOP-HEADER FILE SCOPE LOCK (ANTI-CONFLICT GOVERNANCE RULE):
+ *   ✅ ALLOWED IN THIS FILE   : Parent Card (01.-50.) & Sub-Card (01-1.-50-3.) HTML UI,
+ *                               Top-Left 24px/22px Numbering, Trust Pillars & Card Sweep.
+ *   🚫 FORBIDDEN IN THIS FILE : Global touchend/touchstart listeners, Modal open/close
+ *                               dispatchers (belongs in one-tap-catalog-hydrator.js), or
+ *                               1-Tap Bridge locks (belongs in one-tap-shell-bridge.js).
+ * ==============================================================================
  */
 
 (function () {
@@ -95,10 +103,11 @@
   // Auto-load decoupled Canonical 150 Sub-Category Matrix & Sub-Card Renderer Modules
   (function ensureCanonicalMatrixLoaded() {
     var head = document.head || document.documentElement;
+    var ver = window.__RM_ACTIVE_CACHE_VER || '20261016_v39';
     if (!window.RM_CANONICAL_SUB_MATRIX && !document.getElementById('rm-canonical-sub-matrix-script')) {
       var s1 = document.createElement('script');
       s1.id = 'rm-canonical-sub-matrix-script';
-      s1.src = '/js/universal-catalog/canonical-sub-matrix.js?v=20261015_v25';
+      s1.src = '/js/universal-catalog/canonical-sub-matrix.js?v=' + ver;
       s1.async = false;
       s1.onload = function () { sweepCatalog(); };
       head.appendChild(s1);
@@ -106,7 +115,7 @@
     if (!window.RM_SUB_CARD_RENDERER && !document.getElementById('rm-sub-card-renderer-script')) {
       var s2 = document.createElement('script');
       s2.id = 'rm-sub-card-renderer-script';
-      s2.src = '/js/universal-catalog/sub-card-renderer.js?v=20261015_v25';
+      s2.src = '/js/universal-catalog/sub-card-renderer.js?v=' + ver;
       s2.async = false;
       s2.onload = function () { sweepCatalog(); };
       head.appendChild(s2);
@@ -165,7 +174,7 @@
     return matrix[paddedSub] || null;
   }
 
-  // 1. RENDER UNIVERSAL PARENT CARD (TOP-LEFT: NUMBER ON TOP, LOGO BELOW | RIGHT: PLAY STORE TITLE)
+  // 1. RENDER UNIVERSAL PARENT CARD (TOP-LEFT: LARGE 24PX NUMBER ON TOP, LOGO BELOW | RIGHT: PLAY STORE TITLE)
   function renderParentCard(headerEl, catId, isOpen, subCount) {
     if (!headerEl) return;
     var ids = getNormalizedIds(catId);
@@ -217,13 +226,13 @@
 
     var targetState = numId + ':' + String(Boolean(isOpen)) + ':' + String(subCount || 0) + ':' + title + ':' + subtitle;
     var existingContainer = headerEl.querySelector('#' + canonicalParentId);
-    if (existingContainer && headerEl.getAttribute('data-rm-parent-rendered') === targetState) {
+    if (existingContainer && headerEl.getAttribute('data-rm-parent-state') === targetState) {
       return;
     }
 
     // Universal Future-Proof Domain Value Pillars
     var universalPillars = [
-      { icon: '🛡️', text: '100% आधार व पुलिस सत्यापित सेवा प्रदाता नेटवर्क', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.12)' },
+      { icon: '🛡️', text: '100% सत्यापित व पुलिस वेरिफाइड सेवा प्रदाता नेटवर्क', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.12)' },
       { icon: '⚡', text: 'पारदर्शी तय रेट कार्ड, डिजिटल बिलिंग व शून्य छुपा शुल्क', color: '#34d399', bg: 'rgba(52, 211, 153, 0.12)' },
       { icon: '🔒', text: 'Rise Mitra कार्य संतुष्टि गारंटी व प्रत्यक्ष सहायता', color: '#facc15', bg: 'rgba(250, 204, 21, 0.12)' }
     ];
@@ -266,15 +275,17 @@
     var countText = (subCount && subCount > 0) ? (subCount + ' सेवाएं ') : 'सभी सेवाएं ';
 
     container.innerHTML = [
-      '<!-- Top Row: Squircle Badge [Icon + Order Inside] + Right Column [Play Store Bold Title & Subtitle] -->',
+      '<!-- Top Row: Left Column [Top-Left Large 24px Number + Squircle Logo Below] + Right Column [Play Store Bold Title & Subtitle] -->',
       '<div style="display: flex; align-items: flex-start; gap: 14px; width: 100%;">',
-      '  <!-- Squircle Badge: Order & Icon strictly INSIDE, zero numbers outside -->',
-      '  <div style="width: 58px; height: 58px; min-width: 58px; border-radius: 16px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 1.5px solid rgba(56, 189, 248, 0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.45); flex-shrink: 0;">',
-      '    <span style="font-size: 24px; line-height: 1;">' + icon + '</span>',
-      '    <span style="font-size: 11px; font-weight: 800; color: #38bdf8; font-family: ui-monospace, monospace; margin-top: 3px; line-height: 1;">' + displayNum + '</span>',
+      '  <!-- Top-Left Stack: Large Bold Number on Top, Squircle Icon Below -->',
+      '  <div style="display: flex; flex-direction: column; align-items: flex-start; flex-shrink: 0;">',
+      '    <span class="rm-toplevel-num-badge" style="font-size: 24px; font-weight: 900; color: #38bdf8; font-family: system-ui, -apple-system, sans-serif; letter-spacing: -0.5px; margin-bottom: 6px; line-height: 1.05; display: block; text-align: left;">' + displayNum + '</span>',
+      '    <div style="width: 58px; height: 58px; min-width: 58px; border-radius: 16px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 1.5px solid rgba(56, 189, 248, 0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.45); flex-shrink: 0;">',
+      '      <span style="font-size: 28px; line-height: 1;">' + icon + '</span>',
+      '    </div>',
       '  </div>',
       '  <!-- Right Column: Standard Play Store Bold Title & Clean Subtitle -->',
-      '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0;">',
+      '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0; padding-top: 2px;">',
       '    <div style="font-size: 21px; font-weight: 900; color: #ffffff; letter-spacing: -0.3px; line-height: 1.25; margin-bottom: 4px; word-break: break-word;">' + title + '</div>',
       '    <div style="font-size: 13.5px; font-weight: 600; color: #34d399; line-height: 1.35; margin-bottom: 6px; word-break: break-word;">' + subtitle + '</div>',
       '    <!-- Badges Row -->',
@@ -295,7 +306,11 @@
       '</div>'
     ].join('');
 
-    headerEl.setAttribute('data-rm-parent-rendered', targetState);
+    headerEl.setAttribute('data-rm-parent-state', targetState);
+    headerEl.setAttribute('data-rm-parent-rendered', '1');
+    if (headerEl.parentElement && headerEl.parentElement.hasAttribute('data-cat-id')) {
+      headerEl.parentElement.setAttribute('data-rm-parent-rendered', '1');
+    }
   }
 
   // Helper: Trigger original hidden button in legacy DOM (delegates to sub-card-renderer.js)
@@ -306,10 +321,30 @@
     return false;
   }
 
-  // 2. RENDER SUB-CARD (DELEGATED TO MODULAR public/js/universal-catalog/sub-card-renderer.js — 100% ZEL)
+  // 2. RENDER SUB-CARD (DELEGATED TO MODULAR public/js/universal-catalog/sub-card-renderer.js + TOP-LEFT NUMBERING LOCK)
   function renderSubCard(subCardEl, catId, subId) {
     if (window.RM_SUB_CARD_RENDERER && typeof window.RM_SUB_CARD_RENDERER.renderSubCard === 'function') {
       window.RM_SUB_CARD_RENDERER.renderSubCard(subCardEl, catId, subId);
+    }
+    if (subCardEl) {
+      var cleanCode = String(subId || '').replace(/\s+/g, '').replace(/\.$/, '') + '.';
+      var spans = subCardEl.querySelectorAll('span, div');
+      for (var i = 0; i < spans.length; i++) {
+        var s = spans[i];
+        if (s.children.length === 0 && s.textContent && /^\d{1,2}-\d\s*\.?$/.test(s.textContent.trim())) {
+          s.textContent = cleanCode;
+          s.style.setProperty('font-family', 'system-ui, -apple-system, sans-serif', 'important');
+          s.style.setProperty('font-size', '22px', 'important');
+          s.style.setProperty('font-weight', '900', 'important');
+          s.style.setProperty('color', '#38bdf8', 'important');
+          s.style.setProperty('letter-spacing', '-0.5px', 'important');
+          s.style.setProperty('line-height', '1.05', 'important');
+          if (s.parentElement && s.parentElement !== subCardEl) {
+            s.parentElement.style.setProperty('align-items', 'flex-start', 'important');
+          }
+          break;
+        }
+      }
     }
   }
 
@@ -387,7 +422,7 @@
     document.addEventListener('click', function (e) {
       if (e.target.closest('.sivme-notch-pill')) return;
 
-      // Skip duplicate toggle if one-tap-shell-bridge already owns window.__RM_OPEN_CAT_STATE
+      // Skip duplicate toggle AND skip 40ms/250ms re-sweep collision when one-tap-shell-bridge owns state
       if (window.__RM_OPEN_CAT_STATE) return;
 
       // Deterministic 1-Tap Parent Category Accordion Toggle
