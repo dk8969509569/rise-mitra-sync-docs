@@ -18,7 +18,7 @@
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261016_v35';
+  var CACHE_VERSION = '20261016_v36';
   var lastActionTs = 0;
   var lastTouchTs = 0;
   var lastModalOpenTs = 0;
@@ -105,13 +105,14 @@
 
   // 5. DETERMINISTIC 1-TAP ACCORDION & SUB-SERVICE CLICK CONTROLLER (CASE 0, HOME, CASE 1 & CASE 2)
   function handleDeterministicOneTap(e) {
-    if (isSyntheticHomeClick) return;
+    if (isSyntheticHomeClick || e.__rmHandled) return;
     var target = e.target && e.target.nodeType === 1 ? e.target : (e.target ? e.target.parentElement : null);
     if (!target || typeof target.closest !== 'function') return;
     if (target.closest('input, textarea, select, option, .sivme-notch-pill, #sivme-hud, #sivme-drawer')) return;
 
     var now = Date.now();
     if (e.type === 'click' && (now - lastTouchTs < 650)) {
+      e.__rmHandled = true;
       e.stopImmediatePropagation();
       e.stopPropagation();
       if (e.cancelable) e.preventDefault();
@@ -121,6 +122,7 @@
     // PRIORITY 0: Fullscreen Close (‹ वापस, ‹ कैटलॉग पर वापस, ✕) via Part-3 Router
     if (window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.handleFullscreenCloseOneTap === 'function') {
       if (window.RM_SUBCARD_ROUTER.handleFullscreenCloseOneTap(e, target)) {
+        e.__rmHandled = true;
         if (e.type === 'touchend') lastTouchTs = now;
         lastActionTs = now;
         return;
@@ -137,6 +139,7 @@
         var bBtn = target.closest('button, [onclick]');
         var bTxt = bBtn ? (bBtn.textContent || '').trim() : '';
         if (bTxt.indexOf('बाद में') !== -1 || bTxt === '✕' || bTxt === '×' || (bBtn && (bBtn.getAttribute('onclick') || '').indexOf('dismiss') !== -1)) {
+          e.__rmHandled = true;
           if (e.type === 'touchend') lastTouchTs = now;
           lastActionTs = now;
           e.stopImmediatePropagation();
@@ -159,6 +162,7 @@
         }
       }
       if (dirTrigger) {
+        e.__rmHandled = true;
         if (e.type === 'touchend') lastTouchTs = now;
         lastActionTs = now;
         e.stopImmediatePropagation();
@@ -171,6 +175,7 @@
       if (e.type === 'touchend') {
         var homeActionBtn = target.closest('button[onclick], a[onclick], [onclick]');
         if (homeActionBtn && typeof homeActionBtn.click === 'function') {
+          e.__rmHandled = true;
           if (e.cancelable) e.preventDefault();
           isSyntheticHomeClick = true;
           try { homeActionBtn.click(); } catch (err) {}
@@ -187,6 +192,7 @@
 
     var modalCloseBtn = target.closest('[onclick*="closeCatalogModal"], #closeCatalogBtn');
     if (modalCloseBtn) {
+      e.__rmHandled = true;
       if (e.type === 'touchend') lastTouchTs = now;
       lastActionTs = now;
       lastModalOpenTs = 0;
@@ -210,6 +216,7 @@
       }
     }
     if (tierToggleBtn) {
+      e.__rmHandled = true;
       if (now - lastActionTs < 80) {
         e.stopImmediatePropagation();
         e.stopPropagation();
@@ -238,6 +245,7 @@
     var subWrapper = target.closest('[id^="sub-"]');
     if (subWrapper) {
       if (target.closest('.rm-act-pin, .rm-act-vid, .rm-act-video')) return;
+      e.__rmHandled = true;
       if (now - lastActionTs < 80) {
         e.stopImmediatePropagation();
         e.stopPropagation();
@@ -262,6 +270,7 @@
       }
     }
     if (catEl) {
+      e.__rmHandled = true;
       if (now - lastActionTs < 80) {
         e.stopImmediatePropagation();
         e.stopPropagation();
@@ -309,7 +318,7 @@
     var dx = Math.abs(e.changedTouches[0].clientX - touchStartX);
     var dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
     var dt = Date.now() - touchStartTime;
-    if (dx < 18 && dy < 18 && dt < 500) {
+    if (dx < 28 && dy < 28 && dt < 650) {
       handleDeterministicOneTap(e);
     }
   }, { capture: true, passive: false });
