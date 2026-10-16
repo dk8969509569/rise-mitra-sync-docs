@@ -1,5 +1,5 @@
 /**
- * RISE MITRA — MODULAR 1-TAP SHELL BRIDGE & DETERMINISTIC CONTROLLER
+ * RISE MITRA — MODULAR 1-TAP SHELL BRIDGE & DETERMINISTIC CONTROLLER (FINAL 100% ZEL)
  * MODULE        : Decoupled Shell Controller, 1-Tap Catalog Sync, Cache Sentinel & SIVME Loader
  * GOVERNANCE    : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  * REPO TARGET   : public/js/one-tap-shell-bridge.js (pre-main staging verified)
@@ -9,6 +9,7 @@
  * ==============================================================================
  * 🔒 EXISTING MODULAR FILES LOCK (DO NOT CREATE DUPLICATE FILES):
  *   - /js/one-tap-shell-bridge.js (This File: 1-Tap Controller & Catalog Sync)
+ *   - /js/one-tap-catalog-hydrator.js (Modular Companion Hydrator)
  *   - /js/fullscreen-microapp-controller.js (Dedicated 15-3/15-2 & Fullscreen UI)
  *   - /js/shell-controller.js & /js/sivme-adapters/cat16-adapter.js
  *   - /js/universal-catalog/universal-card-engine.js & sub-card-renderer.js
@@ -18,7 +19,7 @@
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261016_v26';
+  var CACHE_VERSION = '20261016_v28';
   var lastActionTs = 0;
   var lastTouchTs = 0;
   var lastModalOpenTs = 0;
@@ -28,17 +29,25 @@
   var isSyncingDOM = false;
 
   // Persistent open state map so background 120ms re-renders never close an opened category
-  var openStateMap = { '15': true, '16': true };
+  var openStateMap = window.__RM_OPEN_CAT_STATE || { '15': true, '16': true };
   window.__RM_OPEN_CAT_STATE = openStateMap;
 
-  // Auto-load decoupled Fullscreen Micro-App Controller Module (public/js/fullscreen-microapp-controller.js)
+  // Auto-load decoupled Fullscreen Micro-App Controller & Companion Hydrator Module
   (function ensureFullscreenControllerLoaded() {
-    if (window.RM_FULLSCREEN_CONTROLLER || document.getElementById('rm-fs-microapp-controller-script')) return;
-    var s = document.createElement('script');
-    s.id = 'rm-fs-microapp-controller-script';
-    s.src = '/js/fullscreen-microapp-controller.js?v=' + CACHE_VERSION;
-    s.async = false;
-    (document.head || document.documentElement).appendChild(s);
+    if (!window.RM_FULLSCREEN_CONTROLLER && !document.getElementById('rm-fs-microapp-controller-script')) {
+      var s = document.createElement('script');
+      s.id = 'rm-fs-microapp-controller-script';
+      s.src = '/js/fullscreen-microapp-controller.js?v=' + CACHE_VERSION;
+      s.async = false;
+      (document.head || document.documentElement).appendChild(s);
+    }
+    if (!window.RM_CATALOG_HYDRATOR && !document.getElementById('rm-catalog-hydrator-script')) {
+      var h = document.createElement('script');
+      h.id = 'rm-catalog-hydrator-script';
+      h.src = '/js/one-tap-catalog-hydrator.js?v=' + CACHE_VERSION;
+      h.async = false;
+      (document.head || document.documentElement).appendChild(h);
+    }
   })();
 
   // 1. AUTO-PURGE STALE SIVME FLAGS & STALE CACHE ON NORMAL PUBLIC LAUNCH
@@ -58,9 +67,7 @@
     try {
       if (localStorage.getItem('rm_cache_ver') !== CACHE_VERSION && 'caches' in window) {
         caches.keys().then(function (names) {
-          for (var i = 0; i < names.length; i++) {
-            caches.delete(names[i]);
-          }
+          for (var i = 0; i < names.length; i++) caches.delete(names[i]);
         });
         localStorage.setItem('rm_cache_ver', CACHE_VERSION);
       }
@@ -207,6 +214,7 @@
     var m = document.getElementById('categoryModal');
     if (!m) return;
     lastModalOpenTs = Date.now();
+    window.__RM_LAST_MODAL_OPEN_TS = lastModalOpenTs;
     m.classList.remove('hidden');
     m.style.setProperty('display', 'flex', 'important');
     syncAndHydrateCatalogCards();
@@ -311,15 +319,22 @@
           e.stopPropagation();
           if (e.cancelable) e.preventDefault();
           window.dismissPlayBanner();
+          banner.classList.add('hidden');
+          banner.style.setProperty('display', 'none', 'important');
           return;
         }
       }
 
       var dirTrigger = target.closest('#cat-menu-btn, #openCatalogBtn, #rm-menu-btn, [onclick*="openCatalogModal"], [onclick*="toggleMenuDrawer"], [onclick*="categoryModal"]');
       if (!dirTrigger) {
-        var dirCard = target.closest('.tactile-25d, button, div');
-        if (dirCard && dirCard.textContent && dirCard.textContent.indexOf('RM World Directory') !== -1 && dirCard.textContent.length < 240) {
-          dirTrigger = dirCard;
+        var el = target;
+        while (el && el !== document.body) {
+          var t = (el.textContent || '').trim();
+          if (t.indexOf('RM World Directory') !== -1 && t.length < 320) {
+            dirTrigger = el;
+            break;
+          }
+          el = el.parentElement;
         }
       }
       if (dirTrigger) {
@@ -330,6 +345,18 @@
         if (e.cancelable) e.preventDefault();
         window.openCatalogModal();
         return;
+      }
+
+      // Instant 1-Tap for other Home Screen buttons (Surakshit Bahikhata, Install, Bottom Nav) on touchend
+      if (e.type === 'touchend') {
+        var homeActionBtn = target.closest('button[onclick], a[onclick], [onclick]');
+        if (homeActionBtn && typeof homeActionBtn.click === 'function') {
+          lastTouchTs = now;
+          lastActionTs = now;
+          if (e.cancelable) e.preventDefault();
+          homeActionBtn.click();
+          return;
+        }
       }
       return;
     }
