@@ -11,7 +11,7 @@
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261016_v37';
+  var CACHE_VERSION = '20261016_v38';
   var isSyncingDOM = false;
   var hasRenderedCatalogOnce = false;
 
@@ -60,8 +60,8 @@
 
   // 2. INJECT ZEL 1-TAP INSTANT TOUCH & SUB-CONTAINER VISIBILITY LOCK CSS
   (function injectOneTapLockStyles() {
-    if (document.getElementById('rm-zel-one-tap-lock')) return;
-    var style = document.createElement('style');
+    var existing = document.getElementById('rm-zel-one-tap-lock');
+    var style = existing || document.createElement('style');
     style.id = 'rm-zel-one-tap-lock';
     style.textContent = [
       'html, body { background-color: #0b0f19 !important; }',
@@ -72,7 +72,7 @@
       '}',
       '.tactile-25d:active { transform: none !important; }',
       '#categoryModal { -webkit-overflow-scrolling: touch !important; }',
-      '#categoryModal.hidden, #rm-fullscreen-view.hidden, #playStoreInstallBanner.hidden, #categoryModal .hidden, #categoryModal [id^="sub-"].hidden, #categoryModal [id^="sub-"][data-rm-collapsed="true"] { display: none !important; }',
+      '#categoryModal.hidden, #rm-fullscreen-view.hidden, #playStoreInstallBanner.hidden, #categoryModal [id^="sub-"]:not([data-rm-collapsed="false"]).hidden, #categoryModal [id^="sub-"][data-rm-collapsed="true"] { display: none !important; }',
       '#categoryModal [id^="sub-"][data-rm-collapsed="false"] { display: block !important; }',
       '#categoryModal:not(.hidden) { position: fixed !important; inset: 0 !important; z-index: 50 !important; background-color: #0b0f19 !important; display: flex !important; justify-content: center !important; }',
       '#rm-fullscreen-view:not(.hidden) { position: fixed !important; inset: 0 !important; z-index: 99999 !important; display: flex !important; background-color: #0b0f19 !important; }',
@@ -80,7 +80,7 @@
       '#rm-module-container select { font-size: 12.5px !important; padding-right: 24px !important; text-overflow: ellipsis !important; }',
       '#rm-module-container select:empty, #rm-module-container div:empty:not([class*="h-"]):not([class*="w-"]) { display: none !important; }'
     ].join('\n');
-    document.head.appendChild(style);
+    if (!existing) document.head.appendChild(style);
   })();
 
   // Helper: Force-close Fullscreen Viewport reliably
@@ -194,6 +194,33 @@
       shielded.__rmShielded = true;
       window.renderCatalogItems = shielded;
     }
+    if (window.RM_UNIVERSAL_CARD_ENGINE) {
+      if (typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function' && !window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog.__rmShielded) {
+        var origSweep = window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog;
+        var shieldedSweep = function () {
+          var modal = document.getElementById('categoryModal');
+          if (hasRenderedCatalogOnce && modal && !modal.querySelector('[data-cat-id]:not([data-rm-parent-rendered])')) {
+            return;
+          }
+          return origSweep.apply(this, arguments);
+        };
+        shieldedSweep.__rmShielded = true;
+        window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog = shieldedSweep;
+      }
+      if (typeof window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard === 'function' && !window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard.__rmShielded) {
+        var origRenderParent = window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard;
+        var shieldedRenderParent = function (targetEl, catId, isOpen, subCount) {
+          if (targetEl && (targetEl.hasAttribute('data-rm-parent-rendered') ||
+              (targetEl.parentElement && targetEl.parentElement.hasAttribute('data-rm-parent-rendered')) ||
+              (targetEl.textContent && (targetEl.textContent.indexOf('और देखें') !== -1 || targetEl.textContent.indexOf('समेटें') !== -1)))) {
+            return;
+          }
+          return origRenderParent.call(this, targetEl, catId, isOpen, subCount);
+        };
+        shieldedRenderParent.__rmShielded = true;
+        window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard = shieldedRenderParent;
+      }
+    }
   }
 
   // Helper: Apply open/close state directly to a single Category Card (0ms O(1) instant — no DOM destruction loop)
@@ -250,8 +277,15 @@
       window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard(headerEl, normNum, isOpen, subCards.length || 3);
       catEl.__rmPillEl = null;
     }
+
+    // Lock data-rm-parent-rendered on catEl, headerEl AND first-child so 10/50/140/260ms timers never re-sweep
     catEl.setAttribute('data-rm-parent-rendered', '1');
     if (headerEl) headerEl.setAttribute('data-rm-parent-rendered', '1');
+    for (var chIdx = 0; chIdx < catEl.children.length; chIdx++) {
+      if (catEl.children[chIdx] !== subContainer) {
+        catEl.children[chIdx].setAttribute('data-rm-parent-rendered', '1');
+      }
+    }
 
     if (isOpen && !subContainer.__rmSubsHydrated) {
       subCards.forEach(function (sc, idx) {
@@ -317,8 +351,6 @@
         try { window.renderCatalogItems(); } catch (e) {}
       }
 
-      installRenderDestructionShield();
-
       var needsInitialSweep = Boolean(modal.querySelector('[data-cat-id] > div:first-child:not([data-rm-parent-rendered])'));
       if (needsInitialSweep && window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
         try { window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog(); } catch (e) {}
@@ -338,11 +370,13 @@
         var normNum = isNaN(intNum) ? cleanNum : String(intNum);
         var isOpen = Boolean(openStateMap[normNum]);
 
-        if (!needsInitialSweep && catEl.__rmHydratedOpen === isOpen && catEl.__rmHeaderEl && catEl.__rmHeaderEl.hasAttribute('data-rm-parent-rendered')) {
+        if (!needsInitialSweep && catEl.__rmHydratedOpen === isOpen && catEl.hasAttribute('data-rm-parent-rendered')) {
           return;
         }
         applyCategoryOpenState(catEl, rawId, cleanNum, isOpen);
       });
+
+      installRenderDestructionShield();
     } finally {
       isSyncingDOM = false;
     }
