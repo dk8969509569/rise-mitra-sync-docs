@@ -11,7 +11,8 @@
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261016_v38';
+  var CACHE_VERSION = '20261016_v39';
+  window.__RM_ACTIVE_CACHE_VER = CACHE_VERSION;
   var isSyncingDOM = false;
   var hasRenderedCatalogOnce = false;
 
@@ -58,7 +59,7 @@
     } catch (e) {}
   })();
 
-  // 2. INJECT ZEL 1-TAP INSTANT TOUCH & SUB-CONTAINER VISIBILITY LOCK CSS
+  // 2. INJECT ZEL 1-TAP INSTANT TOUCH, SUB-CONTAINER VISIBILITY LOCK & TOP-LEFT LARGE NUMBERING CSS
   (function injectOneTapLockStyles() {
     var existing = document.getElementById('rm-zel-one-tap-lock');
     var style = existing || document.createElement('style');
@@ -78,7 +79,9 @@
       '#rm-fullscreen-view:not(.hidden) { position: fixed !important; inset: 0 !important; z-index: 99999 !important; display: flex !important; background-color: #0b0f19 !important; }',
       '#fs-module-title { margin: 0 10px !important; font-size: 14px !important; font-weight: 800 !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; text-align: center !important; flex: 1 !important; }',
       '#rm-module-container select { font-size: 12.5px !important; padding-right: 24px !important; text-overflow: ellipsis !important; }',
-      '#rm-module-container select:empty, #rm-module-container div:empty:not([class*="h-"]):not([class*="w-"]) { display: none !important; }'
+      '#rm-module-container select:empty, #rm-module-container div:empty:not([class*="h-"]):not([class*="w-"]) { display: none !important; }',
+      '.rm-toplevel-num-badge { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important; font-size: 24px !important; font-weight: 900 !important; color: #38bdf8 !important; line-height: 1.05 !important; letter-spacing: -0.5px !important; margin-bottom: 6px !important; display: block !important; text-align: left !important; white-space: nowrap !important; }',
+      '.rm-sublevel-num-badge { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important; font-size: 22px !important; font-weight: 900 !important; color: #38bdf8 !important; line-height: 1.05 !important; letter-spacing: -0.5px !important; margin-bottom: 6px !important; display: block !important; text-align: left !important; white-space: nowrap !important; }'
     ].join('\n');
     if (!existing) document.head.appendChild(style);
   })();
@@ -176,6 +179,84 @@
       return created;
     }
     return null;
+  }
+
+  // Helper: Promote Category Number (01. - 50.) & Sub-Card Number (01-1. - 50-3.) to Top-Left in Large Bold Size
+  function enforceTopLeftLargeNumbering(catEl, subContainer, paddedNum) {
+    if (!catEl) return;
+
+    // A. Parent Card Top-Left Large Numbering (Move tiny "01 ." out of icon box to Top-Left in 24px extra-bold)
+    var allEls = catEl.querySelectorAll('span, div');
+    var tinyNumEl = null;
+    for (var i = 0; i < allEls.length; i++) {
+      var el = allEls[i];
+      if (subContainer && subContainer.contains(el)) continue;
+      if (el.classList && el.classList.contains('rm-toplevel-num-badge')) continue;
+      if (el.children.length === 0 && el.textContent) {
+        var t = el.textContent.trim();
+        if (/^0?[1-9]\d?\s*\.?$/.test(t)) {
+          tinyNumEl = el;
+          break;
+        }
+      }
+    }
+
+    if (tinyNumEl) {
+      var iconBox = tinyNumEl.parentElement;
+      tinyNumEl.style.setProperty('display', 'none', 'important');
+      if (iconBox && iconBox !== catEl) {
+        for (var c = 0; c < iconBox.children.length; c++) {
+          var ch = iconBox.children[c];
+          if (ch !== tinyNumEl && !ch.classList.contains('rm-toplevel-num-badge')) {
+            ch.style.setProperty('font-size', '26px', 'important');
+            ch.style.setProperty('line-height', '1', 'important');
+          }
+        }
+        var parentRow = iconBox.parentElement;
+        if (parentRow && !parentRow.querySelector('.rm-toplevel-num-badge')) {
+          var leftCol = document.createElement('div');
+          leftCol.className = 'flex flex-col items-start shrink-0';
+          leftCol.style.setProperty('display', 'flex', 'important');
+          leftCol.style.setProperty('flex-direction', 'column', 'important');
+          leftCol.style.setProperty('align-items', 'flex-start', 'important');
+
+          var bigBadge = document.createElement('div');
+          bigBadge.className = 'rm-toplevel-num-badge';
+          bigBadge.textContent = paddedNum + '.';
+
+          parentRow.insertBefore(leftCol, iconBox);
+          leftCol.appendChild(bigBadge);
+          leftCol.appendChild(iconBox);
+        }
+      }
+    } else {
+      var existingBadge = catEl.querySelector('.rm-toplevel-num-badge');
+      if (existingBadge) existingBadge.textContent = paddedNum + '.';
+    }
+
+    // B. Sub-Cards Top-Left Large Numbering (Clean "01-1 ." -> "01-1." in 22px extra-bold aligned Top-Left)
+    if (subContainer) {
+      var subCards = subContainer.querySelectorAll(':scope > div');
+      for (var s = 0; s < subCards.length; s++) {
+        var sc = subCards[s];
+        var expectedSubCode = paddedNum + '-' + (s + 1) + '.';
+        var subLeaves = sc.querySelectorAll('span, div');
+        for (var j = 0; j < subLeaves.length; j++) {
+          var sl = subLeaves[j];
+          if (sl.children.length === 0 && sl.textContent) {
+            var st = sl.textContent.trim();
+            if (/^\d{1,2}-\d\s*\.?$/.test(st)) {
+              sl.textContent = expectedSubCode;
+              sl.classList.add('rm-sublevel-num-badge');
+              if (sl.parentElement && sl.parentElement !== sc) {
+                sl.parentElement.style.setProperty('align-items', 'flex-start', 'important');
+              }
+              break;
+            }
+          }
+        }
+      }
+    }
   }
 
   // Helper: Lock legacy renderCatalogItems & sweepCatalog so background timers cannot cause lag or wipe accordions
@@ -300,7 +381,7 @@
           var entry = matrix[subCode] || {};
           var sTitle = entry.title || ('सेवा व गेमिंग विकल्प ' + subCode);
           var sSub = entry.hindiTitle || 'Rise Mitra सत्यापित सेवा व तत्काल सहायता';
-          sc.innerHTML = '<div class="flex items-center justify-between"><span class="text-xs font-bold text-emerald-400">' + subCode + '</span><span class="text-xs text-amber-400">★ 4.9</span></div>' +
+          sc.innerHTML = '<div class="flex items-center justify-between"><span class="rm-sublevel-num-badge">' + subCode + '.</span><span class="text-xs text-amber-400">★ 4.9</span></div>' +
                          '<h4 class="font-bold text-white text-sm mt-1">' + sTitle + '</h4>' +
                          '<p class="text-xs text-slate-400 mt-0.5">' + sSub + '</p>' +
                          '<div class="mt-2 inline-block px-3 py-1 rounded-lg bg-emerald-950/80 border border-emerald-700/60 text-emerald-300 text-xs font-bold rm-service-chip">खोलें ›</div>';
@@ -309,6 +390,9 @@
       });
       subContainer.__rmSubsHydrated = true;
     }
+
+    // Promote Category Number (01.) & Sub-Card Numbers (01-1., 01-2., 01-3.) to Top-Left in Large Bold Size
+    enforceTopLeftLargeNumbering(catEl, subContainer, paddedNum);
 
     // Update pill text directly ("और देखें ▼" <-> "समेटें ▲") across full catEl outside subContainer
     var pill = catEl.__rmPillEl;
@@ -442,6 +526,7 @@
     normalizeFullscreenMicroAppDOM: normalizeFullscreenMicroAppDOM,
     ensureMicroAppRendered: ensureMicroAppRendered,
     resolveCategorySubContainer: resolveCategorySubContainer,
+    enforceTopLeftLargeNumbering: enforceTopLeftLargeNumbering,
     installRenderDestructionShield: installRenderDestructionShield,
     applyCategoryOpenState: applyCategoryOpenState,
     syncAndHydrateCatalogCards: syncAndHydrateCatalogCards,
