@@ -11,7 +11,7 @@
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261016_v34';
+  var CACHE_VERSION = '20261016_v35';
   var isSyncingDOM = false;
 
   // Shared state across Part 1 (Hydrator) and Part 2 (1-Tap Bridge)
@@ -63,18 +63,21 @@
     var style = document.createElement('style');
     style.id = 'rm-zel-one-tap-lock';
     style.textContent = [
+      'html, body { background-color: #0b0f19 !important; }',
       'button, a, [onclick], .tactile-25d, #categoryModal [data-cat-id], #categoryModal [id^="sub-"] > div, .rm-service-chip {',
       '  touch-action: manipulation !important; -webkit-tap-highlight-color: transparent !important;',
       '  cursor: pointer !important; user-select: none !important; -webkit-user-select: none !important;',
       '  transition: none !important;',
       '}',
       '.tactile-25d:active { transform: none !important; }',
+      '#categoryModal { -webkit-overflow-scrolling: touch !important; }',
       '#categoryModal.hidden, #rm-fullscreen-view.hidden, #playStoreInstallBanner.hidden, #categoryModal .hidden, #categoryModal [id^="sub-"].hidden, #categoryModal [id^="sub-"][data-rm-collapsed="true"] { display: none !important; }',
       '#categoryModal [id^="sub-"][data-rm-collapsed="false"] { display: block !important; }',
       '#categoryModal:not(.hidden) { position: fixed !important; inset: 0 !important; z-index: 50 !important; background-color: #0b0f19 !important; display: flex !important; justify-content: center !important; }',
-      '#rm-fullscreen-view:not(.hidden) { position: fixed !important; inset: 0 !important; z-index: 99999 !important; display: flex !important; }',
+      '#rm-fullscreen-view:not(.hidden) { position: fixed !important; inset: 0 !important; z-index: 99999 !important; display: flex !important; background-color: #0b0f19 !important; }',
       '#fs-module-title { margin: 0 10px !important; font-size: 14px !important; font-weight: 800 !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; text-align: center !important; flex: 1 !important; }',
-      '#rm-module-container select { font-size: 12.5px !important; padding-right: 24px !important; text-overflow: ellipsis !important; }'
+      '#rm-module-container select { font-size: 12.5px !important; padding-right: 24px !important; text-overflow: ellipsis !important; }',
+      '#rm-module-container select:empty { display: none !important; }'
     ].join('\n');
     document.head.appendChild(style);
   })();
@@ -191,7 +194,7 @@
     }
   }
 
-  // Helper: Apply open/close state directly to a single Category Card (0ms instant — no DOM destruction loop)
+  // Helper: Apply open/close state directly to a single Category Card (0ms O(1) instant — no DOM destruction loop)
   function applyCategoryOpenState(catEl, rawId, cleanNum, isOpen) {
     if (!catEl) return false;
     var intNum = parseInt(cleanNum, 10);
@@ -200,12 +203,27 @@
     var subContainer = resolveCategorySubContainer(catEl, rawId, cleanNum);
     if (!subContainer) return false;
 
-    var headerEl = (catEl.children && catEl.children.length > 1 && catEl.contains(subContainer) && catEl.children[0] !== subContainer)
-      ? catEl.children[0]
-      : (catEl.querySelector(':scope > div:first-child') || catEl);
+    var headerEl = catEl.__rmHeaderEl;
+    if (!headerEl || !catEl.contains(headerEl)) {
+      headerEl = (catEl.children && catEl.children.length > 1 && catEl.contains(subContainer) && catEl.children[0] !== subContainer)
+        ? catEl.children[0]
+        : (catEl.querySelector(':scope > div:first-child') || catEl);
+      catEl.__rmHeaderEl = headerEl;
+    }
 
     if (headerEl && headerEl.hasAttribute('onclick')) {
       headerEl.removeAttribute('onclick');
+    }
+
+    // 1. Toggle visibility FIRST in 0ms for instant visual feedback
+    if (isOpen) {
+      subContainer.classList.remove('hidden');
+      subContainer.setAttribute('data-rm-collapsed', 'false');
+      subContainer.style.setProperty('display', 'block', 'important');
+    } else {
+      subContainer.classList.add('hidden');
+      subContainer.setAttribute('data-rm-collapsed', 'true');
+      subContainer.style.setProperty('display', 'none', 'important');
     }
 
     var subCards = subContainer.querySelectorAll(':scope > div');
@@ -214,43 +232,44 @@
         window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard === 'function') {
       window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard(headerEl, normNum, isOpen, subCards.length || 3);
       headerEl.setAttribute('data-rm-parent-rendered', '1');
+      catEl.__rmPillEl = null;
     }
 
-    if (isOpen) {
-      subContainer.classList.remove('hidden');
-      subContainer.setAttribute('data-rm-collapsed', 'false');
-      subContainer.style.setProperty('display', 'block', 'important');
-      if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard === 'function') {
-        subCards.forEach(function (sc, idx) {
-          if (!sc.hasAttribute('data-rm-sub-rendered')) {
-            window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, normNum, paddedNum + '-' + (idx + 1));
-            sc.setAttribute('data-rm-sub-rendered', paddedNum + '-' + (idx + 1));
+    if (isOpen && !subContainer.__rmSubsHydrated &&
+        window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard === 'function') {
+      subCards.forEach(function (sc, idx) {
+        if (!sc.hasAttribute('data-rm-sub-rendered')) {
+          window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, normNum, paddedNum + '-' + (idx + 1));
+          sc.setAttribute('data-rm-sub-rendered', paddedNum + '-' + (idx + 1));
+        }
+      });
+      subContainer.__rmSubsHydrated = true;
+    }
+
+    // Update pill text directly ("और देखें ▼" <-> "समेटें ▲") in 0ms using O(1) cached reference
+    var pill = catEl.__rmPillEl;
+    if (!pill || !catEl.contains(pill)) {
+      var pills = headerEl ? headerEl.querySelectorAll('button, span, div') : catEl.querySelectorAll('button, span, div');
+      for (var i = 0; i < pills.length; i++) {
+        var p = pills[i];
+        if (!subContainer.contains(p) && p.children.length === 0 && p.textContent) {
+          var txt = p.textContent.trim();
+          if (txt.indexOf('और देखें') !== -1 || txt.indexOf('समेटें') !== -1 || txt.indexOf('विकल्प') !== -1 || txt.indexOf('सेवाएं') !== -1 || txt.indexOf('छुपाएं') !== -1) {
+            pill = p;
+            catEl.__rmPillEl = p;
+            break;
           }
-        });
-      }
-    } else {
-      subContainer.classList.add('hidden');
-      subContainer.setAttribute('data-rm-collapsed', 'true');
-      subContainer.style.setProperty('display', 'none', 'important');
-    }
-
-    // Update pill text directly ("और देखें ▼" <-> "समेटें ▲") in 0ms without rebuilding DOM
-    var pills = headerEl ? headerEl.querySelectorAll('button, span, div') : catEl.querySelectorAll('button, span, div');
-    for (var i = 0; i < pills.length; i++) {
-      var p = pills[i];
-      if (!subContainer.contains(p) && p.children.length === 0 && p.textContent) {
-        var txt = p.textContent.trim();
-        if (isOpen && (txt.indexOf('और देखें') !== -1 || txt.indexOf('विकल्प') !== -1 || txt.indexOf('सेवाएं') !== -1 || txt.indexOf('▼') !== -1)) {
-          p.textContent = 'समेटें ▲';
-        } else if (!isOpen && (txt.indexOf('समेटें') !== -1 || txt.indexOf('छुपाएं') !== -1 || txt.indexOf('▲') !== -1)) {
-          p.textContent = 'और देखें ▼';
         }
       }
     }
+    if (pill) {
+      pill.textContent = isOpen ? 'समेटें ▲' : 'और देखें ▼';
+    }
+    catEl.__rmHydratedOpen = isOpen;
     return true;
   }
 
-  // Helper: Hydrate Play Store Cards & enforce openStateMap after legacy 20ms/120ms renders
+  // Helper: Hydrate Play Store Cards & enforce openStateMap (O(1) skip for already-hydrated unchanged cards)
   function syncAndHydrateCatalogCards() {
     if (isSyncingDOM) return;
     isSyncingDOM = true;
@@ -284,6 +303,9 @@
         var normNum = isNaN(intNum) ? cleanNum : String(intNum);
         var isOpen = Boolean(openStateMap[normNum]);
 
+        if (!needsInitialSweep && catEl.__rmHydratedOpen === isOpen && catEl.__rmHeaderEl && catEl.__rmHeaderEl.hasAttribute('data-rm-parent-rendered')) {
+          return;
+        }
         applyCategoryOpenState(catEl, rawId, cleanNum, isOpen);
       });
     } finally {
@@ -291,7 +313,7 @@
     }
   }
 
-  // 3. GLOBAL MODAL & DRAWER DISPATCHERS (100% ZEL PRESERVED)
+  // 3. GLOBAL MODAL & DRAWER DISPATCHERS (100% ZEL PRESERVED + NON-BLOCKING PAINT)
   window.openCatalogModal = function () {
     var m = document.getElementById('categoryModal');
     if (!m) return;
@@ -368,7 +390,7 @@
         syncAndHydrateCatalogCards();
       }
     });
-    obs.observe(modal, { childList: true, subtree: true });
+    obs.observe(modal, { childList: true, subtree: false });
   }
 
   if (document.readyState === 'loading') {
