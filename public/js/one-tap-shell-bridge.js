@@ -19,7 +19,7 @@
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261016_v31';
+  var CACHE_VERSION = '20261016_v32';
   var lastActionTs = 0;
   var lastTouchTs = 0;
   var lastModalOpenTs = 0;
@@ -68,15 +68,89 @@
     }
   }
 
-  // Helper: Resolve sub-container across all 10 ID formats (sub-c01, sub-c1, sub-g34, etc.) + sibling fallback
-  function resolveCategorySubContainer(catEl, rawId, cleanNum) {
-    if (catEl && catEl.__rmSubBox && document.body.contains(catEl.__rmSubBox)) {
-      return catEl.__rmSubBox;
+  // Helper: Repair Fullscreen Sub-Service DOM (Fixes 32-3 bullet title, Crop Damage text & empty select dropdown)
+  function repairFullscreenSubServiceDOM(subCard, subCode) {
+    var fs = document.getElementById('rm-fullscreen-view');
+    if (!fs || fs.classList.contains('hidden')) return;
+
+    var cleanTitle = '';
+    var cleanSub = '';
+    var optionsList = [];
+
+    if (subCard) {
+      var hEl = subCard.querySelector('h3, h4, .font-black, .font-bold');
+      if (hEl && hEl.textContent) {
+        cleanTitle = hEl.textContent.replace(/^\s*\d{1,2}\s*-\s*\d\s*\.?\s*/, '').trim();
+      }
+      var chipNodes = subCard.querySelectorAll('.rm-service-chip, [style*="border-radius"]');
+      for (var i = 0; i < chipNodes.length; i++) {
+        var ct = (chipNodes[i].textContent || '').trim();
+        if (ct.length > 5 && ct.length < 85 && ct.indexOf('✓') === -1 && ct.indexOf('4.') === -1 &&
+            ct.indexOf('पिन') === -1 && ct.indexOf('वीडियो') === -1 && ct.indexOf('देखें') === -1) {
+          optionsList.push(ct);
+        }
+      }
     }
-    if (window.RM_CATALOG_HYDRATOR && typeof window.RM_CATALOG_HYDRATOR.resolveCategorySubContainer === 'function') {
-      var resolved = window.RM_CATALOG_HYDRATOR.resolveCategorySubContainer(catEl, rawId, cleanNum);
-      if (resolved && catEl) catEl.__rmSubBox = resolved;
-      return resolved;
+
+    var matrix = window.RM_CANONICAL_SUB_MATRIX || {};
+    var entry = matrix[subCode] || null;
+    if (entry) {
+      if (entry.title) cleanTitle = entry.title;
+      if (entry.hindiTitle) cleanSub = entry.hindiTitle;
+      if (Array.isArray(entry.services) && entry.services.length > 0) optionsList = entry.services;
+    }
+
+    var fsTitle = document.getElementById('fs-module-title');
+    if (fsTitle && cleanTitle) {
+      fsTitle.textContent = subCode + ' • ' + cleanTitle;
+    }
+
+    var container = document.getElementById('rm-module-container');
+    if (!container) return;
+
+    var innerHeading = container.querySelector('h2, h3, .text-xl, .text-lg');
+    if (innerHeading && cleanTitle && (innerHeading.textContent.length > 42 || innerHeading.textContent.indexOf('बुजुर्गों') !== -1)) {
+      innerHeading.textContent = cleanTitle;
+    }
+
+    var allEls = container.querySelectorAll('p, div, span');
+    for (var j = 0; j < allEls.length; j++) {
+      var el = allEls[j];
+      if (el.children.length === 0 && el.textContent && el.textContent.indexOf('Crop Damage Insurance Claim') !== -1 && subCode.indexOf('01-') !== 0) {
+        el.textContent = cleanSub || (cleanTitle ? (cleanTitle + ' • सत्यापित नागरिक सेवा व तत्काल सहायता') : 'Rise Mitra सत्यापित नागरिक सेवा पोर्टल');
+      }
+    }
+
+    var selectEl = container.querySelector('select');
+    if (selectEl) {
+      selectEl.style.setProperty('background-color', '#0f172a', 'important');
+      selectEl.style.setProperty('color', '#f8fafc', 'important');
+      selectEl.style.setProperty('border', '1px solid #334155', 'important');
+      selectEl.style.setProperty('padding', '10px 12px', 'important');
+      if (selectEl.options.length === 0 || (selectEl.options.length === 1 && !selectEl.options[0].textContent.trim())) {
+        selectEl.innerHTML = '';
+        var finalOpts = optionsList.length > 0 ? optionsList : [
+          (cleanTitle || subCode) + ' — तत्काल ऑनलाइन सेवा',
+          (cleanTitle || subCode) + ' — नज़दीकी केंद्र व विशेषज्ञ सहायता',
+          (cleanTitle || subCode) + ' — 24x7 आपातकालीन सहायता'
+        ];
+        for (var k = 0; k < finalOpts.length; k++) {
+          var opt = document.createElement('option');
+          opt.value = finalOpts[k];
+          opt.textContent = finalOpts[k];
+          opt.style.backgroundColor = '#0f172a';
+          opt.style.color = '#f8fafc';
+          selectEl.appendChild(opt);
+        }
+      }
+    }
+  }
+
+  // Helper: Resolve sub-container across all 10 ID formats (sub-c01, sub-c1, sub-g34, etc.) + validated sibling fallback
+  function resolveCategorySubContainer(catEl, rawId, cleanNum) {
+    if (catEl && catEl.__rmSubBox && document.body.contains(catEl.__rmSubBox) &&
+        catEl.__rmSubBox.id && catEl.__rmSubBox.id.indexOf('sub-') === 0) {
+      return catEl.__rmSubBox;
     }
     var intNum = parseInt(cleanNum, 10);
     var paddedNum = (intNum < 10 ? '0' : '') + intNum;
@@ -105,9 +179,16 @@
         catEl.__rmSubBox = nextSib;
         return nextSib;
       }
-      if (catEl.children.length > 1) {
+      if (catEl.children.length > 1 && catEl.children[1].id && catEl.children[1].id.indexOf('sub-') === 0) {
         catEl.__rmSubBox = catEl.children[1];
         return catEl.children[1];
+      }
+    }
+    if (window.RM_CATALOG_HYDRATOR && typeof window.RM_CATALOG_HYDRATOR.resolveCategorySubContainer === 'function') {
+      var resolved = window.RM_CATALOG_HYDRATOR.resolveCategorySubContainer(catEl, rawId, cleanNum);
+      if (resolved && resolved.id && resolved.id.indexOf('sub-') === 0) {
+        if (catEl) catEl.__rmSubBox = resolved;
+        return resolved;
       }
     }
     return null;
@@ -143,7 +224,7 @@
   function handleDeterministicOneTap(e) {
     var target = e.target && e.target.nodeType === 1 ? e.target : (e.target ? e.target.parentElement : null);
     if (!target || typeof target.closest !== 'function') return;
-    if (target.closest('input, textarea, select, .sivme-notch-pill')) return;
+    if (target.closest('input, textarea, select, option, .sivme-notch-pill')) return;
 
     var now = Date.now();
 
@@ -155,27 +236,33 @@
     }
 
     // PRIORITY 0: Instant 1-Tap Close on Fullscreen Top-Right ✕, Top-Left ‹ वापस, or ‹ कैटलॉग पर वापस
-    var fsCloseBtn = target.closest('#rm-fullscreen-view [onclick*="closeFullscreenModule"]');
-    if (fsCloseBtn) {
-      if (e.type === 'touchend') lastTouchTs = now;
-      lastActionTs = now;
-      e.stopImmediatePropagation();
-      e.stopPropagation();
-      if (e.cancelable) e.preventDefault();
+    var fsCloseBtn = target.closest('#rm-fullscreen-view [onclick*="closeFullscreenModule"], #rm-fullscreen-view button, #rm-fullscreen-view a, #fs-back-btn, #fs-close-btn');
+    if (fsCloseBtn && document.getElementById('rm-fullscreen-view') && !document.getElementById('rm-fullscreen-view').classList.contains('hidden')) {
       var btnTxt = (fsCloseBtn.textContent || '').trim();
-      forceCloseFullscreenViewport();
-      if (btnTxt.indexOf('वापस') !== -1) {
-        var catModal = document.getElementById('categoryModal');
-        if (catModal) {
-          catModal.classList.remove('hidden');
-          catModal.style.setProperty('display', 'flex', 'important');
+      var isBack = btnTxt.indexOf('वापस') !== -1 || fsCloseBtn.id === 'fs-back-btn';
+      var isCloseX = btnTxt === '✕' || btnTxt === '×' || btnTxt === 'X' || fsCloseBtn.id === 'fs-close-btn';
+      var hasCloseAttr = (fsCloseBtn.getAttribute('onclick') || '').indexOf('closeFullscreenModule') !== -1;
+
+      if (isBack || isCloseX || hasCloseAttr) {
+        if (e.type === 'touchend') lastTouchTs = now;
+        lastActionTs = now;
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        if (e.cancelable) e.preventDefault();
+        forceCloseFullscreenViewport();
+        if (isBack && !isCloseX) {
+          var catModal = document.getElementById('categoryModal');
+          if (catModal) {
+            catModal.classList.remove('hidden');
+            catModal.style.setProperty('display', 'flex', 'important');
+          }
+        } else if (isCloseX) {
+          lastModalOpenTs = 0;
+          window.__RM_LAST_MODAL_OPEN_TS = 0;
+          window.closeCatalogModal();
         }
-      } else if (btnTxt === '✕' || btnTxt === '×' || btnTxt === 'X') {
-        lastModalOpenTs = 0;
-        window.__RM_LAST_MODAL_OPEN_TS = 0;
-        window.closeCatalogModal();
+        return;
       }
-      return;
     }
 
     var modal = document.getElementById('categoryModal');
@@ -238,7 +325,7 @@
 
     if (!modal || !modal.contains(target)) return;
 
-    var modalCloseBtn = target.closest('[onclick*="closeCatalogModal"]');
+    var modalCloseBtn = target.closest('[onclick*="closeCatalogModal"], #closeCatalogBtn');
     if (modalCloseBtn) {
       if (e.type === 'touchend') lastTouchTs = now;
       lastActionTs = now;
@@ -247,12 +334,23 @@
       e.stopImmediatePropagation();
       e.stopPropagation();
       if (e.cancelable) e.preventDefault();
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.style.setProperty('display', 'none', 'important');
+      }
       window.closeCatalogModal();
       return;
     }
 
     // Tier-1 (आजीविका) & Tier-2 (खेल व मनोरंजन) Section Header 1-Tap Toggle (Folder A/B v27 Parity)
     var tierToggleBtn = target.closest('#rm-tier1-toggle, #rm-tier2-toggle');
+    if (!tierToggleBtn && !target.closest('[data-cat-id]') && !target.closest('[id^="sub-"]')) {
+      var candBar = target.closest('button, div');
+      var barTxt = candBar ? (candBar.textContent || '').trim() : '';
+      if (barTxt.length < 90 && (barTxt.indexOf('आजीविका (') !== -1 || barTxt.indexOf('खेल व मनोरंजन (') !== -1)) {
+        tierToggleBtn = candBar;
+      }
+    }
     if (tierToggleBtn) {
       if (now - lastActionTs < 80) {
         e.stopImmediatePropagation();
@@ -266,7 +364,7 @@
       e.stopPropagation();
       if (e.cancelable) e.preventDefault();
 
-      var listId = tierToggleBtn.id === 'rm-tier1-toggle' ? 'tier1-list' : 'tier2-list';
+      var listId = (tierToggleBtn.id === 'rm-tier1-toggle' || (tierToggleBtn.textContent || '').indexOf('आजीविका') !== -1) ? 'tier1-list' : 'tier2-list';
       var listEl = document.getElementById(listId);
       if (listEl) {
         var isHidden = listEl.classList.contains('hidden') || listEl.style.display === 'none';
@@ -300,8 +398,10 @@
       var subIdMatch = (subCard.textContent || '').match(/\b(\d{1,2}-\d)\b/);
       var subCode = subIdMatch ? subIdMatch[1] : (rawRenderedAttr || '15-3');
 
+      var safeHeadingTarget = subCard.querySelector('h3, h4, .font-black, .font-bold') || subCard;
+
       if (window.RM_FULLSCREEN_CONTROLLER && typeof window.RM_FULLSCREEN_CONTROLLER.routeSubCardOneTap === 'function') {
-        window.RM_FULLSCREEN_CONTROLLER.routeSubCardOneTap(e, target, subCard);
+        window.RM_FULLSCREEN_CONTROLLER.routeSubCardOneTap(e, safeHeadingTarget, subCard);
       } else {
         e.stopImmediatePropagation();
         e.stopPropagation();
@@ -310,8 +410,15 @@
 
       // Guarantee 0ms render if #rm-module-container is stuck on "मॉड्यूल लोड हो रहा है..."
       ensureMicroAppRendered(subCode);
-      setTimeout(function () { ensureMicroAppRendered(subCode); }, 25);
-      setTimeout(function () { ensureMicroAppRendered(subCode); }, 80);
+      repairFullscreenSubServiceDOM(subCard, subCode);
+      setTimeout(function () {
+        ensureMicroAppRendered(subCode);
+        repairFullscreenSubServiceDOM(subCard, subCode);
+      }, 25);
+      setTimeout(function () {
+        ensureMicroAppRendered(subCode);
+        repairFullscreenSubServiceDOM(subCard, subCode);
+      }, 80);
       return;
     }
 
@@ -335,6 +442,7 @@
       var cleanNum = rawId.replace(/[^0-9]/g, '');
       var intNum = parseInt(cleanNum, 10);
       var normNum = isNaN(intNum) ? cleanNum : String(intNum);
+      var paddedNum = (intNum < 10 ? '0' : '') + intNum;
 
       var subContainer = resolveCategorySubContainer(catEl, rawId, cleanNum);
       var isCurrentlyOpen = Boolean(openStateMap[normNum]);
@@ -347,9 +455,7 @@
       var nextOpen = !isCurrentlyOpen;
       openStateMap[normNum] = nextOpen;
 
-      if (window.RM_CATALOG_HYDRATOR && typeof window.RM_CATALOG_HYDRATOR.applyCategoryOpenState === 'function') {
-        window.RM_CATALOG_HYDRATOR.applyCategoryOpenState(catEl, rawId, cleanNum, nextOpen);
-      } else if (subContainer) {
+      if (subContainer) {
         if (isCurrentlyOpen) {
           subContainer.classList.add('hidden');
           subContainer.setAttribute('data-rm-collapsed', 'true');
@@ -370,10 +476,25 @@
           if (!isCurrentlyOpen && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard === 'function') {
             subCards.forEach(function (sc, idx) {
               if (!sc.hasAttribute('data-rm-sub-rendered')) {
-                window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, normNum, normNum + '-' + (idx + 1));
-                sc.setAttribute('data-rm-sub-rendered', normNum + '-' + (idx + 1));
+                window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, normNum, paddedNum + '-' + (idx + 1));
+                sc.setAttribute('data-rm-sub-rendered', paddedNum + '-' + (idx + 1));
               }
             });
+          }
+        }
+      } else if (window.RM_CATALOG_HYDRATOR && typeof window.RM_CATALOG_HYDRATOR.applyCategoryOpenState === 'function') {
+        window.RM_CATALOG_HYDRATOR.applyCategoryOpenState(catEl, rawId, cleanNum, nextOpen);
+      }
+
+      var pills = catEl.querySelectorAll('button, span, div');
+      for (var pIdx = 0; pIdx < pills.length; pIdx++) {
+        var p = pills[pIdx];
+        if (p.children.length === 0 && p.textContent) {
+          var pTxt = p.textContent.trim();
+          if (nextOpen && (pTxt.indexOf('और देखें') !== -1 || pTxt.indexOf('विकल्प') !== -1 || pTxt.indexOf('सेवाएं') !== -1 || pTxt.indexOf('▼') !== -1)) {
+            p.textContent = 'समेटें ▲';
+          } else if (!nextOpen && (pTxt.indexOf('समेटें') !== -1 || pTxt.indexOf('छुपाएं') !== -1 || pTxt.indexOf('▲') !== -1)) {
+            p.textContent = 'और देखें ▼';
           }
         }
       }
