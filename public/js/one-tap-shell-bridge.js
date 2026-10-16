@@ -18,7 +18,7 @@
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261016_v36';
+  var CACHE_VERSION = '20261016_v37';
   var lastActionTs = 0;
   var lastTouchTs = 0;
   var lastModalOpenTs = 0;
@@ -214,6 +214,17 @@
       if (barTxt.length < 90 && (barTxt.indexOf('आजीविका (') !== -1 || barTxt.indexOf('खेल व मनोरंजन (') !== -1)) {
         tierToggleBtn = candBar;
       }
+      if (!tierToggleBtn) {
+        var walkEl = target;
+        while (walkEl && walkEl !== modal) {
+          var wTxt = (walkEl.textContent || '').trim();
+          if (wTxt.length > 5 && wTxt.length < 130 && (wTxt.indexOf('आजीविका (') !== -1 || wTxt.indexOf('खेल व मनोरंजन (') !== -1)) {
+            tierToggleBtn = walkEl;
+            break;
+          }
+          walkEl = walkEl.parentElement;
+        }
+      }
     }
     if (tierToggleBtn) {
       e.__rmHandled = true;
@@ -232,11 +243,11 @@
       var listId = (tierToggleBtn.id === 'rm-tier1-toggle' || (tierToggleBtn.textContent || '').indexOf('आजीविका') !== -1) ? 'tier1-list' : 'tier2-list';
       var listEl = document.getElementById(listId);
       if (listEl) {
-        var isHidden = listEl.classList.contains('hidden') || listEl.style.display === 'none';
+        var isHidden = listEl.classList.contains('hidden') || listEl.style.display === 'none' || window.getComputedStyle(listEl).display === 'none' || listEl.offsetHeight < 5;
         listEl.classList.toggle('hidden', !isHidden);
         listEl.style.setProperty('display', isHidden ? 'block' : 'none', 'important');
-        var arrow = tierToggleBtn.querySelector('.acc-arrow');
-        if (arrow) arrow.textContent = isHidden ? '▼' : '▶';
+        var arrow = tierToggleBtn.querySelector('.acc-arrow') || tierToggleBtn.lastElementChild;
+        if (arrow && arrow.children.length === 0) arrow.textContent = isHidden ? '▼' : '▶';
       }
       return;
     }
@@ -287,14 +298,17 @@
       var cleanNum = rawId.replace(/[^0-9]/g, '');
       var intNum = parseInt(cleanNum, 10);
       var normNum = isNaN(intNum) ? cleanNum : String(intNum);
+      var paddedNum = (intNum < 10 ? '0' : '') + intNum;
 
       var subContainer = resolveCategorySubContainer(catEl, rawId, cleanNum);
       var isCurrentlyOpen = subContainer
-        ? (!subContainer.classList.contains('hidden') && subContainer.getAttribute('data-rm-collapsed') !== 'true' && subContainer.style.display !== 'none')
+        ? (!subContainer.classList.contains('hidden') && subContainer.getAttribute('data-rm-collapsed') !== 'true' && subContainer.style.display !== 'none' && window.getComputedStyle(subContainer).display !== 'none' && subContainer.offsetHeight > 5)
         : Boolean(openStateMap[normNum]);
 
       var nextOpen = !isCurrentlyOpen;
       openStateMap[normNum] = nextOpen;
+      openStateMap[cleanNum] = nextOpen;
+      openStateMap[paddedNum] = nextOpen;
 
       if (window.RM_CATALOG_HYDRATOR && typeof window.RM_CATALOG_HYDRATOR.applyCategoryOpenState === 'function') {
         window.RM_CATALOG_HYDRATOR.applyCategoryOpenState(catEl, rawId, cleanNum, nextOpen);
@@ -311,6 +325,16 @@
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
     touchStartTime = Date.now();
+    var m = document.getElementById('categoryModal');
+    if (m && e.target && m.contains(e.target)) {
+      var el = e.target;
+      while (el && el !== m) {
+        if (el.hasAttribute && el.hasAttribute('onclick') && (el.getAttribute('onclick') || '').indexOf('closeCatalogModal') === -1) {
+          el.removeAttribute('onclick');
+        }
+        el = el.parentElement;
+      }
+    }
   }, { capture: true, passive: true });
 
   window.addEventListener('touchend', function (e) {
@@ -318,7 +342,7 @@
     var dx = Math.abs(e.changedTouches[0].clientX - touchStartX);
     var dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
     var dt = Date.now() - touchStartTime;
-    if (dx < 28 && dy < 28 && dt < 650) {
+    if (dx < 36 && dy < 36 && dt < 1200) {
       handleDeterministicOneTap(e);
     }
   }, { capture: true, passive: false });
