@@ -11,7 +11,7 @@
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261016_v36';
+  var CACHE_VERSION = '20261016_v37';
   var isSyncingDOM = false;
   var hasRenderedCatalogOnce = false;
 
@@ -213,6 +213,7 @@
       catEl.__rmHeaderEl = headerEl;
     }
 
+    if (catEl.hasAttribute('onclick')) catEl.removeAttribute('onclick');
     if (headerEl && headerEl.hasAttribute('onclick')) {
       headerEl.removeAttribute('onclick');
     }
@@ -229,29 +230,57 @@
     }
 
     var subCards = subContainer.querySelectorAll(':scope > div');
-
-    if (headerEl && !headerEl.hasAttribute('data-rm-parent-rendered') &&
-        window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard === 'function') {
-      window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard(headerEl, normNum, isOpen, subCards.length || 3);
-      headerEl.setAttribute('data-rm-parent-rendered', '1');
-      catEl.__rmPillEl = null;
+    if (subCards.length === 0) {
+      for (var cIdx = 1; cIdx <= 3; cIdx++) {
+        var newSc = document.createElement('div');
+        newSc.className = 'p-3 rounded-xl bg-slate-900/90 border border-slate-800';
+        newSc.setAttribute('data-sub-id', paddedNum + '-' + cIdx);
+        subContainer.appendChild(newSc);
+      }
+      subCards = subContainer.querySelectorAll(':scope > div');
     }
 
-    if (isOpen && !subContainer.__rmSubsHydrated &&
-        window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard === 'function') {
+    // Prevent overwriting already-rendered Play Store cards (e.g. 33. Action Games) when #sub-g33 is appended
+    var isAlreadyPlayStoreCard = catEl.hasAttribute('data-rm-parent-rendered') ||
+      (headerEl && headerEl.hasAttribute('data-rm-parent-rendered')) ||
+      (catEl.textContent && (catEl.textContent.indexOf('Rise Verified') !== -1 || catEl.textContent.indexOf('और देखें') !== -1 || catEl.textContent.indexOf('समेटें') !== -1));
+
+    if (!isAlreadyPlayStoreCard && headerEl &&
+        window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard === 'function') {
+      window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard(headerEl, normNum, isOpen, subCards.length || 3);
+      catEl.__rmPillEl = null;
+    }
+    catEl.setAttribute('data-rm-parent-rendered', '1');
+    if (headerEl) headerEl.setAttribute('data-rm-parent-rendered', '1');
+
+    if (isOpen && !subContainer.__rmSubsHydrated) {
       subCards.forEach(function (sc, idx) {
-        if (!sc.hasAttribute('data-rm-sub-rendered')) {
-          window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, normNum, paddedNum + '-' + (idx + 1));
-          sc.setAttribute('data-rm-sub-rendered', paddedNum + '-' + (idx + 1));
+        var subCode = paddedNum + '-' + (idx + 1);
+        if (!sc.hasAttribute('data-rm-sub-rendered') &&
+            window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard === 'function') {
+          try { window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, normNum, subCode); } catch (e) {}
+          sc.setAttribute('data-rm-sub-rendered', subCode);
+        }
+        if (!sc.innerHTML || sc.innerHTML.trim() === '') {
+          var matrix = window.RM_CANONICAL_SUB_MATRIX || {};
+          var entry = matrix[subCode] || {};
+          var sTitle = entry.title || ('सेवा व गेमिंग विकल्प ' + subCode);
+          var sSub = entry.hindiTitle || 'Rise Mitra सत्यापित सेवा व तत्काल सहायता';
+          sc.innerHTML = '<div class="flex items-center justify-between"><span class="text-xs font-bold text-emerald-400">' + subCode + '</span><span class="text-xs text-amber-400">★ 4.9</span></div>' +
+                         '<h4 class="font-bold text-white text-sm mt-1">' + sTitle + '</h4>' +
+                         '<p class="text-xs text-slate-400 mt-0.5">' + sSub + '</p>' +
+                         '<div class="mt-2 inline-block px-3 py-1 rounded-lg bg-emerald-950/80 border border-emerald-700/60 text-emerald-300 text-xs font-bold rm-service-chip">खोलें ›</div>';
+          sc.setAttribute('data-rm-sub-rendered', subCode);
         }
       });
       subContainer.__rmSubsHydrated = true;
     }
 
-    // Update pill text directly ("और देखें ▼" <-> "समेटें ▲") in 0ms using O(1) cached reference
+    // Update pill text directly ("और देखें ▼" <-> "समेटें ▲") across full catEl outside subContainer
     var pill = catEl.__rmPillEl;
-    if (!pill || !catEl.contains(pill)) {
-      var pills = headerEl ? headerEl.querySelectorAll('button, span, div') : catEl.querySelectorAll('button, span, div');
+    if (!pill || !catEl.contains(pill) || subContainer.contains(pill)) {
+      pill = null;
+      var pills = catEl.querySelectorAll('button, span, div');
       for (var i = 0; i < pills.length; i++) {
         var p = pills[i];
         if (!subContainer.contains(p) && p.children.length === 0 && p.textContent) {
@@ -265,6 +294,7 @@
       }
     }
     if (pill) {
+      if (pill.hasAttribute('onclick')) pill.removeAttribute('onclick');
       pill.textContent = isOpen ? 'समेटें ▲' : 'और देखें ▼';
     }
     catEl.__rmHydratedOpen = isOpen;
