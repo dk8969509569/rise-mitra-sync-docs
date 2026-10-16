@@ -2,7 +2,7 @@
  * RISE MITRA — PART 1: MODULAR CATALOG HYDRATOR, DISPATCHERS & CACHE SENTINEL
  * MODULE        : Decoupled CSS Lock, Catalog Sync, Global Modal Dispatchers & SIVME Loader
  * GOVERNANCE    : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
- * REPO TARGET   : public/js/one-tap-catalog-hydrator.js (Split from one-tap-shell-bridge.js v26)
+ * REPO TARGET   : public/js/one-tap-catalog-hydrator.js (Split from one-tap-shell-bridge.js v26/v27)
  * DUAL-FOLDER REFS:
  *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
  *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
@@ -11,7 +11,7 @@
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261016_v27';
+  var CACHE_VERSION = '20261016_v30';
   var isSyncingDOM = false;
 
   // Shared state across Part 1 (Hydrator) and Part 2 (1-Tap Bridge)
@@ -29,7 +29,7 @@
     (document.head || document.documentElement).appendChild(s);
   })();
 
-  // 1. AUTO-PURGE STALE SIVME FLAGS & STALE CACHE ON NORMAL PUBLIC LAUNCH
+  // 1. AUTO-PURGE STALE SIVME FLAGS, STALE VISIBILITY LOCKS & STALE CACHE ON NORMAL PUBLIC LAUNCH
   (function purgeStaleState() {
     var urlParams = new URLSearchParams(window.location.search);
     var isOwnerLaunch = urlParams.get('sivme') === 'owner' ||
@@ -40,6 +40,8 @@
         localStorage.removeItem('sivme_active');
         localStorage.removeItem('sivme_mode');
         localStorage.removeItem('rm_sivme_state');
+        localStorage.removeItem('rm_active_categories_v1');
+        localStorage.removeItem('rm_sovereign_visibility_registry_v1');
         sessionStorage.removeItem('sivme_active');
       } catch (e) {}
     }
@@ -113,21 +115,117 @@
     }
   }
 
-  // Helper: Resolve sub-container across all 10 ID formats (sub-c01, sub-c1, sub-g34, etc.)
+  // Helper: Resolve sub-container across all 10 ID formats + sibling check + auto-create fallback for Games 33-50
   function resolveCategorySubContainer(catEl, rawId, cleanNum) {
     var intNum = parseInt(cleanNum, 10);
     var paddedNum = (intNum < 10 ? '0' : '') + intNum;
     var normNum = isNaN(intNum) ? cleanNum : String(intNum);
-    return document.getElementById('sub-c' + cleanNum) ||
-           document.getElementById('sub-c' + paddedNum) ||
-           document.getElementById('sub-c' + normNum) ||
-           document.getElementById('sub-g' + cleanNum) ||
-           document.getElementById('sub-g' + paddedNum) ||
-           document.getElementById('sub-g' + normNum) ||
-           document.getElementById('sub-' + rawId) ||
-           document.getElementById('sub-' + cleanNum) ||
-           document.getElementById('sub-' + paddedNum) ||
-           (catEl ? catEl.querySelector('[id^="sub-"]') : null);
+    var byId = document.getElementById('sub-c' + cleanNum) ||
+               document.getElementById('sub-c' + paddedNum) ||
+               document.getElementById('sub-c' + normNum) ||
+               document.getElementById('sub-g' + cleanNum) ||
+               document.getElementById('sub-g' + paddedNum) ||
+               document.getElementById('sub-g' + normNum) ||
+               document.getElementById('sub-' + rawId) ||
+               document.getElementById('sub-' + cleanNum) ||
+               document.getElementById('sub-' + paddedNum);
+    if (byId) return byId;
+
+    if (catEl) {
+      var inside = catEl.querySelector('[id^="sub-"]');
+      if (inside) return inside;
+      var nextSib = catEl.nextElementSibling;
+      if (nextSib && nextSib.id && nextSib.id.indexOf('sub-') === 0) return nextSib;
+      if (catEl.children.length > 1 && catEl.children[1].tagName === 'DIV') return catEl.children[1];
+
+      // Auto-build missing sub-container (e.g., 33. Action Games) so 1-Tap NEVER returns null
+      var created = document.createElement('div');
+      created.id = (intNum >= 33 ? 'sub-g' : 'sub-c') + paddedNum;
+      created.className = 'hidden space-y-2 mt-3 pt-2 border-t border-slate-800/80';
+      created.setAttribute('data-rm-collapsed', 'true');
+      for (var k = 1; k <= 3; k++) {
+        var sc = document.createElement('div');
+        sc.className = 'p-3 rounded-xl bg-slate-900/90 border border-slate-800';
+        sc.setAttribute('data-sub-id', paddedNum + '-' + k);
+        created.appendChild(sc);
+      }
+      catEl.appendChild(created);
+      return created;
+    }
+    return null;
+  }
+
+  // Helper: Lock legacy renderCatalogItems so 20ms/120ms timers cannot wipe out opened accordions
+  function installRenderDestructionShield() {
+    if (typeof window.renderCatalogItems === 'function' && !window.renderCatalogItems.__rmShielded) {
+      var origRender = window.renderCatalogItems;
+      var shielded = function () {
+        var t1 = document.getElementById('tier1-list');
+        var t2 = document.getElementById('tier2-list');
+        var alreadyHydrated = t1 && t2 && t1.children.length >= 10 && t2.children.length >= 1 &&
+                              t1.innerHTML.indexOf('लोड हो रहा है') === -1;
+        if (alreadyHydrated) return;
+        return origRender.apply(this, arguments);
+      };
+      shielded.__rmShielded = true;
+      window.renderCatalogItems = shielded;
+    }
+  }
+
+  // Helper: Apply open/close state directly to a single Category Card (0ms deterministic)
+  function applyCategoryOpenState(catEl, rawId, cleanNum, isOpen) {
+    if (!catEl) return false;
+    var intNum = parseInt(cleanNum, 10);
+    var normNum = isNaN(intNum) ? cleanNum : String(intNum);
+    var paddedNum = (intNum < 10 ? '0' : '') + intNum;
+    var subContainer = resolveCategorySubContainer(catEl, rawId, cleanNum);
+    if (!subContainer) return false;
+
+    var headerEl = (catEl.children && catEl.children.length > 1 && catEl.contains(subContainer))
+      ? catEl.children[0]
+      : (catEl.querySelector(':scope > div:first-child') || catEl);
+
+    if (headerEl && headerEl.hasAttribute('onclick')) {
+      headerEl.removeAttribute('onclick');
+    }
+
+    var subCards = subContainer.querySelectorAll(':scope > div');
+
+    if (isOpen) {
+      subContainer.classList.remove('hidden');
+      subContainer.setAttribute('data-rm-collapsed', 'false');
+      subContainer.style.setProperty('display', 'block', 'important');
+      if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard === 'function') {
+        subCards.forEach(function (sc, idx) {
+          sc.removeAttribute('data-rm-sub-rendered');
+          window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, normNum, paddedNum + '-' + (idx + 1));
+        });
+      }
+    } else {
+      subContainer.classList.add('hidden');
+      subContainer.setAttribute('data-rm-collapsed', 'true');
+      subContainer.style.setProperty('display', 'none', 'important');
+    }
+
+    if (headerEl && window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard === 'function') {
+      headerEl.removeAttribute('data-rm-parent-rendered');
+      window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard(headerEl, normNum, isOpen, subCards.length || 3);
+    }
+
+    // Update pill text directly ("और देखें ▼" <-> "समेटें ▲")
+    var pills = catEl.querySelectorAll('button, span, div');
+    for (var i = 0; i < pills.length; i++) {
+      var p = pills[i];
+      if (p.children.length === 0 && p.textContent) {
+        var txt = p.textContent.trim();
+        if (isOpen && (txt.indexOf('और देखें') !== -1 || txt.indexOf('विकल्प ▼') !== -1 || txt.indexOf('सेवाएं ▼') !== -1)) {
+          p.textContent = 'समेटें ▲';
+        } else if (!isOpen && (txt.indexOf('समेटें') !== -1 || txt.indexOf('छुपाएं ▲') !== -1)) {
+          p.textContent = 'और देखें ▼';
+        }
+      }
+    }
+    return true;
   }
 
   // Helper: Hydrate Play Store Cards & enforce openStateMap after legacy 20ms/120ms renders
@@ -143,47 +241,25 @@
         try { window.renderCatalogItems(); } catch (e) {}
       }
 
+      installRenderDestructionShield();
+
       if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
-        window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog();
+        try { window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog(); } catch (e) {}
       }
 
       var cats = modal.querySelectorAll('[data-cat-id]');
       cats.forEach(function (catEl) {
+        catEl.classList.remove('hidden');
+        if (catEl.style.display === 'none') catEl.style.removeProperty('display');
+
         var rawId = catEl.getAttribute('data-cat-id') || '';
         var cleanNum = rawId.replace(/[^0-9]/g, '');
         if (!cleanNum) return;
         var intNum = parseInt(cleanNum, 10);
         var normNum = isNaN(intNum) ? cleanNum : String(intNum);
-
-        var headerEl = catEl.querySelector(':scope > div:first-child');
-        if (headerEl && headerEl.hasAttribute('onclick')) {
-          headerEl.removeAttribute('onclick');
-        }
-
-        var subContainer = resolveCategorySubContainer(catEl, rawId, cleanNum);
-        if (!subContainer) return;
-
         var isOpen = Boolean(openStateMap[normNum]);
-        var subCards = subContainer.querySelectorAll(':scope > div');
 
-        if (isOpen) {
-          subContainer.classList.remove('hidden');
-          subContainer.setAttribute('data-rm-collapsed', 'false');
-          subContainer.style.setProperty('display', 'block', 'important');
-          if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard === 'function') {
-            subCards.forEach(function (sc, idx) {
-              window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, normNum, normNum + '-' + (idx + 1));
-            });
-          }
-        } else {
-          subContainer.classList.add('hidden');
-          subContainer.setAttribute('data-rm-collapsed', 'true');
-          subContainer.style.setProperty('display', 'none', 'important');
-        }
-
-        if (headerEl && window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard === 'function') {
-          window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard(headerEl, normNum, isOpen, subCards.length || 3);
-        }
+        applyCategoryOpenState(catEl, rawId, cleanNum, isOpen);
       });
     } finally {
       isSyncingDOM = false;
@@ -250,6 +326,8 @@
     normalizeFullscreenMicroAppDOM: normalizeFullscreenMicroAppDOM,
     ensureMicroAppRendered: ensureMicroAppRendered,
     resolveCategorySubContainer: resolveCategorySubContainer,
+    installRenderDestructionShield: installRenderDestructionShield,
+    applyCategoryOpenState: applyCategoryOpenState,
     syncAndHydrateCatalogCards: syncAndHydrateCatalogCards,
     launchOneTapServiceScreen: launchOneTapServiceScreen
   };
@@ -259,6 +337,7 @@
     if (!modal || typeof MutationObserver === 'undefined') return;
     var obs = new MutationObserver(function () {
       if (isSyncingDOM) return;
+      installRenderDestructionShield();
       var rawHeader = modal.querySelector('[data-cat-id] > div:first-child:not([data-rm-parent-rendered])');
       if (rawHeader) {
         syncAndHydrateCatalogCards();
