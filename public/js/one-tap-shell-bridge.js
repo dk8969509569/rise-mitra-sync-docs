@@ -19,7 +19,7 @@
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261016_v30';
+  var CACHE_VERSION = '20261016_v31';
   var lastActionTs = 0;
   var lastTouchTs = 0;
   var lastModalOpenTs = 0;
@@ -70,8 +70,13 @@
 
   // Helper: Resolve sub-container across all 10 ID formats (sub-c01, sub-c1, sub-g34, etc.) + sibling fallback
   function resolveCategorySubContainer(catEl, rawId, cleanNum) {
+    if (catEl && catEl.__rmSubBox && document.body.contains(catEl.__rmSubBox)) {
+      return catEl.__rmSubBox;
+    }
     if (window.RM_CATALOG_HYDRATOR && typeof window.RM_CATALOG_HYDRATOR.resolveCategorySubContainer === 'function') {
-      return window.RM_CATALOG_HYDRATOR.resolveCategorySubContainer(catEl, rawId, cleanNum);
+      var resolved = window.RM_CATALOG_HYDRATOR.resolveCategorySubContainer(catEl, rawId, cleanNum);
+      if (resolved && catEl) catEl.__rmSubBox = resolved;
+      return resolved;
     }
     var intNum = parseInt(cleanNum, 10);
     var paddedNum = (intNum < 10 ? '0' : '') + intNum;
@@ -85,13 +90,25 @@
                document.getElementById('sub-' + rawId) ||
                document.getElementById('sub-' + cleanNum) ||
                document.getElementById('sub-' + paddedNum);
-    if (byId) return byId;
+    if (byId) {
+      if (catEl) catEl.__rmSubBox = byId;
+      return byId;
+    }
     if (catEl) {
       var inside = catEl.querySelector('[id^="sub-"]');
-      if (inside) return inside;
+      if (inside) {
+        catEl.__rmSubBox = inside;
+        return inside;
+      }
       var nextSib = catEl.nextElementSibling;
-      if (nextSib && nextSib.id && nextSib.id.indexOf('sub-') === 0) return nextSib;
-      if (catEl.children.length > 1) return catEl.children[1];
+      if (nextSib && nextSib.id && nextSib.id.indexOf('sub-') === 0) {
+        catEl.__rmSubBox = nextSib;
+        return nextSib;
+      }
+      if (catEl.children.length > 1) {
+        catEl.__rmSubBox = catEl.children[1];
+        return catEl.children[1];
+      }
     }
     return null;
   }
@@ -162,7 +179,7 @@
     }
 
     var modal = document.getElementById('categoryModal');
-    var isModalOpen = Boolean(modal && !modal.classList.contains('hidden') && window.getComputedStyle(modal).display !== 'none');
+    var isModalOpen = Boolean(modal && !modal.classList.contains('hidden') && modal.style.display !== 'none');
 
     // PRIORITY 0.5: HOME SCREEN 1-TAP OPEN FOR "RM WORLD DIRECTORY" (#cat-menu-btn / ☰ / खोलें ›) & PLAY BANNER DISMISS
     if (!isModalOpen) {
@@ -237,7 +254,7 @@
     // Tier-1 (आजीविका) & Tier-2 (खेल व मनोरंजन) Section Header 1-Tap Toggle (Folder A/B v27 Parity)
     var tierToggleBtn = target.closest('#rm-tier1-toggle, #rm-tier2-toggle');
     if (tierToggleBtn) {
-      if (now - lastActionTs < 200) {
+      if (now - lastActionTs < 80) {
         e.stopImmediatePropagation();
         e.stopPropagation();
         if (e.cancelable) e.preventDefault();
@@ -252,7 +269,7 @@
       var listId = tierToggleBtn.id === 'rm-tier1-toggle' ? 'tier1-list' : 'tier2-list';
       var listEl = document.getElementById(listId);
       if (listEl) {
-        var isHidden = listEl.classList.contains('hidden') || window.getComputedStyle(listEl).display === 'none';
+        var isHidden = listEl.classList.contains('hidden') || listEl.style.display === 'none';
         listEl.classList.toggle('hidden', !isHidden);
         listEl.style.setProperty('display', isHidden ? 'block' : 'none', 'important');
         var arrow = tierToggleBtn.querySelector('.acc-arrow');
@@ -267,7 +284,7 @@
       var actBtn = target.closest('.rm-act-pin, .rm-act-vid, .rm-act-video');
       if (actBtn) return;
 
-      if (now - lastActionTs < 180) {
+      if (now - lastActionTs < 80) {
         e.stopImmediatePropagation();
         e.stopPropagation();
         if (e.cancelable) e.preventDefault();
@@ -301,7 +318,7 @@
     // CASE 1: 1-Tap on Parent Category Card Header or "समेटें ▲ / और देखें ▼" (Categories 01 to 50 including 33 Action Games)
     var catEl = target.closest('[data-cat-id]');
     if (catEl) {
-      if (now - lastActionTs < 180) {
+      if (now - lastActionTs < 80) {
         e.stopImmediatePropagation();
         e.stopPropagation();
         if (e.cancelable) e.preventDefault();
@@ -324,7 +341,7 @@
       if (subContainer) {
         isCurrentlyOpen = !subContainer.classList.contains('hidden') &&
                           subContainer.getAttribute('data-rm-collapsed') !== 'true' &&
-                          window.getComputedStyle(subContainer).display !== 'none';
+                          subContainer.style.display !== 'none';
       }
 
       var nextOpen = !isCurrentlyOpen;
@@ -346,12 +363,16 @@
         var headerEl = catEl.querySelector(':scope > div:first-child');
         var subCards = subContainer.querySelectorAll(':scope > div');
         if (window.RM_UNIVERSAL_CARD_ENGINE) {
-          if (headerEl && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard === 'function') {
+          if (headerEl && !headerEl.hasAttribute('data-rm-parent-rendered') && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard === 'function') {
             window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard(headerEl, normNum, !isCurrentlyOpen, subCards.length || 3);
+            headerEl.setAttribute('data-rm-parent-rendered', '1');
           }
           if (!isCurrentlyOpen && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard === 'function') {
             subCards.forEach(function (sc, idx) {
-              window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, normNum, normNum + '-' + (idx + 1));
+              if (!sc.hasAttribute('data-rm-sub-rendered')) {
+                window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, normNum, normNum + '-' + (idx + 1));
+                sc.setAttribute('data-rm-sub-rendered', normNum + '-' + (idx + 1));
+              }
             });
           }
         }
