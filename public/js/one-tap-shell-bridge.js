@@ -1,6 +1,6 @@
 /**
  * RISE MITRA — PART 2: MODULAR 1-TAP SHELL BRIDGE & DETERMINISTIC CONTROLLER (AUDITED 100% ZEL)
- * MODULE        : Decoupled 1-Tap Controller (Works with Part-1: /js/one-tap-catalog-hydrator.js)
+ * MODULE        : Decoupled 1-Tap Controller (Works with Part-1 Hydrator & Part-3 SubCard Router)
  * GOVERNANCE    : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  * REPO TARGET   : public/js/one-tap-shell-bridge.js (pre-main staging verified)
  * DUAL-FOLDER REFS:
@@ -8,8 +8,9 @@
  *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
  * ==============================================================================
  * 🔒 EXISTING MODULAR FILES LOCK (DO NOT CREATE DUPLICATE FILES):
- *   - /js/one-tap-shell-bridge.js (This File: Part-2 1-Tap Controller — ~265 Lines)
+ *   - /js/one-tap-shell-bridge.js (This File: Part-2 1-Tap Controller — ~290 Lines)
  *   - /js/one-tap-catalog-hydrator.js (Part-1 Companion: Sections 1,2,3,4,6,7 & Hydrator)
+ *   - /js/one-tap-subcard-router.js (Part-3 Companion: Priority 0, Case 2 & 32-3 DOM Repair)
  *   - /js/fullscreen-microapp-controller.js (Dedicated 15-3/15-2 & Fullscreen UI)
  *   - /js/shell-controller.js & /js/sivme-adapters/cat16-adapter.js
  *   - /js/universal-catalog/universal-card-engine.js & sub-card-renderer.js
@@ -19,7 +20,7 @@
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261016_v32';
+  var CACHE_VERSION = '20261016_v33';
   var lastActionTs = 0;
   var lastTouchTs = 0;
   var lastModalOpenTs = 0;
@@ -27,30 +28,34 @@
   var touchStartY = 0;
   var touchStartTime = 0;
 
-  // Shared persistent open state map across Part-1 & Part-2
+  // Shared persistent open state map across Part-1, Part-2 & Part-3
   var openStateMap = window.__RM_OPEN_CAT_STATE || { '15': true, '16': true };
   window.__RM_OPEN_CAT_STATE = openStateMap;
 
-  // Auto-load decoupled Fullscreen Micro-App Controller & Companion Hydrator Module (Part-1)
+  // Auto-load decoupled Fullscreen Micro-App Controller, Part-1 Hydrator & Part-3 SubCard Router
   (function ensureFullscreenControllerLoaded() {
-    if (!window.RM_FULLSCREEN_CONTROLLER && !document.getElementById('rm-fs-microapp-controller-script')) {
-      var s = document.createElement('script');
-      s.id = 'rm-fs-microapp-controller-script';
-      s.src = '/js/fullscreen-microapp-controller.js?v=' + CACHE_VERSION;
-      s.async = false;
-      (document.head || document.documentElement).appendChild(s);
-    }
-    if (!window.RM_CATALOG_HYDRATOR && !document.getElementById('rm-catalog-hydrator-script')) {
-      var h = document.createElement('script');
-      h.id = 'rm-catalog-hydrator-script';
-      h.src = '/js/one-tap-catalog-hydrator.js?v=' + CACHE_VERSION;
-      h.async = false;
-      (document.head || document.documentElement).appendChild(h);
+    var modules = [
+      { id: 'rm-fs-microapp-controller-script', src: '/js/fullscreen-microapp-controller.js' },
+      { id: 'rm-catalog-hydrator-script', src: '/js/one-tap-catalog-hydrator.js' },
+      { id: 'rm-subcard-router-script', src: '/js/one-tap-subcard-router.js' }
+    ];
+    for (var i = 0; i < modules.length; i++) {
+      if (!document.getElementById(modules[i].id)) {
+        var s = document.createElement('script');
+        s.id = modules[i].id;
+        s.src = modules[i].src + '?v=' + CACHE_VERSION;
+        s.async = false;
+        (document.head || document.documentElement).appendChild(s);
+      }
     }
   })();
 
-  // Helper: Force-close Fullscreen Viewport reliably (100% ZEL fallback)
+  // Helper: Force-close Fullscreen Viewport reliably (100% ZEL symbol & fallback preserved)
   function forceCloseFullscreenViewport() {
+    if (window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.forceCloseFullscreenViewport === 'function') {
+      window.RM_SUBCARD_ROUTER.forceCloseFullscreenViewport();
+      return;
+    }
     var fs = document.getElementById('rm-fullscreen-view');
     if (fs) {
       fs.classList.add('hidden');
@@ -61,88 +66,21 @@
     }
   }
 
-  // Helper: Zero-Hang Micro-App Hydration Guard
+  // Helper: Zero-Hang Micro-App Hydration Guard (100% ZEL symbol preserved)
   function ensureMicroAppRendered(subCode, titleText, subtitleText) {
+    if (window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.ensureMicroAppRendered === 'function') {
+      window.RM_SUBCARD_ROUTER.ensureMicroAppRendered(subCode, titleText, subtitleText);
+      return;
+    }
     if (window.RM_FULLSCREEN_CONTROLLER && typeof window.RM_FULLSCREEN_CONTROLLER.ensureMicroAppRendered === 'function') {
       window.RM_FULLSCREEN_CONTROLLER.ensureMicroAppRendered(subCode, titleText, subtitleText);
     }
   }
 
-  // Helper: Repair Fullscreen Sub-Service DOM (Fixes 32-3 bullet title, Crop Damage text & empty select dropdown)
+  // Helper: Repair Fullscreen Sub-Service DOM (Delegated to Part-3 one-tap-subcard-router.js — 100% ZEL symbol preserved)
   function repairFullscreenSubServiceDOM(subCard, subCode) {
-    var fs = document.getElementById('rm-fullscreen-view');
-    if (!fs || fs.classList.contains('hidden')) return;
-
-    var cleanTitle = '';
-    var cleanSub = '';
-    var optionsList = [];
-
-    if (subCard) {
-      var hEl = subCard.querySelector('h3, h4, .font-black, .font-bold');
-      if (hEl && hEl.textContent) {
-        cleanTitle = hEl.textContent.replace(/^\s*\d{1,2}\s*-\s*\d\s*\.?\s*/, '').trim();
-      }
-      var chipNodes = subCard.querySelectorAll('.rm-service-chip, [style*="border-radius"]');
-      for (var i = 0; i < chipNodes.length; i++) {
-        var ct = (chipNodes[i].textContent || '').trim();
-        if (ct.length > 5 && ct.length < 85 && ct.indexOf('✓') === -1 && ct.indexOf('4.') === -1 &&
-            ct.indexOf('पिन') === -1 && ct.indexOf('वीडियो') === -1 && ct.indexOf('देखें') === -1) {
-          optionsList.push(ct);
-        }
-      }
-    }
-
-    var matrix = window.RM_CANONICAL_SUB_MATRIX || {};
-    var entry = matrix[subCode] || null;
-    if (entry) {
-      if (entry.title) cleanTitle = entry.title;
-      if (entry.hindiTitle) cleanSub = entry.hindiTitle;
-      if (Array.isArray(entry.services) && entry.services.length > 0) optionsList = entry.services;
-    }
-
-    var fsTitle = document.getElementById('fs-module-title');
-    if (fsTitle && cleanTitle) {
-      fsTitle.textContent = subCode + ' • ' + cleanTitle;
-    }
-
-    var container = document.getElementById('rm-module-container');
-    if (!container) return;
-
-    var innerHeading = container.querySelector('h2, h3, .text-xl, .text-lg');
-    if (innerHeading && cleanTitle && (innerHeading.textContent.length > 42 || innerHeading.textContent.indexOf('बुजुर्गों') !== -1)) {
-      innerHeading.textContent = cleanTitle;
-    }
-
-    var allEls = container.querySelectorAll('p, div, span');
-    for (var j = 0; j < allEls.length; j++) {
-      var el = allEls[j];
-      if (el.children.length === 0 && el.textContent && el.textContent.indexOf('Crop Damage Insurance Claim') !== -1 && subCode.indexOf('01-') !== 0) {
-        el.textContent = cleanSub || (cleanTitle ? (cleanTitle + ' • सत्यापित नागरिक सेवा व तत्काल सहायता') : 'Rise Mitra सत्यापित नागरिक सेवा पोर्टल');
-      }
-    }
-
-    var selectEl = container.querySelector('select');
-    if (selectEl) {
-      selectEl.style.setProperty('background-color', '#0f172a', 'important');
-      selectEl.style.setProperty('color', '#f8fafc', 'important');
-      selectEl.style.setProperty('border', '1px solid #334155', 'important');
-      selectEl.style.setProperty('padding', '10px 12px', 'important');
-      if (selectEl.options.length === 0 || (selectEl.options.length === 1 && !selectEl.options[0].textContent.trim())) {
-        selectEl.innerHTML = '';
-        var finalOpts = optionsList.length > 0 ? optionsList : [
-          (cleanTitle || subCode) + ' — तत्काल ऑनलाइन सेवा',
-          (cleanTitle || subCode) + ' — नज़दीकी केंद्र व विशेषज्ञ सहायता',
-          (cleanTitle || subCode) + ' — 24x7 आपातकालीन सहायता'
-        ];
-        for (var k = 0; k < finalOpts.length; k++) {
-          var opt = document.createElement('option');
-          opt.value = finalOpts[k];
-          opt.textContent = finalOpts[k];
-          opt.style.backgroundColor = '#0f172a';
-          opt.style.color = '#f8fafc';
-          selectEl.appendChild(opt);
-        }
-      }
+    if (window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.repairFullscreenSubServiceDOM === 'function') {
+      window.RM_SUBCARD_ROUTER.repairFullscreenSubServiceDOM(subCard, subCode);
     }
   }
 
@@ -224,7 +162,7 @@
   function handleDeterministicOneTap(e) {
     var target = e.target && e.target.nodeType === 1 ? e.target : (e.target ? e.target.parentElement : null);
     if (!target || typeof target.closest !== 'function') return;
-    if (target.closest('input, textarea, select, option, .sivme-notch-pill')) return;
+    if (target.closest('input, textarea, select, option, .sivme-notch-pill, #sivme-hud, #sivme-drawer')) return;
 
     var now = Date.now();
 
@@ -236,32 +174,40 @@
     }
 
     // PRIORITY 0: Instant 1-Tap Close on Fullscreen Top-Right ✕, Top-Left ‹ वापस, or ‹ कैटलॉग पर वापस
-    var fsCloseBtn = target.closest('#rm-fullscreen-view [onclick*="closeFullscreenModule"], #rm-fullscreen-view button, #rm-fullscreen-view a, #fs-back-btn, #fs-close-btn');
-    if (fsCloseBtn && document.getElementById('rm-fullscreen-view') && !document.getElementById('rm-fullscreen-view').classList.contains('hidden')) {
-      var btnTxt = (fsCloseBtn.textContent || '').trim();
-      var isBack = btnTxt.indexOf('वापस') !== -1 || fsCloseBtn.id === 'fs-back-btn';
-      var isCloseX = btnTxt === '✕' || btnTxt === '×' || btnTxt === 'X' || fsCloseBtn.id === 'fs-close-btn';
-      var hasCloseAttr = (fsCloseBtn.getAttribute('onclick') || '').indexOf('closeFullscreenModule') !== -1;
-
-      if (isBack || isCloseX || hasCloseAttr) {
+    if (window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.handleFullscreenCloseOneTap === 'function') {
+      if (window.RM_SUBCARD_ROUTER.handleFullscreenCloseOneTap(e, target)) {
         if (e.type === 'touchend') lastTouchTs = now;
         lastActionTs = now;
-        e.stopImmediatePropagation();
-        e.stopPropagation();
-        if (e.cancelable) e.preventDefault();
-        forceCloseFullscreenViewport();
-        if (isBack && !isCloseX) {
-          var catModal = document.getElementById('categoryModal');
-          if (catModal) {
-            catModal.classList.remove('hidden');
-            catModal.style.setProperty('display', 'flex', 'important');
-          }
-        } else if (isCloseX) {
-          lastModalOpenTs = 0;
-          window.__RM_LAST_MODAL_OPEN_TS = 0;
-          window.closeCatalogModal();
-        }
         return;
+      }
+    } else {
+      var fsCloseBtn = target.closest('#rm-fullscreen-view [onclick*="closeFullscreenModule"], #rm-fullscreen-view button, #rm-fullscreen-view a, #fs-back-btn, #fs-close-btn');
+      if (fsCloseBtn && document.getElementById('rm-fullscreen-view') && !document.getElementById('rm-fullscreen-view').classList.contains('hidden')) {
+        var btnTxt = (fsCloseBtn.textContent || '').trim();
+        var isBack = btnTxt.indexOf('वापस') !== -1 || fsCloseBtn.id === 'fs-back-btn';
+        var isCloseX = btnTxt === '✕' || btnTxt === '×' || btnTxt === 'X' || fsCloseBtn.id === 'fs-close-btn';
+        var hasCloseAttr = (fsCloseBtn.getAttribute('onclick') || '').indexOf('closeFullscreenModule') !== -1;
+
+        if (isBack || isCloseX || hasCloseAttr) {
+          if (e.type === 'touchend') lastTouchTs = now;
+          lastActionTs = now;
+          e.stopImmediatePropagation();
+          e.stopPropagation();
+          if (e.cancelable) e.preventDefault();
+          forceCloseFullscreenViewport();
+          if (isBack && !isCloseX) {
+            var catModal = document.getElementById('categoryModal');
+            if (catModal) {
+              catModal.classList.remove('hidden');
+              catModal.style.setProperty('display', 'flex', 'important');
+            }
+          } else if (isCloseX) {
+            lastModalOpenTs = 0;
+            window.__RM_LAST_MODAL_OPEN_TS = 0;
+            window.closeCatalogModal();
+          }
+          return;
+        }
       }
     }
 
@@ -376,7 +322,7 @@
       return;
     }
 
-    // CASE 2 FIRST: 1-Tap inside Sub-Category Card (Delegated to RM_FULLSCREEN_CONTROLLER.routeSubCardOneTap + Zero-Hang Guard — 100% ZEL)
+    // CASE 2 FIRST: 1-Tap inside Sub-Category Card (Delegated to Part-3 RM_SUBCARD_ROUTER with inline fallback — 100% ZEL)
     var subWrapper = target.closest('[id^="sub-"]');
     if (subWrapper) {
       var actBtn = target.closest('.rm-act-pin, .rm-act-vid, .rm-act-video');
@@ -391,13 +337,17 @@
       if (e.type === 'touchend') lastTouchTs = now;
       lastActionTs = now;
 
+      if (window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.handleSubCardOneTap === 'function') {
+        window.RM_SUBCARD_ROUTER.handleSubCardOneTap(e, target);
+        return;
+      }
+
       var subCard = target.closest('[id^="sub-"] > div');
       if (!subCard) return;
 
       var rawRenderedAttr = (subCard.getAttribute('data-rm-sub-rendered') || '').split(':')[0];
       var subIdMatch = (subCard.textContent || '').match(/\b(\d{1,2}-\d)\b/);
       var subCode = subIdMatch ? subIdMatch[1] : (rawRenderedAttr || '15-3');
-
       var safeHeadingTarget = subCard.querySelector('h3, h4, .font-black, .font-bold') || subCard;
 
       if (window.RM_FULLSCREEN_CONTROLLER && typeof window.RM_FULLSCREEN_CONTROLLER.routeSubCardOneTap === 'function') {
@@ -408,7 +358,6 @@
         if (e.cancelable) e.preventDefault();
       }
 
-      // Guarantee 0ms render if #rm-module-container is stuck on "मॉड्यूल लोड हो रहा है..."
       ensureMicroAppRendered(subCode);
       repairFullscreenSubServiceDOM(subCard, subCode);
       setTimeout(function () {
