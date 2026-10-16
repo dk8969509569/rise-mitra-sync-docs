@@ -11,7 +11,7 @@
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261016_v30';
+  var CACHE_VERSION = '20261016_v31';
   var isSyncingDOM = false;
 
   // Shared state across Part 1 (Hydrator) and Part 2 (1-Tap Bridge)
@@ -66,6 +66,7 @@
       'button, a, [onclick], .tactile-25d, #categoryModal [data-cat-id], #categoryModal [id^="sub-"] > div, .rm-service-chip {',
       '  touch-action: manipulation !important; -webkit-tap-highlight-color: transparent !important;',
       '  cursor: pointer !important; user-select: none !important; -webkit-user-select: none !important;',
+      '  transition: none !important;',
       '}',
       '.tactile-25d:active { transform: none !important; }',
       '#categoryModal.hidden, #rm-fullscreen-view.hidden, #playStoreInstallBanner.hidden, #categoryModal .hidden, #categoryModal [id^="sub-"].hidden, #categoryModal [id^="sub-"][data-rm-collapsed="true"] { display: none !important; }',
@@ -117,6 +118,9 @@
 
   // Helper: Resolve sub-container across all 10 ID formats + sibling check + auto-create fallback for Games 33-50
   function resolveCategorySubContainer(catEl, rawId, cleanNum) {
+    if (catEl && catEl.__rmSubBox && document.body.contains(catEl.__rmSubBox)) {
+      return catEl.__rmSubBox;
+    }
     var intNum = parseInt(cleanNum, 10);
     var paddedNum = (intNum < 10 ? '0' : '') + intNum;
     var normNum = isNaN(intNum) ? cleanNum : String(intNum);
@@ -129,14 +133,26 @@
                document.getElementById('sub-' + rawId) ||
                document.getElementById('sub-' + cleanNum) ||
                document.getElementById('sub-' + paddedNum);
-    if (byId) return byId;
+    if (byId) {
+      if (catEl) catEl.__rmSubBox = byId;
+      return byId;
+    }
 
     if (catEl) {
       var inside = catEl.querySelector('[id^="sub-"]');
-      if (inside) return inside;
+      if (inside) {
+        catEl.__rmSubBox = inside;
+        return inside;
+      }
       var nextSib = catEl.nextElementSibling;
-      if (nextSib && nextSib.id && nextSib.id.indexOf('sub-') === 0) return nextSib;
-      if (catEl.children.length > 1 && catEl.children[1].tagName === 'DIV') return catEl.children[1];
+      if (nextSib && nextSib.id && nextSib.id.indexOf('sub-') === 0) {
+        catEl.__rmSubBox = nextSib;
+        return nextSib;
+      }
+      if (catEl.children.length > 1 && catEl.children[1].tagName === 'DIV') {
+        catEl.__rmSubBox = catEl.children[1];
+        return catEl.children[1];
+      }
 
       // Auto-build missing sub-container (e.g., 33. Action Games) so 1-Tap NEVER returns null
       var created = document.createElement('div');
@@ -150,12 +166,13 @@
         created.appendChild(sc);
       }
       catEl.appendChild(created);
+      catEl.__rmSubBox = created;
       return created;
     }
     return null;
   }
 
-  // Helper: Lock legacy renderCatalogItems so 20ms/120ms timers cannot wipe out opened accordions
+  // Helper: Lock legacy renderCatalogItems & sweepCatalog so background timers cannot cause lag or wipe accordions
   function installRenderDestructionShield() {
     if (typeof window.renderCatalogItems === 'function' && !window.renderCatalogItems.__rmShielded) {
       var origRender = window.renderCatalogItems;
@@ -172,7 +189,7 @@
     }
   }
 
-  // Helper: Apply open/close state directly to a single Category Card (0ms deterministic)
+  // Helper: Apply open/close state directly to a single Category Card (0ms instant — no DOM destruction loop)
   function applyCategoryOpenState(catEl, rawId, cleanNum, isOpen) {
     if (!catEl) return false;
     var intNum = parseInt(cleanNum, 10);
@@ -191,14 +208,22 @@
 
     var subCards = subContainer.querySelectorAll(':scope > div');
 
+    if (headerEl && !headerEl.hasAttribute('data-rm-parent-rendered') &&
+        window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard === 'function') {
+      window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard(headerEl, normNum, isOpen, subCards.length || 3);
+      headerEl.setAttribute('data-rm-parent-rendered', '1');
+    }
+
     if (isOpen) {
       subContainer.classList.remove('hidden');
       subContainer.setAttribute('data-rm-collapsed', 'false');
       subContainer.style.setProperty('display', 'block', 'important');
       if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard === 'function') {
         subCards.forEach(function (sc, idx) {
-          sc.removeAttribute('data-rm-sub-rendered');
-          window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, normNum, paddedNum + '-' + (idx + 1));
+          if (!sc.hasAttribute('data-rm-sub-rendered')) {
+            window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, normNum, paddedNum + '-' + (idx + 1));
+            sc.setAttribute('data-rm-sub-rendered', paddedNum + '-' + (idx + 1));
+          }
         });
       }
     } else {
@@ -207,20 +232,15 @@
       subContainer.style.setProperty('display', 'none', 'important');
     }
 
-    if (headerEl && window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard === 'function') {
-      headerEl.removeAttribute('data-rm-parent-rendered');
-      window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard(headerEl, normNum, isOpen, subCards.length || 3);
-    }
-
-    // Update pill text directly ("और देखें ▼" <-> "समेटें ▲")
-    var pills = catEl.querySelectorAll('button, span, div');
+    // Update pill text directly ("और देखें ▼" <-> "समेटें ▲") in 0ms without rebuilding DOM
+    var pills = headerEl ? headerEl.querySelectorAll('button, span, div') : catEl.querySelectorAll('button, span, div');
     for (var i = 0; i < pills.length; i++) {
       var p = pills[i];
       if (p.children.length === 0 && p.textContent) {
         var txt = p.textContent.trim();
-        if (isOpen && (txt.indexOf('और देखें') !== -1 || txt.indexOf('विकल्प ▼') !== -1 || txt.indexOf('सेवाएं ▼') !== -1)) {
+        if (isOpen && (txt.indexOf('और देखें') !== -1 || txt.indexOf('विकल्प') !== -1 || txt.indexOf('सेवाएं') !== -1 || txt.indexOf('▼') !== -1)) {
           p.textContent = 'समेटें ▲';
-        } else if (!isOpen && (txt.indexOf('समेटें') !== -1 || txt.indexOf('छुपाएं ▲') !== -1)) {
+        } else if (!isOpen && (txt.indexOf('समेटें') !== -1 || txt.indexOf('छुपाएं') !== -1 || txt.indexOf('▲') !== -1)) {
           p.textContent = 'और देखें ▼';
         }
       }
@@ -243,13 +263,14 @@
 
       installRenderDestructionShield();
 
-      if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
+      var needsInitialSweep = Boolean(modal.querySelector('[data-cat-id] > div:first-child:not([data-rm-parent-rendered])'));
+      if (needsInitialSweep && window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
         try { window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog(); } catch (e) {}
       }
 
       var cats = modal.querySelectorAll('[data-cat-id]');
       cats.forEach(function (catEl) {
-        catEl.classList.remove('hidden');
+        if (catEl.classList.contains('hidden')) catEl.classList.remove('hidden');
         if (catEl.style.display === 'none') catEl.style.removeProperty('display');
 
         var rawId = catEl.getAttribute('data-cat-id') || '';
