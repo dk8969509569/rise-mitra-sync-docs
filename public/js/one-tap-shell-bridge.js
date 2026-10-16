@@ -8,7 +8,7 @@
  *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
  * ==============================================================================
  * 🔒 EXISTING MODULAR FILES LOCK (DO NOT CREATE DUPLICATE FILES):
- *   - /js/one-tap-shell-bridge.js (This File: Part-2 1-Tap Controller — ~235 Lines)
+ *   - /js/one-tap-shell-bridge.js (This File: Part-2 1-Tap Controller — ~265 Lines)
  *   - /js/one-tap-catalog-hydrator.js (Part-1 Companion: Sections 1,2,3,4,6,7 & Hydrator)
  *   - /js/fullscreen-microapp-controller.js (Dedicated 15-3/15-2 & Fullscreen UI)
  *   - /js/shell-controller.js & /js/sivme-adapters/cat16-adapter.js
@@ -19,7 +19,7 @@
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261016_v28';
+  var CACHE_VERSION = '20261016_v30';
   var lastActionTs = 0;
   var lastTouchTs = 0;
   var lastModalOpenTs = 0;
@@ -68,7 +68,7 @@
     }
   }
 
-  // Helper: Resolve sub-container across all 10 ID formats (sub-c01, sub-c1, sub-g34, etc.)
+  // Helper: Resolve sub-container across all 10 ID formats (sub-c01, sub-c1, sub-g34, etc.) + sibling fallback
   function resolveCategorySubContainer(catEl, rawId, cleanNum) {
     if (window.RM_CATALOG_HYDRATOR && typeof window.RM_CATALOG_HYDRATOR.resolveCategorySubContainer === 'function') {
       return window.RM_CATALOG_HYDRATOR.resolveCategorySubContainer(catEl, rawId, cleanNum);
@@ -76,19 +76,27 @@
     var intNum = parseInt(cleanNum, 10);
     var paddedNum = (intNum < 10 ? '0' : '') + intNum;
     var normNum = isNaN(intNum) ? cleanNum : String(intNum);
-    return document.getElementById('sub-c' + cleanNum) ||
-           document.getElementById('sub-c' + paddedNum) ||
-           document.getElementById('sub-c' + normNum) ||
-           document.getElementById('sub-g' + cleanNum) ||
-           document.getElementById('sub-g' + paddedNum) ||
-           document.getElementById('sub-g' + normNum) ||
-           document.getElementById('sub-' + rawId) ||
-           document.getElementById('sub-' + cleanNum) ||
-           document.getElementById('sub-' + paddedNum) ||
-           (catEl ? catEl.querySelector('[id^="sub-"]') : null);
+    var byId = document.getElementById('sub-c' + cleanNum) ||
+               document.getElementById('sub-c' + paddedNum) ||
+               document.getElementById('sub-c' + normNum) ||
+               document.getElementById('sub-g' + cleanNum) ||
+               document.getElementById('sub-g' + paddedNum) ||
+               document.getElementById('sub-g' + normNum) ||
+               document.getElementById('sub-' + rawId) ||
+               document.getElementById('sub-' + cleanNum) ||
+               document.getElementById('sub-' + paddedNum);
+    if (byId) return byId;
+    if (catEl) {
+      var inside = catEl.querySelector('[id^="sub-"]');
+      if (inside) return inside;
+      var nextSib = catEl.nextElementSibling;
+      if (nextSib && nextSib.id && nextSib.id.indexOf('sub-') === 0) return nextSib;
+      if (catEl.children.length > 1) return catEl.children[1];
+    }
+    return null;
   }
 
-  // Early-Tap Safe Fallbacks before Part-1 script finishes loading
+  // Early-Tap Safe Fallbacks before Part-1 script finishes loading (100% ZEL Preserved)
   if (typeof window.openCatalogModal !== 'function') {
     window.openCatalogModal = function () {
       var m = document.getElementById('categoryModal');
@@ -226,67 +234,34 @@
       return;
     }
 
-    if (target.closest('#rm-tier1-toggle, #rm-tier2-toggle')) return;
-
-    var catEl = target.closest('[data-cat-id]');
-
-    // CASE 1: 1-Tap on Parent Category Card Header or "समेटें ▲ / और देखें ▼"
-    if (catEl) {
-      var rawId = catEl.getAttribute('data-cat-id') || '';
-      var cleanNum = rawId.replace(/[^0-9]/g, '');
-      var intNum = parseInt(cleanNum, 10);
-      var normNum = isNaN(intNum) ? cleanNum : String(intNum);
-
-      var subContainer = resolveCategorySubContainer(catEl, rawId, cleanNum);
-
-      if (subContainer && !subContainer.contains(target)) {
-        if (now - lastActionTs < 180) {
-          e.stopImmediatePropagation();
-          e.stopPropagation();
-          if (e.cancelable) e.preventDefault();
-          return;
-        }
-        if (e.type === 'touchend') lastTouchTs = now;
-        lastActionTs = now;
-
+    // Tier-1 (आजीविका) & Tier-2 (खेल व मनोरंजन) Section Header 1-Tap Toggle (Folder A/B v27 Parity)
+    var tierToggleBtn = target.closest('#rm-tier1-toggle, #rm-tier2-toggle');
+    if (tierToggleBtn) {
+      if (now - lastActionTs < 200) {
         e.stopImmediatePropagation();
         e.stopPropagation();
         if (e.cancelable) e.preventDefault();
-
-        var isCurrentlyOpen = !subContainer.classList.contains('hidden') &&
-                              subContainer.getAttribute('data-rm-collapsed') !== 'true' &&
-                              window.getComputedStyle(subContainer).display !== 'none';
-
-        var nextOpen = !isCurrentlyOpen;
-        openStateMap[normNum] = nextOpen;
-
-        if (isCurrentlyOpen) {
-          subContainer.classList.add('hidden');
-          subContainer.setAttribute('data-rm-collapsed', 'true');
-          subContainer.style.setProperty('display', 'none', 'important');
-        } else {
-          subContainer.classList.remove('hidden');
-          subContainer.setAttribute('data-rm-collapsed', 'false');
-          subContainer.style.setProperty('display', 'block', 'important');
-        }
-
-        var headerEl = catEl.querySelector(':scope > div:first-child');
-        var subCards = subContainer.querySelectorAll(':scope > div');
-        if (window.RM_UNIVERSAL_CARD_ENGINE) {
-          if (headerEl && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard === 'function') {
-            window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard(headerEl, normNum, !isCurrentlyOpen, subCards.length || 3);
-          }
-          if (!isCurrentlyOpen && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard === 'function') {
-            subCards.forEach(function (sc, idx) {
-              window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, normNum, normNum + '-' + (idx + 1));
-            });
-          }
-        }
         return;
       }
+      if (e.type === 'touchend') lastTouchTs = now;
+      lastActionTs = now;
+      e.stopImmediatePropagation();
+      e.stopPropagation();
+      if (e.cancelable) e.preventDefault();
+
+      var listId = tierToggleBtn.id === 'rm-tier1-toggle' ? 'tier1-list' : 'tier2-list';
+      var listEl = document.getElementById(listId);
+      if (listEl) {
+        var isHidden = listEl.classList.contains('hidden') || window.getComputedStyle(listEl).display === 'none';
+        listEl.classList.toggle('hidden', !isHidden);
+        listEl.style.setProperty('display', isHidden ? 'block' : 'none', 'important');
+        var arrow = tierToggleBtn.querySelector('.acc-arrow');
+        if (arrow) arrow.textContent = isHidden ? '▼' : '▶';
+      }
+      return;
     }
 
-    // CASE 2: 1-Tap inside Sub-Category Card (Delegated to RM_FULLSCREEN_CONTROLLER.routeSubCardOneTap + Zero-Hang Guard — 100% ZEL)
+    // CASE 2 FIRST: 1-Tap inside Sub-Category Card (Delegated to RM_FULLSCREEN_CONTROLLER.routeSubCardOneTap + Zero-Hang Guard — 100% ZEL)
     var subWrapper = target.closest('[id^="sub-"]');
     if (subWrapper) {
       var actBtn = target.closest('.rm-act-pin, .rm-act-vid, .rm-act-video');
@@ -320,6 +295,68 @@
       ensureMicroAppRendered(subCode);
       setTimeout(function () { ensureMicroAppRendered(subCode); }, 25);
       setTimeout(function () { ensureMicroAppRendered(subCode); }, 80);
+      return;
+    }
+
+    // CASE 1: 1-Tap on Parent Category Card Header or "समेटें ▲ / और देखें ▼" (Categories 01 to 50 including 33 Action Games)
+    var catEl = target.closest('[data-cat-id]');
+    if (catEl) {
+      if (now - lastActionTs < 180) {
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        if (e.cancelable) e.preventDefault();
+        return;
+      }
+      if (e.type === 'touchend') lastTouchTs = now;
+      lastActionTs = now;
+
+      e.stopImmediatePropagation();
+      e.stopPropagation();
+      if (e.cancelable) e.preventDefault();
+
+      var rawId = catEl.getAttribute('data-cat-id') || '';
+      var cleanNum = rawId.replace(/[^0-9]/g, '');
+      var intNum = parseInt(cleanNum, 10);
+      var normNum = isNaN(intNum) ? cleanNum : String(intNum);
+
+      var subContainer = resolveCategorySubContainer(catEl, rawId, cleanNum);
+      var isCurrentlyOpen = Boolean(openStateMap[normNum]);
+      if (subContainer) {
+        isCurrentlyOpen = !subContainer.classList.contains('hidden') &&
+                          subContainer.getAttribute('data-rm-collapsed') !== 'true' &&
+                          window.getComputedStyle(subContainer).display !== 'none';
+      }
+
+      var nextOpen = !isCurrentlyOpen;
+      openStateMap[normNum] = nextOpen;
+
+      if (window.RM_CATALOG_HYDRATOR && typeof window.RM_CATALOG_HYDRATOR.applyCategoryOpenState === 'function') {
+        window.RM_CATALOG_HYDRATOR.applyCategoryOpenState(catEl, rawId, cleanNum, nextOpen);
+      } else if (subContainer) {
+        if (isCurrentlyOpen) {
+          subContainer.classList.add('hidden');
+          subContainer.setAttribute('data-rm-collapsed', 'true');
+          subContainer.style.setProperty('display', 'none', 'important');
+        } else {
+          subContainer.classList.remove('hidden');
+          subContainer.setAttribute('data-rm-collapsed', 'false');
+          subContainer.style.setProperty('display', 'block', 'important');
+        }
+
+        var headerEl = catEl.querySelector(':scope > div:first-child');
+        var subCards = subContainer.querySelectorAll(':scope > div');
+        if (window.RM_UNIVERSAL_CARD_ENGINE) {
+          if (headerEl && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard === 'function') {
+            window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard(headerEl, normNum, !isCurrentlyOpen, subCards.length || 3);
+          }
+          if (!isCurrentlyOpen && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard === 'function') {
+            subCards.forEach(function (sc, idx) {
+              window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, normNum, normNum + '-' + (idx + 1));
+            });
+          }
+        }
+      }
+      return;
     }
   }
 
