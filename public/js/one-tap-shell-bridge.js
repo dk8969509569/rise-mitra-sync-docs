@@ -20,13 +20,14 @@
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261016_v33';
+  var CACHE_VERSION = '20261016_v34';
   var lastActionTs = 0;
   var lastTouchTs = 0;
   var lastModalOpenTs = 0;
   var touchStartX = 0;
   var touchStartY = 0;
   var touchStartTime = 0;
+  var isSyntheticHomeClick = false;
 
   // Shared persistent open state map across Part-1, Part-2 & Part-3
   var openStateMap = window.__RM_OPEN_CAT_STATE || { '15': true, '16': true };
@@ -84,7 +85,7 @@
     }
   }
 
-  // Helper: Resolve sub-container across all 10 ID formats (sub-c01, sub-c1, sub-g34, etc.) + validated sibling fallback
+  // Helper: Resolve sub-container across all 10 ID formats (sub-c01, sub-c1, sub-g34, etc.) + validated sibling & auto-create fallback
   function resolveCategorySubContainer(catEl, rawId, cleanNum) {
     if (catEl && catEl.__rmSubBox && document.body.contains(catEl.__rmSubBox) &&
         catEl.__rmSubBox.id && catEl.__rmSubBox.id.indexOf('sub-') === 0) {
@@ -129,6 +130,21 @@
         return resolved;
       }
     }
+    if (catEl) {
+      var created = document.createElement('div');
+      created.id = (intNum >= 33 ? 'sub-g' : 'sub-c') + paddedNum;
+      created.className = 'hidden space-y-2 mt-3 pt-2 border-t border-slate-800/80';
+      created.setAttribute('data-rm-collapsed', 'true');
+      for (var k = 1; k <= 3; k++) {
+        var sc = document.createElement('div');
+        sc.className = 'p-3 rounded-xl bg-slate-900/90 border border-slate-800';
+        sc.setAttribute('data-sub-id', paddedNum + '-' + k);
+        created.appendChild(sc);
+      }
+      catEl.appendChild(created);
+      catEl.__rmSubBox = created;
+      return created;
+    }
     return null;
   }
 
@@ -160,6 +176,7 @@
 
   // 5. DETERMINISTIC 1-TAP ACCORDION & SUB-SERVICE CLICK CONTROLLER (CASE 0, HOME, CASE 1 & CASE 2)
   function handleDeterministicOneTap(e) {
+    if (isSyntheticHomeClick) return;
     var target = e.target && e.target.nodeType === 1 ? e.target : (e.target ? e.target.parentElement : null);
     if (!target || typeof target.closest !== 'function') return;
     if (target.closest('input, textarea, select, option, .sivme-notch-pill, #sivme-hud, #sivme-drawer')) return;
@@ -259,10 +276,12 @@
       if (e.type === 'touchend') {
         var homeActionBtn = target.closest('button[onclick], a[onclick], [onclick]');
         if (homeActionBtn && typeof homeActionBtn.click === 'function') {
+          if (e.cancelable) e.preventDefault();
+          isSyntheticHomeClick = true;
+          try { homeActionBtn.click(); } catch (err) {}
+          isSyntheticHomeClick = false;
           lastTouchTs = now;
           lastActionTs = now;
-          if (e.cancelable) e.preventDefault();
-          homeActionBtn.click();
           return;
         }
       }
@@ -373,6 +392,16 @@
 
     // CASE 1: 1-Tap on Parent Category Card Header or "समेटें ▲ / और देखें ▼" (Categories 01 to 50 including 33 Action Games)
     var catEl = target.closest('[data-cat-id]');
+    if (!catEl) {
+      var fallbackCard = target.closest('#tier1-list > div, #tier2-list > div');
+      if (fallbackCard) {
+        var numMatch = (fallbackCard.textContent || '').match(/\b([0-4]?\d|50)\s*\./);
+        if (numMatch) {
+          fallbackCard.setAttribute('data-cat-id', numMatch[1]);
+          catEl = fallbackCard;
+        }
+      }
+    }
     if (catEl) {
       if (now - lastActionTs < 80) {
         e.stopImmediatePropagation();
@@ -405,6 +434,17 @@
       openStateMap[normNum] = nextOpen;
 
       if (subContainer) {
+        var subCards = subContainer.querySelectorAll(':scope > div');
+        if (subCards.length === 0) {
+          for (var cIdx = 1; cIdx <= 3; cIdx++) {
+            var newSc = document.createElement('div');
+            newSc.className = 'p-3 rounded-xl bg-slate-900/90 border border-slate-800';
+            newSc.setAttribute('data-sub-id', paddedNum + '-' + cIdx);
+            subContainer.appendChild(newSc);
+          }
+          subCards = subContainer.querySelectorAll(':scope > div');
+        }
+
         if (isCurrentlyOpen) {
           subContainer.classList.add('hidden');
           subContainer.setAttribute('data-rm-collapsed', 'true');
@@ -415,8 +455,9 @@
           subContainer.style.setProperty('display', 'block', 'important');
         }
 
-        var headerEl = catEl.querySelector(':scope > div:first-child');
-        var subCards = subContainer.querySelectorAll(':scope > div');
+        var headerEl = (catEl.children && catEl.children.length > 1 && catEl.contains(subContainer) && catEl.children[0] !== subContainer)
+          ? catEl.children[0]
+          : catEl.querySelector(':scope > div:first-child');
         if (window.RM_UNIVERSAL_CARD_ENGINE) {
           if (headerEl && !headerEl.hasAttribute('data-rm-parent-rendered') && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard === 'function') {
             window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard(headerEl, normNum, !isCurrentlyOpen, subCards.length || 3);
@@ -438,7 +479,7 @@
       var pills = catEl.querySelectorAll('button, span, div');
       for (var pIdx = 0; pIdx < pills.length; pIdx++) {
         var p = pills[pIdx];
-        if (p.children.length === 0 && p.textContent) {
+        if ((!subContainer || !subContainer.contains(p)) && p.children.length === 0 && p.textContent) {
           var pTxt = p.textContent.trim();
           if (nextOpen && (pTxt.indexOf('और देखें') !== -1 || pTxt.indexOf('विकल्प') !== -1 || pTxt.indexOf('सेवाएं') !== -1 || pTxt.indexOf('▼') !== -1)) {
             p.textContent = 'समेटें ▲';
