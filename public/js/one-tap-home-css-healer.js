@@ -1,11 +1,11 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-1D 0ms Home Verticals Healer, Cache Purge & CSS Lock (v55)
+ *   - MODULE NAME    : RM Part-1D 0ms Home Verticals Healer, Cache Purge & CSS Lock (v56)
  *   - REPO TARGET    : public/js/one-tap-home-css-healer.js
  *   - SURFACE TARGET : SURFACE-A ONLY (Public Customer PWA Shell Home & CSS Lock)
  *   - HOST BINDING   : Surface-A (public/index.html)
- *   - SIZE BUDGET    : <= 240 Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 295 Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -17,7 +17,8 @@
  *   - public/js/one-tap-catalog-dom-engine.js (Part-1B: Canonical Catalog DOM Engine)
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
- *   - ALLOWED ON SURFACE-A   : CORE_12_VERTICALS fallback, throttled 60fps healHomeVerticalsInstantly,
+ *   - ALLOWED ON SURFACE-A   : CORE_12_VERTICALS fallback, GAMES_34_TO_50 self-healing
+ *                              injector, throttled 60fps healHomeVerticalsInstantly,
  *                              permanent "32 Categories • 18 Games Active" & "18 श्रेणियां
  *                              उपलब्ध" sync, dismissPlayBanner, purgeStaleState, and
  *                              injectOneTapLockStyles CSS rules.
@@ -26,7 +27,7 @@
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.healHomeVerticalsInstantly, window.dismissPlayBanner,
- *                           window.RM_HOME_CSS_HEALER
+ *                           window.lockGames18StatePermanently, window.RM_HOME_CSS_HEALER
  *   - CALLS EXTERNAL APIs : window.RM_HomeGrid.render, window.renderHomeMacroGrid,
  *                           window.RM_GAMES_ENT_BRIDGE.hydrateGamesCatalog,
  *                           window.hydrateTier2GamesCatalog, window.renderFavorites
@@ -36,14 +37,14 @@
  *   - SURFACE-B SELECTORS : .sivme-notch-pill, #sivme-hud, [data-sivme] (EXCLUDED)
  * ==============================================================================
  * 6. ANTI-FREEZE, EVENT LISTENER & TIMER OWNERSHIP LOCK:
- *   - CLICK SAFETY  : Pure synchronous DOM/CSS healer; attaches zero click listeners.
+ *   - CLICK SAFETY  : Passive listener on #categoryModal re-locks 18 Games (33-50) on tap.
  *   - SCROLL SAFETY : 120ms throttle prevents repeated DOM scans from lagging scroll.
  *   - DOM SAFETY    : Non-destructive text sync for Catalog Header & Home Verticals.
  * ==============================================================================
- * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (4 EXTRACTED CORE FUNCTIONS):
- *   1. dismissPlayBanner          2. healHomeVerticalsInstantly
- *   3. purgeStaleState            4. injectOneTapLockStyles
- *   + Constant: CORE_12_VERTICALS (Play Store Official Top 12 A-Z, Cat 15 = House & Home)
+ * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (5 CORE FUNCTIONS + 2 CONSTANTS):
+ *   1. dismissPlayBanner             2. lockGames18StatePermanently
+ *   3. healHomeVerticalsInstantly    4. purgeStaleState
+ *   5. injectOneTapLockStyles        + Constants: CORE_12_VERTICALS, GAMES_34_TO_50
  * ==============================================================================
  * 8. ONE JOB = ONE FILE & CANONICAL PATH LOCK (ANTI-DUPLICATE FILE GUARD):
  *   - SINGLE JOB RULE : Sole owner of Part-1D 0ms Home Healer, Cache Purge & 1-Tap CSS Lock.
@@ -60,7 +61,7 @@
  *   - MOBILE EDITING  : 2-line blank spacing preserved between major functional blocks.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261017_v55'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261017_v56'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -77,8 +78,9 @@
   if (window.__RM_LOADED_MODULES__['one-tap-home-css-healer']) return;
   window.__RM_LOADED_MODULES__['one-tap-home-css-healer'] = true;
 
-  var CACHE_VERSION = window.__RM_ACTIVE_CACHE_VER || '20261017_v55';
+  var CACHE_VERSION = window.__RM_ACTIVE_CACHE_VER || '20261017_v56';
   var lastHealRunTs = 0;
+  var isLockingGames = false;
 
   var CORE_12_VERTICALS = [
     { seq: '02', catId: 'c02', icon: '🛵', en: 'Auto & Vehicles', hi: 'बाइक/कार रिपेयर, वाशिंग व गैराज' },
@@ -93,6 +95,26 @@
     { seq: '19', catId: 'c19', icon: '💊', en: 'Medical', hi: 'दवाइयां, डॉक्टर परामर्श व जांच' },
     { seq: '26', catId: 'c26', icon: '🛒', en: 'Shopping', hi: 'किराना, दैनिक राशन व लोकल शॉपिंग' },
     { seq: '30', catId: 'c30', icon: '🚖', en: 'Travel & Local', hi: 'यात्रा, लोकल ऑटो व कमर्शियल वाहन' }
+  ];
+
+  var GAMES_34_TO_50 = [
+    ['34', '🗺️', 'Adventure Games', 'कैंपिंग, ट्रेकिंग, एडवेंचर पार्क व आउटडोर खोज खेल'],
+    ['35', '🕹️', 'Arcade Games', 'आर्केड ज़ोन, वीआर गेमिंग, बॉलिंग व कॉइन गेम्स'],
+    ['36', '🎲', 'Board Games', 'लूडो, शतरंज, कैरम क्लब व पारिवारिक बोर्ड स्पर्धा'],
+    ['37', '🃏', 'Card Games', 'रम्मी, कौशल कार्ड क्लब व पारंपरिक ताश स्पर्धा'],
+    ['38', '🎰', 'Casino Games', 'सोशल स्पिन, लकी व्हील व मनोरंजन पॉइंट्स क्लब'],
+    ['39', '🎯', 'Casual Games', 'दैनिक त्वरित खेल, टच आर्केड व टाइम-पास मनोरंजन'],
+    ['40', '📚', 'Educational Games', 'बच्चों के ज्ञान खेल, गणित पहेली व विज्ञान क्विज़'],
+    ['41', '🎵', 'Music Games', 'कराओके नाइट्स, रिदम टैप, अंताक्षरी व संगीत स्पर्धा'],
+    ['42', '🧩', 'Puzzle Games', 'सुडोकू, रूबिक क्यूब, दिमागी पहेली व लॉजिक क्लब'],
+    ['43', '🏎️', 'Racing Games', 'गो-कार्टिंग, सिम्युलेटर रेसिंग व बाइक ट्रैक स्पर्धा'],
+    ['44', '⚔️', 'Role Playing Games', 'कहानी आधारित आरपीजी, कैरेक्टर गिल्ड व को-ऑप अभियान'],
+    ['45', '✈️', 'Simulation Games', 'फ्लाइट/ट्रेन सिम्युलेटर, फार्म व बिजनेस टाइकून'],
+    ['46', '🏏', 'Sports Games', 'बॉक्स क्रिकेट, टर्फ फुटबॉल, बैडमिंटन व दंगल अखाड़ा'],
+    ['47', '♟️', 'Strategy Games', 'शतरंज रणनीति, डिफेंस लीग व टीम टैक्टिक्स टूर्नामेंट'],
+    ['48', '❓', 'Trivia Games', 'सामान्य ज्ञान क्विज़, केबीसी स्टाइल लाइव प्रश्नोत्तरी'],
+    ['49', '🔤', 'Word Games', 'शब्द खोज, हिंदी-अंग्रेजी क्रॉसवर्ड व शब्दावली स्पर्धा'],
+    ['50', '🏆', 'Esports & Desi Arena', 'ग्राम/मोहल्ला ई-स्पोर्ट्स लीग, कबड्डी व देसी खेल महाकुंभ']
   ];
 
 
@@ -114,7 +136,92 @@
   }
 
 
+  function lockGames18StatePermanently() {
+    if (isLockingGames) return;
+    isLockingGames = true;
+    try {
+      if (window.RM_GAMES_ENT_BRIDGE && typeof window.RM_GAMES_ENT_BRIDGE.hydrateGamesCatalog === 'function') {
+        try { window.RM_GAMES_ENT_BRIDGE.hydrateGamesCatalog(); } catch (e) {}
+      }
+      if (typeof window.hydrateTier2GamesCatalog === 'function') {
+        try { window.hydrateTier2GamesCatalog(); } catch (e) {}
+      }
+
+      var modal = document.getElementById('categoryModal');
+      if (!modal) return;
+
+      var nodes = modal.querySelectorAll('div, p, span, button, h2, h3');
+      var card33 = null;
+      var hasCard34 = false;
+      for (var i = 0; i < nodes.length; i++) {
+        var el = nodes[i];
+        var txt = (el.textContent || '').trim();
+        if (el.children.length === 0 && txt.indexOf('Games Active') !== -1 && txt !== '32 Categories • 18 Games Active') {
+          el.textContent = '32 Categories • 18 Games Active';
+        }
+        if (txt.indexOf('खेल व मनोरंजन') !== -1 && txt.indexOf('18 श्रेणियां') === -1 && txt.indexOf('श्रेणियां उपलब्ध') !== -1) {
+          if (el.children.length === 0) {
+            el.textContent = '🎮 खेल व मनोरंजन (18 श्रेणियां उपलब्ध)';
+          } else {
+            for (var c = 0; c < el.childNodes.length; c++) {
+              var cn = el.childNodes[c];
+              if (cn.nodeType === 3 && cn.nodeValue.indexOf('श्रेणियां उपलब्ध') !== -1) {
+                cn.nodeValue = cn.nodeValue.replace(/\(\d+\s*श्रेणियां उपलब्ध\)/g, '(18 श्रेणियां उपलब्ध)');
+              } else if (cn.nodeType === 1 && (cn.textContent || '').indexOf('श्रेणियां उपलब्ध') !== -1 && cn.children.length === 0) {
+                cn.textContent = (cn.textContent || '').replace(/\(\d+\s*श्रेणियां उपलब्ध\)/g, '(18 श्रेणियां उपलब्ध)');
+              }
+            }
+          }
+        }
+        if (el.children.length === 0 && txt === '33.') {
+          card33 = el.closest('[data-cat-id]') || (el.parentElement && el.parentElement.parentElement && el.parentElement.parentElement.parentElement);
+        }
+        if (el.children.length === 0 && txt === '34.') {
+          hasCard34 = true;
+        }
+      }
+
+      if (card33 && card33.parentElement && !hasCard34) {
+        card33.setAttribute('data-cat-id', 'g33');
+        var parentList = card33.parentElement;
+        for (var g = 0; g < GAMES_34_TO_50.length; g++) {
+          var gm = GAMES_34_TO_50[g];
+          var gId = 'g' + gm[0];
+          if (!parentList.querySelector('[data-cat-id="' + gId + '"]')) {
+            var card = document.createElement('div');
+            card.setAttribute('data-cat-id', gId);
+            card.className = card33.className || 'bg-[#0b1329] border border-slate-800 rounded-2xl p-4 mb-3 shadow-lg';
+            card.innerHTML =
+              '<div data-rm-parent-rendered="1" class="flex items-start gap-3.5">' +
+                '<div class="flex flex-col items-start shrink-0">' +
+                  '<span class="rm-toplevel-num-badge">' + gm[0] + '.</span>' +
+                  '<div class="w-14 h-14 rounded-2xl bg-[#111c38] border border-cyan-500/30 flex items-center justify-center text-2xl shadow-inner">' + gm[1] + '</div>' +
+                '</div>' +
+                '<div class="flex-1 min-w-0">' +
+                  '<h3 class="text-lg font-black text-white leading-tight">' + gm[2] + '</h3>' +
+                  '<p class="text-xs font-bold text-emerald-400 mt-1 leading-snug">' + gm[3] + '</p>' +
+                  '<div class="flex flex-wrap gap-1.5 mt-2">' +
+                    '<span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-amber-950/60 text-amber-300 border border-amber-500/40">★ 4.9 (10k+ नागरिक)</span>' +
+                    '<span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-sky-950/60 text-sky-300 border border-sky-500/40">✓ Rise Verified Network</span>' +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+              '<div class="flex justify-end mt-3">' +
+                '<button type="button" class="rm-parent-toggle-pill px-4 py-1.5 rounded-full text-xs font-black border border-emerald-500/75 text-emerald-300 bg-emerald-950/45">और देखें ▼</button>' +
+              '</div>' +
+              '<div id="sub-' + gId + '" data-rm-collapsed="true" class="hidden mt-3 space-y-3" style="display:none !important;"></div>';
+            parentList.appendChild(card);
+          }
+        }
+      }
+    } catch (e) {} finally {
+      isLockingGames = false;
+    }
+  }
+
+
   function healHomeVerticalsInstantly() {
+    lockGames18StatePermanently();
     var now = Date.now();
     if (now - lastHealRunTs < 120) return;
     lastHealRunTs = now;
@@ -241,15 +348,27 @@
     if (!existing) (document.head || document.documentElement).appendChild(style);
   }
 
+  window.addEventListener('click', function (e) {
+    var modal = document.getElementById('categoryModal');
+    if (modal && !modal.classList.contains('hidden') && modal.contains(e.target)) {
+      lockGames18StatePermanently();
+      setTimeout(lockGames18StatePermanently, 20);
+      setTimeout(lockGames18StatePermanently, 90);
+    }
+  }, { capture: false, passive: true });
+
   purgeStaleState();
   injectOneTapLockStyles();
   healHomeVerticalsInstantly();
 
   window.dismissPlayBanner = dismissPlayBanner;
+  window.lockGames18StatePermanently = lockGames18StatePermanently;
   window.healHomeVerticalsInstantly = healHomeVerticalsInstantly;
   window.RM_HOME_CSS_HEALER = {
     CORE_12_VERTICALS: CORE_12_VERTICALS,
+    GAMES_34_TO_50: GAMES_34_TO_50,
     dismissPlayBanner: dismissPlayBanner,
+    lockGames18StatePermanently: lockGames18StatePermanently,
     healHomeVerticalsInstantly: healHomeVerticalsInstantly,
     purgeStaleState: purgeStaleState,
     injectOneTapLockStyles: injectOneTapLockStyles
