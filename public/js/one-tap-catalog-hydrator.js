@@ -1,11 +1,11 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-1A Modular Catalog Hydrator & Modal Dispatcher (v54)
+ *   - MODULE NAME    : RM Part-1A Modular Catalog Hydrator & Modal Dispatcher (v55)
  *   - REPO TARGET    : public/js/one-tap-catalog-hydrator.js
  *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional Loader for Surface-B SIVME)
  *   - HOST BINDING   : Surface-A (public/index.html) | Surface-B (public/owner-console.html)
- *   - SIZE BUDGET    : <= 285 Lines Total (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 290 Lines Total (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -23,12 +23,12 @@
  * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : Parallel script preloader (zero hanging progress bar),
  *                              0ms synchronous "32 Categories • 18 Games Active" & "18 श्रेणियां
- *                              उपलब्ध" anti-regression lock, modal open/close dispatchers,
+ *                              उपलब्ध" anti-regression lock, 0ms rAF modal open/close dispatchers,
  *                              install popup auto-dismissal, fullscreen micro-app bridges,
  *                              and Part-1B/1C/1D API bridges.
  *   - ALLOWED ON SURFACE-B   : Conditional loading of /js/sovereign-in-situ-hud.js ONLY when
  *                              ?sivme=owner or ?sov_mode=in_situ is present in URL.
- *   - FORBIDDEN IN THIS FILE : Cross-surface DOM leakage or dropping any v39-v53 ZEL function.
+ *   - FORBIDDEN IN THIS FILE : Cross-surface DOM leakage or dropping any v39-v54 ZEL function.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.__RM_ACTIVE_CACHE_VER, window.__RM_OPEN_CAT_STATE,
@@ -48,9 +48,9 @@
  *   - SURFACE-B SELECTORS : .sivme-notch-pill, #sivme-hud, [data-sivme] (EXCLUDED)
  * ==============================================================================
  * 6. ANTI-FREEZE, EVENT LISTENER & TIMER OWNERSHIP LOCK:
- *   - CLICK SAFETY  : 0ms modal open/close; delegates 1-Tap Accordion to Part-1C Engine.
+ *   - CLICK SAFETY  : 0ms rAF modal open/close; delegates 1-Tap Accordion to Part-1C Engine.
  *   - SCROLL SAFETY : Restores body.style.overflowY = 'auto' on modal/fullscreen close.
- *   - DOM SAFETY    : MutationObserver permanently prevents "1 Games Active" regression.
+ *   - DOM SAFETY    : MutationObserver uses subtree: false to prevent main-thread lag.
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (ALL 23 MANDATORY FUNCTIONS INTACT):
  *   1. ensureFullscreenControllerLoaded 2. purgeStaleState             3. injectOneTapLockStyles
@@ -77,7 +77,7 @@
  *   - MOBILE EDITING  : 2-line blank spacing preserved between major functional blocks.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261017_v54'`.
+ *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261017_v55'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -94,10 +94,11 @@
   if (window.__RM_LOADED_MODULES__['one-tap-catalog-hydrator']) return;
   window.__RM_LOADED_MODULES__['one-tap-catalog-hydrator'] = true;
 
-  var CACHE_VERSION = '20261017_v54';
+  var CACHE_VERSION = '20261017_v55';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VERSION;
   var isSyncingDOM = false;
   var hasRenderedCatalogOnce = false;
+  var lastHydratorHealTs = 0;
 
   // Shared state across Part 1A (Hydrator), Part 1B (DOM Engine), Part 1C (Accordion) and Part 1D (Healer)
   var openStateMap = window.__RM_OPEN_CAT_STATE || { '15': true, '16': true };
@@ -110,8 +111,8 @@
     var head = document.head || document.documentElement;
     var modules = [
       { id: 'rm-home-css-healer-script', src: '/js/one-tap-home-css-healer.js' },
-      { id: 'rm-home-grid-engine-script', src: '/js/home-grid-engine.js' },
       { id: 'rm-accordion-engine-script', src: '/js/one-tap-accordion-engine.js' },
+      { id: 'rm-home-grid-engine-script', src: '/js/home-grid-engine.js' },
       { id: 'rm-fs-microapp-controller-script', src: '/js/fullscreen-microapp-controller.js' },
       { id: 'rm-catalog-dom-engine-script', src: '/js/one-tap-catalog-dom-engine.js' },
       { id: 'rm-games-ent-bridge-script', src: '/js/universal-catalog/games-entertainment-bridge.js' }
@@ -133,8 +134,11 @@
   })();
 
 
-  // 2. Delegated Part-1D (`public/js/one-tap-home-css-healer.js`) Bridges + 0ms Synchronous Header Lock
+  // 2. Delegated Part-1D (`public/js/one-tap-home-css-healer.js`) Bridges + Throttled 0ms Synchronous Header Lock
   function healHomeVerticalsInstantly() {
+    var now = Date.now();
+    if (now - lastHydratorHealTs < 120) return;
+    lastHydratorHealTs = now;
     try {
       window.dismissPlayBanner();
       if (window.RM_HOME_CSS_HEALER && typeof window.RM_HOME_CSS_HEALER.healHomeVerticalsInstantly === 'function') {
@@ -147,7 +151,7 @@
       if (typeof window.renderFavorites === 'function') window.renderFavorites();
 
       var nodes = document.querySelectorAll('#categoryModal span, #categoryModal p, #categoryModal div, #categoryModal button');
-      for (var i = 0; i < nodes.length; i++) {
+      for (var i = 0; i < nodes.length && i < 80; i++) {
         var el = nodes[i];
         var txt = (el.textContent || '').trim();
         if (el.children.length === 0 && txt.indexOf('Games Active') !== -1 && txt !== '32 Categories • 18 Games Active') {
@@ -173,7 +177,7 @@
   window.healHomeVerticalsInstantly = healHomeVerticalsInstantly;
 
 
-  // 3. Fullscreen Viewport Helpers (100% v53 ZEL Intact)
+  // 3. Fullscreen Viewport Helpers (100% v54 ZEL Intact)
   function forceCloseFullscreenViewport() {
     var fs = document.getElementById('rm-fullscreen-view');
     if (fs) {
@@ -271,27 +275,33 @@
   window.toggleCategoryAccordion1Tap = applyCategoryOpenState;
 
   function syncAndHydrateCatalogCards() {
-    healHomeVerticalsInstantly();
-    if (window.RM_CATALOG_DOM_ENGINE && typeof window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards === 'function') {
-      hasRenderedCatalogOnce = true;
-      return window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards();
+    if (isSyncingDOM) return;
+    isSyncingDOM = true;
+    try {
+      healHomeVerticalsInstantly();
+      if (!hasRenderedCatalogOnce && window.RM_CATALOG_DOM_ENGINE && typeof window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards === 'function') {
+        hasRenderedCatalogOnce = true;
+        return window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards();
+      }
+    } finally {
+      isSyncingDOM = false;
     }
   }
 
 
-  // 5. Global Modal & Drawer Dispatchers (100% ZEL Preserved + 0ms Non-Blocking Paint)
+  // 5. Global Modal & Drawer Dispatchers (100% ZEL Preserved + 0ms Instant rAF Paint)
   window.openCatalogModal = function () {
     var m = document.getElementById('categoryModal');
     if (!m) return;
     window.__RM_LAST_MODAL_OPEN_TS = Date.now();
     m.classList.remove('hidden');
     m.style.setProperty('display', 'flex', 'important');
-    syncAndHydrateCatalogCards();
-    setTimeout(syncAndHydrateCatalogCards, 10);
-    setTimeout(syncAndHydrateCatalogCards, 50);
-    setTimeout(syncAndHydrateCatalogCards, 140);
-    setTimeout(syncAndHydrateCatalogCards, 260);
-    if (typeof window.updatePinButtonsUI === 'function') window.updatePinButtonsUI();
+    var rAF = window.requestAnimationFrame || function (cb) { setTimeout(cb, 0); };
+    rAF(function () {
+      syncAndHydrateCatalogCards();
+      setTimeout(syncAndHydrateCatalogCards, 80);
+      if (typeof window.updatePinButtonsUI === 'function') window.updatePinButtonsUI();
+    });
   };
 
   window.closeCatalogModal = function () {
@@ -347,20 +357,22 @@
   };
 
 
-  // 6. Permanent Anti-Regression Hydration Observer, Fast Boot, Service Worker Sentinel & Surface-B SIVME Loader
+  // 6. Lightweight Anti-Regression Hydration Observer, Fast Boot, Service Worker Sentinel & Surface-B SIVME Loader
   function attachCatalogHydrationObserver() {
     var modal = document.getElementById('categoryModal');
     if (!modal || typeof MutationObserver === 'undefined') return;
     var obs = new MutationObserver(function () {
       if (isSyncingDOM || modal.classList.contains('hidden')) return;
       installRenderDestructionShield();
-      var modalTxt = modal.textContent || '';
       var rawHeader = modal.querySelector('[data-cat-id] > div:first-child:not([data-rm-parent-rendered])');
-      if (rawHeader || modalTxt.indexOf('1 Games Active') !== -1 || modalTxt.indexOf('(1 श्रेणियां उपलब्ध)') !== -1) {
+      if (rawHeader) {
+        hasRenderedCatalogOnce = false;
         syncAndHydrateCatalogCards();
+      } else {
+        healHomeVerticalsInstantly();
       }
     });
-    obs.observe(modal, { childList: true, subtree: true });
+    obs.observe(modal, { childList: true, subtree: false });
   }
 
   function bootFastHomeAndCatalog() {
@@ -368,9 +380,7 @@
     window.dismissPlayBanner();
     installMasterOneTapAccordionEngine();
     healHomeVerticalsInstantly();
-    setTimeout(healHomeVerticalsInstantly, 80);
-    setTimeout(healHomeVerticalsInstantly, 250);
-    setTimeout(healHomeVerticalsInstantly, 600);
+    setTimeout(healHomeVerticalsInstantly, 140);
     attachCatalogHydrationObserver();
     var idleFn = window.requestIdleCallback || function (cb) { setTimeout(cb, 150); };
     idleFn(syncAndHydrateCatalogCards);
