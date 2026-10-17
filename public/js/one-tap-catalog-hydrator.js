@@ -1,11 +1,11 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-1A Modular Catalog Hydrator & Modal Dispatcher (v56)
+ *   - MODULE NAME    : RM Part-1A Modular Catalog Hydrator & Modal Dispatcher (v57)
  *   - REPO TARGET    : public/js/one-tap-catalog-hydrator.js
  *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional Loader for Surface-B SIVME)
  *   - HOST BINDING   : Surface-A (public/index.html) | Surface-B (public/owner-console.html)
- *   - SIZE BUDGET    : <= 295 Lines Total (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 298 Lines Total (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -28,7 +28,7 @@
  *                              and Part-1B/1C/1D API bridges.
  *   - ALLOWED ON SURFACE-B   : Conditional loading of /js/sovereign-in-situ-hud.js ONLY when
  *                              ?sivme=owner or ?sov_mode=in_situ is present in URL.
- *   - FORBIDDEN IN THIS FILE : Cross-surface DOM leakage or dropping any v39-v55 ZEL function.
+ *   - FORBIDDEN IN THIS FILE : Cross-surface DOM leakage or dropping any v39-v56 ZEL function.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.__RM_ACTIVE_CACHE_VER, window.__RM_OPEN_CAT_STATE,
@@ -47,7 +47,7 @@
  *                           #fs-module-title, #playStoreInstallBanner, #pwa-install-banner, [data-cat-id]
  *   - SURFACE-B SELECTORS : .sivme-notch-pill, #sivme-hud, [data-sivme] (EXCLUDED)
  * ==============================================================================
- * 6. ANTI-FREEZE, EVENT LISTENER & TIMER OWNERSHIP LOCK:
+ * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
  *   - CLICK SAFETY  : 0ms rAF modal open/close; delegates 1-Tap Accordion to Part-1C Engine.
  *   - SCROLL SAFETY : Restores body.style.overflowY = 'auto' on modal/fullscreen close.
  *   - DOM SAFETY    : State-verified DOM canary check prevents legacy overwrite regression.
@@ -77,7 +77,7 @@
  *   - MOBILE EDITING  : 2-line blank spacing preserved between major functional blocks.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261017_v56'`.
+ *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261017_v57'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -94,7 +94,7 @@
   if (window.__RM_LOADED_MODULES__['one-tap-catalog-hydrator']) return;
   window.__RM_LOADED_MODULES__['one-tap-catalog-hydrator'] = true;
 
-  var CACHE_VERSION = '20261017_v56';
+  var CACHE_VERSION = '20261017_v57';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VERSION;
   var isSyncingDOM = false;
   var hasRenderedCatalogOnce = false;
@@ -134,7 +134,7 @@
   })();
 
 
-  // 2. Delegated Part-1D (`public/js/one-tap-home-css-healer.js`) Bridges + State-Verified 0ms Synchronous Header Lock
+  // 2. Delegated Part-1D (`public/js/one-tap-home-css-healer.js`) Bridges + Final-Pass 0ms Synchronous Header Lock
   function healHomeVerticalsInstantly() {
     try {
       if (typeof window.lockGames18StatePermanently === 'function') {
@@ -145,21 +145,33 @@
     } catch (e) {}
 
     var now = Date.now();
-    if (now - lastHydratorHealTs < 120) return;
-    lastHydratorHealTs = now;
-    try {
-      window.dismissPlayBanner();
-      if (window.RM_HOME_CSS_HEALER && typeof window.RM_HOME_CSS_HEALER.healHomeVerticalsInstantly === 'function') {
-        window.RM_HOME_CSS_HEALER.healHomeVerticalsInstantly();
-      }
-      if (window.RM_HomeGrid && typeof window.RM_HomeGrid.render === 'function') window.RM_HomeGrid.render();
-      if (typeof window.renderHomeMacroGrid === 'function') window.renderHomeMacroGrid();
-      if (window.RM_GAMES_ENT_BRIDGE && typeof window.RM_GAMES_ENT_BRIDGE.hydrateGamesCatalog === 'function') window.RM_GAMES_ENT_BRIDGE.hydrateGamesCatalog();
-      if (typeof window.hydrateTier2GamesCatalog === 'function') window.hydrateTier2GamesCatalog();
-      if (typeof window.renderFavorites === 'function') window.renderFavorites();
+    if (now - lastHydratorHealTs >= 120) {
+      lastHydratorHealTs = now;
+      try {
+        window.dismissPlayBanner();
+        if (window.RM_HOME_CSS_HEALER && typeof window.RM_HOME_CSS_HEALER.healHomeVerticalsInstantly === 'function') {
+          window.RM_HOME_CSS_HEALER.healHomeVerticalsInstantly();
+        }
+        if (window.RM_HomeGrid && typeof window.RM_HomeGrid.render === 'function') window.RM_HomeGrid.render();
+        if (typeof window.renderHomeMacroGrid === 'function') window.renderHomeMacroGrid();
+        var modalEl = document.getElementById('categoryModal');
+        if (!modalEl || !modalEl.querySelector('[data-cat-id="g34"]')) {
+          if (window.RM_GAMES_ENT_BRIDGE && typeof window.RM_GAMES_ENT_BRIDGE.hydrateGamesCatalog === 'function') window.RM_GAMES_ENT_BRIDGE.hydrateGamesCatalog();
+          if (typeof window.hydrateTier2GamesCatalog === 'function') window.hydrateTier2GamesCatalog();
+        }
+        if (typeof window.renderFavorites === 'function') window.renderFavorites();
+      } catch (e) {}
+    }
 
+    // Final-Pass Lock (No i < 80 cutoff): Always runs AFTER legacy hydrators so 18-Games is never overwritten
+    try {
+      if (typeof window.lockGames18StatePermanently === 'function') {
+        window.lockGames18StatePermanently();
+      } else if (window.RM_HOME_CSS_HEALER && typeof window.RM_HOME_CSS_HEALER.lockGames18StatePermanently === 'function') {
+        window.RM_HOME_CSS_HEALER.lockGames18StatePermanently();
+      }
       var nodes = document.querySelectorAll('#categoryModal span, #categoryModal p, #categoryModal div, #categoryModal button');
-      for (var i = 0; i < nodes.length && i < 80; i++) {
+      for (var i = 0; i < nodes.length; i++) {
         var el = nodes[i];
         var txt = (el.textContent || '').trim();
         if (el.children.length === 0 && txt.indexOf('Games Active') !== -1 && txt !== '32 Categories • 18 Games Active') {
@@ -185,7 +197,7 @@
   window.healHomeVerticalsInstantly = healHomeVerticalsInstantly;
 
 
-  // 3. Fullscreen Viewport Helpers (100% v55 ZEL Intact)
+  // 3. Fullscreen Viewport Helpers (100% v56 ZEL Intact)
   function forceCloseFullscreenViewport() {
     var fs = document.getElementById('rm-fullscreen-view');
     if (fs) {
@@ -286,15 +298,15 @@
     if (isSyncingDOM) return;
     isSyncingDOM = true;
     try {
-      healHomeVerticalsInstantly();
       var modal = document.getElementById('categoryModal');
       var needsDomEngine = !hasRenderedCatalogOnce ||
                            (modal && (!modal.querySelector('[data-cat-id="g34"]') ||
                             modal.querySelector('[data-cat-id] > div:first-child:not([data-rm-parent-rendered])')));
       if (needsDomEngine && window.RM_CATALOG_DOM_ENGINE && typeof window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards === 'function') {
         hasRenderedCatalogOnce = true;
-        return window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards();
+        window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards();
       }
+      healHomeVerticalsInstantly();
     } finally {
       isSyncingDOM = false;
     }
@@ -312,6 +324,7 @@
     rAF(function () {
       syncAndHydrateCatalogCards();
       setTimeout(syncAndHydrateCatalogCards, 80);
+      setTimeout(syncAndHydrateCatalogCards, 200);
       if (typeof window.updatePinButtonsUI === 'function') window.updatePinButtonsUI();
     });
   };
@@ -369,7 +382,7 @@
   };
 
 
-  // 6. Lightweight Anti-Regression Hydration Observer, Fast Boot, Service Worker Sentinel & Surface-B SIVME Loader
+  // 6. Subtree-Aware Anti-Regression Hydration Observer, Fast Boot, Service Worker Sentinel & Surface-B SIVME Loader
   function attachCatalogHydrationObserver() {
     var modal = document.getElementById('categoryModal');
     if (!modal || typeof MutationObserver === 'undefined') return;
@@ -384,7 +397,7 @@
         healHomeVerticalsInstantly();
       }
     });
-    obs.observe(modal, { childList: true, subtree: false });
+    obs.observe(modal, { childList: true, subtree: true });
   }
 
   function bootFastHomeAndCatalog() {
