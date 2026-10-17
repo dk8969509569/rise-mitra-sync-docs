@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-1 Modular Catalog Hydrator, 0ms Home Healer & Sentinel (v46)
+ *   - MODULE NAME    : RM Part-1 Modular Catalog Hydrator, 0ms Home Healer & Sentinel (v47)
  *   - REPO TARGET    : public/js/one-tap-catalog-hydrator.js
  *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional Loader for Surface-B SIVME)
  *   - HOST BINDING   : Surface-A (public/index.html) | Surface-B (public/owner-console.html)
@@ -20,12 +20,13 @@
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : 0ms Home Verticals healing ("वर्टिकल्स लोड हो रहे हैं...") in
- *                              official Play Store A-Z order (Cat 15 = House & Home), 1-tap
- *                              CSS injection, horizontal scrollbar elimination, bottom-nav
- *                              scroll clearance, stale SIVME/cache purge, and modal dispatchers.
+ *                              official Play Store A-Z order (Cat 15 = House & Home), Catalog
+ *                              Header "32 Categories • 18 Games Active" sync, 1-tap CSS injection,
+ *                              horizontal scrollbar elimination, bottom-nav scroll clearance,
+ *                              stale SIVME/cache purge, and modal dispatchers.
  *   - ALLOWED ON SURFACE-B   : Conditional loading of /js/sovereign-in-situ-hud.js ONLY when
  *                              ?sivme=owner or ?sov_mode=in_situ is present in URL.
- *   - FORBIDDEN IN THIS FILE : Cross-surface DOM leakage or dropping any v39/v44/v45 ZEL function.
+ *   - FORBIDDEN IN THIS FILE : Cross-surface DOM leakage or dropping any v39/v44/v45/v46 ZEL function.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.__RM_ACTIVE_CACHE_VER, window.__RM_OPEN_CAT_STATE,
@@ -73,7 +74,7 @@
  *   - MOBILE EDITING  : 2-line blank spacing preserved between major functional blocks.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261017_v46'`.
+ *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261017_v47'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -90,7 +91,7 @@
   if (window.__RM_LOADED_MODULES__['one-tap-catalog-hydrator']) return;
   window.__RM_LOADED_MODULES__['one-tap-catalog-hydrator'] = true;
 
-  var CACHE_VERSION = '20261017_v46';
+  var CACHE_VERSION = '20261017_v47';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VERSION;
   var isSyncingDOM = false;
   var hasRenderedCatalogOnce = false;
@@ -140,7 +141,7 @@
   })();
 
 
-  // 0. Instant 0ms Healer for "वर्टिकल्स लोड हो रहे हैं..." on Home Screen (100% ZEL Intact + Scroll Unlock)
+  // 0. Instant 0ms Healer for "वर्टिकल्स लोड हो रहे हैं...", Catalog Header "18 Games Active" & Home Scroll Unlock
   function healHomeVerticalsInstantly() {
     try {
       document.documentElement.style.overflowX = 'hidden';
@@ -156,7 +157,14 @@
       var nodes = document.querySelectorAll('div, p, span, section');
       for (var i = 0; i < nodes.length; i++) {
         var el = nodes[i];
-        if (el.children.length === 0 && (el.textContent || '').trim().indexOf('वर्टिकल्स लोड हो रहे हैं') !== -1) {
+        var txt = (el.textContent || '').trim();
+        if (el.children.length === 0 && txt.indexOf('Games Active') !== -1 && txt !== '32 Categories • 18 Games Active') {
+          el.textContent = '32 Categories • 18 Games Active';
+        }
+        if (el.children.length === 0 && txt.indexOf('खेल व मनोरंजन') !== -1 && (txt.indexOf('(1 ') !== -1 || txt.indexOf('(17 ') !== -1)) {
+          el.textContent = '🎮 खेल व मनोरंजन (18 श्रेणियां उपलब्ध)';
+        }
+        if (el.children.length === 0 && txt.indexOf('वर्टिकल्स लोड हो रहे हैं') !== -1) {
           var box = el.parentElement || el;
           box.className = 'grid grid-cols-2 gap-2.5 px-4 mb-24 max-w-lg mx-auto';
           box.innerHTML = CORE_12_VERTICALS.map(function (v) {
@@ -171,7 +179,6 @@
               '</div>' +
             '</div>';
           }).join('');
-          break;
         }
       }
       if (typeof window.renderFavorites === 'function') {
@@ -320,6 +327,7 @@
   }
 
   function syncAndHydrateCatalogCards() {
+    healHomeVerticalsInstantly();
     if (window.RM_CATALOG_DOM_ENGINE && typeof window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards === 'function') {
       hasRenderedCatalogOnce = true;
       return window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards();
