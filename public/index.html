@@ -1,21 +1,82 @@
 <!DOCTYPE html>
 <html lang="hi" class="dark" data-theme="dark">
-<!-- ============================================================================== -->
-<!-- RISE MITRA — SLIM MODULAR HTML SHELL (DEFAULT PUBLIC LOCK & PHASE 5 FAVORITES) -->
-<!-- GOVERNANCE : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0            -->
-<!-- SPEC SSOT  : FOLDER A (MASTER DOCUMENT SSOT) & FOLDER B (LIVE SNAPSHOT)       -->
-<!-- STATUS     : FULLY DECOUPLED (CSS -> app.css | JS -> modular engines)          -->
-<!-- ============================================================================== -->
-<!-- 🔒 EXISTING MODULAR FILES LOCK (DO NOT CREATE DUPLICATE FILES):                -->
-<!--   - /js/one-tap-shell-bridge.js, /js/data/india-geo-data.js                    -->
-<!--   - /js/home-grid-engine.js, /js/profile-hub-engine.js                         -->
-<!--   - /js/categories-data.js, /js/catalog-sivme-core-engine.js                   -->
-<!--   - /js/catalog-sivme-render-engine.js, /js/catalog-sivme-engine.js            -->
-<!--   - /js/shell-controller.js, /js/sivme-adapters/cat16-adapter.js               -->
-<!--   - /js/universal-catalog/ (catalog-metadata-registry, canonical-sub-matrix,   -->
-<!--     sub-card-renderer, universal-card-engine, universal-search-engine, ext-*)  -->
-<!--   - /js/favorites-engine.js, /js/core/sovereign-in-situ-registry.js            -->
-<!-- ============================================================================== -->
+<!-- ==============================================================================
+ * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
+ *   - MODULE NAME    : RM Surface-A Master Modular HTML Shell & 18-Games SSOT Lock (v60)
+ *   - REPO TARGET    : public/index.html
+ *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional SIVME Loader via Bootstrap)
+ *   - HOST BINDING   : Surface-A Primary Entry Point (https://rmworld.vercel.app)
+ *   - SIZE BUDGET    : <= 290 Lines (Target <= 300 Lines | 100% Decoupled CSS & JS)
+ *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
+ *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
+ *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
+ * ==============================================================================
+ * 2. EXISTING MODULAR FILES LOCK (ZERO DUPLICATE IMPLEMENTATION):
+ *   - /js/index-shell-bootstrap.js (Part-0: Extracted Inline Shell Scripts & Sentinels)
+ *   - /js/one-tap-catalog-hydrator.js (Part-1A), /js/one-tap-home-css-healer.js (Part-1D)
+ *   - /js/one-tap-accordion-engine.js (Part-1C), /js/one-tap-catalog-dom-engine.js (Part-1B)
+ *   - /js/one-tap-shell-bridge.js, /js/data/india-geo-data.js, /js/home-grid-engine.js
+ *   - /js/profile-hub-engine.js, /js/categories-data.js, /js/catalog-sivme-core-engine.js
+ *   - /js/catalog-sivme-render-engine.js, /js/catalog-sivme-engine.js, /js/shell-controller.js
+ *   - /js/sivme-adapters/cat16-adapter.js, /js/favorites-engine.js
+ *   - /js/universal-catalog/ (catalog-metadata-registry, canonical-sub-matrix,
+ *     sub-card-renderer, universal-card-engine, universal-search-engine, ext-*,
+ *     games-entertainment-bridge.js), /js/core/sovereign-in-situ-registry.js
+ * ==============================================================================
+ * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
+ *   - ALLOWED ON SURFACE-A   : Sticky Header, Circular Profile Avatar, Directory Button,
+ *                              Live Search Input, Hero Wallet Card (RM CASH), User Pinned
+ *                              Favorites Section, 12 Core Cashflow Verticals Grid, Play
+ *                              Store Install Banner, Universal Catalog Modal (32 Categories
+ *                              • 18 Games Active), Fullscreen Micro-App Viewport & Bottom Nav.
+ *   - ALLOWED ON SURFACE-B   : Conditional loading of /js/sovereign-in-situ-hud.js via
+ *                              /js/index-shell-bootstrap.js ONLY when ?sivme=owner.
+ *   - FORBIDDEN IN THIS FILE : Inline script bloat (>300L) or stale cache versions (<v60).
+ * ==============================================================================
+ * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
+ *   - WRITES GLOBAL STATE : Delegated to /js/index-shell-bootstrap.js & Part-1A..1D
+ *   - CALLS EXTERNAL APIs : openCatalogModal, closeCatalogModal, triggerPWAInstall,
+ *                           dismissPlayBanner, filterQuickTiles, closeFullscreenModule
+ * ==============================================================================
+ * 5. DOM ATTRIBUTE & SELECTOR CONTRACT (ZERO-COLLISION DOM RULE):
+ *   - SURFACE-A SELECTORS : #categoryModal, #modal-catalog-count, #tier1-header-text,
+ *                           #tier2-header-text, #tier1-list, #tier2-list, #verticalTilesGrid,
+ *                           #userPinnedFavoritesSection, #rm-fullscreen-view, #playStoreInstallBanner
+ *   - SURFACE-B SELECTORS : .sivme-notch-pill, #sivme-hud, [data-sivme] (ISOLATED)
+ * ==============================================================================
+ * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
+ *   - CLICK SAFETY  : 1-Tap manipulation lock injected by /js/index-shell-bootstrap.js.
+ *   - SCROLL SAFETY : Non-blocking deferred modular scripts synced to ?v=20261018_v60.
+ *   - DOM SAFETY    : Native HTML locks "32 Categories • 18 Games Active" & "18 श्रेणियां".
+ * ==============================================================================
+ * 7. 100% ZERO-ELEMENT-LOSS (ZEL) SHELL MANIFEST:
+ *   1. Head Meta, Icons & app.css (?v=v60)    2. Part-0 Bootstrap (/js/index-shell-bootstrap.js)
+ *   3. Sticky Header & Circular Avatar        4. Main Content (Blocks 1 to 5 + console link)
+ *   5. Play Store Install Banner              6. Universal Catalog Modal (#categoryModal)
+ *   7. Fullscreen Viewport (#rm-fullscreen-view) 8. Bottom Navigation Bar (4 Tabs)
+ *   9. All 24 Modular Script Tags (?v=20261018_v60)
+ * ==============================================================================
+ * 8. ONE JOB = ONE FILE & CANONICAL PATH LOCK (ANTI-DUPLICATE FILE GUARD):
+ *   - SINGLE JOB RULE : Sole authoritative Surface-A HTML markup shell.
+ *   - CANONICAL PATH  : Must exist ONLY at `public/index.html`.
+ * ==============================================================================
+ * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
+ *   - ZERO DOHRAO     : Inline scripts extracted to `public/js/index-shell-bootstrap.js`.
+ *   - ANTI-OVERWRITE  : Part-0 + Part-1D lock 18 Games (33-50) after legacy renderers.
+ * ==============================================================================
+ * 10. FAIL-SAFE ERROR BOUNDARY, ZERO-STUB & 2-LINE SECTION GAP STANDARD:
+ *   - ERROR BOUNDARY  : All runtime logic guarded inside modular IIFE scripts.
+ *   - ZERO-STUB RULE  : 100% production-complete HTML shell; zero placeholders.
+ * ==============================================================================
+ * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
+ *   - VERSION SYNC    : All CSS/JS assets synced to `?v=20261018_v60`.
+ *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
+ * ==============================================================================
+ * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
+ *   - @folder-a-ssot  : 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW (Pure Policy & Specs Only)
+ *   - @folder-b-mirror: 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH (Auto-Synced via sync_drive.yml)
+ *   - @ai-pre-flight  : 12-Point Header + Shell auto-indexed in Folder B snapshot.
+ * ============================================================================== -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
@@ -29,90 +90,15 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  <!-- Master Decoupled Global CSS with Fresh Cache Buster -->
-  <link rel="stylesheet" href="/css/app.css?v=20261016_v12">
+  <link rel="stylesheet" href="/css/app.css?v=20261018_v60">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: { 500: '#10b981', 600: '#059669', 950: '#022c22' },
-            amberBrand: { 500: '#f59e0b', 950: '#451a03' },
-            surface: { 800: '#111827', 900: '#0b0f19', 950: '#030712' }
-          }
-        }
-      }
-    }
-  </script>
-
-  <!-- Auto-Purge Stale SIVME Flags on Normal Public Launch -->
-  <script>
-    (function() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const isOwnerLaunch = urlParams.get('sivme') === 'owner' || 
-                            urlParams.get('sov_mode') === 'in_situ' || 
-                            urlParams.get('dev_auto') === '1';
-      if (!isOwnerLaunch) {
-        try {
-          localStorage.removeItem('sivme_active');
-          localStorage.removeItem('sivme_mode');
-          localStorage.removeItem('rm_sivme_state');
-          sessionStorage.removeItem('sivme_active');
-        } catch(e) {}
-      }
-      try {
-        if (localStorage.getItem('rm_cache_ver') !== '20261016_v12' && 'caches' in window) {
-          caches.keys().then(function(names) {
-            for (let name of names) caches.delete(name);
-          });
-          localStorage.setItem('rm_cache_ver', '20261016_v12');
-        }
-      } catch(e) {}
-    })();
-  </script>
-
-  <!-- ZEL 1-Tap Instant Touch & Sub-Container Visibility Lock -->
-  <style id="rm-zel-one-tap-lock">
-    button, a, [onclick], .tactile-25d, #categoryModal [data-cat-id], #categoryModal [id^="sub-"] > div, .rm-service-chip {
-      touch-action: manipulation !important;
-      -webkit-tap-highlight-color: transparent !important;
-      cursor: pointer !important;
-    }
-    .tactile-25d:active {
-      transform: none !important;
-    }
-    #categoryModal.hidden,
-    #rm-fullscreen-view.hidden,
-    #playStoreInstallBanner.hidden,
-    #categoryModal .hidden,
-    #categoryModal [id^="sub-"].hidden,
-    #categoryModal [id^="sub-"][data-rm-collapsed="true"] {
-      display: none !important;
-    }
-    #categoryModal:not(.hidden) {
-      position: fixed !important;
-      inset: 0 !important;
-      z-index: 50 !important;
-      background-color: #0b0f19 !important;
-      display: flex !important;
-      justify-content: center !important;
-    }
-    #rm-fullscreen-view:not(.hidden) {
-      position: fixed !important;
-      inset: 0 !important;
-      z-index: 99999 !important;
-      display: flex !important;
-    }
-  </style>
+  <!-- Part-0 Modular Shell Bootstrapper (Tailwind Config, Cache Purge, 1-Tap Style Lock & Sentinels) -->
+  <script src="/js/index-shell-bootstrap.js?v=20261018_v60"></script>
 </head>
 
 <body class="bg-[#030712] text-slate-100 min-h-screen pb-36 antialiased select-none font-sans">
 
-  <!-- ============================================================================ -->
-  <!-- HEADER: LOGO, SYNC STATUS & ANGEL ONE CIRCULAR PROFILE AVATAR                -->
-  <!-- ============================================================================ -->
+  <!-- HEADER: LOGO, SYNC STATUS & ANGEL ONE CIRCULAR PROFILE AVATAR -->
   <header class="sticky top-0 z-40 bg-[#030712]/95 backdrop-blur-md border-b border-slate-800/80 px-4 py-3">
     <div class="flex items-center justify-between">
       <div class="flex items-center space-x-3">
@@ -121,9 +107,7 @@
           <img src="/rise-mitra-logo.svg" alt="RM WORLD Logo" class="relative w-11 h-11 rounded-xl shadow-lg border border-slate-700/60 object-contain bg-[#02091d]" />
         </div>
         <div>
-          <h1 class="text-lg font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 leading-tight uppercase font-sans">
-            RM WORLD
-          </h1>
+          <h1 class="text-lg font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 leading-tight uppercase font-sans">RM WORLD</h1>
           <p class="text-[10px] text-slate-400 font-medium">Rise Mitra • स्वास्थ्य और स्वावलंबन</p>
         </div>
       </div>
@@ -132,8 +116,6 @@
           <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-live"></span>
           <span class="text-[10px] font-bold text-emerald-300">ऑनलाइन सिंक</span>
         </div>
-        
-        <!-- Standard Circular Profile Avatar Button (Angel One Clean UX — 100% ZEL) -->
         <button type="button" onclick="if(window.RM_ProfileHub) window.RM_ProfileHub.open();" title="प्रोफ़ाइल व सेटिंग्स खोलें" class="w-9 h-9 rounded-full bg-slate-900 border border-slate-700/80 hover:border-cyan-400/80 flex items-center justify-center cursor-pointer active:scale-90 transition-all tactile-25d shadow-md overflow-hidden p-0.5 min-w-[36px] min-h-[36px]">
           <div id="header-user-avatar" class="w-full h-full rounded-full bg-gradient-to-tr from-cyan-600 to-blue-500 flex items-center justify-center text-white overflow-hidden shadow-inner">
             <svg class="w-full h-full text-slate-200 fill-current p-1" viewBox="0 0 24 24">
@@ -155,43 +137,32 @@
     </div>
   </header>
 
-  <!-- ============================================================================ -->
-  <!-- MAIN CONTENT: DIRECTORY BUTTON, WALLET, FAVORITES & 12 CORE VERTICALS        -->
-  <!-- ============================================================================ -->
+
+  <!-- MAIN CONTENT: DIRECTORY BUTTON, WALLET, FAVORITES & 12 CORE VERTICALS -->
   <main class="max-w-md mx-auto px-4 py-4 space-y-4">
-    <!-- Block 1: RM World Directory (Solid 2.5D Slate Border + High-Contrast Button) -->
+    <!-- Block 1: RM World Directory -->
     <button type="button" id="cat-menu-btn" onclick="openCatalogModal()" class="w-full tactile-25d bg-gradient-to-r from-slate-900 via-[#0d1527] to-slate-900 border border-slate-700/80 hover:border-cyan-500/60 p-3.5 rounded-2xl flex items-center justify-between cursor-pointer group shadow-xl transition-all min-h-[56px]">
       <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-slate-950 border border-slate-700/80 flex items-center justify-center text-lg text-slate-200 shadow-inner group-hover:scale-105 group-hover:border-cyan-400/80 transition-all">
-          ☰
-        </div>
+        <div class="w-10 h-10 rounded-xl bg-slate-950 border border-slate-700/80 flex items-center justify-center text-lg text-slate-200 shadow-inner group-hover:scale-105 group-hover:border-cyan-400/80 transition-all">☰</div>
         <div class="text-left">
-          <div class="text-sm font-black text-slate-100 group-hover:text-cyan-300 transition-colors">
-            RM World Directory
-          </div>
-          <div id="cat-subtitle-pill" class="text-xs text-emerald-400 font-sans tracking-wide">
-            Services • Utilities • Security • Games
-          </div>
+          <div class="text-sm font-black text-slate-100 group-hover:text-cyan-300 transition-colors">RM World Directory</div>
+          <div id="cat-subtitle-pill" class="text-xs text-emerald-400 font-sans tracking-wide">Services • Utilities • Security • Games</div>
         </div>
       </div>
-      <span class="bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/40 px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-md tracking-wide transition-colors">
-        खोलें ›
-      </span>
+      <span class="bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/40 px-3.5 py-1.5 rounded-xl text-xs font-bold shadow-md tracking-wide transition-colors">खोलें ›</span>
     </button>
 
-    <!-- Block 2: Live Search Input (Solid Slate-700 Border + High Focus Contrast) -->
+    <!-- Block 2: Live Search Input -->
     <div class="relative">
       <input type="text" id="liveSearchInput" oninput="filterQuickTiles()" placeholder="श्रेणी, दुकान या सेवा खोजें..." class="w-full bg-[#0b0f19] border border-slate-700/80 rounded-xl px-4 py-2.5 text-xs text-slate-200 placeholder-slate-400 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/40 transition-all min-h-[48px] shadow-md">
       <span class="absolute right-3.5 top-3.5 text-slate-400 text-sm">🔍</span>
     </div>
 
-    <!-- Block 3: Hero Wallet Card (Solid 2.5D Border + Ultra-High Button Contrast) -->
+    <!-- Block 3: Hero Wallet Card -->
     <section class="wallet-card bg-gradient-to-b from-[#111a30] via-[#0d1424] to-[#090d18] border border-slate-700/80 p-4 rounded-2xl space-y-3.5 shadow-2xl">
       <div class="flex justify-between items-center text-xs">
         <span class="text-slate-300 font-semibold tracking-wide">उपलब्ध शेष राशि (RM CASH)</span>
-        <span class="bg-emerald-950/90 border border-emerald-600/60 text-emerald-300 px-2.5 py-0.5 rounded-md text-[10px] font-bold shadow-sm">
-          सुरक्षित बहीखाता
-        </span>
+        <span class="bg-emerald-950/90 border border-emerald-600/60 text-emerald-300 px-2.5 py-0.5 rounded-md text-[10px] font-bold shadow-sm">सुरक्षित बहीखाता</span>
       </div>
       <div class="flex items-baseline space-x-2">
         <span class="text-3xl font-black text-white tracking-tight">₹0.00</span>
@@ -204,7 +175,6 @@
         <span>लेन-देन स्थिति: <span class="text-emerald-400 font-bold">सत्यापित</span></span>
         <span class="text-emerald-300 font-mono text-[11px] font-bold">ऑफलाइन-फर्स्ट सिंक</span>
       </div>
-      <!-- Action Buttons with High-Contrast Elevation -->
       <div class="grid grid-cols-2 gap-2.5 pt-1">
         <button type="button" onclick="alert('नया लेन-देन खुला')" class="w-full bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-black py-2.5 rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-lg shadow-emerald-950/50 cursor-pointer min-h-[48px] transition-all">
           <span class="text-base font-black leading-none">+</span>
@@ -217,7 +187,7 @@
       </div>
     </section>
 
-    <!-- Block 4: User Pinned Favorites (Phase 5 Play Store Styled Favorites Grid) -->
+    <!-- Block 4: User Pinned Favorites -->
     <section id="userPinnedFavoritesSection" class="space-y-2 hidden">
       <div class="flex justify-between items-center px-1">
         <h2 class="text-xs font-black uppercase tracking-wider text-amber-400 flex items-center space-x-1.5">
@@ -229,7 +199,7 @@
       <div id="userPinnedFavoritesGrid" class="grid grid-cols-2 gap-2.5 w-full"></div>
     </section>
 
-    <!-- Block 5: 12 Core Cashflow Verticals Grid Target -->
+    <!-- Block 5: 12 Core Cashflow Verticals Grid -->
     <section class="space-y-2">
       <div class="flex justify-between items-center px-1">
         <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">12 Core Cashflow Verticals</h2>
@@ -241,13 +211,12 @@
     </section>
 
     <div class="text-center pt-8 pb-10">
-      <a href="/owner-console.html" class="text-slate-600 hover:text-amber-400 font-mono text-xs tracking-widest uppercase transition-colors p-3 inline-block min-h-[48px] min-w-[48px] flex items-center justify-center">
-        console
-      </a>
+      <a href="/owner-console.html" class="text-slate-600 hover:text-amber-400 font-mono text-xs tracking-widest uppercase transition-colors p-3 inline-block min-h-[48px] min-w-[48px] flex items-center justify-center">console</a>
     </div>
   </main>
 
-  <!-- Play Store Banner -->
+
+  <!-- PLAY STORE INSTALL BANNER -->
   <div id="playStoreInstallBanner" class="fixed bottom-16 left-3 right-3 max-w-md mx-auto z-40 play-install-card bg-[#0b0f19] border border-slate-800 rounded-2xl p-3.5 shadow-2xl transition-all">
     <div class="flex items-start justify-between">
       <div class="flex items-center space-x-3">
@@ -260,9 +229,7 @@
             <span>•</span>
             <span class="text-slate-400">1.2 MB</span>
             <span>•</span>
-            <span class="text-emerald-400 font-bold flex items-center space-x-0.5">
-              <span>🛡️ Play Protect सत्यापित</span>
-            </span>
+            <span class="text-emerald-400 font-bold flex items-center space-x-0.5"><span>🛡️ Play Protect सत्यापित</span></span>
           </div>
         </div>
       </div>
@@ -276,43 +243,34 @@
         </svg>
         <span id="installBtnText">इंस्टॉल करें (Install)</span>
       </button>
-      <button onclick="dismissPlayBanner()" class="px-3.5 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700 cursor-pointer min-h-[48px] flex items-center justify-center">
-        बाद में
-      </button>
+      <button onclick="dismissPlayBanner()" class="px-3.5 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold hover:bg-slate-700 cursor-pointer min-h-[48px] flex items-center justify-center">बाद में</button>
     </div>
   </div>
 
-  <!-- ============================================================================ -->
-  <!-- MODALS & FULLSCREEN VIEWPORT MOUNT TARGETS                                   -->
-  <!-- ============================================================================ -->
-  <!-- Universal Catalog Modal: 100% Top-Anchored Fullscreen (Zero Gap & Instant Close) -->
+
+  <!-- UNIVERSAL CATALOG MODAL & FULLSCREEN VIEWPORT MOUNT TARGETS -->
   <div id="categoryModal" class="hidden" style="display: none;">
     <div class="w-full h-full max-w-md bg-[#0b0f19] border-none rounded-none flex flex-col shadow-none overflow-hidden">
       <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/70">
         <div>
           <h3 class="text-sm font-black text-slate-100 uppercase tracking-wide">RM World — Universal Catalog</h3>
-          <p id="modal-catalog-count" class="text-[10px] text-emerald-400">Services • Utilities • Security • Games</p>
+          <p id="modal-catalog-count" class="text-[10px] text-emerald-400">32 Categories • 18 Games Active</p>
         </div>
-        <!-- 100% Fail-Safe Instant Close Button -->
-        <button type="button" onclick="closeCatalogModal()" class="w-9 h-9 rounded-lg bg-slate-800 text-slate-300 font-bold text-sm hover:bg-slate-700 cursor-pointer flex items-center justify-center">
-          ✕
-        </button>
+        <button type="button" onclick="closeCatalogModal()" class="w-9 h-9 rounded-lg bg-slate-800 text-slate-300 font-bold text-sm hover:bg-slate-700 cursor-pointer flex items-center justify-center">✕</button>
       </div>
-
       <div class="flex-1 overflow-y-auto p-3.5 space-y-3 text-xs">
         <div class="space-y-1.5">
           <button type="button" id="rm-tier1-toggle" onclick="toggleAccordion('tier1-list', this)" class="w-full flex justify-between items-center p-3 rounded-xl bg-emerald-950/60 border border-emerald-800/40 text-emerald-300 font-bold cursor-pointer select-none transition-transform min-h-[52px]">
-            <span id="tier1-header-text">💼 आजीविका (33 सेवाएं)</span>
+            <span id="tier1-header-text">💼 आजीविका (32 श्रेणियां उपलब्ध)</span>
             <span class="acc-arrow text-sm font-bold font-mono">▼</span>
           </button>
           <div id="tier1-list" class="space-y-2 pl-1 transition-all" style="display: block;">
             <div class="p-4 text-xs text-slate-500 animate-pulse text-center">कैटलॉग लोड हो रहा है…</div>
           </div>
         </div>
-
         <div class="space-y-1.5">
           <button type="button" id="rm-tier2-toggle" onclick="toggleAccordion('tier2-list', this)" class="w-full flex justify-between items-center p-3 rounded-xl bg-cyan-950/60 border border-cyan-800/40 text-cyan-300 font-bold cursor-pointer select-none transition-transform min-h-[52px]">
-            <span id="tier2-header-text">🎮 खेल व मनोरंजन (17 श्रेणियां)</span>
+            <span id="tier2-header-text">🎮 खेल व मनोरंजन (18 श्रेणियां उपलब्ध)</span>
             <span class="acc-arrow text-sm font-bold font-mono">▼</span>
           </button>
           <div id="tier2-list" class="space-y-2 pl-1 transition-all" style="display: block;">
@@ -330,21 +288,16 @@
         <span class="text-base leading-none">‹</span>
         <span>वापस</span>
       </button>
-      <div id="fs-module-title" class="text-xs font-bold text-slate-200 font-sans tracking-wide">
-        🏠 किराया बहीखाता
-      </div>
-      <button type="button" onclick="closeFullscreenModule()" class="w-8 h-8 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 text-xs font-bold flex items-center justify-center tactile-25d cursor-pointer">
-        ✕
-      </button>
+      <div id="fs-module-title" class="text-xs font-bold text-slate-200 font-sans tracking-wide">🏠 किराया बहीखाता</div>
+      <button type="button" onclick="closeFullscreenModule()" class="w-8 h-8 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 text-xs font-bold flex items-center justify-center tactile-25d cursor-pointer">✕</button>
     </div>
     <div class="flex-1 w-full max-w-md mx-auto p-3 sm:p-4 pb-24 box-border overflow-x-hidden">
       <div id="rm-module-container" class="w-full max-w-full box-border"></div>
     </div>
   </div>
 
-  <!-- ============================================================================ -->
-  <!-- BOTTOM NAVIGATION                                                            -->
-  <!-- ============================================================================ -->
+
+  <!-- BOTTOM NAVIGATION -->
   <nav class="fixed bottom-0 left-0 right-0 nav-glass z-40 px-4 py-2">
     <div class="max-w-md mx-auto grid grid-cols-4 gap-1 text-center">
       <button class="flex flex-col items-center justify-center py-1 text-emerald-400 font-bold tactile-25d cursor-pointer min-h-[48px]">
@@ -366,129 +319,32 @@
     </div>
   </nav>
 
-  <!-- ============================================================================ -->
-  <!-- MODULAR CONTROLLERS & BULLETPROOF MODAL DISPATCHER                           -->
-  <!-- ============================================================================ -->
-  <script>
-    function openCatalogModal() {
-      var m = document.getElementById('categoryModal');
-      if (!m) return;
-      m.classList.remove('hidden');
-      m.style.setProperty('display', 'flex', 'important');
-      if (typeof window.ensureCatalogHydratedNow === 'function') {
-        window.ensureCatalogHydratedNow();
-      }
-    }
 
-    function closeCatalogModal() {
-      var m = document.getElementById('categoryModal');
-      if (!m) return;
-      m.classList.add('hidden');
-      m.style.setProperty('display', 'none', 'important');
-    }
-
-    window.toggleMenuDrawer = function(open) {
-      if (open) openCatalogModal();
-      else closeCatalogModal();
-    };
-  </script>
-
-  <!-- Modular 1-Tap Shell Bridge & Deterministic Catalog Controller -->
-  <script src="/js/one-tap-shell-bridge.js?v=20261016_v12"></script>
-
-  <!-- Pan-India Master Geographic Dataset -->
-  <script src="/js/data/india-geo-data.js?v=20261016_v12"></script>
-
-  <!-- Modular Home Grid Engine (12 Play Store Standard Verticals) -->
-  <script src="/js/home-grid-engine.js?v=20261016_v12"></script>
-
-  <!-- Sovereign Profile & Control Hub Engine (Angel One Taxonomy) -->
-  <script src="/js/profile-hub-engine.js?v=20261016_v12"></script>
-
-  <!-- Canonical Decoupled Catalog Engine & Data Registry (With Core & Render Sub-Modules) -->
-  <script src="/js/categories-data.js?v=20261016_v12"></script>
-  <script src="/js/catalog-sivme-core-engine.js?v=20261016_v12"></script>
-  <script src="/js/catalog-sivme-render-engine.js?v=20261016_v12"></script>
-  <script src="/js/catalog-sivme-engine.js?v=20261016_v12"></script>
-
-  <!-- Decoupled Shell Controller Engine & Viewport Dispatcher -->
-  <script src="/js/shell-controller.js?v=20261016_v12"></script>
-
-  <!-- Sovereign In-Situ Isolated Adapters -->
-  <script src="/js/sivme-adapters/cat16-adapter.js?v=20261016_v12"></script>
-
-  <!-- Universal Production Catalog & 0.05s Search Intelligence Engine (All Existing Sub-Modules Linked) -->
-  <script src="/js/universal-catalog/catalog-metadata-registry.js?v=20261016_v12"></script>
-  <script src="/js/universal-catalog/canonical-sub-matrix.js?v=20261016_v12"></script>
-  <script src="/js/universal-catalog/sub-card-renderer.js?v=20261016_v12"></script>
-  <script src="/js/universal-catalog/universal-card-engine.js?v=20261016_v12"></script>
-  <script src="/js/universal-catalog/universal-search-engine.js?v=20261016_v12"></script>
-
-  <!-- Modular Catalog Extensions (Cache-Busted Play Store Batches) -->
-  <script src="/js/universal-catalog/extensions/ext-batch-11-15.js?v=20261016_v12"></script>
-  <script src="/js/universal-catalog/extensions/ext-batch-16-20.js?v=20261016_v12"></script>
-
-  <!-- MODULAR PHASE 5 FAVORITES ENGINE (DECOUPLED & PLAY STORE STYLED) -->
-  <script src="/js/favorites-engine.js?v=20261016_v12"></script>
-
-  <!-- SIVME v2.0 Phase 1: Core Visibility Registry Engine (ZEL Isolated) -->
-  <script src="/js/core/sovereign-in-situ-registry.js?v=20261016_v12"></script>
-
-  <!-- FAIL-SAFE CATALOG HYDRATION SENTINEL (Eliminates Stuck Loading Text) -->
-  <script>
-    (function() {
-      window.ensureCatalogHydratedNow = function() {
-        var t1 = document.getElementById('tier1-list');
-        var t2 = document.getElementById('tier2-list');
-        if (!t1 || !t2) return;
-
-        var stuck1 = t1.innerHTML.indexOf('लोड हो रहा है') !== -1 || t1.children.length <= 1;
-        var stuck2 = t2.innerHTML.indexOf('लोड हो रहे हैं') !== -1 || t2.children.length <= 1;
-
-        if ((stuck1 || stuck2) && typeof window.renderCatalogItems === 'function') {
-          try { window.renderCatalogItems(); } catch (e) {}
-        }
-
-        if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
-          try { window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog(); } catch (e) {}
-        }
-      };
-
-      window.addEventListener('RM_CATALOG_DATA_READY', window.ensureCatalogHydratedNow);
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', window.ensureCatalogHydratedNow);
-      } else {
-        window.ensureCatalogHydratedNow();
-      }
-      setTimeout(window.ensureCatalogHydratedNow, 150);
-      setTimeout(window.ensureCatalogHydratedNow, 600);
-    })();
-  </script>
-
-  <!-- Service Worker Auto-Update Sentinel -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(function(regs) {
-        for (var reg of regs) { reg.update(); }
-      });
-    }
-  </script>
-
-  <!-- CONDITIONAL SIVME DEBUG ENGINE (ONLY RUNS WHEN LAUNCHED FROM SURFACE-B) -->
-  <script>
-    (function() {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('sivme') === 'owner' || urlParams.get('sov_mode') === 'in_situ') {
-        const scripts = ['/js/sovereign-in-situ-hud.js'];
-        scripts.forEach(src => {
-          const s = document.createElement('script');
-          s.src = src;
-          s.async = false;
-          document.body.appendChild(s);
-        });
-      }
-    })();
-  </script>
+  <!-- MODULAR CONTROLLERS & V60 DEFERRED CACHE-BUSTED SCRIPT REGISTRY -->
+  <script defer src="/js/one-tap-shell-bridge.js?v=20261018_v60"></script>
+  <script defer src="/js/data/india-geo-data.js?v=20261018_v60"></script>
+  <script defer src="/js/home-grid-engine.js?v=20261018_v60"></script>
+  <script defer src="/js/profile-hub-engine.js?v=20261018_v60"></script>
+  <script defer src="/js/categories-data.js?v=20261018_v60"></script>
+  <script defer src="/js/catalog-sivme-core-engine.js?v=20261018_v60"></script>
+  <script defer src="/js/catalog-sivme-render-engine.js?v=20261018_v60"></script>
+  <script defer src="/js/catalog-sivme-engine.js?v=20261018_v60"></script>
+  <script defer src="/js/shell-controller.js?v=20261018_v60"></script>
+  <script defer src="/js/sivme-adapters/cat16-adapter.js?v=20261018_v60"></script>
+  <script defer src="/js/universal-catalog/catalog-metadata-registry.js?v=20261018_v60"></script>
+  <script defer src="/js/universal-catalog/canonical-sub-matrix.js?v=20261018_v60"></script>
+  <script defer src="/js/universal-catalog/sub-card-renderer.js?v=20261018_v60"></script>
+  <script defer src="/js/universal-catalog/universal-card-engine.js?v=20261018_v60"></script>
+  <script defer src="/js/universal-catalog/universal-search-engine.js?v=20261018_v60"></script>
+  <script defer src="/js/universal-catalog/extensions/ext-batch-11-15.js?v=20261018_v60"></script>
+  <script defer src="/js/universal-catalog/extensions/ext-batch-16-20.js?v=20261018_v60"></script>
+  <script defer src="/js/universal-catalog/games-entertainment-bridge.js?v=20261018_v60"></script>
+  <script defer src="/js/favorites-engine.js?v=20261018_v60"></script>
+  <script defer src="/js/core/sovereign-in-situ-registry.js?v=20261018_v60"></script>
+  <script defer src="/js/one-tap-home-css-healer.js?v=20261018_v60"></script>
+  <script defer src="/js/one-tap-accordion-engine.js?v=20261018_v60"></script>
+  <script defer src="/js/one-tap-catalog-dom-engine.js?v=20261018_v60"></script>
+  <script defer src="/js/one-tap-catalog-hydrator.js?v=20261018_v60"></script>
 
 </body>
 </html>
