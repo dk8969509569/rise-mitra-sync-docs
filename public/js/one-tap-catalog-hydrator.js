@@ -1,11 +1,11 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-1A Modular Catalog Hydrator & Modal Dispatcher (v51)
+ *   - MODULE NAME    : RM Part-1A Modular Catalog Hydrator & Modal Dispatcher (v52)
  *   - REPO TARGET    : public/js/one-tap-catalog-hydrator.js
  *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional Loader for Surface-B SIVME)
  *   - HOST BINDING   : Surface-A (public/index.html) | Surface-B (public/owner-console.html)
- *   - SIZE BUDGET    : <= 245 Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 255 Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -21,11 +21,12 @@
  *   - public/js/favorites-engine.js & public/js/favorites-data-extractor.js (My Favorites Engine)
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
- *   - ALLOWED ON SURFACE-A   : Parallel script preloader, modal open/close dispatchers,
+ *   - ALLOWED ON SURFACE-A   : Parallel script preloader (zero hanging progress bar),
+ *                              modal open/close dispatchers, install popup auto-dismissal,
  *                              fullscreen micro-app bridges, and Part-1B/1C/1D API bridges.
  *   - ALLOWED ON SURFACE-B   : Conditional loading of /js/sovereign-in-situ-hud.js ONLY when
  *                              ?sivme=owner or ?sov_mode=in_situ is present in URL.
- *   - FORBIDDEN IN THIS FILE : Cross-surface DOM leakage or dropping any v39-v50 ZEL function.
+ *   - FORBIDDEN IN THIS FILE : Cross-surface DOM leakage or dropping any v39-v51 ZEL function.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.__RM_ACTIVE_CACHE_VER, window.__RM_OPEN_CAT_STATE,
@@ -73,7 +74,7 @@
  *   - MOBILE EDITING  : 2-line blank spacing preserved between major functional blocks.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261017_v51'`.
+ *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261017_v52'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -90,7 +91,7 @@
   if (window.__RM_LOADED_MODULES__['one-tap-catalog-hydrator']) return;
   window.__RM_LOADED_MODULES__['one-tap-catalog-hydrator'] = true;
 
-  var CACHE_VERSION = '20261017_v51';
+  var CACHE_VERSION = '20261017_v52';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VERSION;
   var isSyncingDOM = false;
   var hasRenderedCatalogOnce = false;
@@ -101,7 +102,7 @@
   window.__RM_LAST_MODAL_OPEN_TS = window.__RM_LAST_MODAL_OPEN_TS || 0;
 
 
-  // 1. Parallel Preload & Script Loader for Part-1D Healer, Part-1C Accordion, Part-1B DOM Engine, Home Grid, Fullscreen & Games
+  // 1. Non-Blocking Parallel Script Loader for Part-1D Healer, Part-1C Accordion, Part-1B DOM Engine, Home Grid, Fullscreen & Games
   (function ensureFullscreenControllerLoaded() {
     var head = document.head || document.documentElement;
     var modules = [
@@ -115,12 +116,6 @@
     for (var i = 0; i < modules.length; i++) {
       if (!document.getElementById(modules[i].id)) {
         var fullUrl = modules[i].src + '?v=' + CACHE_VERSION;
-        var preload = document.createElement('link');
-        preload.rel = 'preload';
-        preload.as = 'script';
-        preload.href = fullUrl;
-        head.appendChild(preload);
-
         var s = document.createElement('script');
         s.id = modules[i].id;
         s.src = fullUrl;
@@ -138,6 +133,7 @@
 
   // 2. Delegated Part-1D Home & CSS Healer Bridges (`public/js/one-tap-home-css-healer.js`)
   function healHomeVerticalsInstantly() {
+    try { window.dismissPlayBanner(); } catch (e) {}
     if (window.RM_HOME_CSS_HEALER && typeof window.RM_HOME_CSS_HEALER.healHomeVerticalsInstantly === 'function') {
       return window.RM_HOME_CSS_HEALER.healHomeVerticalsInstantly();
     }
@@ -155,7 +151,7 @@
   window.healHomeVerticalsInstantly = healHomeVerticalsInstantly;
 
 
-  // 3. Fullscreen Viewport Helpers (100% v50 ZEL Intact)
+  // 3. Fullscreen Viewport Helpers (100% v51 ZEL Intact)
   function forceCloseFullscreenViewport() {
     var fs = document.getElementById('rm-fullscreen-view');
     if (fs) {
@@ -316,6 +312,15 @@
       b.classList.add('hidden');
       b.style.setProperty('display', 'none', 'important');
     }
+    var cards = document.querySelectorAll('div, section, aside');
+    for (var i = 0; i < cards.length; i++) {
+      var el = cards[i];
+      var txt = (el.textContent || '');
+      if (txt.indexOf('Play Protect') !== -1 && txt.indexOf('इंस्टॉल करें') !== -1 && el.offsetHeight > 40 && el.offsetHeight < 320) {
+        el.classList.add('hidden');
+        el.style.setProperty('display', 'none', 'important');
+      }
+    }
   };
 
   function launchOneTapServiceScreen(titleText, subtitleText, subCode) {
@@ -361,6 +366,7 @@
 
   function bootFastHomeAndCatalog() {
     window.closeFullscreenModule = forceCloseFullscreenViewport;
+    window.dismissPlayBanner();
     installMasterOneTapAccordionEngine();
     healHomeVerticalsInstantly();
     setTimeout(healHomeVerticalsInstantly, 80);
@@ -377,11 +383,15 @@
   }
 
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then(function (regs) {
-      for (var i = 0; i < regs.length; i++) {
-        regs[i].update();
-      }
-    });
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        navigator.serviceWorker.getRegistrations().then(function (regs) {
+          for (var i = 0; i < regs.length; i++) {
+            regs[i].update();
+          }
+        });
+      }, 2000);
+    }, { once: true });
   }
 
   var urlParams = new URLSearchParams(window.location.search);
