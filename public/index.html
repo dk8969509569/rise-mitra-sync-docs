@@ -2,7 +2,7 @@
 <html lang="hi" class="dark" data-theme="dark">
 <!-- ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Surface-A Master Modular HTML Shell & 18-Games SSOT Lock (v57)
+ *   - MODULE NAME    : RM Surface-A Master Modular HTML Shell & 18-Games SSOT Lock (v60)
  *   - REPO TARGET    : public/index.html
  *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional SIVME Loader via Bootstrap)
  *   - HOST BINDING   : Surface-A Primary Entry Point (https://rmworld.vercel.app)
@@ -31,7 +31,7 @@
  *                              • 18 Games Active), Fullscreen Micro-App Viewport & Bottom Nav.
  *   - ALLOWED ON SURFACE-B   : Conditional loading of /js/sovereign-in-situ-hud.js via
  *                              /js/index-shell-bootstrap.js ONLY when ?sivme=owner.
- *   - FORBIDDEN IN THIS FILE : Inline script bloat (>300L) or stale cache versions (<v57).
+ *   - FORBIDDEN IN THIS FILE : Inline script bloat (>300L) or stale cache versions (<v60).
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : Delegated to /js/index-shell-bootstrap.js & Part-1A..1D
@@ -46,15 +46,15 @@
  * ==============================================================================
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
  *   - CLICK SAFETY  : 1-Tap manipulation lock injected by /js/index-shell-bootstrap.js.
- *   - SCROLL SAFETY : Non-blocking modular scripts synced to ?v=20261017_v57.
+ *   - SCROLL SAFETY : Non-blocking deferred modular scripts synced to ?v=20261018_v60.
  *   - DOM SAFETY    : Native HTML locks "32 Categories • 18 Games Active" & "18 श्रेणियां".
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) SHELL MANIFEST:
- *   1. Head Meta, Icons & app.css (?v=v57)    2. Part-0 Bootstrap (/js/index-shell-bootstrap.js)
+ *   1. Head Meta, Icons & app.css (?v=v60)    2. Part-0 Bootstrap (/js/index-shell-bootstrap.js)
  *   3. Sticky Header & Circular Avatar        4. Main Content (Blocks 1 to 5 + console link)
  *   5. Play Store Install Banner              6. Universal Catalog Modal (#categoryModal)
  *   7. Fullscreen Viewport (#rm-fullscreen-view) 8. Bottom Navigation Bar (4 Tabs)
- *   9. All 24 Modular Script Tags (?v=20261017_v57)
+ *   9. All 24 Modular Script Tags (?v=20261018_v60)
  * ==============================================================================
  * 8. ONE JOB = ONE FILE & CANONICAL PATH LOCK (ANTI-DUPLICATE FILE GUARD):
  *   - SINGLE JOB RULE : Sole authoritative Surface-A HTML markup shell.
@@ -69,7 +69,7 @@
  *   - ZERO-STUB RULE  : 100% production-complete HTML shell; zero placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : All CSS/JS assets synced to `?v=20261017_v57`.
+ *   - VERSION SYNC    : All CSS/JS assets synced to `?v=20261018_v60`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -90,10 +90,10 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  <link rel="stylesheet" href="/css/app.css?v=20261017_v57">
+  <link rel="stylesheet" href="/css/app.css?v=20261018_v60">
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Part-0 Modular Shell Bootstrapper (Tailwind Config, Cache Purge, 1-Tap Style Lock & Sentinels) -->
-  <script src="/js/index-shell-bootstrap.js?v=20261017_v57"></script>
+  <script src="/js/index-shell-bootstrap.js?v=20261018_v60"></script>
 </head>
 
 <body class="bg-[#030712] text-slate-100 min-h-screen pb-36 antialiased select-none font-sans">
@@ -320,31 +320,31 @@
   </nav>
 
 
-  <!-- MODULAR CONTROLLERS & V57 CACHE-BUSTED SCRIPT REGISTRY -->
-  <script src="/js/one-tap-shell-bridge.js?v=20261017_v57"></script>
-  <script src="/js/data/india-geo-data.js?v=20261017_v57"></script>
-  <script src="/js/home-grid-engine.js?v=20261017_v57"></script>
-  <script src="/js/profile-hub-engine.js?v=20261017_v57"></script>
-  <script src="/js/categories-data.js?v=20261017_v57"></script>
-  <script src="/js/catalog-sivme-core-engine.js?v=20261017_v57"></script>
-  <script src="/js/catalog-sivme-render-engine.js?v=20261017_v57"></script>
-  <script src="/js/catalog-sivme-engine.js?v=20261017_v57"></script>
-  <script src="/js/shell-controller.js?v=20261017_v57"></script>
-  <script src="/js/sivme-adapters/cat16-adapter.js?v=20261017_v57"></script>
-  <script src="/js/universal-catalog/catalog-metadata-registry.js?v=20261017_v57"></script>
-  <script src="/js/universal-catalog/canonical-sub-matrix.js?v=20261017_v57"></script>
-  <script src="/js/universal-catalog/sub-card-renderer.js?v=20261017_v57"></script>
-  <script src="/js/universal-catalog/universal-card-engine.js?v=20261017_v57"></script>
-  <script src="/js/universal-catalog/universal-search-engine.js?v=20261017_v57"></script>
-  <script src="/js/universal-catalog/extensions/ext-batch-11-15.js?v=20261017_v57"></script>
-  <script src="/js/universal-catalog/extensions/ext-batch-16-20.js?v=20261017_v57"></script>
-  <script src="/js/universal-catalog/games-entertainment-bridge.js?v=20261017_v57"></script>
-  <script src="/js/favorites-engine.js?v=20261017_v57"></script>
-  <script src="/js/core/sovereign-in-situ-registry.js?v=20261017_v57"></script>
-  <script src="/js/one-tap-home-css-healer.js?v=20261017_v57"></script>
-  <script src="/js/one-tap-accordion-engine.js?v=20261017_v57"></script>
-  <script src="/js/one-tap-catalog-dom-engine.js?v=20261017_v57"></script>
-  <script src="/js/one-tap-catalog-hydrator.js?v=20261017_v57"></script>
+  <!-- MODULAR CONTROLLERS & V60 DEFERRED CACHE-BUSTED SCRIPT REGISTRY -->
+  <script defer src="/js/one-tap-shell-bridge.js?v=20261018_v60"></script>
+  <script defer src="/js/data/india-geo-data.js?v=20261018_v60"></script>
+  <script defer src="/js/home-grid-engine.js?v=20261018_v60"></script>
+  <script defer src="/js/profile-hub-engine.js?v=20261018_v60"></script>
+  <script defer src="/js/categories-data.js?v=20261018_v60"></script>
+  <script defer src="/js/catalog-sivme-core-engine.js?v=20261018_v60"></script>
+  <script defer src="/js/catalog-sivme-render-engine.js?v=20261018_v60"></script>
+  <script defer src="/js/catalog-sivme-engine.js?v=20261018_v60"></script>
+  <script defer src="/js/shell-controller.js?v=20261018_v60"></script>
+  <script defer src="/js/sivme-adapters/cat16-adapter.js?v=20261018_v60"></script>
+  <script defer src="/js/universal-catalog/catalog-metadata-registry.js?v=20261018_v60"></script>
+  <script defer src="/js/universal-catalog/canonical-sub-matrix.js?v=20261018_v60"></script>
+  <script defer src="/js/universal-catalog/sub-card-renderer.js?v=20261018_v60"></script>
+  <script defer src="/js/universal-catalog/universal-card-engine.js?v=20261018_v60"></script>
+  <script defer src="/js/universal-catalog/universal-search-engine.js?v=20261018_v60"></script>
+  <script defer src="/js/universal-catalog/extensions/ext-batch-11-15.js?v=20261018_v60"></script>
+  <script defer src="/js/universal-catalog/extensions/ext-batch-16-20.js?v=20261018_v60"></script>
+  <script defer src="/js/universal-catalog/games-entertainment-bridge.js?v=20261018_v60"></script>
+  <script defer src="/js/favorites-engine.js?v=20261018_v60"></script>
+  <script defer src="/js/core/sovereign-in-situ-registry.js?v=20261018_v60"></script>
+  <script defer src="/js/one-tap-home-css-healer.js?v=20261018_v60"></script>
+  <script defer src="/js/one-tap-accordion-engine.js?v=20261018_v60"></script>
+  <script defer src="/js/one-tap-catalog-dom-engine.js?v=20261018_v60"></script>
+  <script defer src="/js/one-tap-catalog-hydrator.js?v=20261018_v60"></script>
 
 </body>
 </html>
