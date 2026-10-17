@@ -1,11 +1,11 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-1D 0ms Home Verticals Healer, Cache Purge & CSS Lock (v56)
+ *   - MODULE NAME    : RM Part-1D 0ms Home Verticals Healer, Cache Purge & CSS Lock (v57)
  *   - REPO TARGET    : public/js/one-tap-home-css-healer.js
  *   - SURFACE TARGET : SURFACE-A ONLY (Public Customer PWA Shell Home & CSS Lock)
  *   - HOST BINDING   : Surface-A (public/index.html)
- *   - SIZE BUDGET    : <= 295 Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 298 Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -36,10 +36,10 @@
  *   - SURFACE-A SELECTORS : #verticalTilesGrid, #categoryModal, #playStoreInstallBanner
  *   - SURFACE-B SELECTORS : .sivme-notch-pill, #sivme-hud, [data-sivme] (EXCLUDED)
  * ==============================================================================
- * 6. ANTI-FREEZE, EVENT LISTENER & TIMER OWNERSHIP LOCK:
+ * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
  *   - CLICK SAFETY  : Passive listener on #categoryModal re-locks 18 Games (33-50) on tap.
  *   - SCROLL SAFETY : 120ms throttle prevents repeated DOM scans from lagging scroll.
- *   - DOM SAFETY    : Non-destructive text sync for Catalog Header & Home Verticals.
+ *   - DOM SAFETY    : Final-pass text-node & card lock prevents legacy overwrite regression.
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (5 CORE FUNCTIONS + 2 CONSTANTS):
  *   1. dismissPlayBanner             2. lockGames18StatePermanently
@@ -61,7 +61,7 @@
  *   - MOBILE EDITING  : 2-line blank spacing preserved between major functional blocks.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261017_v56'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261017_v57'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -78,7 +78,7 @@
   if (window.__RM_LOADED_MODULES__['one-tap-home-css-healer']) return;
   window.__RM_LOADED_MODULES__['one-tap-home-css-healer'] = true;
 
-  var CACHE_VERSION = window.__RM_ACTIVE_CACHE_VER || '20261017_v56';
+  var CACHE_VERSION = window.__RM_ACTIVE_CACHE_VER || '20261017_v57';
   var lastHealRunTs = 0;
   var isLockingGames = false;
 
@@ -140,19 +140,35 @@
     if (isLockingGames) return;
     isLockingGames = true;
     try {
-      if (window.RM_GAMES_ENT_BRIDGE && typeof window.RM_GAMES_ENT_BRIDGE.hydrateGamesCatalog === 'function') {
-        try { window.RM_GAMES_ENT_BRIDGE.hydrateGamesCatalog(); } catch (e) {}
-      }
-      if (typeof window.hydrateTier2GamesCatalog === 'function') {
-        try { window.hydrateTier2GamesCatalog(); } catch (e) {}
+      var modal = document.getElementById('categoryModal') || document.body;
+      if (!modal) return;
+
+      if (!modal.querySelector('[data-cat-id="g34"]')) {
+        if (window.RM_GAMES_ENT_BRIDGE && typeof window.RM_GAMES_ENT_BRIDGE.hydrateGamesCatalog === 'function') {
+          try { window.RM_GAMES_ENT_BRIDGE.hydrateGamesCatalog(); } catch (e) {}
+        }
+        if (typeof window.hydrateTier2GamesCatalog === 'function') {
+          try { window.hydrateTier2GamesCatalog(); } catch (e) {}
+        }
       }
 
-      var modal = document.getElementById('categoryModal');
-      if (!modal) return;
+      if (typeof document.createTreeWalker === 'function') {
+        var walker = document.createTreeWalker(modal, 4, null, false);
+        var tNode;
+        while ((tNode = walker.nextNode())) {
+          var val = tNode.nodeValue || '';
+          if (val.indexOf('Games Active') !== -1 && val.indexOf('18 Games Active') === -1) {
+            tNode.nodeValue = val.replace(/\b\d+\s*Games Active/g, '18 Games Active');
+          }
+          if (val.indexOf('श्रेणियां उपलब्ध') !== -1 && val.indexOf('32') === -1 && val.indexOf('18') === -1) {
+            tNode.nodeValue = val.replace(/\(\d+\s*श्रेणियां उपलब्ध\)/g, '(18 श्रेणियां उपलब्ध)');
+          }
+        }
+      }
 
       var nodes = modal.querySelectorAll('div, p, span, button, h2, h3');
       var card33 = null;
-      var hasCard34 = false;
+      var hasCard34 = Boolean(modal.querySelector('[data-cat-id="g34"]'));
       for (var i = 0; i < nodes.length; i++) {
         var el = nodes[i];
         var txt = (el.textContent || '').trim();
@@ -173,8 +189,20 @@
             }
           }
         }
-        if (el.children.length === 0 && txt === '33.') {
-          card33 = el.closest('[data-cat-id]') || (el.parentElement && el.parentElement.parentElement && el.parentElement.parentElement.parentElement);
+        if (el.children.length === 0 && (txt === '33.' || txt === 'Action Games') && !card33) {
+          var cur = el.closest('[data-cat-id]');
+          if (!cur) {
+            var p = el.parentElement;
+            while (p && p !== modal && p !== document.body) {
+              var pTxt = p.textContent || '';
+              if (p.tagName === 'DIV' && pTxt.indexOf('Action Games') !== -1 && (pTxt.indexOf('और देखें') !== -1 || pTxt.indexOf('समेटें') !== -1)) {
+                cur = p;
+                break;
+              }
+              p = p.parentElement;
+            }
+          }
+          card33 = cur || (el.parentElement && el.parentElement.parentElement && el.parentElement.parentElement.parentElement);
         }
         if (el.children.length === 0 && txt === '34.') {
           hasCard34 = true;
@@ -203,8 +231,14 @@
                   '<div class="flex flex-wrap gap-1.5 mt-2">' +
                     '<span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-amber-950/60 text-amber-300 border border-amber-500/40">★ 4.9 (10k+ नागरिक)</span>' +
                     '<span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-sky-950/60 text-sky-300 border border-sky-500/40">✓ Rise Verified Network</span>' +
+                    '<span class="text-[11px] font-bold px-2 py-0.5 rounded-md bg-slate-800/90 text-slate-300 border border-slate-700">24x7 सहायता केंद्र</span>' +
                   '</div>' +
                 '</div>' +
+              '</div>' +
+              '<div class="space-y-2 mt-3">' +
+                '<div class="px-3 py-2 rounded-xl bg-sky-950/35 border border-sky-500/30 text-xs font-bold text-sky-300">🛡️ 100% सत्यापित व पुलिस वेरिफाइड सेवा प्रदाता नेटवर्क</div>' +
+                '<div class="px-3 py-2 rounded-xl bg-emerald-950/35 border border-emerald-500/30 text-xs font-bold text-emerald-300">⚡ पारदर्शी तय रेट कार्ड, डिजिटल बिलिंग व शून्य छुपा शुल्क</div>' +
+                '<div class="px-3 py-2 rounded-xl bg-amber-950/35 border border-amber-500/30 text-xs font-bold text-amber-300">🔒 Rise Mitra कार्य संतुष्टि गारंटी व प्रत्यक्ष सहायता</div>' +
               '</div>' +
               '<div class="flex justify-end mt-3">' +
                 '<button type="button" class="rm-parent-toggle-pill px-4 py-1.5 rounded-full text-xs font-black border border-emerald-500/75 text-emerald-300 bg-emerald-950/45">और देखें ▼</button>' +
@@ -244,11 +278,14 @@
       if (typeof window.renderHomeMacroGrid === 'function') {
         try { window.renderHomeMacroGrid(); } catch (e) {}
       }
-      if (window.RM_GAMES_ENT_BRIDGE && typeof window.RM_GAMES_ENT_BRIDGE.hydrateGamesCatalog === 'function') {
-        try { window.RM_GAMES_ENT_BRIDGE.hydrateGamesCatalog(); } catch (e) {}
-      }
-      if (typeof window.hydrateTier2GamesCatalog === 'function') {
-        try { window.hydrateTier2GamesCatalog(); } catch (e) {}
+      var modalEl = document.getElementById('categoryModal');
+      if (!modalEl || !modalEl.querySelector('[data-cat-id="g34"]')) {
+        if (window.RM_GAMES_ENT_BRIDGE && typeof window.RM_GAMES_ENT_BRIDGE.hydrateGamesCatalog === 'function') {
+          try { window.RM_GAMES_ENT_BRIDGE.hydrateGamesCatalog(); } catch (e) {}
+        }
+        if (typeof window.hydrateTier2GamesCatalog === 'function') {
+          try { window.hydrateTier2GamesCatalog(); } catch (e) {}
+        }
       }
 
       var nodes = document.querySelectorAll('div, p, span, section, button, h2, h3');
@@ -292,6 +329,7 @@
       if (typeof window.renderFavorites === 'function') {
         try { window.renderFavorites(); } catch (e) {}
       }
+      lockGames18StatePermanently();
     } catch (err) {}
   }
 
@@ -348,14 +386,17 @@
     if (!existing) (document.head || document.documentElement).appendChild(style);
   }
 
-  window.addEventListener('click', function (e) {
+  function onCatalogTapReLock(e) {
     var modal = document.getElementById('categoryModal');
     if (modal && !modal.classList.contains('hidden') && modal.contains(e.target)) {
       lockGames18StatePermanently();
       setTimeout(lockGames18StatePermanently, 20);
       setTimeout(lockGames18StatePermanently, 90);
+      setTimeout(lockGames18StatePermanently, 220);
     }
-  }, { capture: false, passive: true });
+  }
+  window.addEventListener('touchend', onCatalogTapReLock, { capture: false, passive: true });
+  window.addEventListener('click', onCatalogTapReLock, { capture: false, passive: true });
 
   purgeStaleState();
   injectOneTapLockStyles();
