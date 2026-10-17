@@ -1,11 +1,11 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-1D 0ms Home Verticals Healer, Cache Purge & CSS Lock (v54)
+ *   - MODULE NAME    : RM Part-1D 0ms Home Verticals Healer, Cache Purge & CSS Lock (v55)
  *   - REPO TARGET    : public/js/one-tap-home-css-healer.js
  *   - SURFACE TARGET : SURFACE-A ONLY (Public Customer PWA Shell Home & CSS Lock)
  *   - HOST BINDING   : Surface-A (public/index.html)
- *   - SIZE BUDGET    : <= 230 Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 240 Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -17,7 +17,7 @@
  *   - public/js/one-tap-catalog-dom-engine.js (Part-1B: Canonical Catalog DOM Engine)
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
- *   - ALLOWED ON SURFACE-A   : CORE_12_VERTICALS fallback, healHomeVerticalsInstantly,
+ *   - ALLOWED ON SURFACE-A   : CORE_12_VERTICALS fallback, throttled 60fps healHomeVerticalsInstantly,
  *                              permanent "32 Categories • 18 Games Active" & "18 श्रेणियां
  *                              उपलब्ध" sync, dismissPlayBanner, purgeStaleState, and
  *                              injectOneTapLockStyles CSS rules.
@@ -37,7 +37,7 @@
  * ==============================================================================
  * 6. ANTI-FREEZE, EVENT LISTENER & TIMER OWNERSHIP LOCK:
  *   - CLICK SAFETY  : Pure synchronous DOM/CSS healer; attaches zero click listeners.
- *   - SCROLL SAFETY : Unlocks vertical page scroll and hides horizontal scrollbar.
+ *   - SCROLL SAFETY : 120ms throttle prevents repeated DOM scans from lagging scroll.
  *   - DOM SAFETY    : Non-destructive text sync for Catalog Header & Home Verticals.
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (4 EXTRACTED CORE FUNCTIONS):
@@ -60,7 +60,7 @@
  *   - MOBILE EDITING  : 2-line blank spacing preserved between major functional blocks.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261017_v54'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261017_v55'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -77,7 +77,8 @@
   if (window.__RM_LOADED_MODULES__['one-tap-home-css-healer']) return;
   window.__RM_LOADED_MODULES__['one-tap-home-css-healer'] = true;
 
-  var CACHE_VERSION = window.__RM_ACTIVE_CACHE_VER || '20261017_v54';
+  var CACHE_VERSION = window.__RM_ACTIVE_CACHE_VER || '20261017_v55';
+  var lastHealRunTs = 0;
 
   var CORE_12_VERTICALS = [
     { seq: '02', catId: 'c02', icon: '🛵', en: 'Auto & Vehicles', hi: 'बाइक/कार रिपेयर, वाशिंग व गैराज' },
@@ -114,6 +115,10 @@
 
 
   function healHomeVerticalsInstantly() {
+    var now = Date.now();
+    if (now - lastHealRunTs < 120) return;
+    lastHealRunTs = now;
+
     try {
       document.documentElement.style.overflowX = 'hidden';
       document.body.style.overflowX = 'hidden';
@@ -222,7 +227,7 @@
       '#playStoreInstallBanner, #pwa-install-banner { display: none !important; }',
       'button, a, [onclick], .tactile-25d, #categoryModal [data-cat-id], #categoryModal [id^="sub-"] > div, .rm-service-chip { touch-action: manipulation !important; -webkit-tap-highlight-color: transparent !important; cursor: pointer !important; user-select: none !important; -webkit-user-select: none !important; transition: none !important; }',
       '.tactile-25d:active { transform: none !important; }',
-      '#categoryModal { -webkit-overflow-scrolling: touch !important; }',
+      '#categoryModal { -webkit-overflow-scrolling: touch !important; overscroll-behavior: contain !important; }',
       '#categoryModal.hidden, #rm-fullscreen-view.hidden, #playStoreInstallBanner.hidden, #categoryModal [id^="sub-"]:not([data-rm-collapsed="false"]).hidden, #categoryModal [id^="sub-"][data-rm-collapsed="true"] { display: none !important; }',
       '#categoryModal [id^="sub-"][data-rm-collapsed="false"] { display: block !important; }',
       '#categoryModal:not(.hidden) { position: fixed !important; inset: 0 !important; z-index: 50 !important; background-color: #0b0f19 !important; display: flex !important; justify-content: center !important; }',
