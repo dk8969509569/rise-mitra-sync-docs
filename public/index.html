@@ -6,6 +6,16 @@
 <!-- SPEC SSOT  : FOLDER A (MASTER DOCUMENT SSOT) & FOLDER B (LIVE SNAPSHOT)       -->
 <!-- STATUS     : FULLY DECOUPLED (CSS -> app.css | JS -> modular engines)          -->
 <!-- ============================================================================== -->
+<!-- 🔒 EXISTING MODULAR FILES LOCK (DO NOT CREATE DUPLICATE FILES):                -->
+<!--   - /js/one-tap-shell-bridge.js, /js/data/india-geo-data.js                    -->
+<!--   - /js/home-grid-engine.js, /js/profile-hub-engine.js                         -->
+<!--   - /js/categories-data.js, /js/catalog-sivme-core-engine.js                   -->
+<!--   - /js/catalog-sivme-render-engine.js, /js/catalog-sivme-engine.js            -->
+<!--   - /js/shell-controller.js, /js/sivme-adapters/cat16-adapter.js               -->
+<!--   - /js/universal-catalog/ (catalog-metadata-registry, canonical-sub-matrix,   -->
+<!--     sub-card-renderer, universal-card-engine, universal-search-engine, ext-*)  -->
+<!--   - /js/favorites-engine.js, /js/core/sovereign-in-situ-registry.js            -->
+<!-- ============================================================================== -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
@@ -20,7 +30,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <!-- Master Decoupled Global CSS with Fresh Cache Buster -->
-  <link rel="stylesheet" href="/css/app.css?v=20261015_v11">
+  <link rel="stylesheet" href="/css/app.css?v=20261016_v12">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -53,11 +63,11 @@
         } catch(e) {}
       }
       try {
-        if (localStorage.getItem('rm_cache_ver') !== '20261015_v10' && 'caches' in window) {
+        if (localStorage.getItem('rm_cache_ver') !== '20261016_v12' && 'caches' in window) {
           caches.keys().then(function(names) {
             for (let name of names) caches.delete(name);
           });
-          localStorage.setItem('rm_cache_ver', '20261015_v10');
+          localStorage.setItem('rm_cache_ver', '20261016_v12');
         }
       } catch(e) {}
     })();
@@ -365,6 +375,9 @@
       if (!m) return;
       m.classList.remove('hidden');
       m.style.setProperty('display', 'flex', 'important');
+      if (typeof window.ensureCatalogHydratedNow === 'function') {
+        window.ensureCatalogHydratedNow();
+      }
     }
 
     function closeCatalogModal() {
@@ -381,41 +394,76 @@
   </script>
 
   <!-- Modular 1-Tap Shell Bridge & Deterministic Catalog Controller -->
-  <script src="/js/one-tap-shell-bridge.js?v=20261015_v11"></script>
+  <script src="/js/one-tap-shell-bridge.js?v=20261016_v12"></script>
 
   <!-- Pan-India Master Geographic Dataset -->
-  <script src="/js/data/india-geo-data.js?v=20261015_v11"></script>
+  <script src="/js/data/india-geo-data.js?v=20261016_v12"></script>
 
   <!-- Modular Home Grid Engine (12 Play Store Standard Verticals) -->
-  <script src="/js/home-grid-engine.js?v=20261015_v11"></script>
+  <script src="/js/home-grid-engine.js?v=20261016_v12"></script>
 
   <!-- Sovereign Profile & Control Hub Engine (Angel One Taxonomy) -->
-  <script src="/js/profile-hub-engine.js?v=20261015_v11"></script>
+  <script src="/js/profile-hub-engine.js?v=20261016_v12"></script>
 
-  <!-- Canonical Decoupled Catalog Engine & Data Registry -->
-  <script src="/js/categories-data.js?v=20261015_v11"></script>
-  <script src="/js/catalog-sivme-engine.js?v=20261015_v11"></script>
+  <!-- Canonical Decoupled Catalog Engine & Data Registry (With Core & Render Sub-Modules) -->
+  <script src="/js/categories-data.js?v=20261016_v12"></script>
+  <script src="/js/catalog-sivme-core-engine.js?v=20261016_v12"></script>
+  <script src="/js/catalog-sivme-render-engine.js?v=20261016_v12"></script>
+  <script src="/js/catalog-sivme-engine.js?v=20261016_v12"></script>
 
   <!-- Decoupled Shell Controller Engine & Viewport Dispatcher -->
-  <script src="/js/shell-controller.js?v=20261015_v11"></script>
+  <script src="/js/shell-controller.js?v=20261016_v12"></script>
 
   <!-- Sovereign In-Situ Isolated Adapters -->
-  <script src="/js/sivme-adapters/cat16-adapter.js?v=20261015_v11"></script>
+  <script src="/js/sivme-adapters/cat16-adapter.js?v=20261016_v12"></script>
 
-  <!-- Universal Production Catalog & 0.05s Search Intelligence Engine (Cache-Busted) -->
-  <script src="/js/universal-catalog/catalog-metadata-registry.js?v=20261015_v11"></script>
-  <script src="/js/universal-catalog/universal-card-engine.js?v=20261015_v11"></script>
-  <script src="/js/universal-catalog/universal-search-engine.js?v=20261015_v11"></script>
+  <!-- Universal Production Catalog & 0.05s Search Intelligence Engine (All Existing Sub-Modules Linked) -->
+  <script src="/js/universal-catalog/catalog-metadata-registry.js?v=20261016_v12"></script>
+  <script src="/js/universal-catalog/canonical-sub-matrix.js?v=20261016_v12"></script>
+  <script src="/js/universal-catalog/sub-card-renderer.js?v=20261016_v12"></script>
+  <script src="/js/universal-catalog/universal-card-engine.js?v=20261016_v12"></script>
+  <script src="/js/universal-catalog/universal-search-engine.js?v=20261016_v12"></script>
 
   <!-- Modular Catalog Extensions (Cache-Busted Play Store Batches) -->
-  <script src="/js/universal-catalog/extensions/ext-batch-11-15.js?v=20261015_v11"></script>
-  <script src="/js/universal-catalog/extensions/ext-batch-16-20.js?v=20261015_v11"></script>
+  <script src="/js/universal-catalog/extensions/ext-batch-11-15.js?v=20261016_v12"></script>
+  <script src="/js/universal-catalog/extensions/ext-batch-16-20.js?v=20261016_v12"></script>
 
   <!-- MODULAR PHASE 5 FAVORITES ENGINE (DECOUPLED & PLAY STORE STYLED) -->
-  <script src="/js/favorites-engine.js?v=20261015_v11"></script>
+  <script src="/js/favorites-engine.js?v=20261016_v12"></script>
 
   <!-- SIVME v2.0 Phase 1: Core Visibility Registry Engine (ZEL Isolated) -->
-  <script src="/js/core/sovereign-in-situ-registry.js?v=20261015_v11"></script>
+  <script src="/js/core/sovereign-in-situ-registry.js?v=20261016_v12"></script>
+
+  <!-- FAIL-SAFE CATALOG HYDRATION SENTINEL (Eliminates Stuck Loading Text) -->
+  <script>
+    (function() {
+      window.ensureCatalogHydratedNow = function() {
+        var t1 = document.getElementById('tier1-list');
+        var t2 = document.getElementById('tier2-list');
+        if (!t1 || !t2) return;
+
+        var stuck1 = t1.innerHTML.indexOf('लोड हो रहा है') !== -1 || t1.children.length <= 1;
+        var stuck2 = t2.innerHTML.indexOf('लोड हो रहे हैं') !== -1 || t2.children.length <= 1;
+
+        if ((stuck1 || stuck2) && typeof window.renderCatalogItems === 'function') {
+          try { window.renderCatalogItems(); } catch (e) {}
+        }
+
+        if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
+          try { window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog(); } catch (e) {}
+        }
+      };
+
+      window.addEventListener('RM_CATALOG_DATA_READY', window.ensureCatalogHydratedNow);
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', window.ensureCatalogHydratedNow);
+      } else {
+        window.ensureCatalogHydratedNow();
+      }
+      setTimeout(window.ensureCatalogHydratedNow, 150);
+      setTimeout(window.ensureCatalogHydratedNow, 600);
+    })();
+  </script>
 
   <!-- Service Worker Auto-Update Sentinel -->
   <script>

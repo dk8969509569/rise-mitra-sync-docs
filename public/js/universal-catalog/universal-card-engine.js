@@ -7,6 +7,14 @@
  * DUAL-FOLDER REFS:
  *   Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
  *   Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
+ * ==============================================================================
+ * 🔒 TOP-HEADER FILE SCOPE LOCK (ANTI-CONFLICT GOVERNANCE RULE):
+ *   ✅ ALLOWED IN THIS FILE   : Parent Card (01.-50.) & Sub-Card (01-1.-50-3.) HTML UI,
+ *                               Top-Left 24px/22px Numbering, Trust Pillars & Card Sweep.
+ *   🚫 FORBIDDEN IN THIS FILE : Global touchend/touchstart listeners, Modal open/close
+ *                               dispatchers (belongs in one-tap-catalog-hydrator.js), or
+ *                               1-Tap Bridge locks (belongs in one-tap-shell-bridge.js).
+ * ==============================================================================
  */
 
 (function () {
@@ -35,6 +43,10 @@
 
   // Helper: Open Fullscreen Micro-App Viewport on 1-Tap for Sub-Card or Service Chip
   function openOneTapSubServiceViewport(info, cleanSub, selectedChipText, isGame) {
+    if (window.RM_FULLSCREEN_MICROAPP_CONTROLLER && typeof window.RM_FULLSCREEN_MICROAPP_CONTROLLER.openOneTapSubServiceViewport === 'function') {
+      window.RM_FULLSCREEN_MICROAPP_CONTROLLER.openOneTapSubServiceViewport(info, cleanSub, selectedChipText, isGame);
+      return;
+    }
     if (cleanSub === '16-2' && typeof window.openFullscreenModule === 'function') {
       window.openFullscreenModule('16-2');
       return;
@@ -68,13 +80,34 @@
       fsTitle.textContent = badgeIcon + ' ' + cleanSub + '. ' + mainHeading;
     }
 
+    fsContainer.innerHTML = [
+      '<div style="padding: 18px 14px; color: #f8fafc; font-family: system-ui, sans-serif;">',
+      '  <div style="background: linear-gradient(135deg, #0f172a, #1e293b); border: 1.5px solid rgba(56, 189, 248, 0.35); border-radius: 16px; padding: 18px; margin-bottom: 16px;">',
+      '    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">',
+      '      <span style="background: rgba(56, 189, 248, 0.16); color: #38bdf8; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 800;">कोड: ' + cleanSub + '</span>',
+      '      <span style="color: #facc15; font-size: 12.5px; font-weight: 800;">' + ratingText + ' (' + reviewText + ')</span>',
+      '    </div>',
+      '    <div style="font-size: 20px; font-weight: 900; color: #ffffff; margin-bottom: 4px;">' + badgeIcon + ' ' + mainHeading + '</div>',
+      '    <div style="font-size: 13.5px; font-weight: 600; color: #34d399;">' + subHeading + '</div>',
+      '  </div>',
+      '  <button type="button" onclick="window.closeFullscreenModule && window.closeFullscreenModule()" style="width: 100%; padding: 13px; border-radius: 12px; border: 1px solid rgba(148, 163, 184, 0.3); background: #1e293b; color: #f8fafc; font-size: 14px; font-weight: 800; cursor: pointer;">← वापस कैटलॉग पर जाएं</button>',
+      '</div>'
+    ].join('');
+
+    fs.classList.remove('hidden');
+    fs.style.setProperty('display', 'flex', 'important');
+  }
+
+  window.openOneTapSubServiceViewport = openOneTapSubServiceViewport;
+
   // Auto-load decoupled Canonical 150 Sub-Category Matrix & Sub-Card Renderer Modules
   (function ensureCanonicalMatrixLoaded() {
     var head = document.head || document.documentElement;
+    var ver = window.__RM_ACTIVE_CACHE_VER || '20261016_v39';
     if (!window.RM_CANONICAL_SUB_MATRIX && !document.getElementById('rm-canonical-sub-matrix-script')) {
       var s1 = document.createElement('script');
       s1.id = 'rm-canonical-sub-matrix-script';
-      s1.src = '/js/universal-catalog/canonical-sub-matrix.js?v=20261015_v18';
+      s1.src = '/js/universal-catalog/canonical-sub-matrix.js?v=' + ver;
       s1.async = false;
       s1.onload = function () { sweepCatalog(); };
       head.appendChild(s1);
@@ -82,7 +115,7 @@
     if (!window.RM_SUB_CARD_RENDERER && !document.getElementById('rm-sub-card-renderer-script')) {
       var s2 = document.createElement('script');
       s2.id = 'rm-sub-card-renderer-script';
-      s2.src = '/js/universal-catalog/sub-card-renderer.js?v=20261015_v18';
+      s2.src = '/js/universal-catalog/sub-card-renderer.js?v=' + ver;
       s2.async = false;
       s2.onload = function () { sweepCatalog(); };
       head.appendChild(s2);
@@ -141,7 +174,7 @@
     return matrix[paddedSub] || null;
   }
 
-  // 1. RENDER UNIVERSAL PARENT CARD (TOP-LEFT: NUMBER ON TOP, LOGO BELOW | RIGHT: PLAY STORE TITLE)
+  // 1. RENDER UNIVERSAL PARENT CARD (TOP-LEFT: LARGE 24PX NUMBER ON TOP, LOGO BELOW | RIGHT: PLAY STORE TITLE)
   function renderParentCard(headerEl, catId, isOpen, subCount) {
     if (!headerEl) return;
     var ids = getNormalizedIds(catId);
@@ -153,6 +186,7 @@
     headerEl.style.setProperty('display', 'flex', 'important');
     headerEl.style.setProperty('flex-direction', 'column', 'important');
     headerEl.style.setProperty('align-items', 'stretch', 'important');
+    headerEl.removeAttribute('onclick');
 
     // Remove any legacy duplicate parent card (such as #rm-universal-parent-01 vs #rm-universal-parent-1)
     Array.from(headerEl.querySelectorAll('[id^="rm-universal-parent-"]')).forEach(function (node) {
@@ -163,9 +197,28 @@
 
     var regData = fetchCategoryRegistryData(ids);
 
+    // Preserve DOM Title/Subtitle before hiding legacy child nodes if registry is still loading
+    var domTitle = headerEl.getAttribute('data-rm-saved-title') || '';
+    var domSubtitle = headerEl.getAttribute('data-rm-saved-subtitle') || '';
+    if (!domTitle) {
+      var rawTitleNode = headerEl.querySelector('.font-bold, h3, h4, .text-base');
+      if (rawTitleNode && rawTitleNode.textContent) {
+        domTitle = rawTitleNode.textContent.replace(/^\d+\.?\s*/, '').trim();
+        if (domTitle) headerEl.setAttribute('data-rm-saved-title', domTitle);
+      }
+    }
+    if (!domSubtitle) {
+      var fullHeaderTxt = headerEl.textContent || '';
+      var hiMatch = fullHeaderTxt.match(/\(([^)]+[\u0900-\u097F][^)]*)\)/);
+      if (hiMatch && hiMatch[1]) {
+        domSubtitle = hiMatch[1].trim();
+        headerEl.setAttribute('data-rm-saved-subtitle', domSubtitle);
+      }
+    }
+
     // Standard Google Play Store Authoritative Names (Folder A SSOT — 100% Protected Against "undefined")
-    var title = (regData && (regData.title || regData.name)) || ('Category ' + displayNum);
-    var subtitle = (regData && (regData.subtitle || regData.hindiTitle || regData.hindi || regData.desc)) || 'दैनिक जनसेवाएं व आधिकारिक सुविधा केंद्र';
+    var title = (regData && (regData.title || regData.name)) || domTitle || ('Category ' + displayNum);
+    var subtitle = (regData && (regData.subtitle || regData.hindiTitle || regData.hindi || regData.desc)) || domSubtitle || 'दैनिक जनसेवाएं व आधिकारिक सुविधा केंद्र';
     var icon = (regData && regData.icon) || '📦';
     var rating = (regData && regData.rating) || '★ 4.9 (10k+ नागरिक)';
     var trustBadge = (regData && (regData.trustBadge || regData.badge)) || 'Rise Verified Network';
@@ -173,13 +226,13 @@
 
     var targetState = numId + ':' + String(Boolean(isOpen)) + ':' + String(subCount || 0) + ':' + title + ':' + subtitle;
     var existingContainer = headerEl.querySelector('#' + canonicalParentId);
-    if (existingContainer && headerEl.getAttribute('data-rm-parent-rendered') === targetState) {
+    if (existingContainer && headerEl.getAttribute('data-rm-parent-state') === targetState) {
       return;
     }
 
     // Universal Future-Proof Domain Value Pillars
     var universalPillars = [
-      { icon: '🛡️', text: '100% आधार व पुलिस सत्यापित सेवा प्रदाता नेटवर्क', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.12)' },
+      { icon: '🛡️', text: '100% सत्यापित व पुलिस वेरिफाइड सेवा प्रदाता नेटवर्क', color: '#38bdf8', bg: 'rgba(56, 189, 248, 0.12)' },
       { icon: '⚡', text: 'पारदर्शी तय रेट कार्ड, डिजिटल बिलिंग व शून्य छुपा शुल्क', color: '#34d399', bg: 'rgba(52, 211, 153, 0.12)' },
       { icon: '🔒', text: 'Rise Mitra कार्य संतुष्टि गारंटी व प्रत्यक्ष सहायता', color: '#facc15', bg: 'rgba(250, 204, 21, 0.12)' }
     ];
@@ -222,15 +275,17 @@
     var countText = (subCount && subCount > 0) ? (subCount + ' सेवाएं ') : 'सभी सेवाएं ';
 
     container.innerHTML = [
-      '<!-- Top Row: Squircle Badge [Icon + Order Inside] + Right Column [Play Store Bold Title & Subtitle] -->',
+      '<!-- Top Row: Left Column [Top-Left Large 24px Number + Squircle Logo Below] + Right Column [Play Store Bold Title & Subtitle] -->',
       '<div style="display: flex; align-items: flex-start; gap: 14px; width: 100%;">',
-      '  <!-- Squircle Badge: Order & Icon strictly INSIDE, zero numbers outside -->',
-      '  <div style="width: 58px; height: 58px; min-width: 58px; border-radius: 16px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 1.5px solid rgba(56, 189, 248, 0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.45); flex-shrink: 0;">',
-      '    <span style="font-size: 24px; line-height: 1;">' + icon + '</span>',
-      '    <span style="font-size: 11px; font-weight: 800; color: #38bdf8; font-family: ui-monospace, monospace; margin-top: 3px; line-height: 1;">' + displayNum + '</span>',
+      '  <!-- Top-Left Stack: Large Bold Number on Top, Squircle Icon Below -->',
+      '  <div style="display: flex; flex-direction: column; align-items: flex-start; flex-shrink: 0;">',
+      '    <span class="rm-toplevel-num-badge" style="font-size: 24px; font-weight: 900; color: #38bdf8; font-family: system-ui, -apple-system, sans-serif; letter-spacing: -0.5px; margin-bottom: 6px; line-height: 1.05; display: block; text-align: left;">' + displayNum + '</span>',
+      '    <div style="width: 58px; height: 58px; min-width: 58px; border-radius: 16px; background: linear-gradient(135deg, #1e293b, #0f172a); border: 1.5px solid rgba(56, 189, 248, 0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.45); flex-shrink: 0;">',
+      '      <span style="font-size: 28px; line-height: 1;">' + icon + '</span>',
+      '    </div>',
       '  </div>',
       '  <!-- Right Column: Standard Play Store Bold Title & Clean Subtitle -->',
-      '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0;">',
+      '  <div style="display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0; padding-top: 2px;">',
       '    <div style="font-size: 21px; font-weight: 900; color: #ffffff; letter-spacing: -0.3px; line-height: 1.25; margin-bottom: 4px; word-break: break-word;">' + title + '</div>',
       '    <div style="font-size: 13.5px; font-weight: 600; color: #34d399; line-height: 1.35; margin-bottom: 6px; word-break: break-word;">' + subtitle + '</div>',
       '    <!-- Badges Row -->',
@@ -251,7 +306,11 @@
       '</div>'
     ].join('');
 
-    headerEl.setAttribute('data-rm-parent-rendered', targetState);
+    headerEl.setAttribute('data-rm-parent-state', targetState);
+    headerEl.setAttribute('data-rm-parent-rendered', '1');
+    if (headerEl.parentElement && headerEl.parentElement.hasAttribute('data-cat-id')) {
+      headerEl.parentElement.setAttribute('data-rm-parent-rendered', '1');
+    }
   }
 
   // Helper: Trigger original hidden button in legacy DOM (delegates to sub-card-renderer.js)
@@ -262,10 +321,30 @@
     return false;
   }
 
-  // 2. RENDER SUB-CARD (DELEGATED TO MODULAR public/js/universal-catalog/sub-card-renderer.js — 100% ZEL)
+  // 2. RENDER SUB-CARD (DELEGATED TO MODULAR public/js/universal-catalog/sub-card-renderer.js + TOP-LEFT NUMBERING LOCK)
   function renderSubCard(subCardEl, catId, subId) {
     if (window.RM_SUB_CARD_RENDERER && typeof window.RM_SUB_CARD_RENDERER.renderSubCard === 'function') {
       window.RM_SUB_CARD_RENDERER.renderSubCard(subCardEl, catId, subId);
+    }
+    if (subCardEl) {
+      var cleanCode = String(subId || '').replace(/\s+/g, '').replace(/\.$/, '') + '.';
+      var spans = subCardEl.querySelectorAll('span, div');
+      for (var i = 0; i < spans.length; i++) {
+        var s = spans[i];
+        if (s.children.length === 0 && s.textContent && /^\d{1,2}-\d\s*\.?$/.test(s.textContent.trim())) {
+          s.textContent = cleanCode;
+          s.style.setProperty('font-family', 'system-ui, -apple-system, sans-serif', 'important');
+          s.style.setProperty('font-size', '22px', 'important');
+          s.style.setProperty('font-weight', '900', 'important');
+          s.style.setProperty('color', '#38bdf8', 'important');
+          s.style.setProperty('letter-spacing', '-0.5px', 'important');
+          s.style.setProperty('line-height', '1.05', 'important');
+          if (s.parentElement && s.parentElement !== subCardEl) {
+            s.parentElement.style.setProperty('align-items', 'flex-start', 'important');
+          }
+          break;
+        }
+      }
     }
   }
 
@@ -276,6 +355,7 @@
     try {
       var modal = document.getElementById('categoryModel') || document.getElementById('categoryModal') || document.body;
       var cats = modal.querySelectorAll('[data-cat-id]');
+      var stateMap = window.__RM_OPEN_CAT_STATE || null;
       cats.forEach(function (catEl) {
         var rawId = catEl.getAttribute('data-cat-id');
         if (!rawId) return;
@@ -290,23 +370,28 @@
                   document.getElementById('sub-g' + ids.paddedId) ||
                   document.getElementById('sub-' + rawId) ||
                   document.getElementById('sub-' + ids.normId) ||
-                  document.getElementById('sub-' + ids.paddedId);
+                  document.getElementById('sub-' + ids.paddedId) ||
+                  resolveSubContainer(catEl, rawId, ids.normId);
 
-        var isOpen = Boolean(
-          sub &&
-          !sub.classList.contains('hidden') &&
-          sub.getAttribute('data-rm-collapsed') !== 'true' &&
-          window.getComputedStyle(sub).display !== 'none'
-        );
+        var isOpen = (stateMap && Object.prototype.hasOwnProperty.call(stateMap, ids.normId))
+          ? Boolean(stateMap[ids.normId])
+          : Boolean(
+              sub &&
+              !sub.classList.contains('hidden') &&
+              sub.getAttribute('data-rm-collapsed') !== 'true' &&
+              window.getComputedStyle(sub).display !== 'none'
+            );
         var subCards = sub ? sub.querySelectorAll(':scope > div') : [];
 
         // Keep sub-container display and hidden class strictly synchronized
         if (sub) {
           if (isOpen) {
             sub.classList.remove('hidden');
+            sub.setAttribute('data-rm-collapsed', 'false');
             sub.style.setProperty('display', 'block', 'important');
           } else {
             sub.classList.add('hidden');
+            sub.setAttribute('data-rm-collapsed', 'true');
             sub.style.setProperty('display', 'none', 'important');
           }
         }
@@ -337,15 +422,17 @@
     document.addEventListener('click', function (e) {
       if (e.target.closest('.sivme-notch-pill')) return;
 
+      // Skip duplicate toggle AND skip 40ms/250ms re-sweep collision when one-tap-shell-bridge owns state
+      if (window.__RM_OPEN_CAT_STATE) return;
+
       // Deterministic 1-Tap Parent Category Accordion Toggle
       var catEl = e.target.closest('[data-cat-id]');
       if (catEl) {
         var rawId = catEl.getAttribute('data-cat-id') || '';
-        var cleanNum = rawId.replace(/[^0-9]/g, '');
-        var intNum = parseInt(cleanNum, 10);
-        var normNum = isNaN(intNum) ? cleanNum : String(intNum);
+        var ids = getNormalizedIds(rawId);
+        var normNum = ids.normId;
         var header = catEl.querySelector(':scope > div:first-child');
-        var sub = resolveSubContainer(catEl, rawId, cleanNum);
+        var sub = resolveSubContainer(catEl, rawId, ids.normId);
 
         if (header && sub && header.contains(e.target) && !sub.contains(e.target)) {
           var now = Date.now();
@@ -359,18 +446,22 @@
           e.stopImmediatePropagation();
           e.preventDefault();
 
-          var currentlyOpen = !sub.classList.contains('hidden') && window.getComputedStyle(sub).display !== 'none';
+          var currentlyOpen = !sub.classList.contains('hidden') &&
+                              sub.getAttribute('data-rm-collapsed') !== 'true' &&
+                              window.getComputedStyle(sub).display !== 'none';
           var nextOpen = !currentlyOpen;
           var subCards = sub.querySelectorAll(':scope > div');
 
           if (nextOpen) {
             sub.classList.remove('hidden');
+            sub.setAttribute('data-rm-collapsed', 'false');
             sub.style.setProperty('display', 'block', 'important');
             subCards.forEach(function (sc, idx) {
-              renderSubCard(sc, normNum, normNum + '-' + (idx + 1));
+              renderSubCard(sc, normNum, ids.paddedId + '-' + (idx + 1));
             });
           } else {
             sub.classList.add('hidden');
+            sub.setAttribute('data-rm-collapsed', 'true');
             sub.style.setProperty('display', 'none', 'important');
           }
 
@@ -395,6 +486,7 @@
   window.RM_UNIVERSAL_CARD_ENGINE = {
     renderParentCard: renderParentCard,
     renderSubCard: renderSubCard,
-    sweepCatalog: sweepCatalog
+    sweepCatalog: sweepCatalog,
+    openOneTapSubServiceViewport: openOneTapSubServiceViewport
   };
 })();

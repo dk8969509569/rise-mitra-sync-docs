@@ -1,409 +1,464 @@
 /**
- * RISE MITRA — MODULAR 1-TAP SHELL BRIDGE & DETERMINISTIC CONTROLLER
- * MODULE        : Decoupled Shell Controller, 1-Tap Catalog Sync, Cache Sentinel & SIVME Loader
- * GOVERNANCE    : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
- * REPO TARGET   : public/js/one-tap-shell-bridge.js (pre-main staging verified)
+ * ==============================================================================
+ * 📌 1. FILE IDENTITY, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
+ *   - MODULE NAME : RISE MITRA — PART 2: MODULAR 1-TAP SHELL BRIDGE & DETERMINISTIC CONTROLLER (SLIM <=300L ZEL)
+ *   - MODULE ROLE : Decoupled 1-Tap Controller (Calls Part-1 Hydrator & Part-3 SubCard Router APIs)
+ *   - GOVERNANCE  : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
+ *   - REPO TARGET : public/js/one-tap-shell-bridge.js (Target <= 300 Lines per SSOT Rule 04)
+ *   - DUAL-FOLDER REFS:
+ *       Folder A (Master Document SSOT): 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW
+ *       Folder B (GitHub Mirror): 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH
+ * ==============================================================================
+ * 🔒 2. EXISTING MODULAR FILES LOCK (3-FILE SPLIT — ZERO DUPLICATE IMPLEMENTATION):
+ *   - /js/one-tap-shell-bridge.js (This File: Part-2 Slim Controller — ~240 Lines)
+ *   - /js/one-tap-catalog-hydrator.js (Part-1: SubContainer Resolver, Card Hydrator & Modal APIs)
+ *   - /js/one-tap-catalog-dom-engine.js (Part-1B: Accordion State, Pill Sync & Shield Engine)
+ *   - /js/one-tap-subcard-router.js (Part-3: Priority 0 Fullscreen Close, Case 2 & 32-3 DOM Repair)
+ *   - /js/universal-catalog/universal-card-engine.js (Root Parent/Sub-Card HTML Renderer)
+ *   - /js/fullscreen-microapp-controller.js (Dedicated 15-3/15-2 & Fullscreen UI)
+ * ==============================================================================
+ * 🛡️ 3. TOP-HEADER FILE SCOPE LOCK (ANTI-CONFLICT GOVERNANCE RULE):
+ *   ✅ ALLOWED IN THIS FILE   : Parallel module bootstrapping, touchstart/touchmove/touchend/click
+ *                               capture, touchSeq tracking & 0ms 1-Tap dispatch.
+ *   🚫 FORBIDDEN IN THIS FILE : Large HTML card templates (belongs in universal-card-engine.js)
+ *                               or CSS stylesheet injection (belongs in one-tap-catalog-hydrator.js).
+ * ==============================================================================
+ * 🌐 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
+ *   - WRITES GLOBAL STATE : window.__RM_ACTIVE_CACHE_VER, window.__RM_OPEN_CAT_STATE,
+ *                           window.__RM_LAST_MODAL_OPEN_TS
+ *   - CALLS EXTERNAL APIs : window.RM_CATALOG_DOM_ENGINE.*, window.RM_CATALOG_HYDRATOR.*,
+ *                           window.RM_SUBCARD_ROUTER.*, window.RM_UNIVERSAL_CARD_ENGINE.*
+ * ==============================================================================
+ * 🏷️ 5. DOM ATTRIBUTE & SELECTOR CONTRACT (ZERO-COLLISION DOM RULE):
+ *   - PARENT CARD MARKER  : [data-cat-id] -> sets data-rm-parent-rendered="1"
+ *   - SUB-CONTAINER STATE : [id^="sub-"] -> sets data-rm-collapsed="true|false"
+ *   - VISIBLE PILL TARGET : .rm-parent-toggle-pill ("समेटें ▲" Red / "और देखें ▼" Green)
+ * ==============================================================================
+ * ❄️ 6. ANTI-FREEZE, EVENT LISTENER & TIMER OWNERSHIP LOCK:
+ *   - CLICK SAFETY  : Only suppress synthetic click within 420ms of a real handled touchend.
+ *                     NEVER permanently block clicks with handledTouchSeq === touchSeq!
+ *   - SCROLL SAFETY : Track touchmove (> 12px) via touchMoved so scrolling never triggers cards.
+ *   -P0 GUARD       : Only run Priority 0 Fullscreen Close when #rm-fullscreen-view is open.
+ * ==============================================================================
+ * 📋 7. 100% ZEL FUNCTION MANIFEST (8 MANDATORY FUNCTIONS + 5 LISTENERS):
+ *   1. ensureFullscreenControllerLoaded  2. forceCloseFullscreenViewport
+ *   3. ensureMicroAppRendered            4. repairFullscreenSubServiceDOM
+ *   5. resolveCategorySubContainer       6. window.openCatalogModal
+ *   7. window.closeCatalogModal          8. handleDeterministicOneTap
+ *   + Listeners: touchstart, touchmove, touchend, window.click, document.click
+ * ==============================================================================
  */
 
 (function () {
   'use strict';
 
-  var CACHE_VERSION = '20261015_v23';
+  var CACHE_VERSION = '20261017_v42';
+  window.__RM_ACTIVE_CACHE_VER = CACHE_VERSION;
   var lastActionTs = 0;
+  var lastTouchTs = 0;
+  var lastModalOpenTs = 0;
   var touchStartX = 0;
   var touchStartY = 0;
   var touchStartTime = 0;
-  var isSyncingDOM = false;
+  var touchMoved = false;
+  var touchSeq = 0;
+  var handledTouchSeq = -1;
+  var isSyntheticHomeClick = false;
 
-  // Persistent open state map so background 120ms re-renders never close an opened category
-  var openStateMap = { '15': true, '16': true };
+  // Shared persistent open state map across Part-1, Part-1B, Part-2 & Part-3
+  var openStateMap = window.__RM_OPEN_CAT_STATE || { '15': true, '16': true };
   window.__RM_OPEN_CAT_STATE = openStateMap;
 
-  // Auto-load decoupled Fullscreen Micro-App Controller Module (public/js/fullscreen-microapp-controller.js)
+  // Auto-load decoupled Fullscreen Controller, Part-1 Hydrator, Part-1B DOM Engine, Sub-Matrix & Part-3 SubCard Router in Parallel
   (function ensureFullscreenControllerLoaded() {
-    if (window.RM_FULLSCREEN_CONTROLLER || document.getElementById('rm-fs-microapp-controller-script')) return;
-    var s = document.createElement('script');
-    s.id = 'rm-fs-microapp-controller-script';
-    s.src = '/js/fullscreen-microapp-controller.js?v=' + CACHE_VERSION;
-    s.async = false;
-    (document.head || document.documentElement).appendChild(s);
-  })();
-
-  // 1. AUTO-PURGE STALE SIVME FLAGS & STALE CACHE ON NORMAL PUBLIC LAUNCH
-  (function purgeStaleState() {
-    var urlParams = new URLSearchParams(window.location.search);
-    var isOwnerLaunch = urlParams.get('sivme') === 'owner' ||
-                        urlParams.get('sov_mode') === 'in_situ' ||
-                        urlParams.get('dev_auto') === '1';
-    if (!isOwnerLaunch) {
-      try {
-        localStorage.removeItem('sivme_active');
-        localStorage.removeItem('sivme_mode');
-        localStorage.removeItem('rm_sivme_state');
-        sessionStorage.removeItem('sivme_active');
-      } catch (e) {}
-    }
-    try {
-      if (localStorage.getItem('rm_cache_ver') !== CACHE_VERSION && 'caches' in window) {
-        caches.keys().then(function (names) {
-          for (var i = 0; i < names.length; i++) {
-            caches.delete(names[i]);
-          }
-        });
-        localStorage.setItem('rm_cache_ver', CACHE_VERSION);
+    var modules = [
+      { id: 'rm-canonical-sub-matrix-script', src: '/js/universal-catalog/canonical-sub-matrix.js' },
+      { id: 'rm-sub-card-renderer-script', src: '/js/universal-catalog/sub-card-renderer.js' },
+      { id: 'rm-fs-microapp-controller-script', src: '/js/fullscreen-microapp-controller.js' },
+      { id: 'rm-catalog-dom-engine-script', src: '/js/one-tap-catalog-dom-engine.js' },
+      { id: 'rm-catalog-hydrator-script', src: '/js/one-tap-catalog-hydrator.js' },
+      { id: 'rm-subcard-router-script', src: '/js/one-tap-subcard-router.js' }
+    ];
+    for (var i = 0; i < modules.length; i++) {
+      if (!document.getElementById(modules[i].id)) {
+        var s = document.createElement('script');
+        s.id = modules[i].id;
+        s.src = modules[i].src + '?v=' + CACHE_VERSION;
+        s.async = false;
+        (document.head || document.documentElement).appendChild(s);
       }
-    } catch (e) {}
+    }
   })();
 
-  // 2. INJECT ZEL 1-TAP INSTANT TOUCH & SUB-CONTAINER VISIBILITY LOCK CSS
-  (function injectOneTapLockStyles() {
-    if (document.getElementById('rm-zel-one-tap-lock')) return;
-    var style = document.createElement('style');
-    style.id = 'rm-zel-one-tap-lock';
-    style.textContent = [
-      'button, a, [onclick], .tactile-25d, #categoryModal [data-cat-id], #categoryModal [id^="sub-"] > div, .rm-service-chip {',
-      '  touch-action: manipulation !important;',
-      '  -webkit-tap-highlight-color: transparent !important;',
-      '  cursor: pointer !important;',
-      '  user-select: none !important;',
-      '  -webkit-user-select: none !important;',
-      '}',
-      '.tactile-25d:active { transform: none !important; }',
-      '#categoryModal.hidden, #rm-fullscreen-view.hidden, #playStoreInstallBanner.hidden, #categoryModal .hidden, #categoryModal [id^="sub-"].hidden, #categoryModal [id^="sub-"][data-rm-collapsed="true"] {',
-      '  display: none !important;',
-      '}',
-      '#categoryModal [id^="sub-"][data-rm-collapsed="false"] {',
-      '  display: block !important;',
-      '}',
-      '#categoryModal:not(.hidden) {',
-      '  position: fixed !important; inset: 0 !important; z-index: 50 !important;',
-      '  background-color: #0b0f19 !important; display: flex !important; justify-content: center !important;',
-      '}',
-      '#rm-fullscreen-view:not(.hidden) {',
-      '  position: fixed !important; inset: 0 !important; z-index: 99999 !important; display: flex !important;',
-      '}',
-      '#fs-module-title {',
-      '  margin: 0 10px !important; font-size: 14px !important; font-weight: 800 !important;',
-      '  white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important;',
-      '  text-align: center !important; flex: 1 !important;',
-      '}',
-      '#rm-module-container select {',
-      '  font-size: 12.5px !important; padding-right: 24px !important; text-overflow: ellipsis !important;',
-      '}'
-    ].join('\n');
-    document.head.appendChild(style);
-  })();
-
-  // Helper: Force-close Fullscreen Viewport reliably (delegates to RM_FULLSCREEN_CONTROLLER with fallback)
+  // Delegated Helper APIs (Single Canonical Implementation in Part-1, Part-1B & Part-3 per SSOT Rule 04)
   function forceCloseFullscreenViewport() {
-    if (window.RM_FULLSCREEN_CONTROLLER && typeof window.RM_FULLSCREEN_CONTROLLER.forceCloseFullscreenViewport === 'function') {
-      return window.RM_FULLSCREEN_CONTROLLER.forceCloseFullscreenViewport();
+    if (window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.forceCloseFullscreenViewport === 'function') {
+      return window.RM_SUBCARD_ROUTER.forceCloseFullscreenViewport();
     }
     var fs = document.getElementById('rm-fullscreen-view');
-    if (fs) {
-      fs.classList.add('hidden');
-      fs.style.setProperty('display', 'none', 'important');
+    if (fs) { fs.classList.add('hidden'); fs.style.setProperty('display', 'none', 'important'); }
+  }
+
+  function ensureMicroAppRendered(subCode, titleText, subtitleText) {
+    if (window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.ensureMicroAppRendered === 'function') {
+      return window.RM_SUBCARD_ROUTER.ensureMicroAppRendered(subCode, titleText, subtitleText);
     }
   }
 
-  // Helper: Normalize Fullscreen Micro-App DOM (delegates to RM_FULLSCREEN_CONTROLLER)
-  function normalizeFullscreenMicroAppDOM(displayCode) {
-    if (window.RM_FULLSCREEN_CONTROLLER && typeof window.RM_FULLSCREEN_CONTROLLER.normalizeFullscreenMicroAppDOM === 'function') {
-      window.RM_FULLSCREEN_CONTROLLER.normalizeFullscreenMicroAppDOM(displayCode);
+  function repairFullscreenSubServiceDOM(subCard, subCode) {
+    if (window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.repairFullscreenSubServiceDOM === 'function') {
+      return window.RM_SUBCARD_ROUTER.repairFullscreenSubServiceDOM(subCard, subCode);
     }
   }
 
-  // Helper: Resolve sub-container across all ID formats (sub-c01, sub-c1, sub-g34, etc.)
   function resolveCategorySubContainer(catEl, rawId, cleanNum) {
+    if (window.RM_CATALOG_DOM_ENGINE && typeof window.RM_CATALOG_DOM_ENGINE.resolveCategorySubContainer === 'function') {
+      return window.RM_CATALOG_DOM_ENGINE.resolveCategorySubContainer(catEl, rawId, cleanNum);
+    }
+    if (window.RM_CATALOG_HYDRATOR && typeof window.RM_CATALOG_HYDRATOR.resolveCategorySubContainer === 'function') {
+      return window.RM_CATALOG_HYDRATOR.resolveCategorySubContainer(catEl, rawId, cleanNum);
+    }
     var intNum = parseInt(cleanNum, 10);
     var paddedNum = (intNum < 10 ? '0' : '') + intNum;
-    var normNum = isNaN(intNum) ? cleanNum : String(intNum);
-    return document.getElementById('sub-c' + cleanNum) ||
+    return (catEl ? catEl.querySelector('[id^="sub-"]') : null) ||
            document.getElementById('sub-c' + paddedNum) ||
-           document.getElementById('sub-c' + normNum) ||
-           document.getElementById('sub-g' + cleanNum) ||
+           document.getElementById('sub-c' + cleanNum) ||
            document.getElementById('sub-g' + paddedNum) ||
-           document.getElementById('sub-g' + normNum) ||
-           document.getElementById('sub-' + rawId) ||
-           document.getElementById('sub-' + cleanNum) ||
-           document.getElementById('sub-' + paddedNum) ||
-           (catEl ? catEl.querySelector('[id^="sub-"]') : null);
+           document.getElementById('sub-g' + cleanNum);
   }
 
-  // Helper: Hydrate Play Store Cards & enforce openStateMap after legacy 20ms/120ms renders
-  function syncAndHydrateCatalogCards() {
-    if (isSyncingDOM) return;
-    isSyncingDOM = true;
-    try {
-      var modal = document.getElementById('categoryModal');
-      if (!modal) return;
-
-      if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
-        window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog();
-      }
-
-      var cats = modal.querySelectorAll('[data-cat-id]');
-      cats.forEach(function (catEl) {
-        var rawId = catEl.getAttribute('data-cat-id') || '';
-        var cleanNum = rawId.replace(/[^0-9]/g, '');
-        if (!cleanNum) return;
-        var intNum = parseInt(cleanNum, 10);
-        var normNum = isNaN(intNum) ? cleanNum : String(intNum);
-
-        var headerEl = catEl.querySelector(':scope > div:first-child');
-        if (headerEl && headerEl.hasAttribute('onclick')) {
-          headerEl.removeAttribute('onclick');
-        }
-
-        var subContainer = resolveCategorySubContainer(catEl, rawId, cleanNum);
-        if (!subContainer) return;
-
-        var isOpen = Boolean(openStateMap[normNum]);
-        var subCards = subContainer.querySelectorAll(':scope > div');
-
-        if (isOpen) {
-          subContainer.classList.remove('hidden');
-          subContainer.setAttribute('data-rm-collapsed', 'false');
-          subContainer.style.setProperty('display', 'block', 'important');
-          if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard === 'function') {
-            subCards.forEach(function (sc, idx) {
-              window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, normNum, normNum + '-' + (idx + 1));
-            });
-          }
-        } else {
-          subContainer.classList.add('hidden');
-          subContainer.setAttribute('data-rm-collapsed', 'true');
-          subContainer.style.setProperty('display', 'none', 'important');
-        }
-
-        if (headerEl && window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard === 'function') {
-          window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard(headerEl, normNum, isOpen, subCards.length || 3);
-        }
-      });
-    } finally {
-      isSyncingDOM = false;
-    }
-  }
-
-  // 3. GLOBAL MODAL & DRAWER DISPATCHERS (100% ZEL PRESERVED)
-  window.openCatalogModal = function () {
-    var m = document.getElementById('categoryModal');
-    if (!m) return;
-    m.classList.remove('hidden');
-    m.style.setProperty('display', 'flex', 'important');
-    syncAndHydrateCatalogCards();
-    setTimeout(syncAndHydrateCatalogCards, 10);
-    setTimeout(syncAndHydrateCatalogCards, 50);
-    setTimeout(syncAndHydrateCatalogCards, 140);
-    setTimeout(syncAndHydrateCatalogCards, 260);
-  };
-
-  window.closeCatalogModal = function () {
-    var m = document.getElementById('categoryModal');
-    if (!m) return;
-    m.classList.add('hidden');
-    m.style.setProperty('display', 'none', 'important');
-  };
-
-  window.toggleMenuDrawer = function (open) {
-    if (open) window.openCatalogModal();
-    else window.closeCatalogModal();
-  };
-
-  window.closeFullscreenModule = forceCloseFullscreenViewport;
-
-  if (typeof window.dismissPlayBanner !== 'function') {
-    window.dismissPlayBanner = function () {
-      var b = document.getElementById('playStoreInstallBanner');
-      if (b) {
-        b.classList.add('hidden');
-        b.style.setProperty('display', 'none', 'important');
+  // Early-Tap Safe Fallbacks before Part-1 script finishes loading
+  if (typeof window.openCatalogModal !== 'function') {
+    window.openCatalogModal = function () {
+      var m = document.getElementById('categoryModal');
+      if (!m) return;
+      lastModalOpenTs = Date.now();
+      window.__RM_LAST_MODAL_OPEN_TS = lastModalOpenTs;
+      m.classList.remove('hidden');
+      m.style.setProperty('display', 'flex', 'important');
+      if (window.RM_CATALOG_DOM_ENGINE && typeof window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards === 'function') {
+        window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards();
+      } else if (window.RM_CATALOG_HYDRATOR && typeof window.RM_CATALOG_HYDRATOR.syncAndHydrateCatalogCards === 'function') {
+        window.RM_CATALOG_HYDRATOR.syncAndHydrateCatalogCards();
       }
     };
   }
 
-  // 4. FULLSCREEN 1-TAP SERVICE LAUNCHER (DELEGATED TO RM_FULLSCREEN_CONTROLLER — 100% ZEL)
-  function launchOneTapServiceScreen(titleText, subtitleText, subCode) {
-    if (window.RM_FULLSCREEN_CONTROLLER && typeof window.RM_FULLSCREEN_CONTROLLER.launchOneTapServiceScreen === 'function') {
-      window.RM_FULLSCREEN_CONTROLLER.launchOneTapServiceScreen(titleText, subtitleText, subCode);
-    }
+  if (typeof window.closeCatalogModal !== 'function') {
+    window.closeCatalogModal = function () {
+      var openTs = Math.max(lastModalOpenTs, window.__RM_LAST_MODAL_OPEN_TS || 0);
+      if (Date.now() - openTs < 350) return;
+      var m = document.getElementById('categoryModal');
+      if (!m) return;
+      m.classList.add('hidden');
+      m.style.setProperty('display', 'none', 'important');
+    };
   }
 
-  // 5. DETERMINISTIC 1-TAP ACCORDION & SUB-SERVICE CLICK CONTROLLER (CASE 1 & CASE 2)
+  // 5. DETERMINISTIC 1-TAP ACCORDION & SUB-SERVICE CLICK CONTROLLER (CASE 0, HOME, CASE 1 & CASE 2)
   function handleDeterministicOneTap(e) {
-    var target = e.target;
+    if (isSyntheticHomeClick || e.__rmHandled) return;
+    var target = e.target && e.target.nodeType === 1 ? e.target : (e.target ? e.target.parentElement : null);
     if (!target || typeof target.closest !== 'function') return;
+    if (target.closest('input, textarea, select, option, .sivme-notch-pill, #sivme-hud, #sivme-drawer')) return;
 
-    // PRIORITY 0: Instant 1-Tap Close on Fullscreen Top-Right ✕, Top-Left ‹ वापस, or ‹ कैटलॉग पर वापस
-    var fsCloseBtn = target.closest('#rm-fullscreen-view [onclick*="closeFullscreenModule"]');
-    if (fsCloseBtn) {
+    var now = Date.now();
+    // Anti-Freeze Guard: Only suppress synthetic click within 420ms of an actual handled touchend
+    if (e.type === 'click' && (now - lastTouchTs < 420)) {
+      e.__rmHandled = true;
       e.stopImmediatePropagation();
       e.stopPropagation();
       if (e.cancelable) e.preventDefault();
-      var btnTxt = (fsCloseBtn.textContent || '').trim();
-      forceCloseFullscreenViewport();
-      if (btnTxt.indexOf('वापस') !== -1) {
-        var catModal = document.getElementById('categoryModal');
-        if (catModal) {
-          catModal.classList.remove('hidden');
-          catModal.style.setProperty('display', 'flex', 'important');
+      return;
+    }
+
+    // PRIORITY 0: Fullscreen Close (‹ वापस, ‹ कैटलॉग पर वापस, ✕) via Part-3 Router (ONLY when Fullscreen is open)
+    var fsView = document.getElementById('rm-fullscreen-view');
+    var isFsOpen = Boolean(fsView && !fsView.classList.contains('hidden') && fsView.style.display !== 'none');
+    if (isFsOpen && window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.handleFullscreenCloseOneTap === 'function') {
+      if (window.RM_SUBCARD_ROUTER.handleFullscreenCloseOneTap(e, target)) {
+        e.__rmHandled = true;
+        handledTouchSeq = touchSeq;
+        if (e.type === 'touchend') lastTouchTs = now;
+        lastActionTs = now;
+        return;
+      }
+    }
+
+    var modal = document.getElementById('categoryModal');
+    var isModalOpen = Boolean(modal && !modal.classList.contains('hidden') && modal.style.display !== 'none');
+
+    // PRIORITY 0.5: HOME SCREEN 1-TAP (Play Banner, RM World Directory & Home Action Buttons)
+    if (!isModalOpen) {
+      var banner = document.getElementById('playStoreInstallBanner');
+      if (banner && banner.contains(target)) {
+        var bBtn = target.closest('button, [onclick]');
+        var bTxt = bBtn ? (bBtn.textContent || '').trim() : '';
+        if (bTxt.indexOf('बाद में') !== -1 || bTxt === '✕' || bTxt === '×' || (bBtn && (bBtn.getAttribute('onclick') || '').indexOf('dismiss') !== -1)) {
+          e.__rmHandled = true;
+          handledTouchSeq = touchSeq;
+          if (e.type === 'touchend') lastTouchTs = now;
+          lastActionTs = now;
+          e.stopImmediatePropagation();
+          e.stopPropagation();
+          if (e.cancelable) e.preventDefault();
+          if (typeof window.dismissPlayBanner === 'function') window.dismissPlayBanner();
+          banner.classList.add('hidden');
+          banner.style.setProperty('display', 'none', 'important');
+          return;
         }
-      } else if (btnTxt === '✕' || btnTxt === '×' || btnTxt === 'X') {
-        window.closeCatalogModal();
+      }
+
+      var dirTrigger = target.closest('#cat-menu-btn, #openCatalogBtn, #rm-menu-btn, [onclick*="openCatalogModal"], [onclick*="toggleMenuDrawer"], [onclick*="categoryModal"]');
+      if (!dirTrigger) {
+        var el = target;
+        while (el && el !== document.body) {
+          var t = (el.textContent || '').trim();
+          if (t.indexOf('RM World Directory') !== -1 && t.length < 320) { dirTrigger = el; break; }
+          el = el.parentElement;
+        }
+      }
+      if (dirTrigger) {
+        e.__rmHandled = true;
+        handledTouchSeq = touchSeq;
+        if (e.type === 'touchend') lastTouchTs = now;
+        lastActionTs = now;
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        if (e.cancelable) e.preventDefault();
+        window.openCatalogModal();
+        return;
+      }
+
+      if (e.type === 'touchend') {
+        var homeActionBtn = target.closest('button[onclick], a[onclick], [onclick]');
+        if (homeActionBtn && typeof homeActionBtn.click === 'function') {
+          e.__rmHandled = true;
+          handledTouchSeq = touchSeq;
+          if (e.cancelable) e.preventDefault();
+          isSyntheticHomeClick = true;
+          try { homeActionBtn.click(); } catch (err) {}
+          isSyntheticHomeClick = false;
+          lastTouchTs = now;
+          lastActionTs = now;
+          return;
+        }
       }
       return;
     }
 
-    var modal = document.getElementById('categoryModal');
-    if (!modal || modal.classList.contains('hidden') || !modal.contains(target)) return;
-    if (target.closest('.sivme-notch-pill')) return;
-    if (target.closest('[onclick*="closeCatalogModal"], #rm-tier1-toggle, #rm-tier2-toggle')) return;
+    if (!modal || !modal.contains(target)) return;
 
-    var now = Date.now();
+    var modalCloseBtn = target.closest('[onclick*="closeCatalogModal"], [onclick*="toggleMenuDrawer"], #closeCatalogBtn');
+    if (!modalCloseBtn && !target.closest('[data-cat-id]') && !target.closest('[id^="sub-"]')) {
+      var candClose = target.closest('button, a, div');
+      var cTxt = candClose ? (candClose.textContent || '').trim() : '';
+      if (cTxt === '✕' || cTxt === '×' || cTxt === 'X' || cTxt === '✖') {
+        modalCloseBtn = candClose;
+      }
+    }
+    if (modalCloseBtn) {
+      e.__rmHandled = true;
+      handledTouchSeq = touchSeq;
+      if (e.type === 'touchend') lastTouchTs = now;
+      lastActionTs = now;
+      lastModalOpenTs = 0;
+      window.__RM_LAST_MODAL_OPEN_TS = 0;
+      e.stopImmediatePropagation();
+      e.stopPropagation();
+      if (e.cancelable) e.preventDefault();
+      modal.classList.add('hidden');
+      modal.style.setProperty('display', 'none', 'important');
+      window.closeCatalogModal();
+      return;
+    }
+
+    // Tier-1 (आजीविका) & Tier-2 (खेल व मनोरंजन) Section Header 1-Tap Toggle
+    var tierToggleBtn = target.closest('#rm-tier1-toggle, #rm-tier2-toggle');
+    if (!tierToggleBtn && !target.closest('[data-cat-id]') && !target.closest('[id^="sub-"]')) {
+      var candBar = target.closest('button, div');
+      var barTxt = candBar ? (candBar.textContent || '').trim() : '';
+      if (barTxt.length < 90 && (barTxt.indexOf('आजीविका (') !== -1 || barTxt.indexOf('खेल व मनोरंजन (') !== -1)) {
+        tierToggleBtn = candBar;
+      }
+      if (!tierToggleBtn) {
+        var walkEl = target;
+        while (walkEl && walkEl !== modal) {
+          var wTxt = (walkEl.textContent || '').trim();
+          if (wTxt.length > 5 && wTxt.length < 130 && (wTxt.indexOf('आजीविका (') !== -1 || wTxt.indexOf('खेल व मनोरंजन (') !== -1)) {
+            tierToggleBtn = walkEl;
+            break;
+          }
+          walkEl = walkEl.parentElement;
+        }
+      }
+    }
+    if (tierToggleBtn) {
+      e.__rmHandled = true;
+      handledTouchSeq = touchSeq;
+      if (now - lastActionTs < 80) {
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        if (e.cancelable) e.preventDefault();
+        return;
+      }
+      if (e.type === 'touchend') lastTouchTs = now;
+      lastActionTs = now;
+      e.stopImmediatePropagation();
+      e.stopPropagation();
+      if (e.cancelable) e.preventDefault();
+
+      var listId = (tierToggleBtn.id === 'rm-tier1-toggle' || (tierToggleBtn.textContent || '').indexOf('आजीविका') !== -1) ? 'tier1-list' : 'tier2-list';
+      var listEl = document.getElementById(listId);
+      if (listEl) {
+        var isHidden = listEl.classList.contains('hidden') || listEl.getAttribute('data-rm-collapsed') === 'true' || listEl.style.display === 'none' || window.getComputedStyle(listEl).display === 'none' || listEl.offsetHeight < 5;
+        listEl.classList.toggle('hidden', !isHidden);
+        listEl.setAttribute('data-rm-collapsed', isHidden ? 'false' : 'true');
+        listEl.style.setProperty('display', isHidden ? 'block' : 'none', 'important');
+        var arrow = tierToggleBtn.querySelector('.acc-arrow') || tierToggleBtn.lastElementChild;
+        if (arrow && arrow.children.length === 0) arrow.textContent = isHidden ? '▼' : '▶';
+      }
+      return;
+    }
+
+    // CASE 2 FIRST: Sub-Category Card 1-Tap via Part-3 Router
+    var subWrapper = target.closest('[id^="sub-"]');
+    if (subWrapper) {
+      if (target.closest('.rm-act-pin, .rm-act-vid, .rm-act-video')) return;
+      e.__rmHandled = true;
+      handledTouchSeq = touchSeq;
+      if (now - lastActionTs < 80) {
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        if (e.cancelable) e.preventDefault();
+        return;
+      }
+      if (e.type === 'touchend') lastTouchTs = now;
+      lastActionTs = now;
+      if (window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.handleSubCardOneTap === 'function') {
+        window.RM_SUBCARD_ROUTER.handleSubCardOneTap(e, target);
+      }
+      return;
+    }
+
+    // CASE 1: Parent Category Card 1-Tap (01 to 50 including 02 Auto & 33 Action Games) via Part-1B DOM Engine / Part-1 Hydrator
     var catEl = target.closest('[data-cat-id]');
-
-    // CASE 1: 1-Tap on Parent Category Card Header or "समेटें ▲ / और देखें ▼"
+    if (!catEl) {
+      var fallbackCard = target.closest('#tier1-list > div, #tier2-list > div');
+      if (fallbackCard) {
+        var numMatch = (fallbackCard.textContent || '').match(/\b([0-4]?\d|50)\s*\./);
+        if (numMatch) { fallbackCard.setAttribute('data-cat-id', numMatch[1]); catEl = fallbackCard; }
+      }
+    }
     if (catEl) {
+      e.__rmHandled = true;
+      handledTouchSeq = touchSeq;
+      if (now - lastActionTs < 80) {
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        if (e.cancelable) e.preventDefault();
+        return;
+      }
+      if (e.type === 'touchend') lastTouchTs = now;
+      lastActionTs = now;
+      e.stopImmediatePropagation();
+      e.stopPropagation();
+      if (e.cancelable) e.preventDefault();
+
       var rawId = catEl.getAttribute('data-cat-id') || '';
       var cleanNum = rawId.replace(/[^0-9]/g, '');
       var intNum = parseInt(cleanNum, 10);
       var normNum = isNaN(intNum) ? cleanNum : String(intNum);
+      var paddedNum = (intNum < 10 ? '0' : '') + intNum;
 
       var subContainer = resolveCategorySubContainer(catEl, rawId, cleanNum);
+      var isCurrentlyOpen = subContainer
+        ? (subContainer.getAttribute('data-rm-collapsed') === 'false' || (!subContainer.classList.contains('hidden') && subContainer.getAttribute('data-rm-collapsed') !== 'true' && subContainer.style.display !== 'none' && window.getComputedStyle(subContainer).display !== 'none' && subContainer.offsetHeight > 5))
+        : Boolean(openStateMap[normNum]);
 
-      if (subContainer && !subContainer.contains(target)) {
-        if (now - lastActionTs < 380) {
-          e.stopImmediatePropagation();
-          e.stopPropagation();
-          if (e.cancelable) e.preventDefault();
-          return;
-        }
-        lastActionTs = now;
+      var nextOpen = !isCurrentlyOpen;
+      openStateMap[normNum] = nextOpen;
+      openStateMap[cleanNum] = nextOpen;
+      openStateMap[paddedNum] = nextOpen;
 
-        e.stopImmediatePropagation();
-        e.stopPropagation();
-        if (e.cancelable) e.preventDefault();
+      if (window.RM_CATALOG_DOM_ENGINE && typeof window.RM_CATALOG_DOM_ENGINE.applyCategoryOpenState === 'function') {
+        window.RM_CATALOG_DOM_ENGINE.applyCategoryOpenState(catEl, rawId, cleanNum, nextOpen);
+      } else if (window.RM_CATALOG_HYDRATOR && typeof window.RM_CATALOG_HYDRATOR.applyCategoryOpenState === 'function') {
+        window.RM_CATALOG_HYDRATOR.applyCategoryOpenState(catEl, rawId, cleanNum, nextOpen);
+      } else if (subContainer) {
+        subContainer.classList.toggle('hidden', !nextOpen);
+        subContainer.setAttribute('data-rm-collapsed', nextOpen ? 'false' : 'true');
+        subContainer.style.setProperty('display', nextOpen ? 'block' : 'none', 'important');
+      }
 
-        var isCurrentlyOpen = !subContainer.classList.contains('hidden') &&
-                              subContainer.getAttribute('data-rm-collapsed') !== 'true' &&
-                              window.getComputedStyle(subContainer).display !== 'none';
-
-        var nextOpen = !isCurrentlyOpen;
-        openStateMap[normNum] = nextOpen;
-
-        if (isCurrentlyOpen) {
-          subContainer.classList.add('hidden');
-          subContainer.setAttribute('data-rm-collapsed', 'true');
-          subContainer.style.setProperty('display', 'none', 'important');
-        } else {
-          subContainer.classList.remove('hidden');
-          subContainer.setAttribute('data-rm-collapsed', 'false');
-          subContainer.style.setProperty('display', 'block', 'important');
-        }
-
-        var headerEl = catEl.querySelector(':scope > div:first-child');
+      // Anti-Conflict Direct 0ms Sync: Ensure subContainer visibility, .rm-parent-toggle-pill & Play Store Sub-Cards ALWAYS match nextOpen
+      if (subContainer) {
+        subContainer.classList.toggle('hidden', !nextOpen);
+        subContainer.setAttribute('data-rm-collapsed', nextOpen ? 'false' : 'true');
+        subContainer.style.setProperty('display', nextOpen ? 'block' : 'none', 'important');
+      }
+      var visiblePill = catEl.querySelector('.rm-parent-toggle-pill');
+      if (visiblePill) {
+        visiblePill.style.setProperty('color', nextOpen ? '#f87171' : '#34d399', 'important');
+        visiblePill.style.setProperty('background', nextOpen ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)', 'important');
+        visiblePill.style.setProperty('border-color', nextOpen ? '#ef4444' : '#10b981', 'important');
+        var pSpan = visiblePill.querySelector('span') || visiblePill;
+        pSpan.textContent = nextOpen ? 'समेटें ▲' : 'और देखें ▼';
+      }
+      if (nextOpen && subContainer && window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard === 'function') {
         var subCards = subContainer.querySelectorAll(':scope > div');
-        if (window.RM_UNIVERSAL_CARD_ENGINE) {
-          if (headerEl && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard === 'function') {
-            window.RM_UNIVERSAL_CARD_ENGINE.renderParentCard(headerEl, normNum, !isCurrentlyOpen, subCards.length || 3);
+        subCards.forEach(function (sc, idx) {
+          sc.style.setProperty('padding', '0px', 'important');
+          sc.style.setProperty('border', 'none', 'important');
+          sc.style.setProperty('background', 'transparent', 'important');
+          var subCode = paddedNum + '-' + (idx + 1);
+          if (!sc.hasAttribute('data-rm-sub-rendered') || (sc.textContent || '').indexOf('[' + subCode + ']') !== -1) {
+            window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, normNum, subCode);
           }
-          if (!isCurrentlyOpen && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard === 'function') {
-            subCards.forEach(function (sc, idx) {
-              window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(sc, normNum, normNum + '-' + (idx + 1));
-            });
-          }
-        }
-        return;
-      }
-    }
-
-    // CASE 2: 1-Tap inside Sub-Category Card (Delegated to RM_FULLSCREEN_CONTROLLER.routeSubCardOneTap — 100% ZEL)
-    var subWrapper = target.closest('[id^="sub-"]');
-    if (subWrapper) {
-      var actBtn = target.closest('.rm-act-pin, .rm-act-vid, .rm-act-video');
-      if (actBtn) return;
-
-      if (now - lastActionTs < 380) {
-        e.stopImmediatePropagation();
-        e.stopPropagation();
-        if (e.cancelable) e.preventDefault();
-        return;
-      }
-      lastActionTs = now;
-
-      var subCard = target.closest('[id^="sub-"] > div');
-      if (!subCard) return;
-
-      if (window.RM_FULLSCREEN_CONTROLLER && typeof window.RM_FULLSCREEN_CONTROLLER.routeSubCardOneTap === 'function') {
-        window.RM_FULLSCREEN_CONTROLLER.routeSubCardOneTap(e, target, subCard);
+        });
       }
     }
   }
 
-  // Bind on window capture phase so it runs before all document-level listeners
   window.addEventListener('touchstart', function (e) {
-    if (!e.touches || e.touches.length !== 1) return;
+    if (!e.touches || e.touches.length === 0) return;
+    touchSeq++;
+    touchMoved = false;
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
     touchStartTime = Date.now();
+    var m = document.getElementById('categoryModal');
+    if (m && e.target && m.contains(e.target)) {
+      var el = e.target;
+      while (el && el !== m) {
+        if (el.hasAttribute && el.hasAttribute('onclick')) {
+          var oc = el.getAttribute('onclick') || '';
+          if (oc.indexOf('closeCatalogModal') === -1 && oc.indexOf('toggleMenuDrawer') === -1) {
+            el.removeAttribute('onclick');
+          }
+        }
+        el = el.parentElement;
+      }
+    }
+  }, { capture: true, passive: true });
+
+  window.addEventListener('touchmove', function (e) {
+    if (!e.touches || e.touches.length === 0 || touchMoved) return;
+    if (Math.abs(e.touches[0].clientX - touchStartX) > 12 || Math.abs(e.touches[0].clientY - touchStartY) > 12) {
+      touchMoved = true;
+    }
   }, { capture: true, passive: true });
 
   window.addEventListener('touchend', function (e) {
-    if (!e.changedTouches || e.changedTouches.length !== 1) return;
+    if (touchMoved || !e.changedTouches || e.changedTouches.length === 0) return;
     var dx = Math.abs(e.changedTouches[0].clientX - touchStartX);
     var dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
     var dt = Date.now() - touchStartTime;
-    if (dx < 18 && dy < 18 && dt < 500) {
+    if (dx < 36 && dy < 36 && dt < 1200) {
       handleDeterministicOneTap(e);
     }
   }, { capture: true, passive: false });
 
   window.addEventListener('click', handleDeterministicOneTap, true);
   document.addEventListener('click', handleDeterministicOneTap, true);
-
-  // Auto-upgrade any raw cards injected by 20ms/120ms timers in catalog-sivme-render-engine.js
-  function attachCatalogHydrationObserver() {
-    var modal = document.getElementById('categoryModal');
-    if (!modal || typeof MutationObserver === 'undefined') return;
-    var obs = new MutationObserver(function () {
-      if (isSyncingDOM) return;
-      var rawHeader = modal.querySelector('[data-cat-id] > div:first-child:not([data-rm-parent-rendered])');
-      if (rawHeader) {
-        syncAndHydrateCatalogCards();
-      }
-    });
-    obs.observe(modal, { childList: true, subtree: true });
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () {
-      window.closeFullscreenModule = forceCloseFullscreenViewport;
-      attachCatalogHydrationObserver();
-      setTimeout(syncAndHydrateCatalogCards, 60);
-      setTimeout(syncAndHydrateCatalogCards, 180);
-    });
-  } else {
-    window.closeFullscreenModule = forceCloseFullscreenViewport;
-    attachCatalogHydrationObserver();
-    setTimeout(syncAndHydrateCatalogCards, 60);
-    setTimeout(syncAndHydrateCatalogCards, 180);
-  }
-
-  // 6. SERVICE WORKER AUTO-UPDATE SENTINEL
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then(function (regs) {
-      for (var i = 0; i < regs.length; i++) {
-        regs[i].update();
-      }
-    });
-  }
-
-  // 7. CONDITIONAL SIVME DEBUG ENGINE LOADER (SURFACE-B ONLY)
-  var urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get('sivme') === 'owner' || urlParams.get('sov_mode') === 'in_situ') {
-    var s = document.createElement('script');
-    s.src = '/js/sovereign-in-situ-hud.js';
-    s.async = false;
-    document.body.appendChild(s);
-  }
 })();
