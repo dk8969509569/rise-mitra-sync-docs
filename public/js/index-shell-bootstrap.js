@@ -1,11 +1,11 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-0 Surface-A HTML Shell Bootstrapper & Sentinel Lock (v59)
+ *   - MODULE NAME    : RM Part-0 Surface-A HTML Shell Bootstrapper & Sentinel Lock (v60)
  *   - REPO TARGET    : public/js/index-shell-bootstrap.js
  *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional SIVME Loader for Surface-B)
  *   - HOST BINDING   : Surface-A (public/index.html)
- *   - SIZE BUDGET    : <= 285 Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 270 Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -22,10 +22,10 @@
  *   - ALLOWED ON SURFACE-A   : Tailwind theme config, stale SIVME/cache purge, inline ZEL
  *                              1-Tap CSS lock, 0ms 1-Tap Macro Accordion toggle, modal
  *                              fallback dispatchers, fail-safe ensureCatalogHydratedNow
- *                              sentinel, SW update check, and Zero-Hanging Progress Bar guard.
+ *                              sentinel, and non-blocking SW cleanup.
  *   - ALLOWED ON SURFACE-B   : Conditional loading of /js/sovereign-in-situ-hud.js ONLY when
  *                              ?sivme=owner or ?sov_mode=in_situ is present in URL.
- *   - FORBIDDEN IN THIS FILE : Duplicating HTML markup or blocking inner accordion lists.
+ *   - FORBIDDEN IN THIS FILE : Calling window.stop() (which freezes WebView progress bar at 80%).
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.__RM_ACTIVE_CACHE_VER, window.tailwind.config,
@@ -43,14 +43,13 @@
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
  *   - CLICK SAFETY  : Enforces touch-action: manipulation !important & 0ms 1-Tap toggle.
  *   - SCROLL SAFETY : Tracks touchmove delta (>10px) + lightweight sentinels (150ms & 600ms).
- *   - DOM SAFETY    : Locks 32 Categories & 18 Games headers + unblocks top progress bar.
+ *   - LOAD SAFETY   : Allows natural 100% window.onload completion so progress bar auto-hides.
  * ==============================================================================
- * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (8 CORE SHELL BLOCKS):
+ * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (7 CORE SHELL BLOCKS):
  *   1. configureTailwindTheme               2. purgeStaleShellCacheAndSivme
  *   3. injectShellOneTapLockStyle           4. toggleMacroBarElementInstantly
  *   5. registerFallbackModalDispatchers     6. ensureCatalogHydratedNow
- *   7. initSwAndConditionalSivmeSentinel    8. unblockBrowserProgressBarNow
- *   + Capture 1-Tap Macro Accordion Listener
+ *   7. initSwAndConditionalSivmeSentinel    + Capture 1-Tap Macro Accordion Listener
  * ==============================================================================
  * 8. ONE JOB = ONE FILE & CANONICAL PATH LOCK (ANTI-DUPLICATE FILE GUARD):
  *   - SINGLE JOB RULE : Sole owner of extracted inline scripts from `public/index.html`.
@@ -65,7 +64,7 @@
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261017_v59'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v60'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -82,7 +81,7 @@
   if (window.__RM_LOADED_MODULES__['index-shell-bootstrap']) return;
   window.__RM_LOADED_MODULES__['index-shell-bootstrap'] = true;
 
-  var CACHE_VER = '20261017_v59';
+  var CACHE_VER = '20261018_v60';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VER;
   var lastMacroToggleTs = 0;
   var touchStartX = 0;
@@ -126,17 +125,24 @@
       } catch (e) {}
     }
     try {
-      if (localStorage.getItem('rm_cache_ver') !== CACHE_VER && 'caches' in window) {
-        caches.keys().then(function (names) {
-          for (var i = 0; i < names.length; i++) caches.delete(names[i]);
-        });
+      if (localStorage.getItem('rm_cache_ver') !== CACHE_VER) {
+        if ('caches' in window) {
+          caches.keys().then(function (names) {
+            for (var i = 0; i < names.length; i++) caches.delete(names[i]);
+          });
+        }
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(function (regs) {
+            for (var j = 0; j < regs.length; j++) regs[j].unregister();
+          });
+        }
         localStorage.setItem('rm_cache_ver', CACHE_VER);
       }
     } catch (e) {}
   }
 
 
-  // 3. ZEL 1-Tap Instant Touch & Sub-Container Visibility Lock Styles + Full-Width Modal Header Fix
+  // 3. ZEL 1-Tap Instant Touch & Sub-Container Visibility Lock Styles + Full-Width Modal Header
   function injectShellOneTapLockStyle() {
     var existing = document.getElementById('rm-zel-one-tap-lock');
     var s = existing || document.createElement('style');
@@ -261,7 +267,7 @@
   window.ensureCatalogHydratedNow = ensureCatalogHydratedNow;
 
 
-  // 7. Capture-Phase 1-Tap Macro Listener + Service Worker & Conditional Surface-B SIVME Loader
+  // 7. Capture-Phase 1-Tap Macro Listener + Conditional Surface-B SIVME Loader
   function findMacroBarTarget(target, modal) {
     var cur = target;
     while (cur && cur !== modal && cur !== document.body) {
@@ -312,11 +318,6 @@
   document.addEventListener('click', handleMacroTapEvent, { capture: true, passive: false });
 
   function initSwAndConditionalSivmeSentinel() {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(function (regs) {
-        for (var i = 0; i < regs.length; i++) regs[i].update();
-      });
-    }
     var urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('sivme') === 'owner' || urlParams.get('sov_mode') === 'in_situ') {
       var s = document.createElement('script');
@@ -324,27 +325,6 @@
       s.async = false;
       (document.body || document.documentElement).appendChild(s);
     }
-  }
-
-
-  // 8. Zero-Hanging Top White Progress Bar Finisher (Unblocks Stuck Sub-Resources)
-  function unblockBrowserProgressBarNow() {
-    try {
-      var scripts = document.querySelectorAll('script[src]');
-      for (var i = 0; i < scripts.length; i++) {
-        scripts[i].async = true;
-      }
-      if (document.readyState !== 'complete') {
-        setTimeout(function () {
-          try {
-            if (document.readyState !== 'complete' && typeof window.stop === 'function') {
-              ensureCatalogHydratedNow();
-              window.stop();
-            }
-          } catch (e) {}
-        }, 900);
-      }
-    } catch (e) {}
   }
 
   configureTailwindTheme();
@@ -357,12 +337,10 @@
     document.addEventListener('DOMContentLoaded', function () {
       ensureCatalogHydratedNow();
       initSwAndConditionalSivmeSentinel();
-      unblockBrowserProgressBarNow();
     });
   } else {
     ensureCatalogHydratedNow();
     initSwAndConditionalSivmeSentinel();
-    unblockBrowserProgressBarNow();
   }
   setTimeout(ensureCatalogHydratedNow, 150);
   setTimeout(ensureCatalogHydratedNow, 600);
