@@ -1,11 +1,11 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-1D 0ms Home Verticals Healer, Cache Purge & CSS Lock (v51)
+ *   - MODULE NAME    : RM Part-1D 0ms Home Verticals Healer, Cache Purge & CSS Lock (v54)
  *   - REPO TARGET    : public/js/one-tap-home-css-healer.js
  *   - SURFACE TARGET : SURFACE-A ONLY (Public Customer PWA Shell Home & CSS Lock)
  *   - HOST BINDING   : Surface-A (public/index.html)
- *   - SIZE BUDGET    : <= 200 Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 230 Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -18,15 +18,18 @@
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : CORE_12_VERTICALS fallback, healHomeVerticalsInstantly,
- *                              "32 Categories • 18 Games Active" sync, purgeStaleState,
- *                              and injectOneTapLockStyles CSS rules.
+ *                              permanent "32 Categories • 18 Games Active" & "18 श्रेणियां
+ *                              उपलब्ध" sync, dismissPlayBanner, purgeStaleState, and
+ *                              injectOneTapLockStyles CSS rules.
  *   - ALLOWED ON SURFACE-B   : NONE (Surface-B SIVME controls are strictly isolated).
  *   - FORBIDDEN IN THIS FILE : Modal open/close dispatchers or accordion click listeners.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
- *   - WRITES GLOBAL STATE : window.healHomeVerticalsInstantly, window.RM_HOME_CSS_HEALER
+ *   - WRITES GLOBAL STATE : window.healHomeVerticalsInstantly, window.dismissPlayBanner,
+ *                           window.RM_HOME_CSS_HEALER
  *   - CALLS EXTERNAL APIs : window.RM_HomeGrid.render, window.renderHomeMacroGrid,
- *                           window.renderFavorites
+ *                           window.RM_GAMES_ENT_BRIDGE.hydrateGamesCatalog,
+ *                           window.hydrateTier2GamesCatalog, window.renderFavorites
  * ==============================================================================
  * 5. DOM ATTRIBUTE & SELECTOR CONTRACT (ZERO-COLLISION DOM RULE):
  *   - SURFACE-A SELECTORS : #verticalTilesGrid, #categoryModal, #playStoreInstallBanner
@@ -37,8 +40,9 @@
  *   - SCROLL SAFETY : Unlocks vertical page scroll and hides horizontal scrollbar.
  *   - DOM SAFETY    : Non-destructive text sync for Catalog Header & Home Verticals.
  * ==============================================================================
- * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (3 EXTRACTED CORE FUNCTIONS):
- *   1. healHomeVerticalsInstantly   2. purgeStaleState   3. injectOneTapLockStyles
+ * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (4 EXTRACTED CORE FUNCTIONS):
+ *   1. dismissPlayBanner          2. healHomeVerticalsInstantly
+ *   3. purgeStaleState            4. injectOneTapLockStyles
  *   + Constant: CORE_12_VERTICALS (Play Store Official Top 12 A-Z, Cat 15 = House & Home)
  * ==============================================================================
  * 8. ONE JOB = ONE FILE & CANONICAL PATH LOCK (ANTI-DUPLICATE FILE GUARD):
@@ -56,7 +60,7 @@
  *   - MOBILE EDITING  : 2-line blank spacing preserved between major functional blocks.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261017_v51'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261017_v54'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -73,7 +77,7 @@
   if (window.__RM_LOADED_MODULES__['one-tap-home-css-healer']) return;
   window.__RM_LOADED_MODULES__['one-tap-home-css-healer'] = true;
 
-  var CACHE_VERSION = window.__RM_ACTIVE_CACHE_VER || '20261017_v51';
+  var CACHE_VERSION = window.__RM_ACTIVE_CACHE_VER || '20261017_v54';
 
   var CORE_12_VERTICALS = [
     { seq: '02', catId: 'c02', icon: '🛵', en: 'Auto & Vehicles', hi: 'बाइक/कार रिपेयर, वाशिंग व गैराज' },
@@ -91,6 +95,24 @@
   ];
 
 
+  function dismissPlayBanner() {
+    var b = document.getElementById('playStoreInstallBanner') || document.getElementById('pwa-install-banner');
+    if (b) {
+      b.classList.add('hidden');
+      b.style.setProperty('display', 'none', 'important');
+    }
+    var cards = document.querySelectorAll('div, section, aside');
+    for (var i = 0; i < cards.length; i++) {
+      var el = cards[i];
+      var txt = (el.textContent || '');
+      if (txt.indexOf('Play Protect') !== -1 && txt.indexOf('इंस्टॉल करें') !== -1 && el.offsetHeight > 40 && el.offsetHeight < 320) {
+        el.classList.add('hidden');
+        el.style.setProperty('display', 'none', 'important');
+      }
+    }
+  }
+
+
   function healHomeVerticalsInstantly() {
     try {
       document.documentElement.style.overflowX = 'hidden';
@@ -102,6 +124,7 @@
         banner.classList.add('hidden');
         banner.style.setProperty('display', 'none', 'important');
       }
+      dismissPlayBanner();
 
       if (window.RM_HomeGrid && typeof window.RM_HomeGrid.render === 'function') {
         try { window.RM_HomeGrid.render(); } catch (e) {}
@@ -109,15 +132,33 @@
       if (typeof window.renderHomeMacroGrid === 'function') {
         try { window.renderHomeMacroGrid(); } catch (e) {}
       }
-      var nodes = document.querySelectorAll('div, p, span, section');
+      if (window.RM_GAMES_ENT_BRIDGE && typeof window.RM_GAMES_ENT_BRIDGE.hydrateGamesCatalog === 'function') {
+        try { window.RM_GAMES_ENT_BRIDGE.hydrateGamesCatalog(); } catch (e) {}
+      }
+      if (typeof window.hydrateTier2GamesCatalog === 'function') {
+        try { window.hydrateTier2GamesCatalog(); } catch (e) {}
+      }
+
+      var nodes = document.querySelectorAll('div, p, span, section, button, h2, h3');
       for (var i = 0; i < nodes.length; i++) {
         var el = nodes[i];
         var txt = (el.textContent || '').trim();
         if (el.children.length === 0 && txt.indexOf('Games Active') !== -1 && txt !== '32 Categories • 18 Games Active') {
           el.textContent = '32 Categories • 18 Games Active';
         }
-        if (el.children.length === 0 && txt.indexOf('खेल व मनोरंजन') !== -1 && (txt.indexOf('(1 ') !== -1 || txt.indexOf('(17 ') !== -1)) {
-          el.textContent = '🎮 खेल व मनोरंजन (18 श्रेणियां उपलब्ध)';
+        if (txt.indexOf('खेल व मनोरंजन') !== -1 && (txt.indexOf('(1 ') !== -1 || txt.indexOf('(17 ') !== -1)) {
+          if (el.children.length === 0) {
+            el.textContent = '🎮 खेल व मनोरंजन (18 श्रेणियां उपलब्ध)';
+          } else {
+            for (var c = 0; c < el.childNodes.length; c++) {
+              var cn = el.childNodes[c];
+              if (cn.nodeType === 3 && cn.nodeValue.indexOf('खेल व मनोरंजन') !== -1) {
+                cn.nodeValue = cn.nodeValue.replace(/\(\d+\s*श्रेणियां उपलब्ध\)/, '(18 श्रेणियां उपलब्ध)');
+              } else if (cn.nodeType === 1 && (cn.textContent || '').indexOf('खेल व मनोरंजन') !== -1 && cn.children.length === 0) {
+                cn.textContent = '🎮 खेल व मनोरंजन (18 श्रेणियां उपलब्ध)';
+              }
+            }
+          }
         }
         if (el.children.length === 0 && txt.indexOf('वर्टिकल्स लोड हो रहे हैं') !== -1) {
           var box = el.parentElement || el;
@@ -199,9 +240,11 @@
   injectOneTapLockStyles();
   healHomeVerticalsInstantly();
 
+  window.dismissPlayBanner = dismissPlayBanner;
   window.healHomeVerticalsInstantly = healHomeVerticalsInstantly;
   window.RM_HOME_CSS_HEALER = {
     CORE_12_VERTICALS: CORE_12_VERTICALS,
+    dismissPlayBanner: dismissPlayBanner,
     healHomeVerticalsInstantly: healHomeVerticalsInstantly,
     purgeStaleState: purgeStaleState,
     injectOneTapLockStyles: injectOneTapLockStyles
