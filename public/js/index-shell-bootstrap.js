@@ -1,18 +1,18 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-0 Surface-A HTML Shell Bootstrapper & Sentinel Lock (v57)
+ *   - MODULE NAME    : RM Part-0 Surface-A HTML Shell Bootstrapper & Sentinel Lock (v58)
  *   - REPO TARGET    : public/js/index-shell-bootstrap.js
  *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional SIVME Loader for Surface-B)
  *   - HOST BINDING   : Surface-A (public/index.html)
- *   - SIZE BUDGET    : <= 195 Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 265 Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
  * ==============================================================================
  * 2. EXISTING MODULAR FILES LOCK (ZERO DUPLICATE IMPLEMENTATION):
  *   - public/js/index-shell-bootstrap.js (This File: Extracted Inline Shell Scripts)
- *   - public/index.html (Master Slim HTML Shell <= 280 Lines)
+ *   - public/index.html (Master Slim HTML Shell <= 290 Lines)
  *   - public/js/one-tap-catalog-hydrator.js (Part-1A: Boot Loader & Modal Dispatchers)
  *   - public/js/one-tap-home-css-healer.js (Part-1D: 0ms Home Healer & 18-Games Lock)
  *   - public/js/one-tap-accordion-engine.js (Part-1C: 1-Tap Accordion & Subcard Engine)
@@ -20,16 +20,18 @@
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : Tailwind theme config, stale SIVME/cache purge, inline ZEL
- *                              1-Tap CSS lock, modal fallback dispatchers, fail-safe
- *                              ensureCatalogHydratedNow sentinel, and SW update check.
+ *                              1-Tap CSS lock, 0ms 1-Tap Macro Accordion toggle, modal
+ *                              fallback dispatchers, fail-safe ensureCatalogHydratedNow
+ *                              sentinel, and SW update check.
  *   - ALLOWED ON SURFACE-B   : Conditional loading of /js/sovereign-in-situ-hud.js ONLY when
  *                              ?sivme=owner or ?sov_mode=in_situ is present in URL.
- *   - FORBIDDEN IN THIS FILE : Duplicating HTML markup or heavy catalog data arrays.
+ *   - FORBIDDEN IN THIS FILE : Duplicating HTML markup or blocking inner accordion lists.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.__RM_ACTIVE_CACHE_VER, window.tailwind.config,
  *                           window.openCatalogModal, window.closeCatalogModal,
- *                           window.toggleMenuDrawer, window.ensureCatalogHydratedNow
+ *                           window.toggleMenuDrawer, window.toggleAccordion,
+ *                           window.ensureCatalogHydratedNow
  *   - CALLS EXTERNAL APIs : window.lockGames18StatePermanently, window.renderCatalogItems,
  *                           window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog
  * ==============================================================================
@@ -39,21 +41,22 @@
  *   - SURFACE-B SELECTORS : .sivme-notch-pill, #sivme-hud, [data-sivme] (ISOLATED)
  * ==============================================================================
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
- *   - CLICK SAFETY  : Enforces touch-action: manipulation !important across shell triggers.
- *   - SCROLL SAFETY : Lightweight non-blocking boot sentinels (150ms & 600ms).
+ *   - CLICK SAFETY  : Enforces touch-action: manipulation !important & 0ms 1-Tap toggle.
+ *   - SCROLL SAFETY : Tracks touchmove delta (>10px) + lightweight sentinels (150ms & 600ms).
  *   - DOM SAFETY    : Locks 32 Categories & 18 Games headers after renderCatalogItems().
  * ==============================================================================
- * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (6 EXTRACTED SHELL BLOCKS):
- *   1. configureTailwindTheme        2. purgeStaleShellCacheAndSivme
- *   3. injectShellOneTapLockStyle    4. registerFallbackModalDispatchers
- *   5. ensureCatalogHydratedNow      6. initSwAndConditionalSivmeSentinel
+ * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (7 CORE SHELL BLOCKS):
+ *   1. configureTailwindTheme               2. purgeStaleShellCacheAndSivme
+ *   3. injectShellOneTapLockStyle           4. toggleMacroBarElementInstantly
+ *   5. registerFallbackModalDispatchers     6. ensureCatalogHydratedNow
+ *   7. initSwAndConditionalSivmeSentinel    + Capture 1-Tap Macro Accordion Listener
  * ==============================================================================
  * 8. ONE JOB = ONE FILE & CANONICAL PATH LOCK (ANTI-DUPLICATE FILE GUARD):
  *   - SINGLE JOB RULE : Sole owner of extracted inline scripts from `public/index.html`.
  *   - CANONICAL PATH  : Must exist ONLY at `public/js/index-shell-bootstrap.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
- *   - ZERO DOHRAO     : Keeps `public/index.html` under 280 lines with 100% ZEL parity.
+ *   - ZERO DOHRAO     : Keeps `public/index.html` under 290 lines with 100% ZEL parity.
  *   - IDEMPOTENT BOOT : Guarded by `window.__RM_LOADED_MODULES__['index-shell-bootstrap']`.
  * ==============================================================================
  * 10. FAIL-SAFE ERROR BOUNDARY, ZERO-STUB & 2-LINE SECTION GAP STANDARD:
@@ -61,7 +64,7 @@
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261017_v57'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261017_v58'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -78,8 +81,12 @@
   if (window.__RM_LOADED_MODULES__['index-shell-bootstrap']) return;
   window.__RM_LOADED_MODULES__['index-shell-bootstrap'] = true;
 
-  var CACHE_VER = '20261017_v57';
+  var CACHE_VER = '20261017_v58';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VER;
+  var lastMacroToggleTs = 0;
+  var touchStartX = 0;
+  var touchStartY = 0;
+  var touchMoved = false;
 
 
   // 1. Tailwind Dark Mode & Custom Brand Palette Configuration
@@ -128,22 +135,73 @@
   }
 
 
-  // 3. ZEL 1-Tap Instant Touch & Sub-Container Visibility Lock Styles
+  // 3. ZEL 1-Tap Instant Touch & Sub-Container Visibility Lock Styles (Without #categoryModal .hidden blocker)
   function injectShellOneTapLockStyle() {
-    if (document.getElementById('rm-zel-one-tap-lock')) return;
-    var s = document.createElement('style');
+    var existing = document.getElementById('rm-zel-one-tap-lock');
+    var s = existing || document.createElement('style');
     s.id = 'rm-zel-one-tap-lock';
     s.textContent =
-      'button, a, [onclick], .tactile-25d, #categoryModal [data-cat-id], #categoryModal [id^="sub-"] > div, .rm-service-chip { touch-action: manipulation !important; -webkit-tap-highlight-color: transparent !important; cursor: pointer !important; }' +
+      'button, a, [onclick], .tactile-25d, #categoryModal [data-cat-id], #categoryModal [id^="sub-"] > div, .rm-service-chip { touch-action: manipulation !important; -webkit-tap-highlight-color: transparent !important; cursor: pointer !important; user-select: none !important; transition: none !important; }' +
       '.tactile-25d:active { transform: none !important; }' +
-      '#categoryModal.hidden, #rm-fullscreen-view.hidden, #playStoreInstallBanner.hidden, #categoryModal .hidden, #categoryModal [id^="sub-"].hidden, #categoryModal [id^="sub-"][data-rm-collapsed="true"] { display: none !important; }' +
+      '#categoryModal.hidden, #rm-fullscreen-view.hidden, #playStoreInstallBanner.hidden, #categoryModal [id^="sub-"]:not([data-rm-collapsed="false"]).hidden, #categoryModal [id^="sub-"][data-rm-collapsed="true"] { display: none !important; }' +
+      '#categoryModal [id^="sub-"][data-rm-collapsed="false"] { display: block !important; }' +
       '#categoryModal:not(.hidden) { position: fixed !important; inset: 0 !important; z-index: 50 !important; background-color: #0b0f19 !important; display: flex !important; justify-content: center !important; }' +
       '#rm-fullscreen-view:not(.hidden) { position: fixed !important; inset: 0 !important; z-index: 99999 !important; display: flex !important; }';
-    (document.head || document.documentElement).appendChild(s);
+    if (!existing) (document.head || document.documentElement).appendChild(s);
   }
 
 
-  // 4. Bulletproof Modal Fallback Dispatchers
+  // 4. 0ms Instant 1-Tap Macro Accordion Toggle (Aajeevika 32 & Games 18 Bars)
+  function toggleMacroBarElementInstantly(barEl, explicitListId) {
+    if (!barEl) return false;
+    var now = Date.now();
+    if (now - lastMacroToggleTs < 220) return true;
+    lastMacroToggleTs = now;
+
+    var listEl = explicitListId ? document.getElementById(explicitListId) : null;
+    if (!listEl) listEl = barEl.nextElementSibling;
+    if (!listEl && barEl.parentElement) {
+      listEl = barEl.parentElement.querySelector('[id$="-list"]') || barEl.parentElement.children[1];
+    }
+    if (!listEl || listEl === barEl) return false;
+
+    var isCurrentlyHidden = listEl.classList.contains('hidden') ||
+                            listEl.getAttribute('data-rm-macro-collapsed') === 'true' ||
+                            window.getComputedStyle(listEl).display === 'none';
+
+    if (isCurrentlyHidden) {
+      listEl.classList.remove('hidden');
+      listEl.setAttribute('data-rm-macro-collapsed', 'false');
+      listEl.style.setProperty('display', 'block', 'important');
+    } else {
+      listEl.classList.add('hidden');
+      listEl.setAttribute('data-rm-macro-collapsed', 'true');
+      listEl.style.setProperty('display', 'none', 'important');
+    }
+
+    var arrow = barEl.querySelector('.acc-arrow') || barEl.lastElementChild;
+    if (arrow && arrow !== barEl) {
+      var aTxt = (arrow.textContent || '').trim();
+      if (aTxt === '▶' || aTxt === '▼' || aTxt === '▲') {
+        arrow.textContent = isCurrentlyHidden ? '▼' : '▶';
+      }
+    }
+
+    if (isCurrentlyHidden && (barEl.textContent || '').indexOf('खेल व मनोरंजन') !== -1) {
+      if (typeof window.lockGames18StatePermanently === 'function') {
+        try { window.lockGames18StatePermanently(); } catch (e) {}
+      }
+    }
+    return true;
+  }
+
+  window.toggleAccordion = function (listId, btnEl) {
+    var bar = btnEl || document.getElementById(listId === 'tier1-list' ? 'rm-tier1-toggle' : 'rm-tier2-toggle');
+    toggleMacroBarElementInstantly(bar, listId);
+  };
+
+
+  // 5. Bulletproof Modal Fallback Dispatchers
   function registerFallbackModalDispatchers() {
     if (typeof window.openCatalogModal !== 'function') {
       window.openCatalogModal = function () {
@@ -172,7 +230,7 @@
   }
 
 
-  // 5. Fail-Safe Catalog Hydration Sentinel & 18-Games Header Lock
+  // 6. Fail-Safe Catalog Hydration Sentinel & 18-Games Header Lock
   function ensureCatalogHydratedNow() {
     var t1 = document.getElementById('tier1-list');
     var t2 = document.getElementById('tier2-list');
@@ -201,7 +259,56 @@
   window.ensureCatalogHydratedNow = ensureCatalogHydratedNow;
 
 
-  // 6. Service Worker Auto-Update & Conditional Surface-B SIVME Loader
+  // 7. Capture-Phase 1-Tap Macro Listener + Service Worker & Conditional Surface-B SIVME Loader
+  function findMacroBarTarget(target, modal) {
+    var cur = target;
+    while (cur && cur !== modal && cur !== document.body) {
+      if (cur.hasAttribute && cur.hasAttribute('data-cat-id')) return null;
+      var id = cur.id || '';
+      if (id === 'rm-tier1-toggle' || id === 'rm-tier2-toggle') return cur;
+      var txt = (cur.textContent || '').trim();
+      if ((cur.tagName === 'BUTTON' || cur.tagName === 'DIV') &&
+          txt.length < 70 &&
+          (txt.indexOf('आजीविका (') !== -1 || txt.indexOf('खेल व मनोरंजन (') !== -1) &&
+          cur.nextElementSibling) {
+        return cur;
+      }
+      cur = cur.parentElement;
+    }
+    return null;
+  }
+
+  document.addEventListener('touchstart', function (e) {
+    if (e.touches && e.touches.length === 1) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchMoved = false;
+    }
+  }, { capture: true, passive: true });
+
+  document.addEventListener('touchmove', function (e) {
+    if (e.touches && e.touches.length === 1) {
+      if (Math.abs(e.touches[0].clientX - touchStartX) > 10 || Math.abs(e.touches[0].clientY - touchStartY) > 10) {
+        touchMoved = true;
+      }
+    }
+  }, { capture: true, passive: true });
+
+  function handleMacroTapEvent(e) {
+    if (e.type === 'touchend' && touchMoved) return;
+    var modal = document.getElementById('categoryModal');
+    if (!modal || modal.classList.contains('hidden') || !modal.contains(e.target)) return;
+    var macroBar = findMacroBarTarget(e.target, modal);
+    if (macroBar) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      toggleMacroBarElementInstantly(macroBar, null);
+    }
+  }
+  document.addEventListener('touchend', handleMacroTapEvent, { capture: true, passive: false });
+  document.addEventListener('click', handleMacroTapEvent, { capture: true, passive: false });
+
   function initSwAndConditionalSivmeSentinel() {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(function (regs) {
