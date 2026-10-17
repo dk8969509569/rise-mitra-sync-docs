@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-1 Modular Catalog Hydrator, 0ms Home Healer & Sentinel (v47)
+ *   - MODULE NAME    : RM Part-1 Modular Catalog Hydrator, 0ms Home Healer & Sentinel (v48)
  *   - REPO TARGET    : public/js/one-tap-catalog-hydrator.js
  *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional Loader for Surface-B SIVME)
  *   - HOST BINDING   : Surface-A (public/index.html) | Surface-B (public/owner-console.html)
@@ -21,12 +21,13 @@
  * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : 0ms Home Verticals healing ("वर्टिकल्स लोड हो रहे हैं...") in
  *                              official Play Store A-Z order (Cat 15 = House & Home), Catalog
- *                              Header "32 Categories • 18 Games Active" sync, 1-tap CSS injection,
- *                              horizontal scrollbar elimination, bottom-nav scroll clearance,
- *                              stale SIVME/cache purge, and modal dispatchers.
+ *                              Header "32 Categories • 18 Games Active" sync, parallel script
+ *                              preload, 1-tap CSS injection, horizontal scrollbar elimination,
+ *                              bottom-nav scroll clearance, stale SIVME/cache purge, and modal
+ *                              open/close dispatchers.
  *   - ALLOWED ON SURFACE-B   : Conditional loading of /js/sovereign-in-situ-hud.js ONLY when
  *                              ?sivme=owner or ?sov_mode=in_situ is present in URL.
- *   - FORBIDDEN IN THIS FILE : Cross-surface DOM leakage or dropping any v39/v44/v45/v46 ZEL function.
+ *   - FORBIDDEN IN THIS FILE : Cross-surface DOM leakage or dropping any v39/v44/v45/v46/v47 ZEL function.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.__RM_ACTIVE_CACHE_VER, window.__RM_OPEN_CAT_STATE,
@@ -74,7 +75,7 @@
  *   - MOBILE EDITING  : 2-line blank spacing preserved between major functional blocks.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261017_v47'`.
+ *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261017_v48'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -91,7 +92,7 @@
   if (window.__RM_LOADED_MODULES__['one-tap-catalog-hydrator']) return;
   window.__RM_LOADED_MODULES__['one-tap-catalog-hydrator'] = true;
 
-  var CACHE_VERSION = '20261017_v47';
+  var CACHE_VERSION = '20261017_v48';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VERSION;
   var isSyncingDOM = false;
   var hasRenderedCatalogOnce = false;
@@ -118,8 +119,9 @@
   ];
 
 
-  // Auto-load decoupled Home Grid Engine, Fullscreen Micro-App Controller, Part-1B Catalog DOM Engine & Games Bridge
+  // Auto-load & Preload decoupled Home Grid Engine, Fullscreen Micro-App Controller, Part-1B Catalog DOM Engine & Games Bridge
   (function ensureFullscreenControllerLoaded() {
+    var head = document.head || document.documentElement;
     var modules = [
       { id: 'rm-home-grid-engine-script', src: '/js/home-grid-engine.js' },
       { id: 'rm-fs-microapp-controller-script', src: '/js/fullscreen-microapp-controller.js' },
@@ -128,14 +130,21 @@
     ];
     for (var i = 0; i < modules.length; i++) {
       if (!document.getElementById(modules[i].id)) {
+        var fullUrl = modules[i].src + '?v=' + CACHE_VERSION;
+        var preload = document.createElement('link');
+        preload.rel = 'preload';
+        preload.as = 'script';
+        preload.href = fullUrl;
+        head.appendChild(preload);
+
         var s = document.createElement('script');
         s.id = modules[i].id;
-        s.src = modules[i].src + '?v=' + CACHE_VERSION;
+        s.src = fullUrl;
         s.async = true;
         if (modules[i].id === 'rm-home-grid-engine-script') {
           s.onload = function () { healHomeVerticalsInstantly(); };
         }
-        (document.head || document.documentElement).appendChild(s);
+        head.appendChild(s);
       }
     }
   })();
@@ -147,6 +156,12 @@
       document.documentElement.style.overflowX = 'hidden';
       document.body.style.overflowX = 'hidden';
       document.body.style.overflowY = 'auto';
+
+      var banner = document.getElementById('playStoreInstallBanner') || document.getElementById('pwa-install-banner');
+      if (banner && !window.__RM_USER_REQUESTED_INSTALL) {
+        banner.classList.add('hidden');
+        banner.style.setProperty('display', 'none', 'important');
+      }
 
       if (window.RM_HomeGrid && typeof window.RM_HomeGrid.render === 'function') {
         try { window.RM_HomeGrid.render(); } catch (e) {}
@@ -227,7 +242,8 @@
       'html, body { background-color: #0b0f19 !important; overflow-x: hidden !important; max-width: 100vw !important; width: 100% !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }',
       'body { padding-bottom: 110px !important; min-height: 100vh !important; }',
       '::-webkit-scrollbar:horizontal { display: none !important; height: 0 !important; width: 0 !important; }',
-      '#verticalTilesGrid { padding-bottom: 32px !important; margin-bottom: 24px !important; }',
+      '#verticalTilesGrid { padding-bottom: 32px !important; margin-bottom: 24px !important; content-visibility: auto !important; }',
+      '#playStoreInstallBanner, #pwa-install-banner { display: none !important; }',
       'button, a, [onclick], .tactile-25d, #categoryModal [data-cat-id], #categoryModal [id^="sub-"] > div, .rm-service-chip {',
       '  touch-action: manipulation !important; -webkit-tap-highlight-color: transparent !important;',
       '  cursor: pointer !important; user-select: none !important; -webkit-user-select: none !important;',
@@ -335,23 +351,27 @@
   }
 
 
-  // 3. GLOBAL MODAL & DRAWER DISPATCHERS (100% ZEL PRESERVED + NON-BLOCKING PAINT)
+  // 3. GLOBAL MODAL & DRAWER DISPATCHERS (100% ZEL PRESERVED + 0ms NON-BLOCKING PAINT)
   window.openCatalogModal = function () {
     var m = document.getElementById('categoryModal');
     if (!m) return;
     window.__RM_LAST_MODAL_OPEN_TS = Date.now();
     m.classList.remove('hidden');
     m.style.setProperty('display', 'flex', 'important');
-    syncAndHydrateCatalogCards();
+    if (!hasRenderedCatalogOnce) {
+      syncAndHydrateCatalogCards();
+      setTimeout(syncAndHydrateCatalogCards, 10);
+      setTimeout(syncAndHydrateCatalogCards, 50);
+      setTimeout(syncAndHydrateCatalogCards, 140);
+      setTimeout(syncAndHydrateCatalogCards, 260);
+    } else {
+      setTimeout(healHomeVerticalsInstantly, 10);
+    }
     if (typeof window.updatePinButtonsUI === 'function') window.updatePinButtonsUI();
-    setTimeout(syncAndHydrateCatalogCards, 10);
-    setTimeout(syncAndHydrateCatalogCards, 50);
-    setTimeout(syncAndHydrateCatalogCards, 140);
-    setTimeout(syncAndHydrateCatalogCards, 260);
   };
 
   window.closeCatalogModal = function () {
-    if (Date.now() - (window.__RM_LAST_MODAL_OPEN_TS || 0) < 350) return;
+    if (Date.now() - (window.__RM_LAST_MODAL_OPEN_TS || 0) < 180) return;
     var m = document.getElementById('categoryModal');
     if (!m) return;
     m.classList.add('hidden');
@@ -427,7 +447,7 @@
     setTimeout(healHomeVerticalsInstantly, 80);
     setTimeout(healHomeVerticalsInstantly, 250);
     attachCatalogHydrationObserver();
-    var idleFn = window.requestIdleCallback || function (cb) { setTimeout(cb, 350); };
+    var idleFn = window.requestIdleCallback || function (cb) { setTimeout(cb, 150); };
     idleFn(syncAndHydrateCatalogCards);
   }
 
