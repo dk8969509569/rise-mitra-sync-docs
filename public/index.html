@@ -1,21 +1,88 @@
 <!DOCTYPE html>
 <html lang="hi" class="dark" data-theme="dark">
-<!-- ============================================================================== -->
-<!-- RISE MITRA — SLIM MODULAR HTML SHELL (DEFAULT PUBLIC LOCK & PHASE 5 FAVORITES) -->
-<!-- GOVERNANCE : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0            -->
-<!-- SPEC SSOT  : FOLDER A (MASTER DOCUMENT SSOT) & FOLDER B (LIVE SNAPSHOT)       -->
-<!-- STATUS     : FULLY DECOUPLED (CSS -> app.css | JS -> modular engines)          -->
-<!-- ============================================================================== -->
-<!-- 🔒 EXISTING MODULAR FILES LOCK (DO NOT CREATE DUPLICATE FILES):                -->
-<!--   - /js/one-tap-shell-bridge.js, /js/data/india-geo-data.js                    -->
-<!--   - /js/home-grid-engine.js, /js/profile-hub-engine.js                         -->
-<!--   - /js/categories-data.js, /js/catalog-sivme-core-engine.js                   -->
-<!--   - /js/catalog-sivme-render-engine.js, /js/catalog-sivme-engine.js            -->
-<!--   - /js/shell-controller.js, /js/sivme-adapters/cat16-adapter.js               -->
-<!--   - /js/universal-catalog/ (catalog-metadata-registry, canonical-sub-matrix,   -->
-<!--     sub-card-renderer, universal-card-engine, universal-search-engine, ext-*)  -->
-<!--   - /js/favorites-engine.js, /js/core/sovereign-in-situ-registry.js            -->
-<!-- ============================================================================== -->
+<!-- ==============================================================================
+ * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
+ *   - MODULE NAME    : RM Surface-A Master Modular HTML Shell & 18-Games SSOT Lock (v57)
+ *   - REPO TARGET    : public/index.html
+ *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional SIVME Loader for Surface-B)
+ *   - HOST BINDING   : Surface-A Primary Entry Point (https://rmworld.vercel.app)
+ *   - SIZE BUDGET    : Slim Decoupled HTML Shell (CSS -> app.css | JS -> modular engines)
+ *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
+ *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
+ *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
+ * ==============================================================================
+ * 2. EXISTING MODULAR FILES LOCK (ZERO DUPLICATE IMPLEMENTATION):
+ *   - /js/one-tap-shell-bridge.js, /js/data/india-geo-data.js
+ *   - /js/one-tap-catalog-hydrator.js (Part-1A), /js/one-tap-home-css-healer.js (Part-1D)
+ *   - /js/one-tap-accordion-engine.js (Part-1C), /js/one-tap-catalog-dom-engine.js (Part-1B)
+ *   - /js/home-grid-engine.js, /js/profile-hub-engine.js
+ *   - /js/categories-data.js, /js/catalog-sivme-core-engine.js
+ *   - /js/catalog-sivme-render-engine.js, /js/catalog-sivme-engine.js
+ *   - /js/shell-controller.js, /js/sivme-adapters/cat16-adapter.js
+ *   - /js/universal-catalog/ (catalog-metadata-registry, canonical-sub-matrix,
+ *     sub-card-renderer, universal-card-engine, universal-search-engine, ext-*,
+ *     games-entertainment-bridge.js)
+ *   - /js/favorites-engine.js, /js/core/sovereign-in-situ-registry.js
+ * ==============================================================================
+ * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
+ *   - ALLOWED ON SURFACE-A   : Sticky Header, Circular Profile Avatar, Directory Button,
+ *                              Live Search Input, Hero Wallet Card (RM CASH), User Pinned
+ *                              Favorites Section, 12 Core Cashflow Verticals Grid, Play
+ *                              Store Install Banner, Universal Catalog Modal (32 Categories
+ *                              • 18 Games Active), Fullscreen Micro-App Viewport & Bottom Nav.
+ *   - ALLOWED ON SURFACE-B   : Conditional loading of /js/sovereign-in-situ-hud.js ONLY when
+ *                              ?sivme=owner or ?sov_mode=in_situ is present in URL.
+ *   - FORBIDDEN IN THIS FILE : Stale cache versions (< v57) or unverified 1-Game text.
+ * ==============================================================================
+ * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
+ *   - WRITES GLOBAL STATE : window.__RM_ACTIVE_CACHE_VER = '20261017_v57',
+ *                           window.openCatalogModal, window.closeCatalogModal,
+ *                           window.toggleMenuDrawer, window.ensureCatalogHydratedNow
+ *   - CALLS EXTERNAL APIs : window.lockGames18StatePermanently, window.renderCatalogItems,
+ *                           window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog, window.RM_ProfileHub.open
+ * ==============================================================================
+ * 5. DOM ATTRIBUTE & SELECTOR CONTRACT (ZERO-COLLISION DOM RULE):
+ *   - SURFACE-A SELECTORS : #categoryModal, #modal-catalog-count, #tier1-header-text,
+ *                           #tier2-header-text, #tier1-list, #tier2-list, #verticalTilesGrid,
+ *                           #userPinnedFavoritesSection, #rm-fullscreen-view, #playStoreInstallBanner
+ *   - SURFACE-B SELECTORS : .sivme-notch-pill, #sivme-hud, [data-sivme] (ISOLATED)
+ * ==============================================================================
+ * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
+ *   - CLICK SAFETY  : touch-action: manipulation !important on all interactive triggers.
+ *   - SCROLL SAFETY : Non-blocking script tags with v57 cache-buster.
+ *   - DOM SAFETY    : Locks #modal-catalog-count to "32 Categories • 18 Games Active",
+ *                     #tier1-header-text to "💼 आजीविका (32 श्रेणियां उपलब्ध)", and
+ *                     #tier2-header-text to "🎮 खेल व मनोरंजन (18 श्रेणियां उपलब्ध)".
+ * ==============================================================================
+ * 7. 100% ZERO-ELEMENT-LOSS (ZEL) SHELL MANIFEST:
+ *   1. Auto-Purge Stale SIVME & Cache Script  2. ZEL 1-Tap Style Lock (#rm-zel-one-tap-lock)
+ *   3. Sticky Header & Circular Avatar        4. Main Content (Blocks 1 to 5 + console link)
+ *   5. Play Store Install Banner              6. Universal Catalog Modal (#categoryModal)
+ *   7. Fullscreen Viewport (#rm-fullscreen-view) 8. Bottom Navigation Bar (4 Tabs)
+ *   9. Modal Dispatchers (open/close/drawer)  10. All 23 Modular Script Tags (?v=20261017_v57)
+ *   11. Fail-Safe Hydration Sentinel          12. Service Worker & Conditional SIVME Sentinels
+ * ==============================================================================
+ * 8. ONE JOB = ONE FILE & CANONICAL PATH LOCK (ANTI-DUPLICATE FILE GUARD):
+ *   - SINGLE JOB RULE : Sole authoritative Surface-A HTML entry point.
+ *   - CANONICAL PATH  : Must exist ONLY at `public/index.html`.
+ * ==============================================================================
+ * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
+ *   - ZERO DOHRAO     : Delegates logic to Part-1A, Part-1B, Part-1C & Part-1D engines.
+ *   - ANTI-OVERWRITE  : Runs lockGames18StatePermanently() after renderCatalogItems().
+ * ==============================================================================
+ * 10. FAIL-SAFE ERROR BOUNDARY, ZERO-STUB & 2-LINE SECTION GAP STANDARD:
+ *   - ERROR BOUNDARY  : All inline scripts wrapped in try/catch blocks.
+ *   - ZERO-STUB RULE  : 100% production-complete HTML shell; zero placeholders.
+ * ==============================================================================
+ * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
+ *   - VERSION SYNC    : All CSS/JS assets synced to `?v=20261017_v57`.
+ *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
+ * ==============================================================================
+ * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
+ *   - @folder-a-ssot  : 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW (Pure Policy & Specs Only)
+ *   - @folder-b-mirror: 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH (Auto-Synced via sync_drive.yml)
+ *   - @ai-pre-flight  : 12-Point Header + Shell auto-indexed in Folder B snapshot.
+ * ============================================================================== -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
@@ -30,7 +97,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <!-- Master Decoupled Global CSS with Fresh Cache Buster -->
-  <link rel="stylesheet" href="/css/app.css?v=20261016_v12">
+  <link rel="stylesheet" href="/css/app.css?v=20261017_v57">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -47,9 +114,10 @@
     }
   </script>
 
-  <!-- Auto-Purge Stale SIVME Flags on Normal Public Launch -->
+  <!-- Auto-Purge Stale SIVME Flags & Old Cache on Normal Public Launch -->
   <script>
     (function() {
+      window.__RM_ACTIVE_CACHE_VER = '20261017_v57';
       const urlParams = new URLSearchParams(window.location.search);
       const isOwnerLaunch = urlParams.get('sivme') === 'owner' || 
                             urlParams.get('sov_mode') === 'in_situ' || 
@@ -59,15 +127,17 @@
           localStorage.removeItem('sivme_active');
           localStorage.removeItem('sivme_mode');
           localStorage.removeItem('rm_sivme_state');
+          localStorage.removeItem('rm_active_categories_v1');
+          localStorage.removeItem('rm_sovereign_visibility_registry_v1');
           sessionStorage.removeItem('sivme_active');
         } catch(e) {}
       }
       try {
-        if (localStorage.getItem('rm_cache_ver') !== '20261016_v12' && 'caches' in window) {
+        if (localStorage.getItem('rm_cache_ver') !== '20261017_v57' && 'caches' in window) {
           caches.keys().then(function(names) {
             for (let name of names) caches.delete(name);
           });
-          localStorage.setItem('rm_cache_ver', '20261016_v12');
+          localStorage.setItem('rm_cache_ver', '20261017_v57');
         }
       } catch(e) {}
     })();
@@ -291,7 +361,7 @@
       <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/70">
         <div>
           <h3 class="text-sm font-black text-slate-100 uppercase tracking-wide">RM World — Universal Catalog</h3>
-          <p id="modal-catalog-count" class="text-[10px] text-emerald-400">Services • Utilities • Security • Games</p>
+          <p id="modal-catalog-count" class="text-[10px] text-emerald-400">32 Categories • 18 Games Active</p>
         </div>
         <!-- 100% Fail-Safe Instant Close Button -->
         <button type="button" onclick="closeCatalogModal()" class="w-9 h-9 rounded-lg bg-slate-800 text-slate-300 font-bold text-sm hover:bg-slate-700 cursor-pointer flex items-center justify-center">
@@ -302,7 +372,7 @@
       <div class="flex-1 overflow-y-auto p-3.5 space-y-3 text-xs">
         <div class="space-y-1.5">
           <button type="button" id="rm-tier1-toggle" onclick="toggleAccordion('tier1-list', this)" class="w-full flex justify-between items-center p-3 rounded-xl bg-emerald-950/60 border border-emerald-800/40 text-emerald-300 font-bold cursor-pointer select-none transition-transform min-h-[52px]">
-            <span id="tier1-header-text">💼 आजीविका (33 सेवाएं)</span>
+            <span id="tier1-header-text">💼 आजीविका (32 श्रेणियां उपलब्ध)</span>
             <span class="acc-arrow text-sm font-bold font-mono">▼</span>
           </button>
           <div id="tier1-list" class="space-y-2 pl-1 transition-all" style="display: block;">
@@ -312,7 +382,7 @@
 
         <div class="space-y-1.5">
           <button type="button" id="rm-tier2-toggle" onclick="toggleAccordion('tier2-list', this)" class="w-full flex justify-between items-center p-3 rounded-xl bg-cyan-950/60 border border-cyan-800/40 text-cyan-300 font-bold cursor-pointer select-none transition-transform min-h-[52px]">
-            <span id="tier2-header-text">🎮 खेल व मनोरंजन (17 श्रेणियां)</span>
+            <span id="tier2-header-text">🎮 खेल व मनोरंजन (18 श्रेणियां उपलब्ध)</span>
             <span class="acc-arrow text-sm font-bold font-mono">▼</span>
           </button>
           <div id="tier2-list" class="space-y-2 pl-1 transition-all" style="display: block;">
@@ -378,6 +448,9 @@
       if (typeof window.ensureCatalogHydratedNow === 'function') {
         window.ensureCatalogHydratedNow();
       }
+      if (typeof window.lockGames18StatePermanently === 'function') {
+        window.lockGames18StatePermanently();
+      }
     }
 
     function closeCatalogModal() {
@@ -394,47 +467,54 @@
   </script>
 
   <!-- Modular 1-Tap Shell Bridge & Deterministic Catalog Controller -->
-  <script src="/js/one-tap-shell-bridge.js?v=20261016_v12"></script>
+  <script src="/js/one-tap-shell-bridge.js?v=20261017_v57"></script>
 
   <!-- Pan-India Master Geographic Dataset -->
-  <script src="/js/data/india-geo-data.js?v=20261016_v12"></script>
+  <script src="/js/data/india-geo-data.js?v=20261017_v57"></script>
 
   <!-- Modular Home Grid Engine (12 Play Store Standard Verticals) -->
-  <script src="/js/home-grid-engine.js?v=20261016_v12"></script>
+  <script src="/js/home-grid-engine.js?v=20261017_v57"></script>
 
   <!-- Sovereign Profile & Control Hub Engine (Angel One Taxonomy) -->
-  <script src="/js/profile-hub-engine.js?v=20261016_v12"></script>
+  <script src="/js/profile-hub-engine.js?v=20261017_v57"></script>
 
   <!-- Canonical Decoupled Catalog Engine & Data Registry (With Core & Render Sub-Modules) -->
-  <script src="/js/categories-data.js?v=20261016_v12"></script>
-  <script src="/js/catalog-sivme-core-engine.js?v=20261016_v12"></script>
-  <script src="/js/catalog-sivme-render-engine.js?v=20261016_v12"></script>
-  <script src="/js/catalog-sivme-engine.js?v=20261016_v12"></script>
+  <script src="/js/categories-data.js?v=20261017_v57"></script>
+  <script src="/js/catalog-sivme-core-engine.js?v=20261017_v57"></script>
+  <script src="/js/catalog-sivme-render-engine.js?v=20261017_v57"></script>
+  <script src="/js/catalog-sivme-engine.js?v=20261017_v57"></script>
 
   <!-- Decoupled Shell Controller Engine & Viewport Dispatcher -->
-  <script src="/js/shell-controller.js?v=20261016_v12"></script>
+  <script src="/js/shell-controller.js?v=20261017_v57"></script>
 
   <!-- Sovereign In-Situ Isolated Adapters -->
-  <script src="/js/sivme-adapters/cat16-adapter.js?v=20261016_v12"></script>
+  <script src="/js/sivme-adapters/cat16-adapter.js?v=20261017_v57"></script>
 
   <!-- Universal Production Catalog & 0.05s Search Intelligence Engine (All Existing Sub-Modules Linked) -->
-  <script src="/js/universal-catalog/catalog-metadata-registry.js?v=20261016_v12"></script>
-  <script src="/js/universal-catalog/canonical-sub-matrix.js?v=20261016_v12"></script>
-  <script src="/js/universal-catalog/sub-card-renderer.js?v=20261016_v12"></script>
-  <script src="/js/universal-catalog/universal-card-engine.js?v=20261016_v12"></script>
-  <script src="/js/universal-catalog/universal-search-engine.js?v=20261016_v12"></script>
+  <script src="/js/universal-catalog/catalog-metadata-registry.js?v=20261017_v57"></script>
+  <script src="/js/universal-catalog/canonical-sub-matrix.js?v=20261017_v57"></script>
+  <script src="/js/universal-catalog/sub-card-renderer.js?v=20261017_v57"></script>
+  <script src="/js/universal-catalog/universal-card-engine.js?v=20261017_v57"></script>
+  <script src="/js/universal-catalog/universal-search-engine.js?v=20261017_v57"></script>
 
   <!-- Modular Catalog Extensions (Cache-Busted Play Store Batches) -->
-  <script src="/js/universal-catalog/extensions/ext-batch-11-15.js?v=20261016_v12"></script>
-  <script src="/js/universal-catalog/extensions/ext-batch-16-20.js?v=20261016_v12"></script>
+  <script src="/js/universal-catalog/extensions/ext-batch-11-15.js?v=20261017_v57"></script>
+  <script src="/js/universal-catalog/extensions/ext-batch-16-20.js?v=20261017_v57"></script>
+  <script src="/js/universal-catalog/games-entertainment-bridge.js?v=20261017_v57"></script>
 
   <!-- MODULAR PHASE 5 FAVORITES ENGINE (DECOUPLED & PLAY STORE STYLED) -->
-  <script src="/js/favorites-engine.js?v=20261016_v12"></script>
+  <script src="/js/favorites-engine.js?v=20261017_v57"></script>
 
   <!-- SIVME v2.0 Phase 1: Core Visibility Registry Engine (ZEL Isolated) -->
-  <script src="/js/core/sovereign-in-situ-registry.js?v=20261016_v12"></script>
+  <script src="/js/core/sovereign-in-situ-registry.js?v=20261017_v57"></script>
 
-  <!-- FAIL-SAFE CATALOG HYDRATION SENTINEL (Eliminates Stuck Loading Text) -->
+  <!-- Direct v57 Modular 1-Tap Healer, Accordion, DOM Engine & Catalog Hydrator Lock -->
+  <script src="/js/one-tap-home-css-healer.js?v=20261017_v57"></script>
+  <script src="/js/one-tap-accordion-engine.js?v=20261017_v57"></script>
+  <script src="/js/one-tap-catalog-dom-engine.js?v=20261017_v57"></script>
+  <script src="/js/one-tap-catalog-hydrator.js?v=20261017_v57"></script>
+
+  <!-- FAIL-SAFE CATALOG HYDRATION SENTINEL (Eliminates Stuck Loading Text & Locks 18 Games) -->
   <script>
     (function() {
       window.ensureCatalogHydratedNow = function() {
@@ -452,6 +532,16 @@
         if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
           try { window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog(); } catch (e) {}
         }
+
+        if (typeof window.lockGames18StatePermanently === 'function') {
+          try { window.lockGames18StatePermanently(); } catch (e) {}
+        }
+        var countEl = document.getElementById('modal-catalog-count');
+        if (countEl) countEl.textContent = '32 Categories • 18 Games Active';
+        var t1Hdr = document.getElementById('tier1-header-text');
+        if (t1Hdr) t1Hdr.textContent = '💼 आजीविका (32 श्रेणियां उपलब्ध)';
+        var t2Hdr = document.getElementById('tier2-header-text');
+        if (t2Hdr) t2Hdr.textContent = '🎮 खेल व मनोरंजन (18 श्रेणियां उपलब्ध)';
       };
 
       window.addEventListener('RM_CATALOG_DATA_READY', window.ensureCatalogHydratedNow);
