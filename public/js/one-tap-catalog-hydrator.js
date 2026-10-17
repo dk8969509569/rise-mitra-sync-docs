@@ -1,11 +1,11 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-1A Modular Catalog Hydrator & Modal Dispatcher (v55)
+ *   - MODULE NAME    : RM Part-1A Modular Catalog Hydrator & Modal Dispatcher (v56)
  *   - REPO TARGET    : public/js/one-tap-catalog-hydrator.js
  *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional Loader for Surface-B SIVME)
  *   - HOST BINDING   : Surface-A (public/index.html) | Surface-B (public/owner-console.html)
- *   - SIZE BUDGET    : <= 290 Lines Total (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 295 Lines Total (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -28,7 +28,7 @@
  *                              and Part-1B/1C/1D API bridges.
  *   - ALLOWED ON SURFACE-B   : Conditional loading of /js/sovereign-in-situ-hud.js ONLY when
  *                              ?sivme=owner or ?sov_mode=in_situ is present in URL.
- *   - FORBIDDEN IN THIS FILE : Cross-surface DOM leakage or dropping any v39-v54 ZEL function.
+ *   - FORBIDDEN IN THIS FILE : Cross-surface DOM leakage or dropping any v39-v55 ZEL function.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.__RM_ACTIVE_CACHE_VER, window.__RM_OPEN_CAT_STATE,
@@ -50,7 +50,7 @@
  * 6. ANTI-FREEZE, EVENT LISTENER & TIMER OWNERSHIP LOCK:
  *   - CLICK SAFETY  : 0ms rAF modal open/close; delegates 1-Tap Accordion to Part-1C Engine.
  *   - SCROLL SAFETY : Restores body.style.overflowY = 'auto' on modal/fullscreen close.
- *   - DOM SAFETY    : MutationObserver uses subtree: false to prevent main-thread lag.
+ *   - DOM SAFETY    : State-verified DOM canary check prevents legacy overwrite regression.
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (ALL 23 MANDATORY FUNCTIONS INTACT):
  *   1. ensureFullscreenControllerLoaded 2. purgeStaleState             3. injectOneTapLockStyles
@@ -77,7 +77,7 @@
  *   - MOBILE EDITING  : 2-line blank spacing preserved between major functional blocks.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261017_v55'`.
+ *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261017_v56'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -94,7 +94,7 @@
   if (window.__RM_LOADED_MODULES__['one-tap-catalog-hydrator']) return;
   window.__RM_LOADED_MODULES__['one-tap-catalog-hydrator'] = true;
 
-  var CACHE_VERSION = '20261017_v55';
+  var CACHE_VERSION = '20261017_v56';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VERSION;
   var isSyncingDOM = false;
   var hasRenderedCatalogOnce = false;
@@ -134,8 +134,16 @@
   })();
 
 
-  // 2. Delegated Part-1D (`public/js/one-tap-home-css-healer.js`) Bridges + Throttled 0ms Synchronous Header Lock
+  // 2. Delegated Part-1D (`public/js/one-tap-home-css-healer.js`) Bridges + State-Verified 0ms Synchronous Header Lock
   function healHomeVerticalsInstantly() {
+    try {
+      if (typeof window.lockGames18StatePermanently === 'function') {
+        window.lockGames18StatePermanently();
+      } else if (window.RM_HOME_CSS_HEALER && typeof window.RM_HOME_CSS_HEALER.lockGames18StatePermanently === 'function') {
+        window.RM_HOME_CSS_HEALER.lockGames18StatePermanently();
+      }
+    } catch (e) {}
+
     var now = Date.now();
     if (now - lastHydratorHealTs < 120) return;
     lastHydratorHealTs = now;
@@ -177,7 +185,7 @@
   window.healHomeVerticalsInstantly = healHomeVerticalsInstantly;
 
 
-  // 3. Fullscreen Viewport Helpers (100% v54 ZEL Intact)
+  // 3. Fullscreen Viewport Helpers (100% v55 ZEL Intact)
   function forceCloseFullscreenViewport() {
     var fs = document.getElementById('rm-fullscreen-view');
     if (fs) {
@@ -279,7 +287,11 @@
     isSyncingDOM = true;
     try {
       healHomeVerticalsInstantly();
-      if (!hasRenderedCatalogOnce && window.RM_CATALOG_DOM_ENGINE && typeof window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards === 'function') {
+      var modal = document.getElementById('categoryModal');
+      var needsDomEngine = !hasRenderedCatalogOnce ||
+                           (modal && (!modal.querySelector('[data-cat-id="g34"]') ||
+                            modal.querySelector('[data-cat-id] > div:first-child:not([data-rm-parent-rendered])')));
+      if (needsDomEngine && window.RM_CATALOG_DOM_ENGINE && typeof window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards === 'function') {
         hasRenderedCatalogOnce = true;
         return window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards();
       }
@@ -365,7 +377,7 @@
       if (isSyncingDOM || modal.classList.contains('hidden')) return;
       installRenderDestructionShield();
       var rawHeader = modal.querySelector('[data-cat-id] > div:first-child:not([data-rm-parent-rendered])');
-      if (rawHeader) {
+      if (rawHeader || !modal.querySelector('[data-cat-id="g34"]')) {
         hasRenderedCatalogOnce = false;
         syncAndHydrateCatalogCards();
       } else {
