@@ -1,11 +1,11 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-1C Capture-Phase 1-Tap Accordion & Subcard Engine (v50)
+ *   - MODULE NAME    : RM Part-1C Capture-Phase 1-Tap Accordion & Subcard Engine (v55)
  *   - REPO TARGET    : public/js/one-tap-accordion-engine.js
  *   - SURFACE TARGET : SURFACE-A ONLY (Universal Catalog 01-50 Accordion Controller)
  *   - HOST BINDING   : Surface-A (public/index.html)
- *   - SIZE BUDGET    : <= 240 Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 275 Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -13,12 +13,14 @@
  * 2. EXISTING MODULAR FILES LOCK (ZERO DUPLICATE IMPLEMENTATION):
  *   - public/js/one-tap-accordion-engine.js (This File: Part-1C 1-Tap Accordion & Subcards)
  *   - public/js/one-tap-catalog-hydrator.js (Part-1A: 0ms Home Healer, CSS Lock & Dispatchers)
+ *   - public/js/one-tap-home-css-healer.js (Part-1D: 0ms Home Verticals Healer & CSS Lock)
  *   - public/js/one-tap-catalog-dom-engine.js (Part-1B: Canonical 50-Category DOM Engine)
  *   - public/js/fullscreen-microapp-controller.js (Fullscreen Micro-App Viewport Controller)
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
- *   - ALLOWED ON SURFACE-A   : Capture-phase 1-Tap dropdown toggle for Categories 01-50,
- *                              "और देखें ▼ ⇄ समेटें ▲" pill sync, and 3-subcard fallback.
+ *   - ALLOWED ON SURFACE-A   : Capture-phase 0ms touchend + click 1-Tap dropdown toggle for
+ *                              Categories 01-50, "और देखें ▼ ⇄ समेटें ▲" pill sync, and
+ *                              3-subcard fallback.
  *   - ALLOWED ON SURFACE-B   : NONE (Surface-B SIVME controls are strictly isolated).
  *   - FORBIDDEN IN THIS FILE : Duplicating Home 12-Verticals healer or Surface-B logic.
  * ==============================================================================
@@ -32,14 +34,16 @@
  *   - SURFACE-B SELECTORS : .sivme-notch-pill, #sivme-hud, [data-sivme] (EXCLUDED)
  * ==============================================================================
  * 6. ANTI-FREEZE, EVENT LISTENER & TIMER OWNERSHIP LOCK:
- *   - CLICK SAFETY  : Capture-phase listener + 220ms debounce prevents 1-1=0 double-toggle.
+ *   - CLICK SAFETY  : Capture-phase 0ms touchend + click listener + 320ms debounce and
+ *                     380ms per-card lock prevents 1-1=0 double-toggle race conditions.
  *   - SCROLL SAFETY : Tracks touchmove (>10px) so scrolling never triggers accordion taps.
  *   - DOM SAFETY    : Never mutates Tier-2 macro bars (आजीविका / खेल व मनोरंजन).
  * ==============================================================================
- * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (9 EXTRACTED FUNCTIONS):
+ * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (ALL 10 FUNCTIONS INTACT):
  *   1. resolveCategorySubContainer  2. enforceTopLeftLargeNumbering 3. installRenderDestructionShield
  *   4. ensureSubCardsPopulated      5. updateAccordionPillUI        6. applyCategoryOpenState
- *   7. syncAndHydrateCatalogCards   8. findCategoryCardElement      9. installMasterOneTapAccordionEngine
+ *   7. syncAndHydrateCatalogCards   8. findCategoryCardElement      9. handleInstantAccordionTap
+ *   10. installMasterOneTapAccordionEngine
  * ==============================================================================
  * 8. ONE JOB = ONE FILE & CANONICAL PATH LOCK (ANTI-DUPLICATE FILE GUARD):
  *   - SINGLE JOB RULE : Sole owner of 1-Tap Category Accordion & Subcard Population (01-50).
@@ -56,7 +60,7 @@
  *   - MOBILE EDITING  : 2-line blank spacing preserved between major functional blocks.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261017_v50'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261017_v55'`.
  *   - PIPELINE GATE   : Verified on `pre-main` before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -76,6 +80,7 @@
   var openStateMap = window.__RM_OPEN_CAT_STATE || { '15': true, '16': true };
   window.__RM_OPEN_CAT_STATE = openStateMap;
   var lastAccordionTapTs = 0;
+  var lastCatToggleMap = {};
   var touchStartX = 0;
   var touchStartY = 0;
   var wasTouchDragged = false;
@@ -142,7 +147,7 @@
 
   function updateAccordionPillUI(catEl, isOpen) {
     if (!catEl) return;
-    var candidates = catEl.querySelectorAll('button, span, div');
+    var candidates = catEl.querySelectorAll('.rm-parent-toggle-pill, button, span, div');
     for (var i = 0; i < candidates.length; i++) {
       var el = candidates[i];
       if (el.closest('[id^="sub-"]')) continue;
@@ -161,8 +166,16 @@
   }
 
 
-  function applyCategoryOpenState(catEl, rawId, cleanNum, isOpen) {
+  function applyCategoryOpenState(catEl, rawId, cleanNum, isOpen, isUserTap) {
     var intNum = parseInt(cleanNum, 10) || 1;
+    var now = Date.now();
+    if (!isUserTap && now - (lastCatToggleMap[intNum] || 0) < 380) {
+      return true;
+    }
+    if (isUserTap) {
+      lastCatToggleMap[intNum] = now;
+    }
+
     var paddedNum = (intNum < 10 ? '0' : '') + intNum;
     openStateMap[String(intNum)] = Boolean(isOpen);
     openStateMap[paddedNum] = Boolean(isOpen);
@@ -239,6 +252,48 @@
     return null;
   }
 
+  function handleInstantAccordionTap(e) {
+    if (wasTouchDragged) return;
+    var modal = document.getElementById('categoryModal');
+    if (!modal || modal.classList.contains('hidden') || !modal.contains(e.target)) return;
+    var target = e.target;
+    if (target.closest('[onclick*="closeCatalogModal"], [onclick*="toggleMenuDrawer"], [id^="sub-"]')) return;
+
+    var catEl = findCategoryCardElement(target, modal);
+    if (!catEl) return;
+
+    var now = Date.now();
+    if (now - lastAccordionTapTs < 320) {
+      if (e.cancelable) e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      return;
+    }
+    lastAccordionTapTs = now;
+    if (e.cancelable) e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+
+    var rawId = catEl.getAttribute('data-cat-id') || catEl.id || '';
+    var numMatch = rawId.match(/(\d+)/);
+    var cleanNum = numMatch ? numMatch[1] : '';
+    if (!cleanNum) {
+      var badgeEl = catEl.querySelector('.rm-toplevel-num-badge');
+      if (badgeEl) {
+        var bm = (badgeEl.textContent || '').match(/(\d+)/);
+        if (bm) cleanNum = bm[1];
+      }
+    }
+    if (!cleanNum) return;
+
+    var intNum = parseInt(cleanNum, 10);
+    var paddedNum = (intNum < 10 ? '0' : '') + intNum;
+    var subContainer = resolveCategorySubContainer(catEl, rawId, cleanNum);
+    var isCurrentlyOpen = Boolean(subContainer && window.getComputedStyle(subContainer).display !== 'none' &&
+                          subContainer.getAttribute('data-rm-collapsed') !== 'true' && !subContainer.classList.contains('hidden'));
+    applyCategoryOpenState(catEl, rawId || ('c' + paddedNum), String(intNum), !isCurrentlyOpen, true);
+  }
+
   function installMasterOneTapAccordionEngine() {
     if (window.__RM_MASTER_ACCORDION_INSTALLED) return;
     window.__RM_MASTER_ACCORDION_INSTALLED = true;
@@ -259,54 +314,8 @@
       }
     }, { capture: true, passive: true });
 
-    window.addEventListener('touchend', function (e) {
-      var modal = document.getElementById('categoryModal');
-      if (!modal || modal.classList.contains('hidden') || !modal.contains(e.target)) return;
-      if (e.target.closest('[id^="sub-"]')) return;
-      if (findCategoryCardElement(e.target, modal)) e.stopPropagation();
-    }, true);
-
-    window.addEventListener('click', function (e) {
-      if (wasTouchDragged) return;
-      var modal = document.getElementById('categoryModal');
-      if (!modal || modal.classList.contains('hidden') || !modal.contains(e.target)) return;
-      var target = e.target;
-      if (target.closest('[onclick*="closeCatalogModal"], [onclick*="toggleMenuDrawer"], [id^="sub-"]')) return;
-
-      var catEl = findCategoryCardElement(target, modal);
-      if (!catEl) return;
-
-      var now = Date.now();
-      if (now - lastAccordionTapTs < 220) {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        return;
-      }
-      lastAccordionTapTs = now;
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-
-      var rawId = catEl.getAttribute('data-cat-id') || catEl.id || '';
-      var numMatch = rawId.match(/(\d+)/);
-      var cleanNum = numMatch ? numMatch[1] : '';
-      if (!cleanNum) {
-        var badgeEl = catEl.querySelector('.rm-toplevel-num-badge');
-        if (badgeEl) {
-          var bm = (badgeEl.textContent || '').match(/(\d+)/);
-          if (bm) cleanNum = bm[1];
-        }
-      }
-      if (!cleanNum) return;
-
-      var intNum = parseInt(cleanNum, 10);
-      var paddedNum = (intNum < 10 ? '0' : '') + intNum;
-      var subContainer = resolveCategorySubContainer(catEl, rawId, cleanNum);
-      var isCurrentlyOpen = subContainer && window.getComputedStyle(subContainer).display !== 'none' &&
-                            subContainer.getAttribute('data-rm-collapsed') !== 'true' && !subContainer.classList.contains('hidden');
-      applyCategoryOpenState(catEl, rawId || ('c' + paddedNum), String(intNum), !isCurrentlyOpen);
-    }, true);
+    window.addEventListener('touchend', handleInstantAccordionTap, { capture: true, passive: false });
+    window.addEventListener('click', handleInstantAccordionTap, true);
   }
 
   installMasterOneTapAccordionEngine();
@@ -320,6 +329,7 @@
     applyCategoryOpenState: applyCategoryOpenState,
     syncAndHydrateCatalogCards: syncAndHydrateCatalogCards,
     findCategoryCardElement: findCategoryCardElement,
+    handleInstantAccordionTap: handleInstantAccordionTap,
     installMasterOneTapAccordionEngine: installMasterOneTapAccordionEngine
   };
 })();
