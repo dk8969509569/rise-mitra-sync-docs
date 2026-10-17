@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-1 Modular Catalog Hydrator, 0ms Home Healer & Sentinel (v45)
+ *   - MODULE NAME    : RM Part-1 Modular Catalog Hydrator, 0ms Home Healer & Sentinel (v46)
  *   - REPO TARGET    : public/js/one-tap-catalog-hydrator.js
  *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional Loader for Surface-B SIVME)
  *   - HOST BINDING   : Surface-A (public/index.html) | Surface-B (public/owner-console.html)
@@ -21,10 +21,11 @@
  * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : 0ms Home Verticals healing ("वर्टिकल्स लोड हो रहे हैं...") in
  *                              official Play Store A-Z order (Cat 15 = House & Home), 1-tap
- *                              CSS injection, stale SIVME/cache purge, and modal dispatchers.
+ *                              CSS injection, horizontal scrollbar elimination, bottom-nav
+ *                              scroll clearance, stale SIVME/cache purge, and modal dispatchers.
  *   - ALLOWED ON SURFACE-B   : Conditional loading of /js/sovereign-in-situ-hud.js ONLY when
  *                              ?sivme=owner or ?sov_mode=in_situ is present in URL.
- *   - FORBIDDEN IN THIS FILE : Cross-surface DOM leakage or dropping any v39/v44 ZEL function.
+ *   - FORBIDDEN IN THIS FILE : Cross-surface DOM leakage or dropping any v39/v44/v45 ZEL function.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.__RM_ACTIVE_CACHE_VER, window.__RM_OPEN_CAT_STATE,
@@ -44,7 +45,8 @@
  * ==============================================================================
  * 6. ANTI-FREEZE, EVENT LISTENER & TIMER OWNERSHIP LOCK:
  *   - CLICK SAFETY  : 0ms instant modal open/close without blocking main thread on boot.
- *   - SCROLL SAFETY : touch-action: manipulation and -webkit-overflow-scrolling: touch.
+ *   - SCROLL SAFETY : touch-action: manipulation, -webkit-overflow-scrolling: touch, and
+ *                     overflow-x: hidden to prevent horizontal scrollbar and scroll lock.
  *   - DOM SAFETY    : MutationObserver uses subtree: false to prevent recursive DOM freezes.
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (ALL 19 MANDATORY FUNCTIONS INTACT):
@@ -71,7 +73,7 @@
  *   - MOBILE EDITING  : 2-line blank spacing preserved between major functional blocks.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261017_v45'`.
+ *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261017_v46'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -88,7 +90,7 @@
   if (window.__RM_LOADED_MODULES__['one-tap-catalog-hydrator']) return;
   window.__RM_LOADED_MODULES__['one-tap-catalog-hydrator'] = true;
 
-  var CACHE_VERSION = '20261017_v45';
+  var CACHE_VERSION = '20261017_v46';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VERSION;
   var isSyncingDOM = false;
   var hasRenderedCatalogOnce = false;
@@ -138,9 +140,13 @@
   })();
 
 
-  // 0. Instant 0ms Healer for "वर्टिकल्स लोड हो रहे हैं..." on Home Screen (100% ZEL Intact)
+  // 0. Instant 0ms Healer for "वर्टिकल्स लोड हो रहे हैं..." on Home Screen (100% ZEL Intact + Scroll Unlock)
   function healHomeVerticalsInstantly() {
     try {
+      document.documentElement.style.overflowX = 'hidden';
+      document.body.style.overflowX = 'hidden';
+      document.body.style.overflowY = 'auto';
+
       if (window.RM_HomeGrid && typeof window.RM_HomeGrid.render === 'function') {
         try { window.RM_HomeGrid.render(); } catch (e) {}
       }
@@ -152,7 +158,7 @@
         var el = nodes[i];
         if (el.children.length === 0 && (el.textContent || '').trim().indexOf('वर्टिकल्स लोड हो रहे हैं') !== -1) {
           var box = el.parentElement || el;
-          box.className = 'grid grid-cols-2 gap-2.5 px-4 mb-6 max-w-lg mx-auto';
+          box.className = 'grid grid-cols-2 gap-2.5 px-4 mb-24 max-w-lg mx-auto';
           box.innerHTML = CORE_12_VERTICALS.map(function (v) {
             return '<div onclick="window.openCatalogModal && window.openCatalogModal()" class="bg-[#0b1329]/95 border border-slate-700/80 hover:border-cyan-500/60 p-3.5 rounded-2xl flex flex-col justify-between shadow-lg active:scale-[0.98] cursor-pointer min-h-[112px]">' +
               '<div class="flex items-center justify-between w-full mb-1.5">' +
@@ -205,13 +211,16 @@
   })();
 
 
-  // 2. INJECT ZEL 1-TAP INSTANT TOUCH, SUB-CONTAINER VISIBILITY LOCK & TOP-LEFT LARGE NUMBERING CSS
+  // 2. INJECT ZEL 1-TAP INSTANT TOUCH, SUB-CONTAINER VISIBILITY LOCK, HORIZONTAL BAR FIX & TOP-LEFT LARGE NUMBERING CSS
   (function injectOneTapLockStyles() {
     var existing = document.getElementById('rm-zel-one-tap-lock');
     var style = existing || document.createElement('style');
     style.id = 'rm-zel-one-tap-lock';
     style.textContent = [
-      'html, body { background-color: #0b0f19 !important; }',
+      'html, body { background-color: #0b0f19 !important; overflow-x: hidden !important; max-width: 100vw !important; width: 100% !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }',
+      'body { padding-bottom: 110px !important; min-height: 100vh !important; }',
+      '::-webkit-scrollbar:horizontal { display: none !important; height: 0 !important; width: 0 !important; }',
+      '#verticalTilesGrid { padding-bottom: 32px !important; margin-bottom: 24px !important; }',
       'button, a, [onclick], .tactile-25d, #categoryModal [data-cat-id], #categoryModal [id^="sub-"] > div, .rm-service-chip {',
       '  touch-action: manipulation !important; -webkit-tap-highlight-color: transparent !important;',
       '  cursor: pointer !important; user-select: none !important; -webkit-user-select: none !important;',
@@ -240,6 +249,7 @@
       fs.classList.add('hidden');
       fs.style.setProperty('display', 'none', 'important');
     }
+    document.body.style.overflowY = 'auto';
     if (window.RM_FULLSCREEN_CONTROLLER && typeof window.RM_FULLSCREEN_CONTROLLER.forceCloseFullscreenViewport === 'function') {
       try { window.RM_FULLSCREEN_CONTROLLER.forceCloseFullscreenViewport(); } catch (e) {}
     }
@@ -338,6 +348,7 @@
     if (!m) return;
     m.classList.add('hidden');
     m.style.setProperty('display', 'none', 'important');
+    document.body.style.overflowY = 'auto';
   };
 
   window.toggleMenuDrawer = function (open) {
