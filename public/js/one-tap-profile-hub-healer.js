@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-0B Top-Right Profile 1-Tap & Large-Font Healer (v78)
+ *   - MODULE NAME    : RM Part-0B Top-Right Profile 1-Tap & Large-Font Healer (v79)
  *   - REPO TARGET    : public/js/one-tap-profile-hub-healer.js
  *   - SURFACE TARGET : SURFACE-A ONLY (Public Member Profile & Sovereign Hub UI)
  *   - HOST BINDING   : Surface-A (Auto-loaded by public/js/index-shell-bootstrap.js)
@@ -38,9 +38,9 @@
  * ==============================================================================
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
  *   - ZERO FREEZE   : Never scans document.body; scans ONLY open #rm-fullscreen-view or #profileModal.
- *   - CLICK SAFETY  : Caches healed DOM (`data-rm-prof-healed="1"`) for 0ms instant open/close,
- *                     unlocks inline display:none!important, and blocks 300ms ghost-click reset.
- *   - ANTI-CLIPPING : Pure CSS rules enforce 2.5D depth, large fonts (16px-20px) & compact 12px Log Out.
+ *   - CLICK SAFETY  : State-verified DOM canary (`.rm-prof-grid-card`) + childList observer ensures
+ *                     0ms instant open/close and blocks inner taps from reverting UI back to small fonts.
+ *   - ANTI-CLIPPING : Pure CSS rules enforce single outer 2.5D depth, large fonts & compact 12px Log Out.
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (8 PROFILE BLOCK FUNCTIONS):
  *   1. injectProfileHubLargeFontStyles       2. healProfileHubTypographyAndLayout
@@ -83,6 +83,7 @@
   var touchStartX = 0;
   var touchStartY = 0;
   var touchMoved = false;
+  var isHealingDOM = false;
 
 
   // 1. Inject Pure CSS Anti-Clipping Large Font, World-Class 2.5D Borders & Compact 12px Logout Styles
@@ -115,8 +116,10 @@
   }
 
 
-  // 2. Scoped Profile Hub Large-Font & 2.5D Visual Healer (One-Time Cached Scan — Zero Repeated Loop Lag)
+  // 2. Scoped Profile Hub Large-Font & 2.5D Visual Healer (State-Verified Canary — Zero Revert & Zero Nested Box)
   function healProfileHubTypographyAndLayout(forceScan) {
+    if (isHealingDOM) return;
+    isHealingDOM = true;
     try {
       var roots = [
         document.getElementById('rm-fullscreen-view'),
@@ -141,7 +144,11 @@
         }
 
         var fsContainer = document.getElementById('rm-module-container') || root;
-        if (!forceScan && fsContainer.getAttribute('data-rm-prof-healed') === '1') return;
+        var hasCanary = root.querySelector('.rm-prof-grid-card') && root.querySelector('.rm-prof-logout-btn');
+        if (!forceScan && hasCanary && fsContainer.getAttribute('data-rm-prof-healed') === '1') {
+          isHealingDOM = false;
+          return;
+        }
 
         var allNodes = root.querySelectorAll('div, span, p, h1, h2, h3, h4, button, a');
         for (var i = 0; i < allNodes.length; i++) {
@@ -166,7 +173,7 @@
               el.style.setProperty('font-weight', '900', 'important');
               el.style.setProperty('color', '#ffffff', 'important');
               el.style.setProperty('white-space', 'normal', 'important');
-              var heroBox = el.closest('.rounded-2xl, .rounded-3xl, .border');
+              var heroBox = el.closest('.rounded-2xl, .rounded-3xl');
               if (heroBox) heroBox.classList.add('rm-prof-hero-box');
             } else if (txt.indexOf('USR-') !== -1 || txt === 'Client ID') {
               el.style.setProperty('font-size', '15px', 'important');
@@ -185,7 +192,7 @@
                        txt.indexOf('OFFICIAL CHANNELS') !== -1) {
               el.classList.add('rm-prof-sec-hdr');
               if (el.parentElement) el.parentElement.classList.add('rm-prof-sec-hdr-bar');
-              var secBox = el.closest('.rounded-2xl, .rounded-3xl, .border');
+              var secBox = el.closest('.rounded-2xl, .rounded-3xl');
               if (secBox) secBox.classList.add('rm-prof-section-box');
             } else if (txt.indexOf('RM WORLD v') !== -1) {
               el.style.setProperty('font-size', '14px', 'important');
@@ -240,12 +247,25 @@
         break;
       }
     } catch (e) {}
+    isHealingDOM = false;
   }
   window.healProfileHubTypographyAndLayout = healProfileHubTypographyAndLayout;
 
 
   // 3. Guaranteed Non-Blocking Top-Right Profile Icon (👤) 0ms 1-Tap Opener & Close Engine
   function bindTopRightProfileOneTap() {
+    var fsContainerObsAttached = false;
+    function attachProfileContainerObserver() {
+      if (fsContainerObsAttached) return;
+      var fsContainer = document.getElementById('rm-module-container');
+      if (!fsContainer || typeof MutationObserver === 'undefined') return;
+      fsContainerObsAttached = true;
+      var obs = new MutationObserver(function () {
+        if (!isHealingDOM) healProfileHubTypographyAndLayout(false);
+      });
+      obs.observe(fsContainer, { childList: true });
+    }
+
     function ensureProfileModalReady() {
       var existing = document.getElementById('profileModal') || document.getElementById('profileHubModal') || document.getElementById('userProfileModal');
       if (existing && existing.getAttribute('data-rm-profile-ready') === '1') return existing;
@@ -302,6 +322,7 @@
     }
 
     window.openProfileModal = function (trigEl) {
+      attachProfileContainerObserver();
       var fsView = document.getElementById('rm-fullscreen-view');
       var fsContainer = document.getElementById('rm-module-container');
 
@@ -386,6 +407,7 @@
 
     function autoTagTopRightProfileIcon() {
       try {
+        attachProfileContainerObserver();
         var nodes = document.querySelectorAll('button, a, div.rounded-full, span.rounded-full');
         for (var i = 0; i < nodes.length; i++) {
           var n = nodes[i];
@@ -462,6 +484,9 @@
             return;
           }
         }
+        healProfileHubTypographyAndLayout(false);
+        setTimeout(function () { healProfileHubTypographyAndLayout(false); }, 10);
+        setTimeout(function () { healProfileHubTypographyAndLayout(false); }, 60);
         return;
       }
 
