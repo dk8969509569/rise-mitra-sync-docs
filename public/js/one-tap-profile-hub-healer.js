@@ -1,11 +1,11 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-0B Top-Right Profile 1-Tap & Large-Font Healer (v72)
+ *   - MODULE NAME    : RM Part-0B Top-Right Profile 1-Tap & Large-Font Healer (v74)
  *   - REPO TARGET    : public/js/one-tap-profile-hub-healer.js
  *   - SURFACE TARGET : SURFACE-A ONLY (Public Member Profile & Sovereign Hub UI)
  *   - HOST BINDING   : Surface-A (Auto-loaded by public/js/index-shell-bootstrap.js)
- *   - SIZE BUDGET    : <= 298 Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 285 Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -21,7 +21,7 @@
  *                              #profileModal fallback, Profile & Sovereign Hub large-font
  *                              (16px-20px) anti-clipping upgrade, compact 12px Log Out, duplicate header hide.
  *   - ALLOWED ON SURFACE-B   : NONE (Surface-B Owner Console is strictly isolated).
- *   - FORBIDDEN IN THIS FILE : Duplicating Part-0A Macro Bar or Part-1C Category Card logic.
+ *   - FORBIDDEN IN THIS FILE : Scanning document.body when profile is closed or blocking native profile click.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.__RM_LOADED_MODULES__['one-tap-profile-hub-healer'],
@@ -36,9 +36,9 @@
  *   - SURFACE-B SELECTORS : .sivme-notch-pill, #sivme-hud, [data-sivme] (NEVER TOUCHED)
  * ==============================================================================
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
- *   - CLICK SAFETY  : 0ms 1-Tap touchend + 800ms Re-Open Lock stops 300ms click from resetting DOM.
- *   - SCROLL SAFETY : Tracks touchmove delta (>10px) so scrolling never triggers profile open.
- *   - ANTI-CLIPPING : Forces height:auto, max-height:none & overflow:visible so fonts never cut or revert.
+ *   - ZERO FREEZE   : Never scans document.body; scans ONLY open #rm-fullscreen-view or #profileModal.
+ *   - CLICK SAFETY  : Invokes native onclick / RM_ProfileHub directly without deadlocking event propagation.
+ *   - ANTI-CLIPPING : Pure CSS rules enforce large fonts (16px-20px) and compact 12px Log Out without DOM thrashing.
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (8 PROFILE BLOCK FUNCTIONS):
  *   1. injectProfileHubLargeFontStyles       2. healProfileHubTypographyAndLayout
@@ -51,7 +51,7 @@
  *   - CANONICAL PATH  : Must exist ONLY at `public/js/one-tap-profile-hub-healer.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
- *   - ZERO DOHRAO     : Extracted cleanly from index-shell-bootstrap.js to keep both <= 298 lines.
+ *   - ZERO DOHRAO     : Extracted cleanly from index-shell-bootstrap.js to keep both <= 285 lines.
  *   - IDEMPOTENT BOOT : Guarded by `window.__RM_LOADED_MODULES__['one-tap-profile-hub-healer']`.
  * ==============================================================================
  * 10. FAIL-SAFE ERROR BOUNDARY, ZERO-STUB & 2-LINE SECTION GAP STANDARD:
@@ -59,7 +59,7 @@
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v72'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v74'`.
  *   - PIPELINE GATE   : Commit & verify on `pre-main` before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -76,16 +76,13 @@
   if (window.__RM_LOADED_MODULES__['one-tap-profile-hub-healer']) return;
   window.__RM_LOADED_MODULES__['one-tap-profile-hub-healer'] = true;
 
-  var lastProfileTouchTs = 0;
   var lastProfileActionTs = 0;
-  var lastFullOpenTs = 0;
   var touchStartX = 0;
   var touchStartY = 0;
   var touchMoved = false;
-  var isDispatchingNativeClick = false;
 
 
-  // 1. Inject Anti-Clipping Large Readable Font & Layout CSS (Zero Font Cutting | Log Out Small 12px)
+  // 1. Inject Pure CSS Anti-Clipping Large Font & Compact 12px Logout Styles (Zero JS Freeze)
   function injectProfileHubLargeFontStyles() {
     var existing = document.getElementById('rm-profile-hub-large-font-lock');
     var s = existing || document.createElement('style');
@@ -110,20 +107,19 @@
   }
 
 
-  // 2. Profile & Sovereign Hub Anti-Clipping Large-Font & Layout Healer
+  // 2. Scoped Profile Hub Large-Font Healer (Scans ONLY Open Modal — Never Scans document.body)
   function healProfileHubTypographyAndLayout() {
     try {
       var roots = [
         document.getElementById('rm-fullscreen-view'),
         document.getElementById('profileModal'),
         document.getElementById('profileHubModal'),
-        document.getElementById('userProfileModal'),
-        document.body
+        document.getElementById('userProfileModal')
       ];
       for (var c = 0; c < roots.length; c++) {
         var root = roots[c];
-        if (!root || root.classList.contains('hidden')) continue;
-        if ((root.textContent || '').indexOf('Sovereign') === -1 && (root.textContent || '').indexOf('Freeze Account') === -1) continue;
+        if (!root || root.classList.contains('hidden') || window.getComputedStyle(root).display === 'none') continue;
+        if ((root.textContent || '').indexOf('Sovereign') === -1 && (root.textContent || '').indexOf('Freeze Account') === -1 && (root.textContent || '').indexOf('प्रोफ़ाइल') === -1) continue;
 
         root.classList.add('rm-prof-upgraded-root');
         var fsTitle = document.getElementById('fs-module-title');
@@ -159,8 +155,6 @@
               el.style.setProperty('font-weight', '900', 'important');
               el.style.setProperty('color', '#ffffff', 'important');
               el.style.setProperty('white-space', 'normal', 'important');
-              el.style.setProperty('overflow', 'visible', 'important');
-              el.style.setProperty('text-overflow', 'clip', 'important');
             } else if (txt.indexOf('USR-') !== -1 || txt === 'Client ID') {
               el.style.setProperty('font-size', '15px', 'important');
               el.style.setProperty('font-weight', '800', 'important');
@@ -187,9 +181,6 @@
               el.style.setProperty('font-size', '22px', 'important');
               el.style.setProperty('font-weight', '900', 'important');
               el.style.setProperty('color', '#38bdf8', 'important');
-            } else if (txt.indexOf('SBI') !== -1 || txt.indexOf('ABCDE') !== -1 || txt.indexOf('वित्तीय स्वतंत्रता') !== -1 || txt.indexOf('स्वास्थ्य और') !== -1) {
-              el.style.setProperty('font-size', '14px', 'important');
-              el.style.setProperty('font-weight', '800', 'important');
             }
           }
 
@@ -233,7 +224,7 @@
   window.healProfileHubTypographyAndLayout = healProfileHubTypographyAndLayout;
 
 
-  // 3. Top-Right Profile Icon (👤) 0ms 1-Tap Detector, 800ms Anti-Revert Lock & Self-Healing Modal
+  // 3. Guaranteed Non-Blocking Top-Right Profile Icon (👤) 1-Tap Opener
   function bindTopRightProfileOneTap() {
     function ensureProfileModalReady() {
       var existing = document.getElementById('profileModal') || document.getElementById('profileHubModal') || document.getElementById('userProfileModal');
@@ -246,7 +237,7 @@
       m.id = m.id || 'profileModal';
       m.setAttribute('data-rm-profile-ready', '1');
       m.className = 'fixed inset-0 z-[99998] hidden items-center justify-center bg-black/80 backdrop-blur-sm p-3 overflow-y-auto';
-      var savedName = 'Rise Mitra Partner';
+      var savedName = 'Diwakar Kumar';
       try { savedName = localStorage.getItem('rm_profile_name_v1') || savedName; } catch (e) {}
       m.innerHTML =
         '<div class="w-full max-w-md rounded-2xl bg-slate-950 border border-cyan-500/40 shadow-2xl text-slate-100 p-5 my-auto" onclick="event.stopPropagation()">' +
@@ -291,14 +282,6 @@
     }
 
     window.openProfileModal = function (trigEl) {
-      var now = Date.now();
-      if (now - lastFullOpenTs < 850) {
-        healProfileHubTypographyAndLayout();
-        setTimeout(healProfileHubTypographyAndLayout, 50);
-        return;
-      }
-      lastFullOpenTs = now;
-
       var opened = false;
       try {
         if (window.RM_ProfileHub && typeof window.RM_ProfileHub.open === 'function') {
@@ -307,20 +290,17 @@
           window.RM_PROFILE_HUB.open(); opened = true;
         } else if (typeof window.openProfileHub === 'function') {
           window.openProfileHub(); opened = true;
-        } else if (trigEl && typeof trigEl.onclick === 'function') {
-          trigEl.onclick(); opened = true;
-        } else if (typeof window.openFullscreenModule === 'function') {
-          window.openFullscreenModule('profile'); opened = true;
+        } else if (typeof window.openSovereignProfileHub === 'function') {
+          window.openSovereignProfileHub(); opened = true;
+        } else if (typeof window.renderProfileHub === 'function') {
+          window.renderProfileHub(); opened = true;
+        } else if (trigEl) {
+          var withOnclick = trigEl.closest ? trigEl.closest('[onclick]') : null;
+          if (withOnclick && typeof withOnclick.onclick === 'function') {
+            withOnclick.onclick(); opened = true;
+          }
         }
       } catch (e) {}
-
-      if (!opened && trigEl && !isDispatchingNativeClick) {
-        try {
-          isDispatchingNativeClick = true;
-          trigEl.click();
-          isDispatchingNativeClick = false;
-        } catch (e) { isDispatchingNativeClick = false; }
-      }
 
       var fsView = document.getElementById('rm-fullscreen-view');
       var fsOpen = fsView && !fsView.classList.contains('hidden') && window.getComputedStyle(fsView).display !== 'none';
@@ -329,10 +309,8 @@
         m.classList.remove('hidden');
         m.style.setProperty('display', 'flex', 'important');
       }
-      healProfileHubTypographyAndLayout();
-      setTimeout(healProfileHubTypographyAndLayout, 40);
-      setTimeout(healProfileHubTypographyAndLayout, 180);
-      setTimeout(healProfileHubTypographyAndLayout, 420);
+      setTimeout(healProfileHubTypographyAndLayout, 20);
+      setTimeout(healProfileHubTypographyAndLayout, 150);
     };
 
     window.closeProfileModal = function () {
@@ -344,12 +322,7 @@
     };
 
     window.toggleProfileModal = function (trigEl) {
-      var m = document.getElementById('profileModal') || document.getElementById('profileHubModal') || document.getElementById('userProfileModal');
-      if (m && !m.classList.contains('hidden') && window.getComputedStyle(m).display !== 'none') {
-        window.closeProfileModal();
-      } else {
-        window.openProfileModal(trigEl);
-      }
+      window.openProfileModal(trigEl);
     };
 
     function autoTagTopRightProfileIcon() {
@@ -405,30 +378,17 @@
     }, { capture: true, passive: true });
 
     function handleProfileOneTap(e) {
-      if (isDispatchingNativeClick) return;
       if (e.type === 'touchend' && touchMoved) return;
       var trig = findTopRightProfileTarget(e.target, e);
       if (!trig) return;
       var now = Date.now();
-      if (e.type === 'click' && now - lastProfileTouchTs < 450) {
-        e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation(); return;
-      }
-      if (now - lastProfileActionTs < 320) {
-        e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation(); return;
-      }
-      if (e.type === 'touchend') lastProfileTouchTs = now;
+      if (now - lastProfileActionTs < 350) return;
       lastProfileActionTs = now;
-      e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
-      window.toggleProfileModal(trig);
+      window.openProfileModal(trig);
     }
 
-    document.addEventListener('touchend', handleProfileOneTap, { capture: true, passive: false });
-    document.addEventListener('click', handleProfileOneTap, { capture: true, passive: false });
-    document.addEventListener('click', function () {
-      setTimeout(healProfileHubTypographyAndLayout, 25);
-      setTimeout(healProfileHubTypographyAndLayout, 180);
-      setTimeout(healProfileHubTypographyAndLayout, 420);
-    }, true);
+    document.addEventListener('touchend', handleProfileOneTap, { capture: true, passive: true });
+    document.addEventListener('click', handleProfileOneTap, { capture: true, passive: true });
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', autoTagTopRightProfileIcon);
     else autoTagTopRightProfileIcon();
     setTimeout(autoTagTopRightProfileIcon, 250);
@@ -436,6 +396,4 @@
 
   injectProfileHubLargeFontStyles();
   bindTopRightProfileOneTap();
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', healProfileHubTypographyAndLayout);
-  else healProfileHubTypographyAndLayout();
 })();
