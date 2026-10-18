@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-0B Top-Right Profile 1-Tap & Large-Font Healer (v77)
+ *   - MODULE NAME    : RM Part-0B Top-Right Profile 1-Tap & Large-Font Healer (v78)
  *   - REPO TARGET    : public/js/one-tap-profile-hub-healer.js
  *   - SURFACE TARGET : SURFACE-A ONLY (Public Member Profile & Sovereign Hub UI)
  *   - HOST BINDING   : Surface-A (Auto-loaded by public/js/index-shell-bootstrap.js)
@@ -19,7 +19,8 @@
  * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : Top-Right Profile icon (👤) 0ms 1-Tap detection, self-healing
  *                              #profileModal fallback, Profile & Sovereign Hub large-font
- *                              (16px-20px) anti-clipping upgrade, compact 12px Log Out, duplicate header hide.
+ *                              (16px-20px) anti-clipping upgrade, World-Class 2.5D borders & distinct
+ *                              surface/button contrast, compact 12px Log Out, duplicate header hide.
  *   - ALLOWED ON SURFACE-B   : NONE (Surface-B Owner Console is strictly isolated).
  *   - FORBIDDEN IN THIS FILE : Scanning document.body when profile is closed or blocking native profile click.
  * ==============================================================================
@@ -39,7 +40,7 @@
  *   - ZERO FREEZE   : Never scans document.body; scans ONLY open #rm-fullscreen-view or #profileModal.
  *   - CLICK SAFETY  : Caches healed DOM (`data-rm-prof-healed="1"`) for 0ms instant open/close,
  *                     unlocks inline display:none!important, and blocks 300ms ghost-click reset.
- *   - ANTI-CLIPPING : Pure CSS rules enforce large fonts (16px-20px) and compact 12px Log Out without DOM thrashing.
+ *   - ANTI-CLIPPING : Pure CSS rules enforce 2.5D depth, large fonts (16px-20px) & compact 12px Log Out.
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (8 PROFILE BLOCK FUNCTIONS):
  *   1. injectProfileHubLargeFontStyles       2. healProfileHubTypographyAndLayout
@@ -60,7 +61,7 @@
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v77'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v78'`.
  *   - PIPELINE GATE   : Commit & verify on `pre-main` before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -84,7 +85,7 @@
   var touchMoved = false;
 
 
-  // 1. Inject Pure CSS Anti-Clipping Large Font & Compact 12px Logout Styles (Zero JS Freeze)
+  // 1. Inject Pure CSS Anti-Clipping Large Font, World-Class 2.5D Borders & Compact 12px Logout Styles
   function injectProfileHubLargeFontStyles() {
     var existing = document.getElementById('rm-profile-hub-large-font-lock');
     var s = existing || document.createElement('style');
@@ -93,24 +94,28 @@
       '#rm-top-profile-btn, [data-rm-profile-trigger="1"] { touch-action: manipulation !important; cursor: pointer !important; transform: none !important; outline: none !important; -webkit-tap-highlight-color: transparent !important; }' +
       '#rm-top-profile-btn *, [data-rm-profile-trigger="1"] * { pointer-events: none !important; }' +
       '#profileModal:not(.hidden) { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99998 !important; background-color: rgba(2, 6, 23, 0.88) !important; display: flex !important; align-items: center !important; justify-content: center !important; padding: 12px !important; }' +
-      '#rm-fullscreen-view:not(.hidden) { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99999 !important; display: flex !important; }' +
-      '.rm-prof-upgraded-root { padding-bottom: 125px !important; }' +
+      '#rm-fullscreen-view:not(.hidden) { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99999 !important; display: flex !important; background: #03060d !important; }' +
+      '.rm-prof-upgraded-root { padding-bottom: 125px !important; background: radial-gradient(circle at top, #0a1428 0%, #03060d 100%) !important; }' +
       '.rm-prof-upgraded-root div, .rm-prof-upgraded-root span, .rm-prof-upgraded-root p, .rm-prof-upgraded-root button, .rm-prof-upgraded-root a, .rm-prof-upgraded-root h1, .rm-prof-upgraded-root h2, .rm-prof-upgraded-root h3, .rm-prof-upgraded-root h4 { height: auto !important; max-height: none !important; overflow: visible !important; text-overflow: clip !important; }' +
       '.rm-prof-upgraded-root .truncate { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }' +
+      '.rm-prof-hero-box { background: linear-gradient(145deg, #101f3a 0%, #091224 100%) !important; border: 1.8px solid rgba(56, 189, 248, 0.58) !important; border-bottom: 3.5px solid rgba(56, 189, 248, 0.78) !important; border-radius: 22px !important; box-shadow: 0 14px 30px -6px rgba(0, 0, 0, 0.9), inset 0 1px 1px rgba(255, 255, 255, 0.22) !important; }' +
+      '.rm-prof-section-box { background: linear-gradient(180deg, #0d172b 0%, #080f1d 100%) !important; border: 1.5px solid rgba(56, 189, 248, 0.44) !important; border-bottom: 3px solid rgba(14, 165, 233, 0.58) !important; border-radius: 20px !important; box-shadow: 0 10px 26px -6px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.16) !important; padding: 10px !important; margin-bottom: 18px !important; }' +
+      '.rm-prof-sec-hdr-bar { background: linear-gradient(90deg, rgba(14, 116, 144, 0.34) 0%, rgba(15, 23, 42, 0.65) 100%) !important; border: 1px solid rgba(56, 189, 248, 0.32) !important; border-radius: 14px !important; padding: 10px 12px !important; margin-bottom: 8px !important; }' +
+      '.rm-prof-feature-btn { background: linear-gradient(145deg, #182744 0%, #101b30 100%) !important; border: 1.2px solid rgba(148, 163, 184, 0.32) !important; border-bottom: 2.8px solid rgba(56, 189, 248, 0.48) !important; border-radius: 15px !important; box-shadow: 0 6px 14px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.14) !important; margin: 8px 4px !important; padding: 14px 12px !important; }' +
       '.rm-prof-upgraded-root .text-xs:not(.rm-prof-logout-btn), .rm-prof-upgraded-root [class*="text-[10px]"]:not(.rm-prof-logout-btn), .rm-prof-upgraded-root [class*="text-[11px]"]:not(.rm-prof-logout-btn), .rm-prof-upgraded-root [class*="text-[12px]"]:not(.rm-prof-logout-btn) { font-size: 15px !important; line-height: 1.5 !important; font-weight: 700 !important; color: #e2e8f0 !important; }' +
       '.rm-prof-upgraded-root .text-sm:not(.rm-prof-logout-btn), .rm-prof-upgraded-root [class*="text-[13px]"]:not(.rm-prof-logout-btn), .rm-prof-upgraded-root [class*="text-[14px]"]:not(.rm-prof-logout-btn) { font-size: 18px !important; line-height: 1.44 !important; font-weight: 800 !important; color: #ffffff !important; }' +
       '.rm-prof-row-title { font-size: 18.5px !important; font-weight: 800 !important; line-height: 1.42 !important; color: #ffffff !important; white-space: normal !important; display: block !important; }' +
       '.rm-prof-row-sub { font-size: 15.5px !important; font-weight: 700 !important; line-height: 1.5 !important; color: #e2e8f0 !important; margin-top: 4px !important; white-space: normal !important; display: block !important; }' +
       '.rm-prof-sec-hdr { font-size: 15.5px !important; font-weight: 900 !important; letter-spacing: 0.3px !important; line-height: 1.45 !important; color: #38bdf8 !important; }' +
-      '.rm-prof-grid-card { height: auto !important; min-height: 94px !important; max-height: none !important; padding: 12px 10px !important; overflow: visible !important; align-items: flex-start !important; }' +
+      '.rm-prof-grid-card { background: linear-gradient(145deg, #1b2d4d 0%, #111d35 100%) !important; border: 1.5px solid rgba(56, 189, 248, 0.5) !important; border-bottom: 3px solid rgba(56, 189, 248, 0.72) !important; border-radius: 16px !important; box-shadow: 0 7px 16px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important; height: auto !important; min-height: 94px !important; max-height: none !important; padding: 12px 10px !important; overflow: visible !important; align-items: flex-start !important; }' +
       '.rm-prof-grid-title { font-size: 16px !important; font-weight: 800 !important; line-height: 1.35 !important; color: #ffffff !important; white-space: normal !important; display: block !important; }' +
       '.rm-prof-grid-sub { font-size: 13.5px !important; font-weight: 700 !important; line-height: 1.42 !important; margin-top: 4px !important; white-space: normal !important; display: block !important; }' +
-      '.rm-prof-logout-btn { font-size: 12px !important; font-weight: 700 !important; line-height: 1.2 !important; min-height: 32px !important; max-width: 140px !important; padding: 6px 16px !important; margin: 14px auto 22px auto !important; display: block !important; border-radius: 10px !important; }';
+      '.rm-prof-logout-btn { font-size: 12px !important; font-weight: 700 !important; line-height: 1.2 !important; min-height: 32px !important; max-width: 140px !important; padding: 6px 16px !important; margin: 14px auto 22px auto !important; display: block !important; border-radius: 10px !important; background: linear-gradient(145deg, #450a0a 0%, #2a0606 100%) !important; border: 1.5px solid rgba(248, 113, 113, 0.52) !important; border-bottom: 2.5px solid rgba(239, 68, 68, 0.7) !important; box-shadow: 0 5px 12px rgba(0, 0, 0, 0.65) !important; color: #fecaca !important; }';
     if (!existing) (document.head || document.documentElement).appendChild(s);
   }
 
 
-  // 2. Scoped Profile Hub Large-Font Healer (One-Time Cached Scan — Zero Repeated Loop Lag)
+  // 2. Scoped Profile Hub Large-Font & 2.5D Visual Healer (One-Time Cached Scan — Zero Repeated Loop Lag)
   function healProfileHubTypographyAndLayout(forceScan) {
     try {
       var roots = [
@@ -161,6 +166,8 @@
               el.style.setProperty('font-weight', '900', 'important');
               el.style.setProperty('color', '#ffffff', 'important');
               el.style.setProperty('white-space', 'normal', 'important');
+              var heroBox = el.closest('.rounded-2xl, .rounded-3xl, .border');
+              if (heroBox) heroBox.classList.add('rm-prof-hero-box');
             } else if (txt.indexOf('USR-') !== -1 || txt === 'Client ID') {
               el.style.setProperty('font-size', '15px', 'important');
               el.style.setProperty('font-weight', '800', 'important');
@@ -177,6 +184,9 @@
                        txt.indexOf('SOCIAL ACTIVITIES') !== -1 || txt.indexOf('सुरक्षा व गोपनीयता') !== -1 ||
                        txt.indexOf('OFFICIAL CHANNELS') !== -1) {
               el.classList.add('rm-prof-sec-hdr');
+              if (el.parentElement) el.parentElement.classList.add('rm-prof-sec-hdr-bar');
+              var secBox = el.closest('.rounded-2xl, .rounded-3xl, .border');
+              if (secBox) secBox.classList.add('rm-prof-section-box');
             } else if (txt.indexOf('RM WORLD v') !== -1) {
               el.style.setProperty('font-size', '14px', 'important');
               el.style.setProperty('font-weight', '700', 'important');
@@ -205,9 +215,12 @@
                 c0.classList.add('rm-prof-row-title');
                 c1.classList.add('rm-prof-row-sub');
                 if (el.parentElement) {
+                  el.parentElement.classList.add('rm-prof-feature-btn');
                   el.parentElement.style.setProperty('padding-top', '14px', 'important');
                   el.parentElement.style.setProperty('padding-bottom', '14px', 'important');
                   el.parentElement.style.setProperty('height', 'auto', 'important');
+                  var parentSec = el.parentElement.closest('.rounded-2xl, .rounded-3xl');
+                  if (parentSec) parentSec.classList.add('rm-prof-section-box');
                 }
               }
             }
