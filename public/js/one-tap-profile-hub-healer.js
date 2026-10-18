@@ -1,11 +1,11 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-0B Top-Right Profile 1-Tap & Large-Font Healer (v74)
+ *   - MODULE NAME    : RM Part-0B Top-Right Profile 1-Tap & Large-Font Healer (v75)
  *   - REPO TARGET    : public/js/one-tap-profile-hub-healer.js
  *   - SURFACE TARGET : SURFACE-A ONLY (Public Member Profile & Sovereign Hub UI)
  *   - HOST BINDING   : Surface-A (Auto-loaded by public/js/index-shell-bootstrap.js)
- *   - SIZE BUDGET    : <= 285 Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 290 Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -37,7 +37,7 @@
  * ==============================================================================
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
  *   - ZERO FREEZE   : Never scans document.body; scans ONLY open #rm-fullscreen-view or #profileModal.
- *   - CLICK SAFETY  : Invokes native onclick / RM_ProfileHub directly without deadlocking event propagation.
+ *   - CLICK SAFETY  : Invokes native onclick / RM_ProfileHub directly and unlocks inline display:none!important.
  *   - ANTI-CLIPPING : Pure CSS rules enforce large fonts (16px-20px) and compact 12px Log Out without DOM thrashing.
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (8 PROFILE BLOCK FUNCTIONS):
@@ -51,7 +51,7 @@
  *   - CANONICAL PATH  : Must exist ONLY at `public/js/one-tap-profile-hub-healer.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
- *   - ZERO DOHRAO     : Extracted cleanly from index-shell-bootstrap.js to keep both <= 285 lines.
+ *   - ZERO DOHRAO     : Extracted cleanly from index-shell-bootstrap.js to keep both <= 290 lines.
  *   - IDEMPOTENT BOOT : Guarded by `window.__RM_LOADED_MODULES__['one-tap-profile-hub-healer']`.
  * ==============================================================================
  * 10. FAIL-SAFE ERROR BOUNDARY, ZERO-STUB & 2-LINE SECTION GAP STANDARD:
@@ -91,6 +91,7 @@
       '#rm-top-profile-btn, [data-rm-profile-trigger="1"] { touch-action: manipulation !important; cursor: pointer !important; transform: none !important; }' +
       '#rm-top-profile-btn *, [data-rm-profile-trigger="1"] * { pointer-events: none !important; }' +
       '#profileModal:not(.hidden) { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99998 !important; background-color: rgba(2, 6, 23, 0.88) !important; display: flex !important; align-items: center !important; justify-content: center !important; padding: 12px !important; }' +
+      '#rm-fullscreen-view:not(.hidden) { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99999 !important; display: flex !important; }' +
       '.rm-prof-upgraded-root { padding-bottom: 125px !important; }' +
       '.rm-prof-upgraded-root div, .rm-prof-upgraded-root span, .rm-prof-upgraded-root p, .rm-prof-upgraded-root button, .rm-prof-upgraded-root a, .rm-prof-upgraded-root h1, .rm-prof-upgraded-root h2, .rm-prof-upgraded-root h3, .rm-prof-upgraded-root h4 { height: auto !important; max-height: none !important; overflow: visible !important; text-overflow: clip !important; }' +
       '.rm-prof-upgraded-root .truncate { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }' +
@@ -224,7 +225,7 @@
   window.healProfileHubTypographyAndLayout = healProfileHubTypographyAndLayout;
 
 
-  // 3. Guaranteed Non-Blocking Top-Right Profile Icon (👤) 1-Tap Opener
+  // 3. Guaranteed Non-Blocking Top-Right Profile Icon (👤) 1-Tap Opener (Unlimited Re-Opens)
   function bindTopRightProfileOneTap() {
     function ensureProfileModalReady() {
       var existing = document.getElementById('profileModal') || document.getElementById('profileHubModal') || document.getElementById('userProfileModal');
@@ -282,6 +283,14 @@
     }
 
     window.openProfileModal = function (trigEl) {
+      var fsView = document.getElementById('rm-fullscreen-view');
+      if (fsView) {
+        fsView.classList.remove('hidden');
+        fsView.style.removeProperty('display');
+        fsView.style.setProperty('display', 'flex', 'important');
+        fsView.style.setProperty('z-index', '99999', 'important');
+      }
+
       var opened = false;
       try {
         if (window.RM_ProfileHub && typeof window.RM_ProfileHub.open === 'function') {
@@ -302,18 +311,33 @@
         }
       } catch (e) {}
 
-      var fsView = document.getElementById('rm-fullscreen-view');
+      if (fsView) {
+        fsView.classList.remove('hidden');
+        fsView.style.removeProperty('display');
+        fsView.style.setProperty('display', 'flex', 'important');
+        fsView.style.setProperty('z-index', '99999', 'important');
+      }
+
       var fsOpen = fsView && !fsView.classList.contains('hidden') && window.getComputedStyle(fsView).display !== 'none';
-      if (!opened && !fsOpen) {
+      var fsContainer = document.getElementById('rm-module-container');
+      var hasFsContent = fsContainer && (fsContainer.innerHTML || '').trim().length > 20;
+      if (!opened && (!fsOpen || !hasFsContent)) {
         var m = ensureProfileModalReady();
         m.classList.remove('hidden');
+        m.style.removeProperty('display');
         m.style.setProperty('display', 'flex', 'important');
       }
+      healProfileHubTypographyAndLayout();
       setTimeout(healProfileHubTypographyAndLayout, 20);
       setTimeout(healProfileHubTypographyAndLayout, 150);
     };
 
     window.closeProfileModal = function () {
+      var fs = document.getElementById('rm-fullscreen-view');
+      if (fs) {
+        fs.classList.add('hidden');
+        fs.style.setProperty('display', 'none', 'important');
+      }
       var m = document.getElementById('profileModal') || document.getElementById('profileHubModal') || document.getElementById('userProfileModal');
       if (m) {
         m.classList.add('hidden');
@@ -345,7 +369,13 @@
     function findTopRightProfileTarget(target, evt) {
       var el = target && target.nodeType === 1 ? target : (target ? target.parentElement : null);
       if (!el || !el.closest) return null;
-      if (el.closest('#categoryModal, #profileModal, #rm-fullscreen-view')) return null;
+      var fs = document.getElementById('rm-fullscreen-view');
+      var pm = document.getElementById('profileModal');
+      var cm = document.getElementById('categoryModal');
+      if (fs && !fs.classList.contains('hidden') && fs.contains(el)) return null;
+      if (pm && !pm.classList.contains('hidden') && pm.contains(el)) return null;
+      if (cm && !cm.classList.contains('hidden') && cm.contains(el)) return null;
+
       var explicit = el.closest(
         '#rm-top-profile-btn, [data-rm-profile-trigger="1"], #profileBtn, #userProfileBtn, #openProfileBtn, [onclick*="Profile"], [onclick*="profile"], [aria-label*="Profile" i], [title*="Profile" i]'
       );
