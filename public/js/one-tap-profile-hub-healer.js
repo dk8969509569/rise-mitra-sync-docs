@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-0B Top-Right Profile 1-Tap & Large-Font Healer (v76)
+ *   - MODULE NAME    : RM Part-0B Top-Right Profile 1-Tap & Large-Font Healer (v77)
  *   - REPO TARGET    : public/js/one-tap-profile-hub-healer.js
  *   - SURFACE TARGET : SURFACE-A ONLY (Public Member Profile & Sovereign Hub UI)
  *   - HOST BINDING   : Surface-A (Auto-loaded by public/js/index-shell-bootstrap.js)
@@ -37,8 +37,8 @@
  * ==============================================================================
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
  *   - ZERO FREEZE   : Never scans document.body; scans ONLY open #rm-fullscreen-view or #profileModal.
- *   - CLICK SAFETY  : Invokes native onclick / RM_ProfileHub directly, unlocks inline display:none!important,
- *                     and blocks 300ms ghost-click from resetting DOM back to small fonts.
+ *   - CLICK SAFETY  : Caches healed DOM (`data-rm-prof-healed="1"`) for 0ms instant open/close,
+ *                     unlocks inline display:none!important, and blocks 300ms ghost-click reset.
  *   - ANTI-CLIPPING : Pure CSS rules enforce large fonts (16px-20px) and compact 12px Log Out without DOM thrashing.
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (8 PROFILE BLOCK FUNCTIONS):
@@ -60,7 +60,7 @@
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v74'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v77'`.
  *   - PIPELINE GATE   : Commit & verify on `pre-main` before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -90,7 +90,7 @@
     var s = existing || document.createElement('style');
     s.id = 'rm-profile-hub-large-font-lock';
     s.textContent =
-      '#rm-top-profile-btn, [data-rm-profile-trigger="1"] { touch-action: manipulation !important; cursor: pointer !important; transform: none !important; }' +
+      '#rm-top-profile-btn, [data-rm-profile-trigger="1"] { touch-action: manipulation !important; cursor: pointer !important; transform: none !important; outline: none !important; -webkit-tap-highlight-color: transparent !important; }' +
       '#rm-top-profile-btn *, [data-rm-profile-trigger="1"] * { pointer-events: none !important; }' +
       '#profileModal:not(.hidden) { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99998 !important; background-color: rgba(2, 6, 23, 0.88) !important; display: flex !important; align-items: center !important; justify-content: center !important; padding: 12px !important; }' +
       '#rm-fullscreen-view:not(.hidden) { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99999 !important; display: flex !important; }' +
@@ -110,8 +110,8 @@
   }
 
 
-  // 2. Scoped Profile Hub Large-Font Healer (Scans ONLY Open Modal — Never Scans document.body)
-  function healProfileHubTypographyAndLayout() {
+  // 2. Scoped Profile Hub Large-Font Healer (One-Time Cached Scan — Zero Repeated Loop Lag)
+  function healProfileHubTypographyAndLayout(forceScan) {
     try {
       var roots = [
         document.getElementById('rm-fullscreen-view'),
@@ -134,6 +134,9 @@
           fsTitle.style.setProperty('overflow', 'visible', 'important');
           fsTitle.style.setProperty('text-overflow', 'clip', 'important');
         }
+
+        var fsContainer = document.getElementById('rm-module-container') || root;
+        if (!forceScan && fsContainer.getAttribute('data-rm-prof-healed') === '1') return;
 
         var allNodes = root.querySelectorAll('div, span, p, h1, h2, h3, h4, button, a');
         for (var i = 0; i < allNodes.length; i++) {
@@ -220,6 +223,7 @@
             }
           }
         }
+        fsContainer.setAttribute('data-rm-prof-healed', '1');
         break;
       }
     } catch (e) {}
@@ -227,7 +231,7 @@
   window.healProfileHubTypographyAndLayout = healProfileHubTypographyAndLayout;
 
 
-  // 3. Guaranteed Non-Blocking Top-Right Profile Icon (👤) 1-Tap Opener (Unlimited Re-Opens & Zero Revert)
+  // 3. Guaranteed Non-Blocking Top-Right Profile Icon (👤) 0ms 1-Tap Opener & Close Engine
   function bindTopRightProfileOneTap() {
     function ensureProfileModalReady() {
       var existing = document.getElementById('profileModal') || document.getElementById('profileHubModal') || document.getElementById('userProfileModal');
@@ -286,6 +290,18 @@
 
     window.openProfileModal = function (trigEl) {
       var fsView = document.getElementById('rm-fullscreen-view');
+      var fsContainer = document.getElementById('rm-module-container');
+
+      if (fsView && fsContainer && (fsContainer.textContent || '').indexOf('Sovereign Crown Partner') !== -1) {
+        fsView.classList.remove('hidden');
+        fsView.classList.add('rm-prof-upgraded-root');
+        fsView.style.removeProperty('display');
+        fsView.style.setProperty('display', 'flex', 'important');
+        fsView.style.setProperty('z-index', '99999', 'important');
+        healProfileHubTypographyAndLayout(false);
+        return;
+      }
+
       if (fsView) {
         fsView.classList.remove('hidden');
         fsView.style.removeProperty('display');
@@ -321,7 +337,6 @@
       }
 
       var fsOpen = fsView && !fsView.classList.contains('hidden') && window.getComputedStyle(fsView).display !== 'none';
-      var fsContainer = document.getElementById('rm-module-container');
       var hasFsContent = fsContainer && (fsContainer.innerHTML || '').trim().length > 20;
       if (!opened && (!fsOpen || !hasFsContent)) {
         var m = ensureProfileModalReady();
@@ -329,9 +344,9 @@
         m.style.removeProperty('display');
         m.style.setProperty('display', 'flex', 'important');
       }
-      healProfileHubTypographyAndLayout();
-      setTimeout(healProfileHubTypographyAndLayout, 20);
-      setTimeout(healProfileHubTypographyAndLayout, 150);
+      if (fsContainer) fsContainer.removeAttribute('data-rm-prof-healed');
+      healProfileHubTypographyAndLayout(true);
+      setTimeout(function () { healProfileHubTypographyAndLayout(false); }, 30);
     };
 
     window.closeProfileModal = function () {
@@ -348,7 +363,12 @@
     };
 
     window.toggleProfileModal = function (trigEl) {
-      window.openProfileModal(trigEl);
+      var fs = document.getElementById('rm-fullscreen-view');
+      var pm = document.getElementById('profileModal');
+      var isFsOpen = fs && !fs.classList.contains('hidden') && window.getComputedStyle(fs).display !== 'none';
+      var isPmOpen = pm && !pm.classList.contains('hidden') && window.getComputedStyle(pm).display !== 'none';
+      if (isFsOpen || isPmOpen) window.closeProfileModal();
+      else window.openProfileModal(trigEl);
     };
 
     function autoTagTopRightProfileIcon() {
@@ -374,9 +394,9 @@
       var fs = document.getElementById('rm-fullscreen-view');
       var pm = document.getElementById('profileModal');
       var cm = document.getElementById('categoryModal');
-      if (fs && !fs.classList.contains('hidden') && fs.contains(el)) return null;
-      if (pm && !pm.classList.contains('hidden') && pm.contains(el)) return null;
-      if (cm && !cm.classList.contains('hidden') && cm.contains(el)) return null;
+      if (fs && !fs.classList.contains('hidden') && window.getComputedStyle(fs).display !== 'none' && fs.contains(el)) return null;
+      if (pm && !pm.classList.contains('hidden') && window.getComputedStyle(pm).display !== 'none' && pm.contains(el)) return null;
+      if (cm && !cm.classList.contains('hidden') && window.getComputedStyle(cm).display !== 'none' && cm.contains(el)) return null;
 
       var explicit = el.closest(
         '#rm-top-profile-btn, [data-rm-profile-trigger="1"], #profileBtn, #userProfileBtn, #openProfileBtn, [onclick*="Profile"], [onclick*="profile"], [aria-label*="Profile" i], [title*="Profile" i]'
@@ -406,30 +426,41 @@
     }, { capture: true, passive: true });
 
     document.addEventListener('touchmove', function (e) {
-      if (e.touches && e.touches.length === 1 && (Math.abs(e.touches[0].clientX - touchStartX) > 10 || Math.abs(e.touches[0].clientY - touchStartY) > 10)) touchMoved = true;
+      if (e.touches && e.touches.length === 1 && (Math.abs(e.touches[0].clientX - touchStartX) > 12 || Math.abs(e.touches[0].clientY - touchStartY) > 12)) touchMoved = true;
     }, { capture: true, passive: true });
 
     function handleProfileOneTap(e) {
       if (e.type === 'touchend' && touchMoved) return;
       var el = e.target && e.target.nodeType === 1 ? e.target : (e.target ? e.target.parentElement : null);
       var fs = document.getElementById('rm-fullscreen-view');
-      if (fs && !fs.classList.contains('hidden') && el && fs.contains(el)) {
-        setTimeout(healProfileHubTypographyAndLayout, 5);
-        setTimeout(healProfileHubTypographyAndLayout, 60);
-        setTimeout(healProfileHubTypographyAndLayout, 180);
+
+      if (fs && !fs.classList.contains('hidden') && window.getComputedStyle(fs).display !== 'none' && el && fs.contains(el)) {
+        var closeBtn = el.closest('button, a');
+        if (closeBtn) {
+          var bTxt = (closeBtn.textContent || '').trim();
+          var bRect = closeBtn.getBoundingClientRect ? closeBtn.getBoundingClientRect() : null;
+          if ((bRect && bRect.top < 110 && (bTxt.indexOf('वापस') !== -1 || bTxt === '✕' || bTxt === '×' || bTxt === 'X' || bTxt === '←')) ||
+              (closeBtn.getAttribute('onclick') || '').indexOf('close') !== -1) {
+            var nowClose = Date.now();
+            if (e.type === 'touchend') lastProfileTouchTs = nowClose;
+            lastProfileActionTs = nowClose;
+            e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+            window.closeProfileModal();
+            return;
+          }
+        }
         return;
       }
+
       var trig = findTopRightProfileTarget(e.target, e);
       if (!trig) return;
       var now = Date.now();
-      if (e.type === 'click' && now - lastProfileTouchTs < 480) {
+      if (e.type === 'click' && now - lastProfileTouchTs < 450) {
         e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
-        healProfileHubTypographyAndLayout();
         return;
       }
-      if (now - lastProfileActionTs < 350) {
+      if (now - lastProfileActionTs < 180) {
         e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
-        healProfileHubTypographyAndLayout();
         return;
       }
       if (e.type === 'touchend') lastProfileTouchTs = now;
