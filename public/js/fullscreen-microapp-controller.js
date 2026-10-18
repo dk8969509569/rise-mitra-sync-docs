@@ -171,6 +171,16 @@
     var icon = (matrixEntry && matrixEntry.icon) || defaultIcons[catNum] || (catNum >= 33 ? '🎮' : '✨');
     var chips = [];
 
+    if (!subCardEl) {
+      var candCards = document.querySelectorAll('#categoryModal [data-sub-code="' + code + '"], #categoryModal [data-rm-sub-rendered^="' + code + '"], #categoryModal [id^="sub-"] > div');
+      for (var s = 0; s < candCards.length; s++) {
+        if ((candCards[s].textContent || '').indexOf(code) !== -1) {
+          subCardEl = candCards[s];
+          break;
+        }
+      }
+    }
+
     if (subCardEl) {
       var nodes = subCardEl.querySelectorAll('div, span');
       for (var i = 0; i < nodes.length; i++) {
@@ -458,14 +468,14 @@
     e.stopPropagation();
     if (e.cancelable) e.preventDefault();
 
-    launchOneTapServiceScreen(
-      cardTitle,
-      cardSubtitle,
-      subCode,
-      isServicePill ? tappedText : null,
-      subCard,
-      matrixEntry
-    );
+    var chosenPill = isServicePill ? tappedText : null;
+    launchOneTapServiceScreen(cardTitle, cardSubtitle, subCode, chosenPill, subCard, matrixEntry);
+    setTimeout(function () {
+      var fsC = document.getElementById('rm-module-container');
+      if (fsC && !fsC.querySelector('[data-fs-chip]')) {
+        launchOneTapServiceScreen(cardTitle, cardSubtitle, subCode, chosenPill, subCard, matrixEntry);
+      }
+    }, 35);
   }
 
 
@@ -481,11 +491,16 @@
     } catch (e) {}
   }
 
-  if (window.RM_SUB_CARD_RENDERER) {
-    window.RM_SUB_CARD_RENDERER.openSmoothSubServiceScreen = function (entry, subCode, title, subtitle, selectedPill) {
-      launchOneTapServiceScreen(title, subtitle, subCode, selectedPill, null, entry);
-    };
+  function hookExternalRenderers() {
+    if (window.RM_SUB_CARD_RENDERER) {
+      window.RM_SUB_CARD_RENDERER.openSmoothSubServiceScreen = function (entry, subCode, title, subtitle, selectedPill) {
+        launchOneTapServiceScreen(title, subtitle, subCode, selectedPill, null, entry);
+      };
+    }
   }
+  hookExternalRenderers();
+  setTimeout(hookExternalRenderers, 200);
+  setTimeout(hookExternalRenderers, 800);
 
   window.closeFullscreenModule = forceCloseFullscreenViewport;
   window.launchOneTapServiceScreen = launchOneTapServiceScreen;
