@@ -1,11 +1,11 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-0 Surface-A HTML Shell Bootstrapper & Sentinel Lock (v62)
+ *   - MODULE NAME    : RM Part-0 Surface-A HTML Shell Bootstrapper & Sentinel Lock (v63)
  *   - REPO TARGET    : public/js/index-shell-bootstrap.js
  *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional SIVME Loader for Surface-B)
  *   - HOST BINDING   : Surface-A (public/index.html)
- *   - SIZE BUDGET    : <= 270 Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 285 Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -32,12 +32,13 @@
  *                           window.toggleMenuDrawer, window.toggleAccordion,
  *                           window.ensureCatalogHydratedNow, window.__RM_MODAL_INTERACTION_LOCK__
  *   - CALLS EXTERNAL APIs : window.lockGames18StatePermanently, window.renderCatalogItems,
- *                           window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog
+ *                           window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog,
+ *                           window.RM_SUB_CARD_RENDERER.renderSubCard
  * ==============================================================================
  * 5. DOM ATTRIBUTE & SELECTOR CONTRACT (ZERO-COLLISION DOM RULE):
  *   - SURFACE-A SELECTORS : #categoryModal, #modal-catalog-count, #tier1-header-text,
  *                           #tier2-header-text, #tier1-list, #tier2-list, [id^="sub-"],
- *                           [data-cat-id], #rm-zel-one-tap-lock
+ *                           [data-cat-id], .rm-parent-toggle-pill, #rm-zel-one-tap-lock
  *   - SURFACE-B SELECTORS : .sivme-notch-pill, #sivme-hud, [data-sivme] (ISOLATED)
  * ==============================================================================
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
@@ -65,7 +66,7 @@
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v62'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v63'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -82,7 +83,7 @@
   if (window.__RM_LOADED_MODULES__['index-shell-bootstrap']) return;
   window.__RM_LOADED_MODULES__['index-shell-bootstrap'] = true;
 
-  var CACHE_VER = '20261018_v62';
+  var CACHE_VER = '20261018_v63';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VER;
   var lastToggleTs = 0;
   var lastTouchEndTs = 0;
@@ -150,10 +151,10 @@
     var s = existing || document.createElement('style');
     s.id = 'rm-zel-one-tap-lock';
     s.textContent =
-      'button, a, [onclick], .tactile-25d, #categoryModal [data-cat-id], #categoryModal [id^="sub-"] > div, .rm-service-chip { touch-action: manipulation !important; -webkit-tap-highlight-color: transparent !important; cursor: pointer !important; user-select: none !important; transition: none !important; }' +
+      'button, a, [onclick], .tactile-25d, .rm-parent-toggle-pill, #categoryModal [data-cat-id], #categoryModal [id^="sub-"] > div, .rm-service-chip { touch-action: manipulation !important; -webkit-tap-highlight-color: transparent !important; cursor: pointer !important; user-select: none !important; transition: none !important; }' +
       '.tactile-25d:active { transform: none !important; }' +
-      '#categoryModal.hidden, #rm-fullscreen-view.hidden, #playStoreInstallBanner.hidden, #categoryModal [id^="sub-"]:not([data-rm-collapsed="false"]).hidden, #categoryModal [id^="sub-"][data-rm-collapsed="true"] { display: none !important; }' +
-      '#categoryModal [id^="sub-"][data-rm-collapsed="false"], #categoryModal .rm-v62-open { display: block !important; visibility: visible !important; opacity: 1 !important; height: auto !important; max-height: none !important; }' +
+      '#categoryModal.hidden, #rm-fullscreen-view.hidden, #playStoreInstallBanner.hidden, #categoryModal [id^="sub-"]:not([data-rm-collapsed="false"]):not(.rm-v63-open).hidden, #categoryModal [id^="sub-"][data-rm-collapsed="true"]:not(.rm-v63-open) { display: none !important; }' +
+      '#categoryModal [id^="sub-"][data-rm-collapsed="false"], #categoryModal .rm-v63-open { display: block !important; visibility: visible !important; opacity: 1 !important; height: auto !important; max-height: none !important; }' +
       '#categoryModal:not(.hidden) { position: fixed !important; inset: 0 !important; width: 100vw !important; max-width: 100vw !important; z-index: 50 !important; background-color: #0b0f19 !important; display: flex !important; justify-content: center !important; -webkit-overflow-scrolling: touch !important; }' +
       '#categoryModal > div { width: 100% !important; max-width: 100% !important; }' +
       '#rm-fullscreen-view:not(.hidden) { position: fixed !important; inset: 0 !important; z-index: 99999 !important; display: flex !important; }';
@@ -161,7 +162,7 @@
   }
 
 
-  // 4. 0ms Instant 1-Tap Macro & Card Accordion Toggles
+  // 4. 0ms Instant 1-Tap Macro & Card Accordion Toggles (With Pill & Sub-Card Sync)
   function toggleMacroBarElementInstantly(barEl, explicitListId) {
     if (!barEl) return false;
     var now = Date.now();
@@ -192,6 +193,62 @@
     return true;
   }
 
+  function hydrateSubCardsIfNeeded(subEl, cardEl) {
+    if (!subEl) return;
+    try {
+      var rawId = (cardEl && cardEl.getAttribute('data-cat-id')) || (subEl.id || '').replace(/^sub-/, '');
+      var cleanNum = String(rawId).replace(/[^0-9]/g, '');
+      var paddedNum = cleanNum.length === 1 ? '0' + cleanNum : cleanNum;
+      var children = subEl.children;
+      for (var i = 0; i < children.length; i++) {
+        var ch = children[i];
+        if (window.RM_SUB_CARD_RENDERER && typeof window.RM_SUB_CARD_RENDERER.renderSubCard === 'function') {
+          if ((ch.textContent || '').indexOf('[' + paddedNum + '-') !== -1 || !ch.getAttribute('data-rm-sub-upgraded')) {
+            window.RM_SUB_CARD_RENDERER.renderSubCard(ch, paddedNum, i + 1);
+            ch.setAttribute('data-rm-sub-upgraded', 'true');
+          }
+        }
+        var badges = ch.querySelectorAll('span, div');
+        for (var b = 0; b < badges.length; b++) {
+          var bTxt = (badges[b].textContent || '').trim();
+          if (/^\[\d{2}-\d+\]$/.test(bTxt)) {
+            badges[b].textContent = '★ 4.9 • सत्यापित सेवा';
+          }
+        }
+      }
+    } catch (e) {}
+  }
+
+  function syncAllCardTogglePills(cardEl, pillBtn, isOpening) {
+    var targets = [];
+    if (pillBtn) targets.push(pillBtn);
+    if (cardEl) {
+      var found = cardEl.querySelectorAll('.rm-parent-toggle-pill, [data-accordion-btn], button, span, div');
+      for (var i = 0; i < found.length; i++) {
+        var el = found[i];
+        if (el.children.length > 1) continue;
+        var txt = (el.textContent || '').trim();
+        if (txt.indexOf('और देखें') !== -1 || txt.indexOf('समेटें') !== -1) {
+          targets.push(el);
+        }
+      }
+    }
+    for (var j = 0; j < targets.length; j++) {
+      var b = targets[j];
+      b.setAttribute('aria-expanded', isOpening ? 'true' : 'false');
+      b.textContent = isOpening ? 'समेटें ▲' : 'और देखें ▼';
+      if (isOpening) {
+        b.style.setProperty('background', 'rgba(239, 68, 68, 0.16)', 'important');
+        b.style.setProperty('border-color', 'rgba(239, 68, 68, 0.55)', 'important');
+        b.style.setProperty('color', '#fca5a5', 'important');
+      } else {
+        b.style.setProperty('background', 'rgba(16, 185, 129, 0.14)', 'important');
+        b.style.setProperty('border-color', 'rgba(16, 185, 129, 0.45)', 'important');
+        b.style.setProperty('color', '#6ee7b7', 'important');
+      }
+    }
+  }
+
   function toggleCardAccordionInstantly(subEl, pillBtn, cardEl) {
     var now = Date.now();
     if (now - lastToggleTs < 160) return true;
@@ -213,35 +270,26 @@
     }
     if (!subEl) return false;
 
-    var isClosed = subEl.classList.contains('hidden') ||
-                   subEl.getAttribute('data-rm-collapsed') === 'true' ||
-                   window.getComputedStyle(subEl).display === 'none';
+    var isCurrentlyOpen = subEl.classList.contains('rm-v63-open') ||
+                          (subEl.getAttribute('data-rm-collapsed') === 'false' &&
+                           !subEl.classList.contains('hidden') &&
+                           window.getComputedStyle(subEl).display !== 'none');
+    var shouldOpen = !isCurrentlyOpen;
 
-    subEl.classList.toggle('hidden', !isClosed);
-    subEl.classList.toggle('rm-v62-open', isClosed);
-    subEl.setAttribute('data-rm-collapsed', isClosed ? 'false' : 'true');
-    subEl.style.setProperty('display', isClosed ? 'block' : 'none', 'important');
+    if (shouldOpen) {
+      hydrateSubCardsIfNeeded(subEl, cardEl);
+      subEl.classList.remove('hidden');
+      subEl.classList.add('rm-v63-open');
+      subEl.setAttribute('data-rm-collapsed', 'false');
+      subEl.style.setProperty('display', 'block', 'important');
+    } else {
+      subEl.classList.remove('rm-v63-open');
+      subEl.classList.add('hidden');
+      subEl.setAttribute('data-rm-collapsed', 'true');
+      subEl.style.setProperty('display', 'none', 'important');
+    }
 
-    var btn = pillBtn;
-    if (!btn && cardEl) {
-      var btns = cardEl.querySelectorAll('button, [data-accordion-btn]');
-      for (var i = 0; i < btns.length; i++) {
-        var t = (btns[i].textContent || '').trim();
-        if (t.indexOf('और देखें') !== -1 || t.indexOf('समेटें') !== -1 || t.indexOf('▼') !== -1 || t.indexOf('▲') !== -1) {
-          btn = btns[i];
-          break;
-        }
-      }
-    }
-    if (btn) {
-      btn.setAttribute('aria-expanded', isClosed ? 'true' : 'false');
-      var bTxt = (btn.textContent || '').trim();
-      if (bTxt.indexOf('और देखें') !== -1 || bTxt.indexOf('समेटें') !== -1) {
-        btn.textContent = isClosed ? 'समेटें ▲' : 'और देखें ▼';
-      } else if (bTxt.indexOf('▼') !== -1 || bTxt.indexOf('▲') !== -1) {
-        btn.textContent = isClosed ? bTxt.replace('▼', '▲') : bTxt.replace('▲', '▼');
-      }
-    }
+    syncAllCardTogglePills(cardEl, pillBtn, shouldOpen);
     setTimeout(function () { window.__RM_MODAL_INTERACTION_LOCK__ = false; }, 400);
     return true;
   }
@@ -300,10 +348,10 @@
       if (typeof window.renderCatalogItems === 'function') {
         try { window.renderCatalogItems(); } catch (e) {}
       }
-      t1.removeAttribute('data-rm-v62-swept');
+      t1.removeAttribute('data-rm-v63-swept');
     }
-    if (!t1.getAttribute('data-rm-v62-swept') && t1.children.length > 1) {
-      t1.setAttribute('data-rm-v62-swept', 'true');
+    if (!t1.getAttribute('data-rm-v63-swept') && t1.children.length > 1) {
+      t1.setAttribute('data-rm-v63-swept', 'true');
       if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
         try { window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog(); } catch (e) {}
       }
@@ -344,7 +392,7 @@
     if (target.closest('.sivme-notch-pill, #sivme-hud, [data-sivme], #rm-master-insitu-dock')) return null;
     if (target.closest('[id^="sub-"]')) return null;
 
-    var btn = target.closest('button, a, [onclick], [data-accordion-btn]');
+    var btn = target.closest('.rm-parent-toggle-pill, button, a, [onclick], [data-accordion-btn]');
     if (btn) {
       var bTxt = (btn.textContent || '').trim();
       var oc = btn.getAttribute('onclick') || '';
@@ -368,8 +416,9 @@
 
     var catId = card.getAttribute('data-cat-id') || '';
     var num = catId.replace(/[^0-9]/g, '');
+    var padded = num.length === 1 ? '0' + num : num;
     var subEl = (catId && document.getElementById('sub-' + catId)) ||
-                (num && (document.getElementById('sub-c' + num) || document.getElementById('sub-g' + num) || document.getElementById('sub-' + num))) ||
+                (num && (document.getElementById('sub-c' + num) || document.getElementById('sub-c' + padded) || document.getElementById('sub-g' + num) || document.getElementById('sub-' + num))) ||
                 card.querySelector('[id^="sub-"], [data-rm-collapsed], .sub-cards-container, .rm-uce-drawer');
     if (!subEl && card.nextElementSibling && (card.nextElementSibling.id || '').indexOf('sub-') === 0) {
       subEl = card.nextElementSibling;
