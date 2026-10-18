@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-1A Modular Catalog Hydrator & Modal Dispatcher (v57)
+ *   - MODULE NAME    : RM Part-1A Modular Catalog Hydrator & Modal Dispatcher (v71)
  *   - REPO TARGET    : public/js/one-tap-catalog-hydrator.js
  *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional Loader for Surface-B SIVME)
  *   - HOST BINDING   : Surface-A (public/index.html) | Surface-B (public/owner-console.html)
@@ -16,19 +16,19 @@
  *   - public/js/one-tap-accordion-engine.js (Part-1C: 1-Tap Accordion & Subcard Engine)
  *   - public/js/one-tap-catalog-dom-engine.js (Part-1B: Canonical Catalog DOM Engine)
  *   - public/js/home-grid-engine.js (Companion 12 Core Cashflow Verticals Grid Engine)
- *   - public/js/fullscreen-microapp-controller.js (Fullscreen Micro-App Viewport Controller)
+ *   - public/js/fullscreen-microapp-controller.js (Part-3A: Fullscreen Micro-App Controller)
+ *   - public/js/one-tap-subcard-router.js (Part-3B: Sub-Card 1-Tap Router & 4-Chip Extractor)
  *   - public/js/one-tap-shell-bridge.js (Part-2: Master 1-Tap Event Router)
- *   - public/js/favorites-engine.js & public/js/favorites-data-extractor.js (My Favorites Engine)
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
- *   - ALLOWED ON SURFACE-A   : Parallel script preloader (zero hanging progress bar),
+ *   - ALLOWED ON SURFACE-A   : Parallel script preloader (v71 cache-busted),
  *                              0ms synchronous "32 Categories • 18 Games Active" & "18 श्रेणियां
  *                              उपलब्ध" anti-regression lock, 0ms rAF modal open/close dispatchers,
  *                              install popup auto-dismissal, fullscreen micro-app bridges,
  *                              and Part-1B/1C/1D API bridges.
  *   - ALLOWED ON SURFACE-B   : Conditional loading of /js/sovereign-in-situ-hud.js ONLY when
  *                              ?sivme=owner or ?sov_mode=in_situ is present in URL.
- *   - FORBIDDEN IN THIS FILE : Cross-surface DOM leakage or dropping any v39-v56 ZEL function.
+ *   - FORBIDDEN IN THIS FILE : Cross-surface DOM leakage or dropping any v39-v57 ZEL function.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.__RM_ACTIVE_CACHE_VER, window.__RM_OPEN_CAT_STATE,
@@ -48,9 +48,9 @@
  *   - SURFACE-B SELECTORS : .sivme-notch-pill, #sivme-hud, [data-sivme] (EXCLUDED)
  * ==============================================================================
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
- *   - CLICK SAFETY  : 0ms rAF modal open/close; delegates 1-Tap Accordion to Part-1C Engine.
+ *   - CLICK SAFETY  : Respects `window.__RM_MODAL_INTERACTION_LOCK__` so user taps never freeze.
  *   - SCROLL SAFETY : Restores body.style.overflowY = 'auto' on modal/fullscreen close.
- *   - DOM SAFETY    : State-verified DOM canary check prevents legacy overwrite regression.
+ *   - DOM SAFETY    : MutationObserver uses `subtree: false` to prevent recursive DOM freezes.
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (ALL 23 MANDATORY FUNCTIONS INTACT):
  *   1. ensureFullscreenControllerLoaded 2. purgeStaleState             3. injectOneTapLockStyles
@@ -77,7 +77,7 @@
  *   - MOBILE EDITING  : 2-line blank spacing preserved between major functional blocks.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261017_v57'`.
+ *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261018_v71'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -94,19 +94,19 @@
   if (window.__RM_LOADED_MODULES__['one-tap-catalog-hydrator']) return;
   window.__RM_LOADED_MODULES__['one-tap-catalog-hydrator'] = true;
 
-  var CACHE_VERSION = '20261017_v57';
+  var CACHE_VERSION = '20261018_v71';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VERSION;
   var isSyncingDOM = false;
   var hasRenderedCatalogOnce = false;
   var lastHydratorHealTs = 0;
 
-  // Shared state across Part 1A (Hydrator), Part 1B (DOM Engine), Part 1C (Accordion) and Part 1D (Healer)
-  var openStateMap = window.__RM_OPEN_CAT_STATE || { '15': true, '16': true };
+  // Shared state across Part 1A (Hydrator), Part 1B (DOM Engine), Part 1C (Accordion) and Part 2 (Bridge)
+  var openStateMap = window.__RM_OPEN_CAT_STATE || { '15': false, '16': false };
   window.__RM_OPEN_CAT_STATE = openStateMap;
   window.__RM_LAST_MODAL_OPEN_TS = window.__RM_LAST_MODAL_OPEN_TS || 0;
 
 
-  // 1. Non-Blocking Parallel Script Loader for Part-1D Healer, Part-1C Accordion, Part-1B DOM Engine, Home Grid, Fullscreen & Games
+  // 1. Non-Blocking Parallel Script Loader (v71 Cache-Busted so Stale v57 Scripts Never Load)
   (function ensureFullscreenControllerLoaded() {
     var head = document.head || document.documentElement;
     var modules = [
@@ -114,6 +114,7 @@
       { id: 'rm-accordion-engine-script', src: '/js/one-tap-accordion-engine.js' },
       { id: 'rm-home-grid-engine-script', src: '/js/home-grid-engine.js' },
       { id: 'rm-fs-microapp-controller-script', src: '/js/fullscreen-microapp-controller.js' },
+      { id: 'rm-subcard-router-script', src: '/js/one-tap-subcard-router.js' },
       { id: 'rm-catalog-dom-engine-script', src: '/js/one-tap-catalog-dom-engine.js' },
       { id: 'rm-games-ent-bridge-script', src: '/js/universal-catalog/games-entertainment-bridge.js' }
     ];
@@ -136,6 +137,7 @@
 
   // 2. Delegated Part-1D (`public/js/one-tap-home-css-healer.js`) Bridges + Final-Pass 0ms Synchronous Header Lock
   function healHomeVerticalsInstantly() {
+    if (window.__RM_MODAL_INTERACTION_LOCK__) return;
     try {
       if (typeof window.lockGames18StatePermanently === 'function') {
         window.lockGames18StatePermanently();
@@ -145,7 +147,7 @@
     } catch (e) {}
 
     var now = Date.now();
-    if (now - lastHydratorHealTs >= 120) {
+    if (now - lastHydratorHealTs >= 180) {
       lastHydratorHealTs = now;
       try {
         window.dismissPlayBanner();
@@ -163,15 +165,9 @@
       } catch (e) {}
     }
 
-    // Final-Pass Lock (No i < 80 cutoff): Always runs AFTER legacy hydrators so 18-Games is never overwritten
     try {
-      if (typeof window.lockGames18StatePermanently === 'function') {
-        window.lockGames18StatePermanently();
-      } else if (window.RM_HOME_CSS_HEALER && typeof window.RM_HOME_CSS_HEALER.lockGames18StatePermanently === 'function') {
-        window.RM_HOME_CSS_HEALER.lockGames18StatePermanently();
-      }
       var nodes = document.querySelectorAll('#categoryModal span, #categoryModal p, #categoryModal div, #categoryModal button');
-      for (var i = 0; i < nodes.length; i++) {
+      for (var i = 0; i < Math.min(nodes.length, 60); i++) {
         var el = nodes[i];
         var txt = (el.textContent || '').trim();
         if (el.children.length === 0 && txt.indexOf('Games Active') !== -1 && txt !== '32 Categories • 18 Games Active') {
@@ -197,7 +193,7 @@
   window.healHomeVerticalsInstantly = healHomeVerticalsInstantly;
 
 
-  // 3. Fullscreen Viewport Helpers (100% v56 ZEL Intact)
+  // 3. Fullscreen Viewport Helpers (100% ZEL Intact)
   function forceCloseFullscreenViewport() {
     var fs = document.getElementById('rm-fullscreen-view');
     if (fs) {
@@ -229,7 +225,7 @@
   }
 
 
-  // 4. Delegated Part-1C (`public/js/one-tap-accordion-engine.js`) & Part-1B (`public/js/one-tap-catalog-dom-engine.js`) Bridges
+  // 4. Delegated Part-1C (`one-tap-accordion-engine.js`) & Part-1B (`one-tap-catalog-dom-engine.js`) Bridges
   function resolveCategorySubContainer(catEl, rawId, cleanNum) {
     if (window.RM_ACCORDION_ENGINE && typeof window.RM_ACCORDION_ENGINE.resolveCategorySubContainer === 'function') {
       return window.RM_ACCORDION_ENGINE.resolveCategorySubContainer(catEl, rawId, cleanNum);
@@ -241,18 +237,12 @@
   }
 
   function enforceTopLeftLargeNumbering(catEl, subContainer, paddedNum) {
-    if (window.RM_ACCORDION_ENGINE && typeof window.RM_ACCORDION_ENGINE.enforceTopLeftLargeNumbering === 'function') {
-      return window.RM_ACCORDION_ENGINE.enforceTopLeftLargeNumbering(catEl, subContainer, paddedNum);
-    }
     if (window.RM_CATALOG_DOM_ENGINE && typeof window.RM_CATALOG_DOM_ENGINE.enforceTopLeftLargeNumbering === 'function') {
       return window.RM_CATALOG_DOM_ENGINE.enforceTopLeftLargeNumbering(catEl, subContainer, paddedNum);
     }
   }
 
   function installRenderDestructionShield() {
-    if (window.RM_ACCORDION_ENGINE && typeof window.RM_ACCORDION_ENGINE.installRenderDestructionShield === 'function') {
-      return window.RM_ACCORDION_ENGINE.installRenderDestructionShield();
-    }
     if (window.RM_CATALOG_DOM_ENGINE && typeof window.RM_CATALOG_DOM_ENGINE.installRenderDestructionShield === 'function') {
       return window.RM_CATALOG_DOM_ENGINE.installRenderDestructionShield();
     }
@@ -295,13 +285,11 @@
   window.toggleCategoryAccordion1Tap = applyCategoryOpenState;
 
   function syncAndHydrateCatalogCards() {
-    if (isSyncingDOM) return;
+    if (isSyncingDOM || window.__RM_MODAL_INTERACTION_LOCK__) return;
     isSyncingDOM = true;
     try {
       var modal = document.getElementById('categoryModal');
-      var needsDomEngine = !hasRenderedCatalogOnce ||
-                           (modal && (!modal.querySelector('[data-cat-id="g34"]') ||
-                            modal.querySelector('[data-cat-id] > div:first-child:not([data-rm-parent-rendered])')));
+      var needsDomEngine = !hasRenderedCatalogOnce || (modal && !modal.querySelector('[data-cat-id="g34"]'));
       if (needsDomEngine && window.RM_CATALOG_DOM_ENGINE && typeof window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards === 'function') {
         hasRenderedCatalogOnce = true;
         window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards();
@@ -313,7 +301,7 @@
   }
 
 
-  // 5. Global Modal & Drawer Dispatchers (100% ZEL Preserved + 0ms Instant rAF Paint)
+  // 5. Global Modal & Drawer Dispatchers (100% ZEL Preserved + Full 6-Arg Fullscreen Launcher)
   window.openCatalogModal = function () {
     var m = document.getElementById('categoryModal');
     if (!m) return;
@@ -323,8 +311,6 @@
     var rAF = window.requestAnimationFrame || function (cb) { setTimeout(cb, 0); };
     rAF(function () {
       syncAndHydrateCatalogCards();
-      setTimeout(syncAndHydrateCatalogCards, 80);
-      setTimeout(syncAndHydrateCatalogCards, 200);
       if (typeof window.updatePinButtonsUI === 'function') window.updatePinButtonsUI();
     });
   };
@@ -342,7 +328,7 @@
     var m = document.getElementById('categoryModal');
     if (open === true) window.openCatalogModal();
     else if (open === false) { window.__RM_LAST_MODAL_OPEN_TS = 0; window.closeCatalogModal(); }
-    else if (m && (m.classList.contains('hidden') || window.getComputedStyle(m).display === 'none')) window.openCatalogModal();
+    else if (m && (m.classList.contains('hidden') || m.style.display === 'none')) window.openCatalogModal();
     else window.closeCatalogModal();
   };
 
@@ -356,9 +342,9 @@
     if (b) { b.classList.add('hidden'); b.style.setProperty('display', 'none', 'important'); }
   };
 
-  function launchOneTapServiceScreen(titleText, subtitleText, subCode) {
+  function launchOneTapServiceScreen(titleText, subtitleText, subCode, preselectedChip, subCardEl, matrixEntry) {
     if (window.RM_FULLSCREEN_CONTROLLER && typeof window.RM_FULLSCREEN_CONTROLLER.launchOneTapServiceScreen === 'function') {
-      window.RM_FULLSCREEN_CONTROLLER.launchOneTapServiceScreen(titleText, subtitleText, subCode);
+      window.RM_FULLSCREEN_CONTROLLER.launchOneTapServiceScreen(titleText, subtitleText, subCode, preselectedChip, subCardEl, matrixEntry);
     }
   }
   window.launchOneTapServiceScreen = launchOneTapServiceScreen;
@@ -382,22 +368,19 @@
   };
 
 
-  // 6. Subtree-Aware Anti-Regression Hydration Observer, Fast Boot, Service Worker Sentinel & Surface-B SIVME Loader
+  // 6. Non-Blocking Hydration Observer (subtree: false prevents recursive tap freeze)
   function attachCatalogHydrationObserver() {
     var modal = document.getElementById('categoryModal');
     if (!modal || typeof MutationObserver === 'undefined') return;
     var obs = new MutationObserver(function () {
-      if (isSyncingDOM || modal.classList.contains('hidden')) return;
+      if (isSyncingDOM || window.__RM_MODAL_INTERACTION_LOCK__ || modal.classList.contains('hidden')) return;
       installRenderDestructionShield();
-      var rawHeader = modal.querySelector('[data-cat-id] > div:first-child:not([data-rm-parent-rendered])');
-      if (rawHeader || !modal.querySelector('[data-cat-id="g34"]')) {
+      if (!modal.querySelector('[data-cat-id="g34"]')) {
         hasRenderedCatalogOnce = false;
         syncAndHydrateCatalogCards();
-      } else {
-        healHomeVerticalsInstantly();
       }
     });
-    obs.observe(modal, { childList: true, subtree: true });
+    obs.observe(modal, { childList: true, subtree: false });
   }
 
   function bootFastHomeAndCatalog() {
