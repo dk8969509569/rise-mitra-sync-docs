@@ -1,11 +1,11 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-0A Surface-A HTML Shell Bootstrapper & Sentinel Lock (v69)
+ *   - MODULE NAME    : RM Part-0A Surface-A HTML Shell Bootstrapper & Sentinel Lock (v71)
  *   - REPO TARGET    : public/js/index-shell-bootstrap.js
  *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional SIVME Loader for Surface-B)
  *   - HOST BINDING   : Surface-A (public/index.html)
- *   - SIZE BUDGET    : <= 250 Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 265 Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -54,7 +54,7 @@
  *   2. purgeStaleShellCacheAndSivme            3. injectShellOneTapLockStyle
  *   4. toggleMacroBarElementInstantly          5. registerFallbackModalDispatchers
  *   6. ensureCatalogHydratedNow                7. initSwAndConditionalSivmeSentinel
- *   8. bindTopRightProfileOneTap (Auto-Loads & Bridges public/js/one-tap-profile-hub-healer.js)
+ *   8. bindTopRightProfileOneTap (Direct 0ms 1-Tap Trigger + Auto-Loads Part-0B)
  *   + Capture 1-Tap Macro Accordion & Top-Right Profile Listeners
  * ==============================================================================
  * 8. ONE JOB = ONE FILE & CANONICAL PATH LOCK (ANTI-DUPLICATE FILE GUARD):
@@ -71,7 +71,7 @@
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v69'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v71'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -88,9 +88,10 @@
   if (window.__RM_LOADED_MODULES__['index-shell-bootstrap']) return;
   window.__RM_LOADED_MODULES__['index-shell-bootstrap'] = true;
 
-  var CACHE_VER = '20261018_v69';
+  var CACHE_VER = '20261018_v71';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VER;
   var lastMacroToggleTs = 0;
+  var lastProfileTapTs = 0;
   var touchStartX = 0;
   var touchStartY = 0;
   var touchMoved = false;
@@ -185,12 +186,12 @@
       '#profileModal:not(.hidden) { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99998 !important; background-color: rgba(2, 6, 23, 0.86) !important; display: flex !important; align-items: center !important; justify-content: center !important; padding: 12px !important; }' +
       '#rm-fullscreen-view:not(.hidden) { position: fixed !important; inset: 0 !important; z-index: 99999 !important; display: flex !important; }' +
       '.rm-prof-upgraded-root { padding-bottom: 115px !important; }' +
-      '.rm-prof-row-title { font-size: 18px !important; font-weight: 800 !important; line-height: 1.35 !important; color: #ffffff !important; }' +
-      '.rm-prof-row-sub { font-size: 15px !important; font-weight: 600 !important; line-height: 1.45 !important; color: #e2e8f0 !important; margin-top: 3px !important; }' +
-      '.rm-prof-sec-hdr { font-size: 15px !important; font-weight: 900 !important; letter-spacing: 0.4px !important; line-height: 1.4 !important; color: #38bdf8 !important; }' +
-      '.rm-prof-grid-title { font-size: 17.5px !important; font-weight: 800 !important; line-height: 1.3 !important; color: #ffffff !important; }' +
-      '.rm-prof-grid-sub { font-size: 14.5px !important; font-weight: 700 !important; line-height: 1.4 !important; margin-top: 3px !important; }' +
-      '.rm-prof-logout-btn { font-size: 18px !important; font-weight: 900 !important; min-height: 56px !important; margin-bottom: 20px !important; }';
+      '.rm-prof-row-title { font-size: 19px !important; font-weight: 800 !important; line-height: 1.35 !important; color: #ffffff !important; }' +
+      '.rm-prof-row-sub { font-size: 16px !important; font-weight: 600 !important; line-height: 1.45 !important; color: #e2e8f0 !important; margin-top: 3px !important; }' +
+      '.rm-prof-sec-hdr { font-size: 16px !important; font-weight: 900 !important; letter-spacing: 0.4px !important; line-height: 1.4 !important; color: #38bdf8 !important; }' +
+      '.rm-prof-grid-title { font-size: 18px !important; font-weight: 800 !important; line-height: 1.3 !important; color: #ffffff !important; }' +
+      '.rm-prof-grid-sub { font-size: 15px !important; font-weight: 700 !important; line-height: 1.4 !important; margin-top: 3px !important; }' +
+      '.rm-prof-logout-btn { font-size: 12px !important; font-weight: 700 !important; min-height: 32px !important; max-width: 140px !important; padding: 6px 16px !important; margin: 14px auto 20px auto !important; display: block !important; }';
     if (!existing) (document.head || document.documentElement).appendChild(s);
   }
 
@@ -325,15 +326,26 @@
   }
 
 
-  // 8. Auto-Load & Bridge Part-0B (public/js/one-tap-profile-hub-healer.js)
+  // 8. Direct 0ms Top-Right Profile 1-Tap Trigger & Auto-Load Part-0B (public/js/one-tap-profile-hub-healer.js)
   function bindTopRightProfileOneTap() {
     if (typeof window.healProfileHubTypographyAndLayout !== 'function') {
       window.healProfileHubTypographyAndLayout = function () {};
     }
     if (typeof window.openProfileModal !== 'function') {
-      window.openProfileModal = function () {
+      window.openProfileModal = function (trigEl) {
         if (window.RM_ProfileHub && typeof window.RM_ProfileHub.open === 'function') {
           try { window.RM_ProfileHub.open(); } catch (e) {}
+        } else if (typeof window.openProfileHub === 'function') {
+          try { window.openProfileHub(); } catch (e) {}
+        } else if (trigEl && typeof trigEl.onclick === 'function') {
+          try { trigEl.onclick(); } catch (e) {}
+        } else if (typeof window.openFullscreenModule === 'function') {
+          try { window.openFullscreenModule('profile'); } catch (e) {}
+        }
+        var m = document.getElementById('profileModal') || document.getElementById('profileHubModal') || document.getElementById('userProfileModal');
+        if (m) { m.classList.remove('hidden'); m.style.setProperty('display', 'flex', 'important'); }
+        if (typeof window.healProfileHubTypographyAndLayout === 'function') {
+          setTimeout(window.healProfileHubTypographyAndLayout, 20);
         }
       };
     }
@@ -344,8 +356,26 @@
       };
     }
     if (typeof window.toggleProfileModal !== 'function') {
-      window.toggleProfileModal = function () { window.openProfileModal(); };
+      window.toggleProfileModal = function (trigEl) { window.openProfileModal(trigEl); };
     }
+
+    function handleDirectProfileTap(e) {
+      if (e.type === 'touchend' && touchMoved) return;
+      var el = e.target && e.target.nodeType === 1 ? e.target : (e.target ? e.target.parentElement : null);
+      if (!el || !el.closest || el.closest('#categoryModal, #profileModal, #rm-fullscreen-view')) return;
+      var btn = el.closest('#rm-top-profile-btn, [data-rm-profile-trigger="1"], #profileBtn, #userProfileBtn, #openProfileBtn, [onclick*="Profile"], [onclick*="profile"], header button, header .rounded-full, button.rounded-full, div.rounded-full');
+      if (!btn) return;
+      var r = btn.getBoundingClientRect ? btn.getBoundingClientRect() : null;
+      var t = (btn.textContent || '').trim();
+      if (!r || r.top > 120 || r.right < window.innerWidth - 115 || t.indexOf('सिंक') !== -1 || t.indexOf('खोलें') !== -1 || t.indexOf('RM') !== -1) return;
+      var now = Date.now();
+      if (now - lastProfileTapTs < 380) return;
+      lastProfileTapTs = now;
+      window.openProfileModal(btn);
+    }
+    window.addEventListener('touchend', handleDirectProfileTap, { capture: true, passive: true });
+    window.addEventListener('click', handleDirectProfileTap, { capture: true, passive: true });
+
     if (!window.__RM_LOADED_MODULES__['one-tap-profile-hub-healer'] && !document.getElementById('rm-part0b-profile-healer-js')) {
       var p = document.createElement('script');
       p.id = 'rm-part0b-profile-healer-js';
