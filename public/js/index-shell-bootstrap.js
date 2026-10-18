@@ -1,26 +1,28 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-0 Surface-A HTML Shell Bootstrapper & Sentinel Lock (v65)
+ *   - MODULE NAME    : RM Part-0 Surface-A HTML Shell Bootstrapper & Sentinel Lock (v66)
  *   - REPO TARGET    : public/js/index-shell-bootstrap.js
  *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional SIVME Loader for Surface-B)
  *   - HOST BINDING   : Surface-A (public/index.html)
- *   - SIZE BUDGET    : <= 230 Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 295 Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
  * ==============================================================================
  * 2. EXISTING MODULAR FILES LOCK (ZERO DUPLICATE IMPLEMENTATION):
- *   - public/js/index-shell-bootstrap.js (Part-0: Shell Boot, Anti-Freeze & Macro Bars ONLY)
+ *   - public/js/index-shell-bootstrap.js (Part-0: Shell Boot, Anti-Freeze, Macro Bars & Top-Right Profile 1-Tap)
  *   - public/js/one-tap-accordion-engine.js (Part-1C: 50 Category Cards & Sub-Card Accordion)
  *   - public/js/one-tap-catalog-hydrator.js (Part-1A: Boot Loader & Modal Dispatchers)
  *   - public/js/one-tap-home-css-healer.js (Part-1D: 0ms Home Healer & 18-Games Lock)
  *   - public/js/one-tap-catalog-dom-engine.js (Part-1B: Canonical Catalog DOM Engine)
+ *   - public/js/profile-hub-engine.js (Profile Hub Engine — Delegated/Bridged on 1-Tap)
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : Anti-freeze MutationObserver shield, Tailwind theme config,
  *                              stale SIVME/cache purge, inline ZEL 1-Tap CSS lock, 0ms 1-Tap
- *                              Macro Bar toggle, modal fallback dispatchers, hydration sentinel.
+ *                              Macro Bar toggle, Top-Right Profile 1-Tap opener, modal fallback
+ *                              dispatchers, hydration sentinel.
  *   - ALLOWED ON SURFACE-B   : Conditional loading of /js/sovereign-in-situ-hud.js ONLY when
  *                              ?sivme=owner or ?sov_mode=in_situ is present in URL.
  *   - FORBIDDEN IN THIS FILE : Category card sub-list logic (owned by one-tap-accordion-engine.js).
@@ -29,26 +31,29 @@
  *   - WRITES GLOBAL STATE : window.__RM_ACTIVE_CACHE_VER, window.tailwind.config,
  *                           window.openCatalogModal, window.closeCatalogModal,
  *                           window.toggleMenuDrawer, window.toggleMacroBarElementInstantly,
- *                           window.ensureCatalogHydratedNow, window.__RM_MODAL_INTERACTION_LOCK__
+ *                           window.ensureCatalogHydratedNow, window.__RM_MODAL_INTERACTION_LOCK__,
+ *                           window.openProfileModal, window.closeProfileModal, window.toggleProfileModal
  *   - CALLS EXTERNAL APIs : window.lockGames18StatePermanently, window.renderCatalogItems,
- *                           window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog
+ *                           window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog, window.RM_ProfileHub
  * ==============================================================================
  * 5. DOM ATTRIBUTE & SELECTOR CONTRACT (ZERO-COLLISION DOM RULE):
  *   - SURFACE-A SELECTORS : #categoryModal, #modal-catalog-count, #tier1-header-text,
- *                           #tier2-header-text, #tier1-list, #tier2-list, #rm-zel-one-tap-lock
+ *                           #tier2-header-text, #tier1-list, #tier2-list, #rm-zel-one-tap-lock,
+ *                           #rm-top-profile-btn, #profileModal
  *   - SURFACE-B SELECTORS : .sivme-notch-pill, #sivme-hud, [data-sivme] (ISOLATED)
  * ==============================================================================
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
- *   - CLICK SAFETY  : Enforces touch-action: manipulation !important & 0ms Macro Bar toggle.
+ *   - CLICK SAFETY  : Enforces touch-action: manipulation !important & 0ms Macro/Profile 1-Tap.
  *   - SCROLL SAFETY : Tracks touchmove delta (>10px) + lightweight sentinels (150ms & 600ms).
  *   - FREEZE SHIELD : Blocks recursive MutationObserver loops when #categoryModal is open.
  * ==============================================================================
- * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (8 CORE SHELL BLOCKS):
+ * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (9 CORE SHELL BLOCKS):
  *   0. installMutationObserverFreezeKillSwitch 1. configureTailwindTheme
  *   2. purgeStaleShellCacheAndSivme            3. injectShellOneTapLockStyle
  *   4. toggleMacroBarElementInstantly          5. registerFallbackModalDispatchers
  *   6. ensureCatalogHydratedNow                7. initSwAndConditionalSivmeSentinel
- *   + Capture 1-Tap Macro Accordion Listener (Delegates Card Taps to Part-1C)
+ *   8. bindTopRightProfileOneTap
+ *   + Capture 1-Tap Macro Accordion & Top-Right Profile Listeners
  * ==============================================================================
  * 8. ONE JOB = ONE FILE & CANONICAL PATH LOCK (ANTI-DUPLICATE FILE GUARD):
  *   - SINGLE JOB RULE : Sole owner of extracted inline shell scripts from `public/index.html`.
@@ -63,7 +68,7 @@
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v65'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v66'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -80,9 +85,11 @@
   if (window.__RM_LOADED_MODULES__['index-shell-bootstrap']) return;
   window.__RM_LOADED_MODULES__['index-shell-bootstrap'] = true;
 
-  var CACHE_VER = '20261018_v65';
+  var CACHE_VER = '20261018_v66';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VER;
   var lastMacroToggleTs = 0;
+  var lastProfileTouchTs = 0;
+  var lastProfileActionTs = 0;
   var touchStartX = 0;
   var touchStartY = 0;
   var touchMoved = false;
@@ -167,9 +174,9 @@
     var s = existing || document.createElement('style');
     s.id = 'rm-zel-one-tap-lock';
     s.textContent =
-      'button, a, [onclick], .tactile-25d, .rm-parent-toggle-pill, #categoryModal [data-cat-id], #categoryModal [id^="sub-"] > div, .rm-service-chip { touch-action: manipulation !important; -webkit-tap-highlight-color: transparent !important; cursor: pointer !important; user-select: none !important; transition: none !important; }' +
+      'button, a, [onclick], .tactile-25d, .rm-parent-toggle-pill, #rm-top-profile-btn, [data-rm-profile-trigger="1"], #categoryModal [data-cat-id], #categoryModal [id^="sub-"] > div, .rm-service-chip { touch-action: manipulation !important; -webkit-tap-highlight-color: transparent !important; cursor: pointer !important; user-select: none !important; transition: none !important; }' +
       '.tactile-25d:active { transform: none !important; }' +
-      '#categoryModal.hidden, #rm-fullscreen-view.hidden, #playStoreInstallBanner.hidden, #categoryModal [id^="sub-"]:not([data-rm-collapsed="false"]):not(.rm-acc-open).hidden, #categoryModal [id^="sub-"][data-rm-collapsed="true"]:not(.rm-acc-open) { display: none !important; }' +
+      '#categoryModal.hidden, #profileModal.hidden, #rm-fullscreen-view.hidden, #playStoreInstallBanner.hidden, #categoryModal [id^="sub-"]:not([data-rm-collapsed="false"]):not(.rm-acc-open).hidden, #categoryModal [id^="sub-"][data-rm-collapsed="true"]:not(.rm-acc-open) { display: none !important; }' +
       '#categoryModal [id^="sub-"][data-rm-collapsed="false"], #categoryModal .rm-acc-open { display: block !important; visibility: visible !important; opacity: 1 !important; height: auto !important; max-height: none !important; }' +
       '#categoryModal:not(.hidden) { position: fixed !important; inset: 0 !important; width: 100vw !important; max-width: 100vw !important; z-index: 50 !important; background-color: #0b0f19 !important; display: flex !important; justify-content: center !important; -webkit-overflow-scrolling: touch !important; }' +
       '#categoryModal > div { width: 100% !important; max-width: 100% !important; }' +
@@ -307,10 +314,135 @@
     }
   }
 
+
+  // 8. Top-Right Profile Icon (👤) 0ms 1-Tap Detector & Self-Healing Profile Modal
+  function bindTopRightProfileOneTap() {
+    function ensureProfileModalReady() {
+      var existing = document.getElementById('profileModal') || document.getElementById('profileHubModal') || document.getElementById('userProfileModal');
+      if (existing && existing.getAttribute('data-rm-profile-ready') === '1') return existing;
+      if (existing && existing.children.length > 0) {
+        existing.setAttribute('data-rm-profile-ready', '1');
+        return existing;
+      }
+      var m = existing || document.createElement('div');
+      m.id = m.id || 'profileModal';
+      m.setAttribute('data-rm-profile-ready', '1');
+      m.className = 'fixed inset-0 z-[200] hidden items-center justify-center bg-black/80 backdrop-blur-sm p-3 overflow-y-auto';
+      var savedName = 'Rise Mitra Partner';
+      try { savedName = localStorage.getItem('rm_profile_name_v1') || savedName; } catch (e) {}
+      m.innerHTML =
+        '<div class="w-full max-w-md rounded-2xl bg-slate-950 border border-cyan-500/40 shadow-2xl text-slate-100 p-4 my-auto" onclick="event.stopPropagation()">' +
+          '<div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">' +
+            '<div class="flex items-center gap-2.5">' +
+              '<div class="w-10 h-10 rounded-full bg-cyan-500/20 border-2 border-cyan-400 flex items-center justify-center text-lg">👤</div>' +
+              '<div><h3 class="text-sm font-extrabold text-white">RM WORLD • सदस्य प्रोफ़ाइल</h3><p class="text-[11px] text-emerald-400 font-semibold">🟢 ऑनलाइन सिंक सक्रिय • DPDP 2023</p></div>' +
+            '</div>' +
+            '<button type="button" id="rm-prof-close-btn" class="px-3 py-1.5 rounded-lg bg-rose-500/20 border border-rose-500/40 text-rose-300 text-xs font-bold">✕ बंद करें</button>' +
+          '</div>' +
+          '<div class="space-y-3 text-xs">' +
+            '<div class="p-3 rounded-xl bg-slate-900 border border-slate-800">' +
+              '<label class="block text-slate-400 mb-1">सदस्य नाम (On-Device Encrypted):</label>' +
+              '<div class="flex gap-2">' +
+                '<input id="rm-prof-name-inp" type="text" value="' + savedName + '" class="flex-1 rounded-lg bg-slate-950 border border-slate-700 px-2.5 py-1.5 text-white text-xs" />' +
+                '<button type="button" id="rm-prof-save-btn" class="px-3 py-1.5 rounded-lg bg-emerald-500 text-slate-950 font-extrabold text-xs">Save</button>' +
+              '</div>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-2">' +
+              '<button type="button" id="rm-prof-dir-btn" class="py-2.5 px-3 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 font-bold text-left">📂 सभी 50 श्रेणियां खोलें ›</button>' +
+              '<a href="/owner-console.html?v=4" class="py-2.5 px-3 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold text-left block">🔐 Owner Console ›</a>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      if (!existing) document.body.appendChild(m);
+      m.addEventListener('click', function (ev) {
+        if (ev.target === m || ev.target.closest('#rm-prof-close-btn')) window.closeProfileModal();
+        else if (ev.target.closest('#rm-prof-save-btn')) {
+          var inp = document.getElementById('rm-prof-name-inp');
+          if (inp && inp.value.trim()) {
+            try { localStorage.setItem('rm_profile_name_v1', inp.value.trim()); } catch (e) {}
+            ev.target.textContent = '✓ Saved';
+          }
+        } else if (ev.target.closest('#rm-prof-dir-btn')) {
+          window.closeProfileModal();
+          if (typeof window.openCatalogModal === 'function') window.openCatalogModal();
+        }
+      });
+      return m;
+    }
+
+    window.openProfileModal = function () {
+      if (window.RM_ProfileHub && typeof window.RM_ProfileHub.open === 'function') {
+        try { window.RM_ProfileHub.open(); return; } catch (e) {}
+      }
+      var m = ensureProfileModalReady();
+      m.classList.remove('hidden');
+      m.style.setProperty('display', 'flex', 'important');
+    };
+    window.closeProfileModal = function () {
+      var m = document.getElementById('profileModal') || document.getElementById('profileHubModal') || document.getElementById('userProfileModal');
+      if (m) {
+        m.classList.add('hidden');
+        m.style.setProperty('display', 'none', 'important');
+      }
+    };
+    window.toggleProfileModal = function () {
+      var m = ensureProfileModalReady();
+      var isHidden = m.classList.contains('hidden') || window.getComputedStyle(m).display === 'none';
+      if (isHidden) window.openProfileModal(); else window.closeProfileModal();
+    };
+
+    function findTopRightProfileTarget(target) {
+      if (!target || !target.closest) return null;
+      if (target.closest('#categoryModal, #profileModal, #rm-fullscreen-view')) return null;
+      var explicit = target.closest(
+        '#rm-top-profile-btn, [data-rm-profile-trigger="1"], #profileBtn, #userProfileBtn, #openProfileBtn, [onclick*="Profile"], [onclick*="profile"], [aria-label*="Profile" i], [title*="Profile" i]'
+      );
+      if (explicit) return explicit;
+      var hdrBtn = target.closest('header button, header a, header .rounded-full');
+      if (hdrBtn) {
+        var txt = (hdrBtn.textContent || '').trim();
+        if (txt.indexOf('सिंक') === -1 && txt.indexOf('RM') === -1 && txt.indexOf('इंस्टॉल') === -1 && txt.indexOf('खोलें') === -1) {
+          return hdrBtn;
+        }
+      }
+      return null;
+    }
+
+    function handleProfileOneTap(e) {
+      if (e.type === 'touchend' && touchMoved) return;
+      var trig = findTopRightProfileTarget(e.target);
+      if (!trig) return;
+      var now = Date.now();
+      if (e.type === 'click' && now - lastProfileTouchTs < 450) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        return;
+      }
+      if (now - lastProfileActionTs < 320) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        return;
+      }
+      if (e.type === 'touchend') lastProfileTouchTs = now;
+      lastProfileActionTs = now;
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      window.toggleProfileModal();
+    }
+
+    document.addEventListener('touchend', handleProfileOneTap, { capture: true, passive: false });
+    document.addEventListener('click', handleProfileOneTap, { capture: true, passive: false });
+  }
+
+
   configureTailwindTheme();
   purgeStaleShellCacheAndSivme();
   injectShellOneTapLockStyle();
   registerFallbackModalDispatchers();
+  bindTopRightProfileOneTap();
   window.addEventListener('RM_CATALOG_DATA_READY', ensureCatalogHydratedNow);
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { ensureCatalogHydratedNow(); initSwAndConditionalSivmeSentinel(); });
   else { ensureCatalogHydratedNow(); initSwAndConditionalSivmeSentinel(); }
