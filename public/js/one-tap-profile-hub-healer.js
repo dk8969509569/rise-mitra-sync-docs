@@ -1,11 +1,11 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-0B Top-Right Profile 1-Tap & Large-Font Healer (v69)
+ *   - MODULE NAME    : RM Part-0B Top-Right Profile 1-Tap & Large-Font Healer (v70)
  *   - REPO TARGET    : public/js/one-tap-profile-hub-healer.js
  *   - SURFACE TARGET : SURFACE-A ONLY (Public Member Profile & Sovereign Hub UI)
  *   - HOST BINDING   : Surface-A (Auto-loaded by public/js/index-shell-bootstrap.js)
- *   - SIZE BUDGET    : <= 255 Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 290 Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -19,7 +19,7 @@
  * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : Top-Right Profile icon (👤) 0ms 1-Tap detection, self-healing
  *                              #profileModal fallback, Profile & Sovereign Hub large-font
- *                              (18px-22px) typography upgrade, duplicate header hide, bottom padding.
+ *                              (18px-24px) typography upgrade, compact 12px Log Out, duplicate header hide.
  *   - ALLOWED ON SURFACE-B   : NONE (Surface-B Owner Console is strictly isolated).
  *   - FORBIDDEN IN THIS FILE : Duplicating Part-0A Macro Bar or Part-1C Category Card logic.
  * ==============================================================================
@@ -27,7 +27,8 @@
  *   - WRITES GLOBAL STATE : window.__RM_LOADED_MODULES__['one-tap-profile-hub-healer'],
  *                           window.openProfileModal, window.closeProfileModal,
  *                           window.toggleProfileModal, window.healProfileHubTypographyAndLayout
- *   - CALLS EXTERNAL APIs : window.RM_ProfileHub.open, window.openCatalogModal
+ *   - CALLS EXTERNAL APIs : window.RM_ProfileHub.open, window.openProfileHub,
+ *                           window.openFullscreenModule, window.openCatalogModal
  * ==============================================================================
  * 5. DOM ATTRIBUTE & SELECTOR CONTRACT (ZERO-COLLISION DOM RULE):
  *   - SURFACE-A SELECTORS : #rm-top-profile-btn, [data-rm-profile-trigger="1"], #profileModal,
@@ -50,7 +51,7 @@
  *   - CANONICAL PATH  : Must exist ONLY at `public/js/one-tap-profile-hub-healer.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
- *   - ZERO DOHRAO     : Extracted cleanly from index-shell-bootstrap.js to keep both <= 250 lines.
+ *   - ZERO DOHRAO     : Extracted cleanly from index-shell-bootstrap.js to keep both <= 290 lines.
  *   - IDEMPOTENT BOOT : Guarded by `window.__RM_LOADED_MODULES__['one-tap-profile-hub-healer']`.
  * ==============================================================================
  * 10. FAIL-SAFE ERROR BOUNDARY, ZERO-STUB & 2-LINE SECTION GAP STANDARD:
@@ -58,7 +59,7 @@
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v69'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v70'`.
  *   - PIPELINE GATE   : Commit & verify on `pre-main` before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -80,26 +81,27 @@
   var touchStartX = 0;
   var touchStartY = 0;
   var touchMoved = false;
+  var isDispatchingNativeClick = false;
 
 
-  // 1. Inject Large Readable Font & Layout CSS for Profile & Sovereign Hub
+  // 1. Inject Large Readable Font & Layout CSS for Profile & Sovereign Hub (Log Out Small 12px)
   function injectProfileHubLargeFontStyles() {
     var existing = document.getElementById('rm-profile-hub-large-font-lock');
     var s = existing || document.createElement('style');
     s.id = 'rm-profile-hub-large-font-lock';
     s.textContent =
-      '#rm-top-profile-btn, [data-rm-profile-trigger="1"] { touch-action: manipulation !important; cursor: pointer !important; }' +
+      '#rm-top-profile-btn, [data-rm-profile-trigger="1"] { touch-action: manipulation !important; cursor: pointer !important; transform: none !important; }' +
       '#rm-top-profile-btn *, [data-rm-profile-trigger="1"] * { pointer-events: none !important; }' +
       '#profileModal:not(.hidden) { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99998 !important; background-color: rgba(2, 6, 23, 0.88) !important; display: flex !important; align-items: center !important; justify-content: center !important; padding: 12px !important; }' +
       '.rm-prof-upgraded-root { padding-bottom: 120px !important; }' +
-      '.rm-prof-upgraded-root .text-xs, .rm-prof-upgraded-root [class*="text-[10px]"], .rm-prof-upgraded-root [class*="text-[11px]"], .rm-prof-upgraded-root [class*="text-[12px]"] { font-size: 15px !important; line-height: 1.45 !important; font-weight: 600 !important; color: #e2e8f0 !important; }' +
-      '.rm-prof-upgraded-root .text-sm, .rm-prof-upgraded-root [class*="text-[13px]"], .rm-prof-upgraded-root [class*="text-[14px]"] { font-size: 18px !important; line-height: 1.38 !important; font-weight: 800 !important; color: #ffffff !important; }' +
-      '.rm-prof-row-title { font-size: 18.5px !important; font-weight: 800 !important; line-height: 1.35 !important; color: #ffffff !important; }' +
-      '.rm-prof-row-sub { font-size: 15.5px !important; font-weight: 600 !important; line-height: 1.45 !important; color: #e2e8f0 !important; margin-top: 4px !important; }' +
-      '.rm-prof-sec-hdr { font-size: 15.5px !important; font-weight: 900 !important; letter-spacing: 0.4px !important; line-height: 1.4 !important; color: #38bdf8 !important; }' +
-      '.rm-prof-grid-title { font-size: 18px !important; font-weight: 800 !important; line-height: 1.3 !important; color: #ffffff !important; }' +
-      '.rm-prof-grid-sub { font-size: 15px !important; font-weight: 700 !important; line-height: 1.4 !important; margin-top: 4px !important; }' +
-      '.rm-prof-logout-btn { font-size: 19px !important; font-weight: 900 !important; min-height: 58px !important; margin-bottom: 24px !important; }';
+      '.rm-prof-upgraded-root .text-xs:not(.rm-prof-logout-btn), .rm-prof-upgraded-root [class*="text-[10px]"]:not(.rm-prof-logout-btn), .rm-prof-upgraded-root [class*="text-[11px]"]:not(.rm-prof-logout-btn), .rm-prof-upgraded-root [class*="text-[12px]"]:not(.rm-prof-logout-btn) { font-size: 16px !important; line-height: 1.48 !important; font-weight: 700 !important; color: #e2e8f0 !important; }' +
+      '.rm-prof-upgraded-root .text-sm:not(.rm-prof-logout-btn), .rm-prof-upgraded-root [class*="text-[13px]"]:not(.rm-prof-logout-btn), .rm-prof-upgraded-root [class*="text-[14px]"]:not(.rm-prof-logout-btn) { font-size: 19px !important; line-height: 1.38 !important; font-weight: 800 !important; color: #ffffff !important; }' +
+      '.rm-prof-row-title { font-size: 19.5px !important; font-weight: 800 !important; line-height: 1.35 !important; color: #ffffff !important; }' +
+      '.rm-prof-row-sub { font-size: 16px !important; font-weight: 700 !important; line-height: 1.45 !important; color: #e2e8f0 !important; margin-top: 4px !important; }' +
+      '.rm-prof-sec-hdr { font-size: 16px !important; font-weight: 900 !important; letter-spacing: 0.4px !important; line-height: 1.4 !important; color: #38bdf8 !important; }' +
+      '.rm-prof-grid-title { font-size: 18.5px !important; font-weight: 800 !important; line-height: 1.3 !important; color: #ffffff !important; }' +
+      '.rm-prof-grid-sub { font-size: 15.5px !important; font-weight: 700 !important; line-height: 1.4 !important; margin-top: 4px !important; }' +
+      '.rm-prof-logout-btn { font-size: 12px !important; font-weight: 700 !important; line-height: 1.2 !important; min-height: 32px !important; max-width: 140px !important; padding: 6px 16px !important; margin: 14px auto 22px auto !important; display: block !important; border-radius: 10px !important; }';
     if (!existing) (document.head || document.documentElement).appendChild(s);
   }
 
@@ -123,8 +125,8 @@
         var fsTitle = document.getElementById('fs-module-title');
         if (fsTitle && (fsTitle.textContent || '').indexOf('Profile') !== -1) {
           fsTitle.textContent = '👤 प्रोफ़ाइल व सॉवरेन हब';
-          fsTitle.style.setProperty('font-size', '18px', 'important');
-          fsTitle.style.setProperty('font-weight', '800', 'important');
+          fsTitle.style.setProperty('font-size', '18.5px', 'important');
+          fsTitle.style.setProperty('font-weight', '900', 'important');
           fsTitle.style.setProperty('white-space', 'nowrap', 'important');
         }
 
@@ -134,41 +136,49 @@
           var txt = (el.textContent || '').trim();
           if (!txt) continue;
 
+          if (txt === 'Log Out' || txt.indexOf('लॉग आउट') !== -1 || txt === 'Logout') {
+            el.classList.add('rm-prof-logout-btn');
+            el.style.setProperty('font-size', '12px', 'important');
+            el.style.setProperty('max-width', '140px', 'important');
+            el.style.setProperty('min-height', '32px', 'important');
+            el.style.setProperty('padding', '6px 16px', 'important');
+            el.style.setProperty('margin', '14px auto 22px auto', 'important');
+            continue;
+          }
+
           if (el.children.length === 0) {
             if (txt === 'Diwakar Kumar' || txt === 'Rise Mitra Partner') {
-              el.style.setProperty('font-size', '23px', 'important');
+              el.style.setProperty('font-size', '24px', 'important');
               el.style.setProperty('font-weight', '900', 'important');
               el.style.setProperty('color', '#ffffff', 'important');
             } else if (txt.indexOf('USR-') !== -1 || txt === 'Client ID') {
-              el.style.setProperty('font-size', '15.5px', 'important');
+              el.style.setProperty('font-size', '16px', 'important');
               el.style.setProperty('font-weight', '800', 'important');
               el.style.setProperty('white-space', 'nowrap', 'important');
             } else if (txt.indexOf('Sovereign Crown Partner') !== -1) {
-              el.style.setProperty('font-size', '15px', 'important');
+              el.style.setProperty('font-size', '15.5px', 'important');
               el.style.setProperty('font-weight', '800', 'important');
               el.style.setProperty('line-height', '1.35', 'important');
             } else if (txt === 'फ़ोटो बदलें' || txt === 'हटाएं' || txt === 'सत्यापित' || txt.indexOf('जुड़ें') !== -1) {
-              el.style.setProperty('font-size', '15px', 'important');
+              el.style.setProperty('font-size', '15.5px', 'important');
               el.style.setProperty('font-weight', '800', 'important');
               el.style.setProperty('white-space', 'nowrap', 'important');
             } else if (txt.indexOf('SOVEREIGN PARTNERSHIP') !== -1 || txt.indexOf('MANAGE ACCOUNT') !== -1 ||
                        txt.indexOf('SOCIAL ACTIVITIES') !== -1 || txt.indexOf('सुरक्षा व गोपनीयता') !== -1 ||
                        txt.indexOf('OFFICIAL CHANNELS') !== -1) {
               el.classList.add('rm-prof-sec-hdr');
-            } else if (txt === 'Log Out' || txt.indexOf('लॉग आउट') !== -1) {
-              el.classList.add('rm-prof-logout-btn');
             } else if (txt.indexOf('RM WORLD v') !== -1) {
               el.style.setProperty('font-size', '14.5px', 'important');
               el.style.setProperty('font-weight', '700', 'important');
               el.style.setProperty('color', '#cbd5e1', 'important');
-              el.style.setProperty('padding-bottom', '80px', 'important');
+              el.style.setProperty('padding-bottom', '85px', 'important');
               el.style.setProperty('display', 'block', 'important');
             } else if (txt === '›' || txt === '>') {
-              el.style.setProperty('font-size', '22px', 'important');
+              el.style.setProperty('font-size', '24px', 'important');
               el.style.setProperty('font-weight', '900', 'important');
               el.style.setProperty('color', '#38bdf8', 'important');
             } else if (txt.indexOf('SBI') !== -1 || txt.indexOf('ABCDE') !== -1 || txt.indexOf('वित्तीय स्वतंत्रता') !== -1 || txt.indexOf('स्वास्थ्य और') !== -1) {
-              el.style.setProperty('font-size', '14.5px', 'important');
+              el.style.setProperty('font-size', '15px', 'important');
               el.style.setProperty('font-weight', '800', 'important');
             }
           }
@@ -264,20 +274,41 @@
       return m;
     }
 
-    window.openProfileModal = function () {
-      if (window.RM_ProfileHub && typeof window.RM_ProfileHub.open === 'function') {
+    window.openProfileModal = function (trigEl) {
+      var opened = false;
+      try {
+        if (window.RM_ProfileHub && typeof window.RM_ProfileHub.open === 'function') {
+          window.RM_ProfileHub.open(); opened = true;
+        } else if (window.RM_PROFILE_HUB && typeof window.RM_PROFILE_HUB.open === 'function') {
+          window.RM_PROFILE_HUB.open(); opened = true;
+        } else if (typeof window.openProfileHub === 'function') {
+          window.openProfileHub(); opened = true;
+        } else if (trigEl && typeof trigEl.onclick === 'function') {
+          trigEl.onclick(); opened = true;
+        } else if (typeof window.openFullscreenModule === 'function') {
+          window.openFullscreenModule('profile'); opened = true;
+        }
+      } catch (e) {}
+
+      if (!opened && trigEl && !isDispatchingNativeClick) {
         try {
-          window.RM_ProfileHub.open();
-          setTimeout(healProfileHubTypographyAndLayout, 15);
-          setTimeout(healProfileHubTypographyAndLayout, 140);
-          return;
-        } catch (e) {}
+          isDispatchingNativeClick = true;
+          trigEl.click();
+          isDispatchingNativeClick = false;
+        } catch (e) { isDispatchingNativeClick = false; }
       }
-      var m = ensureProfileModalReady();
-      m.classList.remove('hidden');
-      m.style.setProperty('display', 'flex', 'important');
+
+      var fsView = document.getElementById('rm-fullscreen-view');
+      var fsOpen = fsView && !fsView.classList.contains('hidden') && window.getComputedStyle(fsView).display !== 'none';
+      if (!opened && !fsOpen) {
+        var m = ensureProfileModalReady();
+        m.classList.remove('hidden');
+        m.style.setProperty('display', 'flex', 'important');
+      }
       setTimeout(healProfileHubTypographyAndLayout, 15);
+      setTimeout(healProfileHubTypographyAndLayout, 140);
     };
+
     window.closeProfileModal = function () {
       var m = document.getElementById('profileModal') || document.getElementById('profileHubModal') || document.getElementById('userProfileModal');
       if (m) {
@@ -285,10 +316,14 @@
         m.style.setProperty('display', 'none', 'important');
       }
     };
-    window.toggleProfileModal = function () {
-      var m = ensureProfileModalReady();
-      var isHidden = m.classList.contains('hidden') || window.getComputedStyle(m).display === 'none';
-      if (isHidden) window.openProfileModal(); else window.closeProfileModal();
+
+    window.toggleProfileModal = function (trigEl) {
+      var m = document.getElementById('profileModal') || document.getElementById('profileHubModal') || document.getElementById('userProfileModal');
+      if (m && !m.classList.contains('hidden') && window.getComputedStyle(m).display !== 'none') {
+        window.closeProfileModal();
+      } else {
+        window.openProfileModal(trigEl);
+      }
     };
 
     function autoTagTopRightProfileIcon() {
@@ -344,6 +379,7 @@
     }, { capture: true, passive: true });
 
     function handleProfileOneTap(e) {
+      if (isDispatchingNativeClick) return;
       if (e.type === 'touchend' && touchMoved) return;
       var trig = findTopRightProfileTarget(e.target, e);
       if (!trig) return;
@@ -357,7 +393,7 @@
       if (e.type === 'touchend') lastProfileTouchTs = now;
       lastProfileActionTs = now;
       e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
-      window.toggleProfileModal();
+      window.toggleProfileModal(trig);
     }
 
     document.addEventListener('touchend', handleProfileOneTap, { capture: true, passive: false });
