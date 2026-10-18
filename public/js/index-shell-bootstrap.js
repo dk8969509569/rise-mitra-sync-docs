@@ -1,11 +1,11 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-0 Surface-A HTML Shell Bootstrapper & Sentinel Lock (v60)
+ *   - MODULE NAME    : RM Part-0 Surface-A HTML Shell Bootstrapper & Sentinel Lock (v61)
  *   - REPO TARGET    : public/js/index-shell-bootstrap.js
  *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional SIVME Loader for Surface-B)
  *   - HOST BINDING   : Surface-A (public/index.html)
- *   - SIZE BUDGET    : <= 270 Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 295 Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -20,9 +20,9 @@
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : Tailwind theme config, stale SIVME/cache purge, inline ZEL
- *                              1-Tap CSS lock, 0ms 1-Tap Macro Accordion toggle, modal
+ *                              1-Tap CSS lock, 0ms 1-Tap Macro & Card Accordion toggle, modal
  *                              fallback dispatchers, fail-safe ensureCatalogHydratedNow
- *                              sentinel, and non-blocking SW cleanup.
+ *                              anti-freeze sentinel, and non-blocking SW cleanup.
  *   - ALLOWED ON SURFACE-B   : Conditional loading of /js/sovereign-in-situ-hud.js ONLY when
  *                              ?sivme=owner or ?sov_mode=in_situ is present in URL.
  *   - FORBIDDEN IN THIS FILE : Calling window.stop() (which freezes WebView progress bar at 80%).
@@ -31,25 +31,28 @@
  *   - WRITES GLOBAL STATE : window.__RM_ACTIVE_CACHE_VER, window.tailwind.config,
  *                           window.openCatalogModal, window.closeCatalogModal,
  *                           window.toggleMenuDrawer, window.toggleAccordion,
- *                           window.ensureCatalogHydratedNow
+ *                           window.ensureCatalogHydratedNow, window.__RM_MODAL_INTERACTION_LOCK__
  *   - CALLS EXTERNAL APIs : window.lockGames18StatePermanently, window.renderCatalogItems,
  *                           window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog
  * ==============================================================================
  * 5. DOM ATTRIBUTE & SELECTOR CONTRACT (ZERO-COLLISION DOM RULE):
  *   - SURFACE-A SELECTORS : #categoryModal, #modal-catalog-count, #tier1-header-text,
- *                           #tier2-header-text, #tier1-list, #tier2-list, #rm-zel-one-tap-lock
+ *                           #tier2-header-text, #tier1-list, #tier2-list, [id^="sub-"],
+ *                           [data-cat-id], #rm-zel-one-tap-lock
  *   - SURFACE-B SELECTORS : .sivme-notch-pill, #sivme-hud, [data-sivme] (ISOLATED)
  * ==============================================================================
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
- *   - CLICK SAFETY  : Enforces touch-action: manipulation !important & 0ms 1-Tap toggle.
- *   - SCROLL SAFETY : Tracks touchmove delta (>10px) + lightweight sentinels (150ms & 600ms).
+ *   - CLICK SAFETY  : Enforces touch-action: manipulation !important & 0ms 1-Tap toggle
+ *                     with 400ms synthetic ghost-click suppression after touchend.
+ *   - SCROLL SAFETY : Tracks touchmove delta (>10px) + canary-guarded sentinels (150ms & 600ms).
  *   - LOAD SAFETY   : Allows natural 100% window.onload completion so progress bar auto-hides.
  * ==============================================================================
- * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (7 CORE SHELL BLOCKS):
+ * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (8 CORE SHELL BLOCKS):
  *   1. configureTailwindTheme               2. purgeStaleShellCacheAndSivme
  *   3. injectShellOneTapLockStyle           4. toggleMacroBarElementInstantly
- *   5. registerFallbackModalDispatchers     6. ensureCatalogHydratedNow
- *   7. initSwAndConditionalSivmeSentinel    + Capture 1-Tap Macro Accordion Listener
+ *   5. toggleCardAccordionInstantly         6. registerFallbackModalDispatchers
+ *   7. ensureCatalogHydratedNow             8. initSwAndConditionalSivmeSentinel
+ *   + Capture 1-Tap Macro & Card Accordion Listeners (touchstart, touchmove, touchend, click)
  * ==============================================================================
  * 8. ONE JOB = ONE FILE & CANONICAL PATH LOCK (ANTI-DUPLICATE FILE GUARD):
  *   - SINGLE JOB RULE : Sole owner of extracted inline scripts from `public/index.html`.
@@ -64,7 +67,7 @@
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v60'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v61'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -81,9 +84,10 @@
   if (window.__RM_LOADED_MODULES__['index-shell-bootstrap']) return;
   window.__RM_LOADED_MODULES__['index-shell-bootstrap'] = true;
 
-  var CACHE_VER = '20261018_v60';
+  var CACHE_VER = '20261018_v61';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VER;
   var lastMacroToggleTs = 0;
+  var lastTouchEndTs = 0;
   var touchStartX = 0;
   var touchStartY = 0;
   var touchMoved = false;
@@ -151,7 +155,7 @@
       'button, a, [onclick], .tactile-25d, #categoryModal [data-cat-id], #categoryModal [id^="sub-"] > div, .rm-service-chip { touch-action: manipulation !important; -webkit-tap-highlight-color: transparent !important; cursor: pointer !important; user-select: none !important; transition: none !important; }' +
       '.tactile-25d:active { transform: none !important; }' +
       '#categoryModal.hidden, #rm-fullscreen-view.hidden, #playStoreInstallBanner.hidden, #categoryModal [id^="sub-"]:not([data-rm-collapsed="false"]).hidden, #categoryModal [id^="sub-"][data-rm-collapsed="true"] { display: none !important; }' +
-      '#categoryModal [id^="sub-"][data-rm-collapsed="false"] { display: block !important; }' +
+      '#categoryModal [id^="sub-"][data-rm-collapsed="false"], #categoryModal .rm-v61-open { display: block !important; visibility: visible !important; opacity: 1 !important; height: auto !important; max-height: none !important; }' +
       '#categoryModal:not(.hidden) { position: fixed !important; inset: 0 !important; width: 100vw !important; max-width: 100vw !important; z-index: 50 !important; background-color: #0b0f19 !important; display: flex !important; justify-content: center !important; }' +
       '#categoryModal > div { width: 100% !important; max-width: 100% !important; }' +
       '#rm-fullscreen-view:not(.hidden) { position: fixed !important; inset: 0 !important; z-index: 99999 !important; display: flex !important; }';
@@ -159,12 +163,13 @@
   }
 
 
-  // 4. 0ms Instant 1-Tap Macro Accordion Toggle (Aajeevika 32 & Games 18 Bars)
+  // 4A. 0ms Instant 1-Tap Macro Accordion Toggle (Aajeevika 32 & Games 18 Bars)
   function toggleMacroBarElementInstantly(barEl, explicitListId) {
     if (!barEl) return false;
     var now = Date.now();
-    if (now - lastMacroToggleTs < 220) return true;
+    if (now - lastMacroToggleTs < 180) return true;
     lastMacroToggleTs = now;
+    window.__RM_MODAL_INTERACTION_LOCK__ = true;
 
     var listEl = explicitListId ? document.getElementById(explicitListId) : null;
     if (!listEl) listEl = barEl.nextElementSibling;
@@ -200,12 +205,74 @@
         try { window.lockGames18StatePermanently(); } catch (e) {}
       }
     }
+    setTimeout(function () { window.__RM_MODAL_INTERACTION_LOCK__ = false; }, 350);
+    return true;
+  }
+
+
+  // 4B. 0ms Instant 1-Tap Category Card Accordion Toggle ("और देखें ▼" / "समेटें ▲" & sub-c01..g50)
+  function toggleCardAccordionInstantly(subEl, pillBtn) {
+    if (!subEl) return false;
+    var now = Date.now();
+    if (now - lastMacroToggleTs < 180) return true;
+    lastMacroToggleTs = now;
+    window.__RM_MODAL_INTERACTION_LOCK__ = true;
+
+    var isClosed = subEl.classList.contains('hidden') ||
+                   subEl.getAttribute('data-rm-collapsed') === 'true' ||
+                   window.getComputedStyle(subEl).display === 'none';
+
+    if (isClosed) {
+      subEl.classList.remove('hidden');
+      subEl.classList.add('rm-v61-open');
+      subEl.setAttribute('data-rm-collapsed', 'false');
+      subEl.style.setProperty('display', 'block', 'important');
+    } else {
+      subEl.classList.remove('rm-v61-open');
+      subEl.classList.add('hidden');
+      subEl.setAttribute('data-rm-collapsed', 'true');
+      subEl.style.setProperty('display', 'none', 'important');
+    }
+
+    var btn = pillBtn;
+    if (!btn) {
+      var parentCard = subEl.closest('[data-cat-id]') || subEl.previousElementSibling || subEl.parentElement;
+      if (parentCard) {
+        var btns = parentCard.querySelectorAll('button, [data-accordion-btn]');
+        for (var i = 0; i < btns.length; i++) {
+          var t = (btns[i].textContent || '').trim();
+          if (t.indexOf('और देखें') !== -1 || t.indexOf('समेटें') !== -1 || t.indexOf('▼') !== -1 || t.indexOf('▲') !== -1) {
+            btn = btns[i];
+            break;
+          }
+        }
+      }
+    }
+    if (btn) {
+      btn.setAttribute('aria-expanded', isClosed ? 'true' : 'false');
+      var bTxt = (btn.textContent || '').trim();
+      if (bTxt.indexOf('और देखें') !== -1 || bTxt.indexOf('समेटें') !== -1) {
+        btn.textContent = isClosed ? 'समेटें ▲' : 'और देखें ▼';
+      } else if (bTxt.indexOf('▼') !== -1 || bTxt.indexOf('▲') !== -1) {
+        btn.textContent = isClosed ? bTxt.replace('▼', '▲') : bTxt.replace('▲', '▼');
+      }
+    }
+
+    setTimeout(function () { window.__RM_MODAL_INTERACTION_LOCK__ = false; }, 350);
     return true;
   }
 
   window.toggleAccordion = function (listId, btnEl) {
-    var bar = btnEl || document.getElementById(listId === 'tier1-list' ? 'rm-tier1-toggle' : 'rm-tier2-toggle');
-    toggleMacroBarElementInstantly(bar, listId);
+    if (!listId) return;
+    if (listId === 'tier1-list' || listId === 'tier2-list') {
+      var bar = btnEl || document.getElementById(listId === 'tier1-list' ? 'rm-tier1-toggle' : 'rm-tier2-toggle');
+      toggleMacroBarElementInstantly(bar, listId);
+      return;
+    }
+    var subPanel = document.getElementById('sub-' + listId) || document.getElementById(listId);
+    if (subPanel) {
+      toggleCardAccordionInstantly(subPanel, btnEl || null);
+    }
   };
 
 
@@ -238,8 +305,9 @@
   }
 
 
-  // 6. Fail-Safe Catalog Hydration Sentinel & 18-Games Header Lock
+  // 6. Fail-Safe Catalog Hydration Sentinel & Anti-Freeze 18-Games Header Lock
   function ensureCatalogHydratedNow() {
+    if (window.__RM_MODAL_INTERACTION_LOCK__) return;
     var t1 = document.getElementById('tier1-list');
     var t2 = document.getElementById('tier2-list');
     if (!t1 || !t2) return;
@@ -247,27 +315,43 @@
     var stuck1 = t1.innerHTML.indexOf('लोड हो रहा है') !== -1 || t1.children.length <= 1;
     var stuck2 = t2.innerHTML.indexOf('लोड हो रहे हैं') !== -1 || t2.children.length <= 1;
 
-    if ((stuck1 || stuck2) && typeof window.renderCatalogItems === 'function') {
-      try { window.renderCatalogItems(); } catch (e) {}
-    }
-    if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
-      try { window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog(); } catch (e) {}
-    }
-    if (typeof window.lockGames18StatePermanently === 'function') {
-      try { window.lockGames18StatePermanently(); } catch (e) {}
+    if (stuck1 || stuck2) {
+      if (typeof window.renderCatalogItems === 'function') {
+        try { window.renderCatalogItems(); } catch (e) {}
+      }
+      if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
+        try { window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog(); } catch (e) {}
+      }
+      if (typeof window.lockGames18StatePermanently === 'function') {
+        try { window.lockGames18StatePermanently(); } catch (e) {}
+      }
+    } else if (!t1.getAttribute('data-rm-v61-swept')) {
+      t1.setAttribute('data-rm-v61-swept', 'true');
+      if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
+        try { window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog(); } catch (e) {}
+      }
+      if (typeof window.lockGames18StatePermanently === 'function') {
+        try { window.lockGames18StatePermanently(); } catch (e) {}
+      }
     }
 
     var countEl = document.getElementById('modal-catalog-count');
-    if (countEl) countEl.textContent = '32 Categories • 18 Games Active';
+    if (countEl && countEl.textContent !== '32 Categories • 18 Games Active') {
+      countEl.textContent = '32 Categories • 18 Games Active';
+    }
     var t1Hdr = document.getElementById('tier1-header-text');
-    if (t1Hdr) t1Hdr.textContent = '💼 आजीविका (32 श्रेणियां उपलब्ध)';
+    if (t1Hdr && t1Hdr.textContent !== '💼 आजीविका (32 श्रेणियां उपलब्ध)') {
+      t1Hdr.textContent = '💼 आजीविका (32 श्रेणियां उपलब्ध)';
+    }
     var t2Hdr = document.getElementById('tier2-header-text');
-    if (t2Hdr) t2Hdr.textContent = '🎮 खेल व मनोरंजन (18 श्रेणियां उपलब्ध)';
+    if (t2Hdr && t2Hdr.textContent !== '🎮 खेल व मनोरंजन (18 श्रेणियां उपलब्ध)') {
+      t2Hdr.textContent = '🎮 खेल व मनोरंजन (18 श्रेणियां उपलब्ध)';
+    }
   }
   window.ensureCatalogHydratedNow = ensureCatalogHydratedNow;
 
 
-  // 7. Capture-Phase 1-Tap Macro Listener + Conditional Surface-B SIVME Loader
+  // 7. Capture-Phase 1-Tap Macro & Card Accordion Listener + Conditional Surface-B SIVME Loader
   function findMacroBarTarget(target, modal) {
     var cur = target;
     while (cur && cur !== modal && cur !== document.body) {
@@ -282,6 +366,45 @@
         return cur;
       }
       cur = cur.parentElement;
+    }
+    return null;
+  }
+
+  function findCardAccordionTarget(target, modal) {
+    if (!target || !target.closest) return null;
+    if (target.closest('.sivme-notch-pill, #sivme-hud, [data-sivme], #rm-master-insitu-dock')) return null;
+    if (target.closest('[id^="sub-"]')) return null;
+
+    var btn = target.closest('button, a, [onclick*="toggleAccordion"], [data-accordion-btn]');
+    var card = target.closest('[data-cat-id]');
+    if (!card && !btn) return null;
+
+    if (btn) {
+      var bTxt = (btn.textContent || '').trim();
+      var oc = btn.getAttribute('onclick') || '';
+      if (bTxt === '✕' || oc.indexOf('closeCatalogModal') !== -1 || oc.indexOf('toggleMenuDrawer(false)') !== -1) {
+        return { type: 'CLOSE_MODAL' };
+      }
+      var isAccPill = bTxt.indexOf('और देखें') !== -1 ||
+                      bTxt.indexOf('समेटें') !== -1 ||
+                      bTxt.indexOf('सेवाएं') !== -1 ||
+                      oc.indexOf('toggleAccordion') !== -1;
+      if (!isAccPill && !card) return null;
+    }
+
+    if (card) {
+      var catId = card.getAttribute('data-cat-id') || '';
+      var cleanNum = catId.replace(/[^0-9]/g, '');
+      var subEl = document.getElementById('sub-' + catId) ||
+                  document.getElementById('sub-c' + cleanNum) ||
+                  document.getElementById('sub-g' + cleanNum) ||
+                  card.querySelector('[id^="sub-"], [data-rm-collapsed]');
+      if (!subEl && card.nextElementSibling && (card.nextElementSibling.id || '').indexOf('sub-') === 0) {
+        subEl = card.nextElementSibling;
+      }
+      if (subEl) {
+        return { type: 'CARD_ACCORDION', subEl: subEl, btn: btn || null };
+      }
     }
     return null;
   }
@@ -306,12 +429,38 @@
     if (e.type === 'touchend' && touchMoved) return;
     var modal = document.getElementById('categoryModal');
     if (!modal || modal.classList.contains('hidden') || !modal.contains(e.target)) return;
+
+    var now = Date.now();
+    if (e.type === 'click' && now - lastTouchEndTs < 400) {
+      if (findMacroBarTarget(e.target, modal) || findCardAccordionTarget(e.target, modal)) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+      }
+      return;
+    }
+
     var macroBar = findMacroBarTarget(e.target, modal);
     if (macroBar) {
+      if (e.type === 'touchend') lastTouchEndTs = now;
       e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation();
       toggleMacroBarElementInstantly(macroBar, null);
+      return;
+    }
+
+    var cardTarget = findCardAccordionTarget(e.target, modal);
+    if (cardTarget) {
+      if (e.type === 'touchend') lastTouchEndTs = now;
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      if (cardTarget.type === 'CLOSE_MODAL') {
+        if (typeof window.closeCatalogModal === 'function') window.closeCatalogModal();
+      } else if (cardTarget.type === 'CARD_ACCORDION') {
+        toggleCardAccordionInstantly(cardTarget.subEl, cardTarget.btn);
+      }
     }
   }
   document.addEventListener('touchend', handleMacroTapEvent, { capture: true, passive: false });
