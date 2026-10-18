@@ -1,17 +1,17 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-0B Top-Right Profile 1-Tap & Large-Font Healer (v70)
+ *   - MODULE NAME    : RM Part-0B Top-Right Profile 1-Tap & Large-Font Healer (v71)
  *   - REPO TARGET    : public/js/one-tap-profile-hub-healer.js
  *   - SURFACE TARGET : SURFACE-A ONLY (Public Member Profile & Sovereign Hub UI)
  *   - HOST BINDING   : Surface-A (Auto-loaded by public/js/index-shell-bootstrap.js)
- *   - SIZE BUDGET    : <= 290 Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 295 Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
  * ==============================================================================
  * 2. EXISTING MODULAR FILES LOCK (ZERO DUPLICATE IMPLEMENTATION):
- *   - public/js/one-tap-profile-hub-healer.js (Part-0B: Top-Right Profile 1-Tap & Large-Font Healer ONLY)
+ *   - public/js/one-tap-profile-hub-healer.js (Part-0B: Top-Right Profile 1-Tap & Anti-Clipping Large-Font Healer)
  *   - public/js/index-shell-bootstrap.js (Part-0A: Core Shell Boot, Anti-Freeze & Macro Bars ONLY)
  *   - public/js/one-tap-accordion-engine.js (Part-1C: 50 Category Cards & Sub-Card Accordion)
  *   - public/js/profile-hub-engine.js (Profile Hub Data/View Engine — Bridged on 1-Tap)
@@ -19,7 +19,7 @@
  * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : Top-Right Profile icon (👤) 0ms 1-Tap detection, self-healing
  *                              #profileModal fallback, Profile & Sovereign Hub large-font
- *                              (18px-24px) typography upgrade, compact 12px Log Out, duplicate header hide.
+ *                              (16px-21px) anti-clipping upgrade, compact 12px Log Out, duplicate header hide.
  *   - ALLOWED ON SURFACE-B   : NONE (Surface-B Owner Console is strictly isolated).
  *   - FORBIDDEN IN THIS FILE : Duplicating Part-0A Macro Bar or Part-1C Category Card logic.
  * ==============================================================================
@@ -38,7 +38,7 @@
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
  *   - CLICK SAFETY  : 0ms 1-Tap touchend + click with 450ms synthetic ghost-click suppression.
  *   - SCROLL SAFETY : Tracks touchmove delta (>10px) so scrolling never triggers profile open.
- *   - SVG SAFETY    : Enforces pointer-events: none on inner SVG paths inside profile button.
+ *   - ANTI-CLIPPING : Forces height:auto, max-height:none & overflow:visible so fonts never cut or revert.
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (8 PROFILE BLOCK FUNCTIONS):
  *   1. injectProfileHubLargeFontStyles       2. healProfileHubTypographyAndLayout
@@ -51,7 +51,7 @@
  *   - CANONICAL PATH  : Must exist ONLY at `public/js/one-tap-profile-hub-healer.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
- *   - ZERO DOHRAO     : Extracted cleanly from index-shell-bootstrap.js to keep both <= 290 lines.
+ *   - ZERO DOHRAO     : Extracted cleanly from index-shell-bootstrap.js to keep both <= 295 lines.
  *   - IDEMPOTENT BOOT : Guarded by `window.__RM_LOADED_MODULES__['one-tap-profile-hub-healer']`.
  * ==============================================================================
  * 10. FAIL-SAFE ERROR BOUNDARY, ZERO-STUB & 2-LINE SECTION GAP STANDARD:
@@ -59,7 +59,7 @@
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v70'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v71'`.
  *   - PIPELINE GATE   : Commit & verify on `pre-main` before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -84,7 +84,7 @@
   var isDispatchingNativeClick = false;
 
 
-  // 1. Inject Large Readable Font & Layout CSS for Profile & Sovereign Hub (Log Out Small 12px)
+  // 1. Inject Anti-Clipping Large Readable Font & Layout CSS (Zero Font Cutting | Log Out Small 12px)
   function injectProfileHubLargeFontStyles() {
     var existing = document.getElementById('rm-profile-hub-large-font-lock');
     var s = existing || document.createElement('style');
@@ -93,20 +93,23 @@
       '#rm-top-profile-btn, [data-rm-profile-trigger="1"] { touch-action: manipulation !important; cursor: pointer !important; transform: none !important; }' +
       '#rm-top-profile-btn *, [data-rm-profile-trigger="1"] * { pointer-events: none !important; }' +
       '#profileModal:not(.hidden) { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99998 !important; background-color: rgba(2, 6, 23, 0.88) !important; display: flex !important; align-items: center !important; justify-content: center !important; padding: 12px !important; }' +
-      '.rm-prof-upgraded-root { padding-bottom: 120px !important; }' +
-      '.rm-prof-upgraded-root .text-xs:not(.rm-prof-logout-btn), .rm-prof-upgraded-root [class*="text-[10px]"]:not(.rm-prof-logout-btn), .rm-prof-upgraded-root [class*="text-[11px]"]:not(.rm-prof-logout-btn), .rm-prof-upgraded-root [class*="text-[12px]"]:not(.rm-prof-logout-btn) { font-size: 16px !important; line-height: 1.48 !important; font-weight: 700 !important; color: #e2e8f0 !important; }' +
-      '.rm-prof-upgraded-root .text-sm:not(.rm-prof-logout-btn), .rm-prof-upgraded-root [class*="text-[13px]"]:not(.rm-prof-logout-btn), .rm-prof-upgraded-root [class*="text-[14px]"]:not(.rm-prof-logout-btn) { font-size: 19px !important; line-height: 1.38 !important; font-weight: 800 !important; color: #ffffff !important; }' +
-      '.rm-prof-row-title { font-size: 19.5px !important; font-weight: 800 !important; line-height: 1.35 !important; color: #ffffff !important; }' +
-      '.rm-prof-row-sub { font-size: 16px !important; font-weight: 700 !important; line-height: 1.45 !important; color: #e2e8f0 !important; margin-top: 4px !important; }' +
-      '.rm-prof-sec-hdr { font-size: 16px !important; font-weight: 900 !important; letter-spacing: 0.4px !important; line-height: 1.4 !important; color: #38bdf8 !important; }' +
-      '.rm-prof-grid-title { font-size: 18.5px !important; font-weight: 800 !important; line-height: 1.3 !important; color: #ffffff !important; }' +
-      '.rm-prof-grid-sub { font-size: 15.5px !important; font-weight: 700 !important; line-height: 1.4 !important; margin-top: 4px !important; }' +
+      '.rm-prof-upgraded-root { padding-bottom: 125px !important; }' +
+      '.rm-prof-upgraded-root div, .rm-prof-upgraded-root span, .rm-prof-upgraded-root p, .rm-prof-upgraded-root button, .rm-prof-upgraded-root a, .rm-prof-upgraded-root h1, .rm-prof-upgraded-root h2, .rm-prof-upgraded-root h3, .rm-prof-upgraded-root h4 { height: auto !important; max-height: none !important; overflow: visible !important; text-overflow: clip !important; }' +
+      '.rm-prof-upgraded-root .truncate { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }' +
+      '.rm-prof-upgraded-root .text-xs:not(.rm-prof-logout-btn), .rm-prof-upgraded-root [class*="text-[10px]"]:not(.rm-prof-logout-btn), .rm-prof-upgraded-root [class*="text-[11px]"]:not(.rm-prof-logout-btn), .rm-prof-upgraded-root [class*="text-[12px]"]:not(.rm-prof-logout-btn) { font-size: 15px !important; line-height: 1.48 !important; font-weight: 700 !important; color: #e2e8f0 !important; }' +
+      '.rm-prof-upgraded-root .text-sm:not(.rm-prof-logout-btn), .rm-prof-upgraded-root [class*="text-[13px]"]:not(.rm-prof-logout-btn), .rm-prof-upgraded-root [class*="text-[14px]"]:not(.rm-prof-logout-btn) { font-size: 18px !important; line-height: 1.42 !important; font-weight: 800 !important; color: #ffffff !important; }' +
+      '.rm-prof-row-title { font-size: 18.5px !important; font-weight: 800 !important; line-height: 1.4 !important; color: #ffffff !important; white-space: normal !important; }' +
+      '.rm-prof-row-sub { font-size: 15.5px !important; font-weight: 700 !important; line-height: 1.48 !important; color: #e2e8f0 !important; margin-top: 4px !important; white-space: normal !important; }' +
+      '.rm-prof-sec-hdr { font-size: 15.5px !important; font-weight: 900 !important; letter-spacing: 0.3px !important; line-height: 1.45 !important; color: #38bdf8 !important; }' +
+      '.rm-prof-grid-card { height: auto !important; min-height: 88px !important; max-height: none !important; padding: 12px !important; overflow: visible !important; align-items: flex-start !important; }' +
+      '.rm-prof-grid-title { font-size: 16.5px !important; font-weight: 800 !important; line-height: 1.35 !important; color: #ffffff !important; white-space: normal !important; }' +
+      '.rm-prof-grid-sub { font-size: 14px !important; font-weight: 700 !important; line-height: 1.42 !important; margin-top: 4px !important; white-space: normal !important; display: block !important; }' +
       '.rm-prof-logout-btn { font-size: 12px !important; font-weight: 700 !important; line-height: 1.2 !important; min-height: 32px !important; max-width: 140px !important; padding: 6px 16px !important; margin: 14px auto 22px auto !important; display: block !important; border-radius: 10px !important; }';
     if (!existing) (document.head || document.documentElement).appendChild(s);
   }
 
 
-  // 2. Profile & Sovereign Hub Large-Font & Layout Healer
+  // 2. Profile & Sovereign Hub Anti-Clipping Large-Font & Layout Healer
   function healProfileHubTypographyAndLayout() {
     try {
       var roots = [
@@ -123,11 +126,13 @@
 
         root.classList.add('rm-prof-upgraded-root');
         var fsTitle = document.getElementById('fs-module-title');
-        if (fsTitle && (fsTitle.textContent || '').indexOf('Profile') !== -1) {
+        if (fsTitle && ((fsTitle.textContent || '').indexOf('Profile') !== -1 || (fsTitle.textContent || '').indexOf('प्रोफ़ाइल') !== -1)) {
           fsTitle.textContent = '👤 प्रोफ़ाइल व सॉवरेन हब';
-          fsTitle.style.setProperty('font-size', '18.5px', 'important');
-          fsTitle.style.setProperty('font-weight', '900', 'important');
+          fsTitle.style.setProperty('font-size', '15.5px', 'important');
+          fsTitle.style.setProperty('font-weight', '800', 'important');
           fsTitle.style.setProperty('white-space', 'nowrap', 'important');
+          fsTitle.style.setProperty('overflow', 'visible', 'important');
+          fsTitle.style.setProperty('text-overflow', 'clip', 'important');
         }
 
         var allNodes = root.querySelectorAll('div, span, p, h1, h2, h3, h4, button, a');
@@ -148,19 +153,22 @@
 
           if (el.children.length === 0) {
             if (txt === 'Diwakar Kumar' || txt === 'Rise Mitra Partner') {
-              el.style.setProperty('font-size', '24px', 'important');
+              el.classList.remove('truncate');
+              el.style.setProperty('font-size', '20px', 'important');
               el.style.setProperty('font-weight', '900', 'important');
               el.style.setProperty('color', '#ffffff', 'important');
+              el.style.setProperty('white-space', 'normal', 'important');
+              el.style.setProperty('overflow', 'visible', 'important');
             } else if (txt.indexOf('USR-') !== -1 || txt === 'Client ID') {
-              el.style.setProperty('font-size', '16px', 'important');
+              el.style.setProperty('font-size', '15px', 'important');
               el.style.setProperty('font-weight', '800', 'important');
               el.style.setProperty('white-space', 'nowrap', 'important');
             } else if (txt.indexOf('Sovereign Crown Partner') !== -1) {
-              el.style.setProperty('font-size', '15.5px', 'important');
+              el.style.setProperty('font-size', '14.5px', 'important');
               el.style.setProperty('font-weight', '800', 'important');
-              el.style.setProperty('line-height', '1.35', 'important');
+              el.style.setProperty('line-height', '1.4', 'important');
             } else if (txt === 'फ़ोटो बदलें' || txt === 'हटाएं' || txt === 'सत्यापित' || txt.indexOf('जुड़ें') !== -1) {
-              el.style.setProperty('font-size', '15.5px', 'important');
+              el.style.setProperty('font-size', '14.5px', 'important');
               el.style.setProperty('font-weight', '800', 'important');
               el.style.setProperty('white-space', 'nowrap', 'important');
             } else if (txt.indexOf('SOVEREIGN PARTNERSHIP') !== -1 || txt.indexOf('MANAGE ACCOUNT') !== -1 ||
@@ -168,17 +176,17 @@
                        txt.indexOf('OFFICIAL CHANNELS') !== -1) {
               el.classList.add('rm-prof-sec-hdr');
             } else if (txt.indexOf('RM WORLD v') !== -1) {
-              el.style.setProperty('font-size', '14.5px', 'important');
+              el.style.setProperty('font-size', '14px', 'important');
               el.style.setProperty('font-weight', '700', 'important');
               el.style.setProperty('color', '#cbd5e1', 'important');
               el.style.setProperty('padding-bottom', '85px', 'important');
               el.style.setProperty('display', 'block', 'important');
             } else if (txt === '›' || txt === '>') {
-              el.style.setProperty('font-size', '24px', 'important');
+              el.style.setProperty('font-size', '22px', 'important');
               el.style.setProperty('font-weight', '900', 'important');
               el.style.setProperty('color', '#38bdf8', 'important');
             } else if (txt.indexOf('SBI') !== -1 || txt.indexOf('ABCDE') !== -1 || txt.indexOf('वित्तीय स्वतंत्रता') !== -1 || txt.indexOf('स्वास्थ्य और') !== -1) {
-              el.style.setProperty('font-size', '15px', 'important');
+              el.style.setProperty('font-size', '14px', 'important');
               el.style.setProperty('font-weight', '800', 'important');
             }
           }
@@ -192,12 +200,14 @@
               if (t0 === 'Personal Details' || t0 === 'Partner Network' || t0 === 'Sovereign Vault' || t0 === 'Reports') {
                 c0.classList.add('rm-prof-grid-title');
                 c1.classList.add('rm-prof-grid-sub');
+                if (el.parentElement) el.parentElement.classList.add('rm-prof-grid-card');
               } else {
                 c0.classList.add('rm-prof-row-title');
                 c1.classList.add('rm-prof-row-sub');
                 if (el.parentElement) {
-                  el.parentElement.style.setProperty('padding-top', '15px', 'important');
-                  el.parentElement.style.setProperty('padding-bottom', '15px', 'important');
+                  el.parentElement.style.setProperty('padding-top', '14px', 'important');
+                  el.parentElement.style.setProperty('padding-bottom', '14px', 'important');
+                  el.parentElement.style.setProperty('height', 'auto', 'important');
                 }
               }
             }
@@ -205,7 +215,10 @@
 
           if (txt === 'Profile & Sovereign Hub' && el.tagName !== 'TITLE' && el.id !== 'fs-module-title') {
             var dupRow = el.parentElement;
-            if (dupRow && (dupRow.textContent || '').indexOf('←') !== -1) {
+            var outerRow = dupRow && dupRow.parentElement ? dupRow.parentElement : dupRow;
+            if (outerRow && (outerRow.textContent || '').indexOf('←') !== -1 && (outerRow.textContent || '').length < 65) {
+              outerRow.style.setProperty('display', 'none', 'important');
+            } else if (dupRow && (dupRow.textContent || '').indexOf('←') !== -1) {
               dupRow.style.setProperty('display', 'none', 'important');
             }
           }
@@ -305,8 +318,9 @@
         m.classList.remove('hidden');
         m.style.setProperty('display', 'flex', 'important');
       }
-      setTimeout(healProfileHubTypographyAndLayout, 15);
-      setTimeout(healProfileHubTypographyAndLayout, 140);
+      healProfileHubTypographyAndLayout();
+      setTimeout(healProfileHubTypographyAndLayout, 30);
+      setTimeout(healProfileHubTypographyAndLayout, 160);
     };
 
     window.closeProfileModal = function () {
@@ -399,8 +413,8 @@
     document.addEventListener('touchend', handleProfileOneTap, { capture: true, passive: false });
     document.addEventListener('click', handleProfileOneTap, { capture: true, passive: false });
     document.addEventListener('click', function () {
-      setTimeout(healProfileHubTypographyAndLayout, 25);
-      setTimeout(healProfileHubTypographyAndLayout, 180);
+      setTimeout(healProfileHubTypographyAndLayout, 20);
+      setTimeout(healProfileHubTypographyAndLayout, 150);
     }, true);
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', autoTagTopRightProfileIcon);
     else autoTagTopRightProfileIcon();
