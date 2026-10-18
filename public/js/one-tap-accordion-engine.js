@@ -1,11 +1,11 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-1C Capture-Phase 1-Tap Accordion & Subcard Engine (v65)
+ *   - MODULE NAME    : RM Part-1C Capture-Phase 1-Tap Accordion & Subcard Engine (v68)
  *   - REPO TARGET    : public/js/one-tap-accordion-engine.js
  *   - SURFACE TARGET : SURFACE-A ONLY (Universal Catalog 01-50 Accordion Controller)
  *   - HOST BINDING   : Surface-A (public/index.html)
- *   - SIZE BUDGET    : <= 285 Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 290 Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -16,21 +16,23 @@
  *   - public/js/one-tap-catalog-hydrator.js (Part-1A: 0ms Home Healer, CSS Lock & Dispatchers)
  *   - public/js/one-tap-home-css-healer.js (Part-1D: 0ms Home Verticals Healer & CSS Lock)
  *   - public/js/one-tap-catalog-dom-engine.js (Part-1B: Canonical 50-Category DOM Engine)
- *   - public/js/fullscreen-microapp-controller.js (Fullscreen Micro-App Viewport Controller)
+ *   - public/js/fullscreen-microapp-controller.js (Part-3A: Fullscreen Micro-App Controller)
+ *   - public/js/one-tap-subcard-router.js (Part-3B: Sub-Card 1-Tap Router & 4-Chip Extractor)
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : Capture-phase 0ms touchend + click 1-Tap dropdown toggle for
  *                              Categories 01-50, all-pill "और देखें ▼ ⇄ समेटें ▲" sync,
  *                              raw [02-1] badge cleanup, and 3-subcard fallback.
  *   - ALLOWED ON SURFACE-B   : NONE (Surface-B SIVME controls are strictly isolated).
- *   - FORBIDDEN IN THIS FILE : Duplicating Home 12-Verticals healer or mutating outer <div> bars.
+ *   - FORBIDDEN IN THIS FILE : Calling slow getComputedStyle inside touch handlers or
+ *                              duplicating Home 12-Verticals healer.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.RM_ACCORDION_ENGINE, window.toggleCategoryAccordion1Tap,
  *                           window.toggleAccordion, window.__RM_OPEN_CAT_STATE,
  *                           window.__RM_MODAL_INTERACTION_LOCK__
  *   - CALLS EXTERNAL APIs : window.RM_CATALOG_DOM_ENGINE.*, window.healHomeVerticalsInstantly,
- *                           window.toggleMacroBarElementInstantly
+ *                           window.toggleMacroBarElementInstantly, window.RM_SUB_CARD_RENDERER.*
  * ==============================================================================
  * 5. DOM ATTRIBUTE & SELECTOR CONTRACT (ZERO-COLLISION DOM RULE):
  *   - SURFACE-A SELECTORS : #categoryModal, [data-cat-id], [id^="sub-"], .rm-toplevel-num-badge,
@@ -38,8 +40,8 @@
  *   - SURFACE-B SELECTORS : .sivme-notch-pill, #sivme-hud, [data-sivme] (EXCLUDED)
  * ==============================================================================
  * 6. ANTI-FREEZE, EVENT LISTENER & TIMER OWNERSHIP LOCK:
- *   - CLICK SAFETY  : Capture-phase 0ms touchend + 450ms synthetic ghost-click guard and
- *                     380ms per-card lock prevents 1-1=0 double-toggle race conditions.
+ *   - CLICK SAFETY  : Capture-phase 0ms touchend + 420ms synthetic ghost-click guard and
+ *                     zero-reflow DOM state check for instant 1-tap open/close.
  *   - SCROLL SAFETY : Tracks touchmove (>10px) so scrolling never triggers accordion taps.
  *   - DOM SAFETY    : Sets window.__RM_MODAL_INTERACTION_LOCK__ during toggle to prevent freeze.
  * ==============================================================================
@@ -64,7 +66,7 @@
  *   - MOBILE EDITING  : 2-line blank spacing preserved between major functional blocks.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v65'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v68'`.
  *   - PIPELINE GATE   : Verified on `pre-main` before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -122,7 +124,18 @@
 
   function ensureSubCardsPopulated(catEl, subContainer, intNum, paddedNum) {
     if (!subContainer) return;
+    if (subContainer.getAttribute('data-rm-badges-cleaned') === '1' && subContainer.children.length > 0) {
+      return;
+    }
     if (subContainer.children.length > 0) {
+      if (window.RM_SUB_CARD_RENDERER && typeof window.RM_SUB_CARD_RENDERER.renderSubCard === 'function') {
+        for (var c = 0; c < subContainer.children.length; c++) {
+          var ch = subContainer.children[c];
+          if (!ch.getAttribute('data-rm-sub-rendered')) {
+            try { window.RM_SUB_CARD_RENDERER.renderSubCard(ch, intNum, c + 1, paddedNum + '-' + (c + 1)); } catch (e) {}
+          }
+        }
+      }
       var badges = subContainer.querySelectorAll('span, div');
       for (var b = 0; b < badges.length; b++) {
         var el = badges[b];
@@ -135,6 +148,7 @@
           }
         }
       }
+      subContainer.setAttribute('data-rm-badges-cleaned', '1');
       return;
     }
     var enTitleEl = catEl ? catEl.querySelector('h3, h4, .text-white.font-bold, .text-slate-100.font-black, .text-xl') : null;
@@ -163,11 +177,11 @@
         '</div>' +
       '</div>';
     }).join('');
+    subContainer.setAttribute('data-rm-badges-cleaned', '1');
   }
 
   function updateAccordionPillUI(catEl, isOpen) {
     if (!catEl) return;
-    /* Updates ALL matching pills in the card (no premature break; never styles wrapper <div> bars) */
     var candidates = catEl.querySelectorAll('.rm-parent-toggle-pill, [data-accordion-btn], button, span');
     for (var i = 0; i < candidates.length; i++) {
       var el = candidates[i];
@@ -175,7 +189,9 @@
       if (el.tagName === 'DIV' && !el.classList.contains('rm-parent-toggle-pill')) continue;
       if (el.children.length === 0) {
         var txt = (el.textContent || '').trim();
-        if (txt.indexOf('और देखें') !== -1 || txt.indexOf('समेटें') !== -1 || txt.indexOf('सेवाएं') !== -1) {
+        if (txt === '▼' || txt === '▲') {
+          el.textContent = isOpen ? '▲' : '▼';
+        } else if (txt.indexOf('और देखें') !== -1 || txt.indexOf('समेटें') !== -1 || txt.indexOf('सेवाएं') !== -1) {
           el.textContent = isOpen ? 'समेटें ▲' : 'और देखें ▼';
           var pill = el.tagName === 'BUTTON' ? el : (el.parentElement && el.parentElement.tagName === 'BUTTON' ? el.parentElement : (el.classList.contains('rm-parent-toggle-pill') ? el : null));
           if (pill) {
@@ -221,7 +237,7 @@
       catEl.appendChild(subContainer);
     }
     if (!subContainer) {
-      if (isUserTap) setTimeout(function () { window.__RM_MODAL_INTERACTION_LOCK__ = false; }, 420);
+      if (isUserTap) setTimeout(function () { window.__RM_MODAL_INTERACTION_LOCK__ = false; }, 220);
       return false;
     }
     if (isOpen) {
@@ -234,13 +250,23 @@
     updateAccordionPillUI(catEl, isOpen);
 
     if (isUserTap) {
-      setTimeout(function () { window.__RM_MODAL_INTERACTION_LOCK__ = false; }, 420);
+      setTimeout(function () { window.__RM_MODAL_INTERACTION_LOCK__ = false; }, 220);
     }
     return true;
   }
 
   function syncAndHydrateCatalogCards() {
     if (window.__RM_MODAL_INTERACTION_LOCK__) return;
+    var modal = document.getElementById('categoryModal');
+    if (modal) {
+      var hdrNodes = modal.querySelectorAll('p, span, div');
+      for (var h = 0; h < Math.min(hdrNodes.length, 25); h++) {
+        if (hdrNodes[h].children.length === 0 && (hdrNodes[h].textContent || '').indexOf('Games Active') !== -1) {
+          hdrNodes[h].textContent = '32 Categories • 18 Games Active';
+          break;
+        }
+      }
+    }
     if (typeof window.healHomeVerticalsInstantly === 'function') {
       window.healHomeVerticalsInstantly();
     }
@@ -260,7 +286,7 @@
     while (cur && cur !== modal && cur !== document.body) {
       if (cur.tagName === 'DIV') {
         var txt = (cur.textContent || '');
-        if (txt.indexOf('और देखें') !== -1 || txt.indexOf('समेटें') !== -1) {
+        if (txt.indexOf('और देखें') !== -1 || txt.indexOf('समेटें') !== -1 || txt.indexOf('गेम्स') !== -1 || txt.indexOf('सेवाएं') !== -1) {
           var badges = cur.querySelectorAll('.rm-toplevel-num-badge, span, div');
           var numFound = '';
           var badgeCount = 0;
@@ -292,20 +318,19 @@
     var modal = document.getElementById('categoryModal');
     if (!modal || modal.classList.contains('hidden') || !modal.contains(e.target)) return;
     var target = e.target;
-    if (target.closest('[onclick*="closeCatalogModal"], [onclick*="toggleMenuDrawer"], [id^="sub-"]')) return;
+    if (target.closest('[onclick*="closeCatalogModal"], [onclick*="toggleMenuDrawer"], #rm-tier1-toggle, #rm-tier2-toggle, [id^="sub-"]')) return;
 
     var catEl = findCategoryCardElement(target, modal);
     if (!catEl) return;
 
     var now = Date.now();
-    /* Block synthetic ghost-click within 450ms after touchend so 1-tap NEVER double-toggles */
-    if (e.type === 'click' && now - lastTouchEndTapTs < 450) {
+    if (e.type === 'click' && now - lastTouchEndTapTs < 420) {
       if (e.cancelable) e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation();
       return;
     }
-    if (now - lastAccordionTapTs < 260) {
+    if (now - lastAccordionTapTs < 120) {
       if (e.cancelable) e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation();
@@ -333,10 +358,12 @@
     var intNum = parseInt(cleanNum, 10);
     var paddedNum = (intNum < 10 ? '0' : '') + intNum;
     var subContainer = resolveCategorySubContainer(catEl, rawId, cleanNum);
-    var isCurrentlyOpen = Boolean(subContainer && (subContainer.classList.contains('rm-acc-open') ||
-                          (window.getComputedStyle(subContainer).display !== 'none' &&
-                           subContainer.getAttribute('data-rm-collapsed') !== 'true' &&
-                           !subContainer.classList.contains('hidden'))));
+    var isCurrentlyOpen = Boolean(
+      subContainer &&
+      !subContainer.classList.contains('hidden') &&
+      subContainer.style.display !== 'none' &&
+      subContainer.getAttribute('data-rm-collapsed') !== 'true'
+    );
     applyCategoryOpenState(catEl, rawId || ('c' + paddedNum), String(intNum), !isCurrentlyOpen, true);
   }
 
@@ -381,7 +408,7 @@
     var paddedNum = (intNum < 10 ? '0' : '') + intNum;
     var sub = document.getElementById('sub-' + listId) || document.getElementById(listId);
     var card = (sub && sub.closest('[data-cat-id]')) || (btnEl && btnEl.closest('[data-cat-id]'));
-    var isOpen = Boolean(sub && !sub.classList.contains('hidden') && sub.getAttribute('data-rm-collapsed') !== 'true');
+    var isOpen = Boolean(sub && !sub.classList.contains('hidden') && sub.style.display !== 'none' && sub.getAttribute('data-rm-collapsed') !== 'true');
     applyCategoryOpenState(card, (intNum >= 33 ? 'g' : 'c') + paddedNum, String(intNum), !isOpen, true);
   };
 
