@@ -1,11 +1,11 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-0B Top-Right Profile 1-Tap & Large-Font Healer (v75)
+ *   - MODULE NAME    : RM Part-0B Top-Right Profile 1-Tap & Large-Font Healer (v76)
  *   - REPO TARGET    : public/js/one-tap-profile-hub-healer.js
  *   - SURFACE TARGET : SURFACE-A ONLY (Public Member Profile & Sovereign Hub UI)
  *   - HOST BINDING   : Surface-A (Auto-loaded by public/js/index-shell-bootstrap.js)
- *   - SIZE BUDGET    : <= 290 Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 298 Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -37,7 +37,8 @@
  * ==============================================================================
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
  *   - ZERO FREEZE   : Never scans document.body; scans ONLY open #rm-fullscreen-view or #profileModal.
- *   - CLICK SAFETY  : Invokes native onclick / RM_ProfileHub directly and unlocks inline display:none!important.
+ *   - CLICK SAFETY  : Invokes native onclick / RM_ProfileHub directly, unlocks inline display:none!important,
+ *                     and blocks 300ms ghost-click from resetting DOM back to small fonts.
  *   - ANTI-CLIPPING : Pure CSS rules enforce large fonts (16px-20px) and compact 12px Log Out without DOM thrashing.
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (8 PROFILE BLOCK FUNCTIONS):
@@ -51,7 +52,7 @@
  *   - CANONICAL PATH  : Must exist ONLY at `public/js/one-tap-profile-hub-healer.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
- *   - ZERO DOHRAO     : Extracted cleanly from index-shell-bootstrap.js to keep both <= 290 lines.
+ *   - ZERO DOHRAO     : Extracted cleanly from index-shell-bootstrap.js to keep both <= 298 lines.
  *   - IDEMPOTENT BOOT : Guarded by `window.__RM_LOADED_MODULES__['one-tap-profile-hub-healer']`.
  * ==============================================================================
  * 10. FAIL-SAFE ERROR BOUNDARY, ZERO-STUB & 2-LINE SECTION GAP STANDARD:
@@ -76,6 +77,7 @@
   if (window.__RM_LOADED_MODULES__['one-tap-profile-hub-healer']) return;
   window.__RM_LOADED_MODULES__['one-tap-profile-hub-healer'] = true;
 
+  var lastProfileTouchTs = 0;
   var lastProfileActionTs = 0;
   var touchStartX = 0;
   var touchStartY = 0;
@@ -225,7 +227,7 @@
   window.healProfileHubTypographyAndLayout = healProfileHubTypographyAndLayout;
 
 
-  // 3. Guaranteed Non-Blocking Top-Right Profile Icon (👤) 1-Tap Opener (Unlimited Re-Opens)
+  // 3. Guaranteed Non-Blocking Top-Right Profile Icon (👤) 1-Tap Opener (Unlimited Re-Opens & Zero Revert)
   function bindTopRightProfileOneTap() {
     function ensureProfileModalReady() {
       var existing = document.getElementById('profileModal') || document.getElementById('profileHubModal') || document.getElementById('userProfileModal');
@@ -409,16 +411,35 @@
 
     function handleProfileOneTap(e) {
       if (e.type === 'touchend' && touchMoved) return;
+      var el = e.target && e.target.nodeType === 1 ? e.target : (e.target ? e.target.parentElement : null);
+      var fs = document.getElementById('rm-fullscreen-view');
+      if (fs && !fs.classList.contains('hidden') && el && fs.contains(el)) {
+        setTimeout(healProfileHubTypographyAndLayout, 5);
+        setTimeout(healProfileHubTypographyAndLayout, 60);
+        setTimeout(healProfileHubTypographyAndLayout, 180);
+        return;
+      }
       var trig = findTopRightProfileTarget(e.target, e);
       if (!trig) return;
       var now = Date.now();
-      if (now - lastProfileActionTs < 350) return;
+      if (e.type === 'click' && now - lastProfileTouchTs < 480) {
+        e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+        healProfileHubTypographyAndLayout();
+        return;
+      }
+      if (now - lastProfileActionTs < 350) {
+        e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+        healProfileHubTypographyAndLayout();
+        return;
+      }
+      if (e.type === 'touchend') lastProfileTouchTs = now;
       lastProfileActionTs = now;
+      e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
       window.openProfileModal(trig);
     }
 
-    document.addEventListener('touchend', handleProfileOneTap, { capture: true, passive: true });
-    document.addEventListener('click', handleProfileOneTap, { capture: true, passive: true });
+    document.addEventListener('touchend', handleProfileOneTap, { capture: true, passive: false });
+    document.addEventListener('click', handleProfileOneTap, { capture: true, passive: false });
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', autoTagTopRightProfileIcon);
     else autoTagTopRightProfileIcon();
     setTimeout(autoTagTopRightProfileIcon, 250);
