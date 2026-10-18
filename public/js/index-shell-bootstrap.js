@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-0 Surface-A HTML Shell Bootstrapper & Sentinel Lock (v66)
+ *   - MODULE NAME    : RM Part-0 Surface-A HTML Shell Bootstrapper & Sentinel Lock (v67)
  *   - REPO TARGET    : public/js/index-shell-bootstrap.js
  *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional SIVME Loader for Surface-B)
  *   - HOST BINDING   : Surface-A (public/index.html)
@@ -68,7 +68,7 @@
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v66'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v67'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -85,7 +85,7 @@
   if (window.__RM_LOADED_MODULES__['index-shell-bootstrap']) return;
   window.__RM_LOADED_MODULES__['index-shell-bootstrap'] = true;
 
-  var CACHE_VER = '20261018_v66';
+  var CACHE_VER = '20261018_v67';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VER;
   var lastMacroToggleTs = 0;
   var lastProfileTouchTs = 0;
@@ -175,11 +175,13 @@
     s.id = 'rm-zel-one-tap-lock';
     s.textContent =
       'button, a, [onclick], .tactile-25d, .rm-parent-toggle-pill, #rm-top-profile-btn, [data-rm-profile-trigger="1"], #categoryModal [data-cat-id], #categoryModal [id^="sub-"] > div, .rm-service-chip { touch-action: manipulation !important; -webkit-tap-highlight-color: transparent !important; cursor: pointer !important; user-select: none !important; transition: none !important; }' +
+      '#rm-top-profile-btn *, [data-rm-profile-trigger="1"] * { pointer-events: none !important; }' +
       '.tactile-25d:active { transform: none !important; }' +
       '#categoryModal.hidden, #profileModal.hidden, #rm-fullscreen-view.hidden, #playStoreInstallBanner.hidden, #categoryModal [id^="sub-"]:not([data-rm-collapsed="false"]):not(.rm-acc-open).hidden, #categoryModal [id^="sub-"][data-rm-collapsed="true"]:not(.rm-acc-open) { display: none !important; }' +
       '#categoryModal [id^="sub-"][data-rm-collapsed="false"], #categoryModal .rm-acc-open { display: block !important; visibility: visible !important; opacity: 1 !important; height: auto !important; max-height: none !important; }' +
       '#categoryModal:not(.hidden) { position: fixed !important; inset: 0 !important; width: 100vw !important; max-width: 100vw !important; z-index: 50 !important; background-color: #0b0f19 !important; display: flex !important; justify-content: center !important; -webkit-overflow-scrolling: touch !important; }' +
       '#categoryModal > div { width: 100% !important; max-width: 100% !important; }' +
+      '#profileModal:not(.hidden) { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99998 !important; background-color: rgba(2, 6, 23, 0.86) !important; display: flex !important; align-items: center !important; justify-content: center !important; padding: 12px !important; }' +
       '#rm-fullscreen-view:not(.hidden) { position: fixed !important; inset: 0 !important; z-index: 99999 !important; display: flex !important; }';
     if (!existing) (document.head || document.documentElement).appendChild(s);
   }
@@ -327,7 +329,7 @@
       var m = existing || document.createElement('div');
       m.id = m.id || 'profileModal';
       m.setAttribute('data-rm-profile-ready', '1');
-      m.className = 'fixed inset-0 z-[200] hidden items-center justify-center bg-black/80 backdrop-blur-sm p-3 overflow-y-auto';
+      m.className = 'fixed inset-0 z-[99998] hidden items-center justify-center bg-black/80 backdrop-blur-sm p-3 overflow-y-auto';
       var savedName = 'Rise Mitra Partner';
       try { savedName = localStorage.getItem('rm_profile_name_v1') || savedName; } catch (e) {}
       m.innerHTML =
@@ -355,14 +357,16 @@
         '</div>';
       if (!existing) document.body.appendChild(m);
       m.addEventListener('click', function (ev) {
-        if (ev.target === m || ev.target.closest('#rm-prof-close-btn')) window.closeProfileModal();
-        else if (ev.target.closest('#rm-prof-save-btn')) {
+        var el = ev.target && ev.target.nodeType === 1 ? ev.target : (ev.target ? ev.target.parentElement : null);
+        if (!el) return;
+        if (el === m || el.closest('#rm-prof-close-btn')) window.closeProfileModal();
+        else if (el.closest('#rm-prof-save-btn')) {
           var inp = document.getElementById('rm-prof-name-inp');
           if (inp && inp.value.trim()) {
             try { localStorage.setItem('rm_profile_name_v1', inp.value.trim()); } catch (e) {}
-            ev.target.textContent = '✓ Saved';
+            el.closest('#rm-prof-save-btn').textContent = '✓ Saved';
           }
-        } else if (ev.target.closest('#rm-prof-dir-btn')) {
+        } else if (el.closest('#rm-prof-dir-btn')) {
           window.closeProfileModal();
           if (typeof window.openCatalogModal === 'function') window.openCatalogModal();
         }
@@ -372,7 +376,7 @@
 
     window.openProfileModal = function () {
       if (window.RM_ProfileHub && typeof window.RM_ProfileHub.open === 'function') {
-        try { window.RM_ProfileHub.open(); return; } catch (e) {}
+        try { window.RM_ProfileHub.open(); } catch (e) {}
       }
       var m = ensureProfileModalReady();
       m.classList.remove('hidden');
@@ -391,26 +395,53 @@
       if (isHidden) window.openProfileModal(); else window.closeProfileModal();
     };
 
-    function findTopRightProfileTarget(target) {
-      if (!target || !target.closest) return null;
-      if (target.closest('#categoryModal, #profileModal, #rm-fullscreen-view')) return null;
-      var explicit = target.closest(
+    function autoTagTopRightProfileIcon() {
+      try {
+        var nodes = document.querySelectorAll('button, a, div.rounded-full, span.rounded-full');
+        for (var i = 0; i < nodes.length; i++) {
+          var n = nodes[i];
+          var r = n.getBoundingClientRect ? n.getBoundingClientRect() : null;
+          var t = (n.textContent || '').trim();
+          if (r && r.top >= 0 && r.top < 115 && r.right > window.innerWidth - 105 && r.width >= 24 && r.width <= 76) {
+            if (t.indexOf('सिंक') === -1 && t.indexOf('RM') === -1 && t.indexOf('इंस्टॉल') === -1 && t.indexOf('खोलें') === -1) {
+              n.id = n.id || 'rm-top-profile-btn';
+              n.setAttribute('data-rm-profile-trigger', '1');
+            }
+          }
+        }
+      } catch (e) {}
+    }
+
+    function findTopRightProfileTarget(target, evt) {
+      var el = target && target.nodeType === 1 ? target : (target ? target.parentElement : null);
+      if (!el || !el.closest) return null;
+      if (el.closest('#categoryModal, #profileModal, #rm-fullscreen-view')) return null;
+      var explicit = el.closest(
         '#rm-top-profile-btn, [data-rm-profile-trigger="1"], #profileBtn, #userProfileBtn, #openProfileBtn, [onclick*="Profile"], [onclick*="profile"], [aria-label*="Profile" i], [title*="Profile" i]'
       );
       if (explicit) return explicit;
-      var hdrBtn = target.closest('header button, header a, header .rounded-full');
+      var hdrBtn = el.closest('header button, header a, header .rounded-full, button, a, .rounded-full');
       if (hdrBtn) {
+        var r = hdrBtn.getBoundingClientRect ? hdrBtn.getBoundingClientRect() : null;
         var txt = (hdrBtn.textContent || '').trim();
-        if (txt.indexOf('सिंक') === -1 && txt.indexOf('RM') === -1 && txt.indexOf('इंस्टॉल') === -1 && txt.indexOf('खोलें') === -1) {
-          return hdrBtn;
+        if (r && r.top >= 0 && r.top < 120 && r.right > window.innerWidth - 110 && r.width <= 76) {
+          if (txt.indexOf('सिंक') === -1 && txt.indexOf('RM') === -1 && txt.indexOf('इंस्टॉल') === -1 && txt.indexOf('खोलें') === -1) {
+            return hdrBtn;
+          }
         }
+      }
+      var cx = evt && evt.changedTouches && evt.changedTouches[0] ? evt.changedTouches[0].clientX : (evt ? evt.clientX : 0);
+      var cy = evt && evt.changedTouches && evt.changedTouches[0] ? evt.changedTouches[0].clientY : (evt ? evt.clientY : 0);
+      if (cx > window.innerWidth - 85 && cy > 8 && cy < 95) {
+        var topTxt = (el.textContent || '').trim();
+        if (topTxt.indexOf('सिंक') === -1 && topTxt.indexOf('इंस्टॉल') === -1) return el;
       }
       return null;
     }
 
     function handleProfileOneTap(e) {
       if (e.type === 'touchend' && touchMoved) return;
-      var trig = findTopRightProfileTarget(e.target);
+      var trig = findTopRightProfileTarget(e.target, e);
       if (!trig) return;
       var now = Date.now();
       if (e.type === 'click' && now - lastProfileTouchTs < 450) {
@@ -435,6 +466,9 @@
 
     document.addEventListener('touchend', handleProfileOneTap, { capture: true, passive: false });
     document.addEventListener('click', handleProfileOneTap, { capture: true, passive: false });
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', autoTagTopRightProfileIcon);
+    else autoTagTopRightProfileIcon();
+    setTimeout(autoTagTopRightProfileIcon, 250);
   }
 
 
