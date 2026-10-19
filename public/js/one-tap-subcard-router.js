@@ -1,42 +1,44 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-3B Modular Sub-Card 1-Tap Core Router (v89 Slim)
+ *   - MODULE NAME    : RM Part-3B Modular Sub-Card 1-Tap Core Router (v91 Slim)
  *   - REPO TARGET    : public/js/one-tap-subcard-router.js
  *   - SURFACE TARGET : SHARED (Surface-A Public 1-Tap & Surface-B Owner SIVME Guard)
  *   - HOST BINDING   : Surface-A (public/index.html)
- *   - SIZE BUDGET    : <= 215 Logical Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 225 Logical Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
  * ==============================================================================
  * 2. EXISTING MODULAR FILES LOCK (ZERO DUPLICATE IMPLEMENTATION):
- *   - public/js/one-tap-subcard-router.js (Part-3B: Core Sub-Card 1-Tap Router & 15-2/15-3 Mounter)
+ *   - public/js/one-tap-subcard-router.js (Part-3B: Core Sub-Card 1-Tap Router & Cat-15 Bridge)
  *   - public/js/one-tap-subcard-dom-helpers.js (Part-3C: Chip Extractor, Preloader & 32-3 DOM Repair)
- *   - public/js/catalog/category-15/15-2-rental-template.js & 16-2-rental-ledger.js (15-2 Engine)
- *   - public/js/catalog/category-15/15-3-rental-template.js & 16-3-rental-search.js (15-3 Engine)
+ *   - public/js/catalog/category-15/15-house-home-controller.js (Independent Category-15 Controller)
+ *   - public/js/catalog/category-15/15-1-home-services-handyman.js (15-1 Home Services & Handyman Pros)
+ *   - public/js/catalog/category-15/15-2-smart-meter-rent-billing.js & 16-2-rental-ledger.js (15-2 Engine)
+ *   - public/js/catalog/category-15/15-3-real-estate-buy-rent-pg.js & 16-3-rental-search.js (15-3 Engine)
  *   - public/js/fullscreen-microapp-controller.js (Part-3A: Generic Fullscreen Viewport Shell)
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE, ROOT-ENGINE-FIRST & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : ensureMicroAppRendered, handleFullscreenCloseOneTap,
  *                              findExactSubCardElement, routeSubCardOneTap, handleSubCardOneTap,
- *                              hookExternalRenderers, plus bridges to Part-3C (`one-tap-subcard-dom-helpers.js`).
+ *                              hookExternalRenderers, plus bridges to Part-3C & `RM_CAT15_CONTROLLER`.
  *   - ALLOWED ON SURFACE-B   : isSurfaceBOwnerActive & isSurfaceBElementTap pass-through guards.
  *   - ROOT-ENGINE-FIRST RULE : Mounts `RM_Cat15_Sub2_RentalLedger` (15-2) & `RM_Cat15_Sub3_RentalSearch`
- *                              (15-3) directly into `#rm-module-container` without calling legacy
- *                              `handleLaunchCategory('c16')`.
+ *                              (15-3) and `15-house-home-controller.js` directly into `#rm-module-container`.
  *   - FORBIDDEN IN THIS FILE : Heavy static icon/chip tables (moved to Part-3C `one-tap-subcard-dom-helpers.js`).
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.RM_SUBCARD_ROUTER, window.__RM_LAST_MODAL_OPEN_TS
- *   - CALLS EXTERNAL APIs : window.RM_SUBCARD_DOM_HELPERS.*, window.RM_Cat15_Sub2_RentalLedger,
- *                           window.RM_Cat15_Sub3_RentalSearch, window.RM_FULLSCREEN_CONTROLLER.*
+ *   - CALLS EXTERNAL APIs : window.RM_CAT15_CONTROLLER.*, window.RM_SUBCARD_DOM_HELPERS.*,
+ *                           window.RM_Cat15_Sub2_RentalLedger, window.RM_Cat15_Sub3_RentalSearch,
+ *                           window.RM_FULLSCREEN_CONTROLLER.*
  * ==============================================================================
  * 5. DOM ATTRIBUTE, SELECTOR CONTRACT & WORLD-CLASS 2.5D VISUAL LOCK (ZERO-COLLISION RULE):
  *   - SURFACE-A SELECTORS : #rm-fullscreen-view, #categoryModal, #fs-module-title,
- *                           #rm-module-container, [id^="sub-"], .rm-service-chip, [data-fs-chip]
+ *                           #rm-module-container, [id^="sub-"], [data-cat15-sub], .rm-service-chip, [data-fs-chip]
  *   - SURFACE-B SELECTORS : .sivme-notch-pill, #sivme-hud, #sivme-drawer, [data-sivme-id], [id^="sivme-"]
- *   - WORLD-CLASS 2.5D UI : Preserves 2.5D UI of 15-2/15-3 and 4-chip launcher for 15-1 & all sub-cards.
+ *   - WORLD-CLASS 2.5D UI : Preserves 2.5D UI of 15-1/15-2/15-3 and 4-chip launcher for all sub-cards.
  * ==============================================================================
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, ZERO-REVERT & TIMER OWNERSHIP LOCK:
  *   - CLICK SAFETY  : `findExactSubCardElement` isolates the exact tapped sub-card (`15-1`/`15-2`/`15-3`)
@@ -53,8 +55,8 @@
  *   10. handleSubCardOneTap                11. hookExternalRenderers
  * ==============================================================================
  * 8. ONE JOB = ONE FILE, ROOT-ENGINE AUTHORITY, ZERO-GUESSWORK & CANONICAL PATH LOCK:
- *   - SINGLE JOB RULE     : Sole owner of Sub-Card 1-Tap Routing & 15-2/15-3 Direct Engine Mounting.
- *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `v87 Slim` (`1000303715.png`).
+ *   - SINGLE JOB RULE     : Sole owner of Sub-Card 1-Tap Routing & Cat-15 Direct Engine Mounting.
+ *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `v89 Slim` & `v91` Play Store Cat-15 modules.
  *   - CANONICAL PATH      : Must exist ONLY at `public/js/one-tap-subcard-router.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
@@ -66,7 +68,7 @@
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, 1-TASK-1-FILE COMMIT, PRE-MAIN GATE & CONTRACT LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261019_v89'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER || '20261020_v91'`.
  *   - PIPELINE GATE   : Commit & verify on `pre-main` before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -85,18 +87,21 @@
 
   var routerPollTimer = null;
 
-  // 0. Auto-Load Part-3C Companion (`one-tap-subcard-dom-helpers.js`) & Preload Cat-15 Engines
+  // 0. Auto-Load Part-3C Companion (`one-tap-subcard-dom-helpers.js`) & Preload Official Cat-15 Engines
   function preloadCat15ModularEngines() {
-    var ver = window.__RM_ACTIVE_CACHE_VER || '20261019_v89';
+    var ver = window.__RM_ACTIVE_CACHE_VER || '20261020_v91';
     var files = [
       { id: 'rm-part3c-dom-helpers-js', src: '/js/one-tap-subcard-dom-helpers.js?v=' + ver },
-      { id: 'rm-cat15-2-template-js', src: '/js/catalog/category-15/15-2-rental-template.js?v=' + ver },
-      { id: 'rm-cat15-3-template-js', src: '/js/catalog/category-15/15-3-rental-template.js?v=' + ver },
+      { id: 'rm-cat15-independent-controller-js', src: '/js/catalog/category-15/15-house-home-controller.js?v=' + ver },
+      { id: 'rm-cat15-1-engine-js', src: '/js/catalog/category-15/15-1-home-services-handyman.js?v=' + ver },
+      { id: 'rm-cat15-2-billing-js', src: '/js/catalog/category-15/15-2-smart-meter-rent-billing.js?v=' + ver },
+      { id: 'rm-cat15-3-realestate-js', src: '/js/catalog/category-15/15-3-real-estate-buy-rent-pg.js?v=' + ver },
       { id: 'rm-cat15-2-engine-js', src: '/js/catalog/category-16/16-2-rental-ledger.js?v=' + ver },
       { id: 'rm-cat15-3-engine-js', src: '/js/catalog/category-16/16-3-rental-search.js?v=' + ver }
     ];
     files.forEach(function (f) {
-      if (!document.getElementById(f.id)) {
+      var existing = document.getElementById(f.id);
+      if (!existing || existing.tagName !== 'SCRIPT') {
         var s = document.createElement('script');
         s.id = f.id;
         s.src = f.src;
@@ -153,12 +158,23 @@
   }
 
 
-  // 6. Authoritative Micro-App Mount Guard (Mounts 15-2 & 15-3 Root Engines Directly with 0ms Fallback & Polling)
+  // 6. Authoritative Micro-App Mount Guard (Mounts 15-1, 15-2 & 15-3 Root Engines Directly with 0ms Fallback & Polling)
   function ensureMicroAppRendered(subCode, titleText, subtitleText) {
     var code = String(subCode || '').trim();
     if (!code) return;
 
+    if (code === '15-1' || code === '16-1') {
+      if (window.RM_CAT15_CONTROLLER && typeof window.RM_CAT15_CONTROLLER.openCat15Sub1Mistry === 'function') {
+        window.RM_CAT15_CONTROLLER.openCat15Sub1Mistry(null, null);
+        return;
+      }
+    }
+
     if (code === '15-2' || code === '16-2' || code === '15-3' || code === '16-3') {
+      if (window.RM_CAT15_CONTROLLER && typeof window.RM_CAT15_CONTROLLER.mountCat15SubApp === 'function') {
+        window.RM_CAT15_CONTROLLER.mountCat15SubApp(code);
+        return;
+      }
       var isLedger = (code === '15-2' || code === '16-2');
       var normCode = isLedger ? '15-2' : '15-3';
       var fs = document.getElementById('rm-fullscreen-view');
@@ -173,8 +189,8 @@
       if (fsTitle) {
         fsTitle.style.fontSize = '13.5px';
         fsTitle.textContent = isLedger
-          ? '📒 15-2 • Rental Ledger (किराया बहीखाता)'
-          : '🏢 15-3 • Room & Flat Search (कमरा व फ्लैट खोज)';
+          ? '⚡ 15-2 • Smart Meter & Rent Billing (किराया बहीखाता)'
+          : '🏢 15-3 • Real Estate: Buy, Rent & PG (कमरा व फ्लैट खोज)';
       }
       var container = document.getElementById('rm-module-container');
       if (!container) return;
@@ -203,8 +219,8 @@
 
         if (!container.querySelector(canarySelector)) {
           var tpl = isLedger
-            ? (window.RM_Cat15_Sub2_Template || window.RM_Cat16_Sub2_Template)
-            : (window.RM_Cat15_Sub3_Template || window.RM_Cat16_Sub3_Template);
+            ? (window.RM_Cat15_Sub2_SmartMeterBilling || window.RM_Cat15_Sub2_Template || window.RM_Cat16_Sub2_Template)
+            : (window.RM_Cat15_Sub3_RealEstateSearch || window.RM_Cat15_Sub3_Template || window.RM_Cat16_Sub3_Template);
           if (tpl) {
             if (isLedger && typeof tpl.buildRentalLedgerHTML === 'function') {
               container.innerHTML = tpl.buildRentalLedgerHTML([], 8);
@@ -283,7 +299,7 @@
     var cur = target;
     var rootStop = subWrapper || document.getElementById('categoryModal') || document.body;
     while (cur && cur !== rootStop && cur !== document.body) {
-      if (cur.getAttribute && (cur.getAttribute('data-sub-code') || cur.getAttribute('data-rm-sub-rendered'))) {
+      if (cur.getAttribute && (cur.getAttribute('data-cat15-sub') || cur.getAttribute('data-sub-code') || cur.getAttribute('data-rm-sub-rendered'))) {
         return cur;
       }
       var txt = (cur.textContent || '').trim();
@@ -294,15 +310,19 @@
       if (cur.parentElement === subWrapper) return cur;
       cur = cur.parentElement;
     }
-    return (target && target.closest ? target.closest('[id^="sub-"] > div') : null) || subWrapper;
+    return (target && target.closest ? target.closest('[data-cat15-sub], [id^="sub-"] > div') : null) || subWrapper;
   }
 
 
-  // 9. Sub-Card 1-Tap Router (Mounts 15-2/15-3 Directly WITHOUT Legacy handleLaunchCategory Overwrite)
+  // 9. Sub-Card 1-Tap Router (Mounts 15-1/15-2/15-3 Directly WITHOUT Legacy handleLaunchCategory Overwrite)
   function routeSubCardOneTap(e, target, subCard) {
-    var rawAttr = subCard ? ((subCard.getAttribute('data-rm-sub-rendered') || subCard.getAttribute('data-sub-code') || '').split(':')[0]) : '';
+    var rawAttr = subCard ? ((subCard.getAttribute('data-cat15-sub') || subCard.getAttribute('data-rm-sub-rendered') || subCard.getAttribute('data-sub-code') || '').split(':')[0]) : '';
     var subIdMatch = ((subCard && subCard.textContent) || (target && target.textContent) || '').match(/\b(\d{1,2}-[123])\b/);
     var subCode = rawAttr || (subIdMatch ? subIdMatch[1] : '01-1');
+
+    if (window.RM_CAT15_CONTROLLER && typeof window.RM_CAT15_CONTROLLER.openSubCategory === 'function') {
+      if (window.RM_CAT15_CONTROLLER.openSubCategory(subCode, e, target, subCard)) return;
+    }
 
     if (subCode === '15-2' || subCode === '16-2' || subCode === '15-3' || subCode === '16-3') {
       if (e) {
@@ -368,9 +388,14 @@
     var subCard = findExactSubCardElement(actualTarget, subWrapper);
     if (!subCard) return false;
 
-    var rawRenderedAttr = (subCard.getAttribute('data-rm-sub-rendered') || subCard.getAttribute('data-sub-code') || '').split(':')[0];
+    var rawRenderedAttr = (subCard.getAttribute('data-cat15-sub') || subCard.getAttribute('data-rm-sub-rendered') || subCard.getAttribute('data-sub-code') || '').split(':')[0];
     var subIdMatch = (subCard.textContent || '').match(/\b(\d{1,2}-[123])\b/);
     var subCode = rawRenderedAttr || (subIdMatch ? subIdMatch[1] : '15-3');
+
+    if (window.RM_CAT15_CONTROLLER && typeof window.RM_CAT15_CONTROLLER.openSubCategory === 'function') {
+      if (window.RM_CAT15_CONTROLLER.openSubCategory(subCode, e, actualTarget, subCard)) return true;
+    }
+
     var tappedChip = actualTarget.closest ? actualTarget.closest('.rm-service-chip') : null;
     var safeHeadingTarget = tappedChip || subCard.querySelector('h3, h4, [style*="font-size: 20px"], .font-black, .font-bold') || subCard;
 
@@ -394,7 +419,7 @@
     if (window.RM_SUB_CARD_RENDERER && typeof window.launchOneTapServiceScreen === 'function') {
       window.RM_SUB_CARD_RENDERER.openSmoothSubServiceScreen = function (entry, subCode, title, subtitle, selectedPill) {
         var code = String(subCode || '').trim();
-        if (code === '15-2' || code === '16-2' || code === '15-3' || code === '16-3') {
+        if (code === '15-1' || code === '15-2' || code === '16-2' || code === '15-3' || code === '16-3') {
           ensureMicroAppRendered(code, title, subtitle);
           return;
         }
