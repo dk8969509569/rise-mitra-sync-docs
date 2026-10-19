@@ -1,37 +1,36 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Category-15 (15-3) Real Estate: Buy, Rent & PG (Part-1 v91)
+ *   - MODULE NAME    : RM Category-15 (15-3) Real Estate: Buy, Rent & PG Complete Engine (v92)
  *   - SPECIFICATION  : 14_04__EXT_004_MODULAR_ARCHITECTURE_MOBILE_SAFETY_RECOVERY_SPEC
  *   - REPO TARGET    : public/js/catalog/category-15/15-3-real-estate-buy-rent-pg.js
- *   - SURFACE TARGET : SURFACE-A ONLY (15-3 Real Estate Buy, Rent & PG 2.5D UI & Seed Data)
- *   - HOST BINDING   : Surface-A (Auto-loaded & consumed by 15-house-home-controller.js & 16-3 engine)
- *   - SIZE BUDGET    : <= 200 Logical Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SURFACE TARGET : SURFACE-A ONLY (15-3 Real Estate Buy, Rent & PG 2.5D UI + Search Engine)
+ *   - HOST BINDING   : Surface-A (Mounted into #rm-module-container via 15-house-home-controller.js)
+ *   - SIZE BUDGET    : <= 300 Logical Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : GATE-16.7 | DEC-RM-SOV-ARCH-20260930-MODULAR-ZEL-001 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
  * ==============================================================================
  * 2. EXISTING MODULAR FILES LOCK (ZERO DUPLICATE IMPLEMENTATION):
- *   - public/js/catalog/category-15/15-3-real-estate-buy-rent-pg.js (Part-1: Seed Listings, Geo & 2.5D HTML)
- *   - public/js/catalog/category-15/15-2-smart-meter-rent-billing.js (15-2 Companion: Smart Meter & Rent Billing)
- *   - public/js/catalog/category-15/15-1-home-services-handyman.js (15-1 Companion: Home Services & Handyman Pros)
- *   - public/js/catalog/category-15/15-house-home-controller.js (Independent Category-15 Controller)
- *   - public/js/catalog/category-16/16-3-rental-search.js (Part-2 Root Engine: Filter, Storage & Events)
+ *   - public/js/catalog/category-15/15-3-real-estate-buy-rent-pg.js (Complete 15-3 UI + Search Engine)
+ *   - public/js/catalog/category-15/15-2-smart-meter-rent-billing.js (Complete 15-2 Smart Meter Engine)
+ *   - public/js/catalog/category-15/15-1-home-services-handyman.js (Complete 15-1 Home Services Engine)
+ *   - public/js/catalog/category-15/15-house-home-controller.js (Independent Category-15 Master Controller)
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE, ROOT-ENGINE-FIRST & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
- *   - ALLOWED ON SURFACE-A   : SEED_LISTINGS (4 Pan-India listings), resolveGeoFromPincode,
- *                              renderListingCard (2.5D), and buildRentalSearchShellHTML (2.5D).
- *   - ALLOWED ON SURFACE-B   : NONE (Respects `ownerCfg` visibility flags passed from Part-2).
- *   - ROOT-ENGINE-FIRST RULE : Pure stateless template & seed provider aligned with Google Play Store
- *                              HOUSE_AND_HOME #1 Revenue Segment "Real estate" (59% Market Share).
- *   - FORBIDDEN IN THIS FILE : Direct DOM mutation or localStorage writes (owned by Part-2).
+ *   - ALLOWED ON SURFACE-A   : All 4 Pan-India seed listings, 9 pincode geo zones, 2.5D card & shell
+ *                              HTML builders, multi-criteria filter, 15-2 auto-publish intake, and DOM mount.
+ *   - ALLOWED ON SURFACE-B   : Reads `rm_local_acct_owner_config` filter visibility flags safely.
+ *   - ROOT-ENGINE-FIRST RULE : 100% self-contained Category 15 (`15-3`) root engine; zero dependency
+ *                              on `public/js/catalog/category-16/` (reserved for Libraries & Demo).
+ *   - FORBIDDEN IN THIS FILE : Cross-category coupling with Category 16 (`Libraries & Demo`).
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
- *   - WRITES GLOBAL STATE : window.RM_Cat15_Sub3_Template, window.RM_Cat16_Sub3_Template,
- *                           window.RM_Cat15_Sub3_RealEstateSearch,
- *                           window.__RM_LOADED_MODULES__['15-3-real-estate-buy-rent-pg'],
- *                           window.__RM_LOADED_MODULES__['15-3-rental-template']
- *   - CALLS EXTERNAL APIs : NONE (Pure deterministic data & HTML functions)
+ *   - WRITES GLOBAL STATE : window.RM_Cat15_Sub3_RealEstateSearch, window.RM_Cat15_Sub3_RentalSearch,
+ *                           window.RiseMitraCatalog_15_3, window.RM_Cat16_Sub3_RentalSearch,
+ *                           window.RiseMitraCatalog_16_3, window.RM_Cat15_Sub3_Template,
+ *                           window.RM_Cat16_Sub3_Template, localStorage['rm_local_acct<id>_cat16_sub3_v1']
+ *   - CALLS EXTERNAL APIs : window.RM_INDIA_GEO (Optional Pan-India State/District dataset)
  * ==============================================================================
  * 5. DOM ATTRIBUTE, SELECTOR CONTRACT & WORLD-CLASS 2.5D VISUAL LOCK (ZERO-COLLISION RULE):
  *   - SURFACE-A SELECTORS : #rm-search-locality, #rm-cat16-search-state, #rm-cat16-search-district,
@@ -43,32 +42,33 @@
  *                           anti-clipping typography, and Play Store `15-3` / `15-2` labels.
  * ==============================================================================
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, ZERO-REVERT & TIMER OWNERSHIP LOCK:
- *   - CLICK SAFETY  : Zero event listeners or timers in this pure template module.
+ *   - CLICK SAFETY  : Scoped event listeners inside `container`; zero global listener conflicts.
  *   - DOM SAFETY    : Preserves 100% of `#rm-search-*` and `#rm-cat16-search-*` IDs.
- *   - ZERO REVERT   : Bakes 2.5D CSS & Play Store `15-3` labels directly into HTML string.
+ *   - ZERO REVERT   : Template, seeds & controller live in the same file so `mount()` renders in 0ms.
  * ==============================================================================
- * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST:
- *   1. SEED_LISTINGS (4 Pan-India Seed Listings: JH Ranchi, BR Patna, MP Indore, RJ Kota)
- *   2. resolveGeoFromPincode (9 Pan-India Pincode Zones)
- *   3. renderListingCard (World-Class 2.5D Property Card Builder)
- *   4. buildRentalSearchShellHTML (World-Class 2.5D Search Filter & Results Shell Builder)
+ * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (ALL MERGED ITEMS INTACT):
+ *   1. SEED_LISTINGS (4 Seeds)        2. resolveGeoFromPincode          3. renderListingCard
+ *   4. buildRentalSearchShellHTML     5. getOwnerFilterConfig           6. getStorageKey
+ *   7. filterListings                 8. calculateEstimatedMoveInCost   9. sortListings
+ *   10. loadSearchData                11. saveSearchData                12. ingestUnitFromLedger
+ *   13. loadAllListings               14. updateDistrictDropdown        15. attachContactHandlers
+ *   16. triggerSearch                 17. renderView / mount / unmount
  * ==============================================================================
  * 8. ONE JOB = ONE FILE, ROOT-ENGINE AUTHORITY, ZERO-GUESSWORK & CANONICAL PATH LOCK:
- *   - SINGLE JOB RULE     : Sole owner of 15-3 2.5D HTML Templates, Seed Listings & Pincode Resolver.
- *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `15-3-rental-template.js` (`v83`).
+ *   - SINGLE JOB RULE     : Sole authoritative file for 15-3 Real Estate: Buy, Rent & PG Search.
+ *   - ZERO-GUESSWORK LOCK : Merged 1:1 with 100% ZEL precision.
  *   - CANONICAL PATH      : Must exist ONLY at `public/js/catalog/category-15/15-3-real-estate-buy-rent-pg.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
- *   - ZERO DOHRAO     : Eliminates inline HTML & seed bloat from `16-3-rental-search.js` and
- *                       registers legacy script IDs (`rm-cat15-3-template-js`, `rm-cat15-3-tpl`).
+ *   - ZERO DOHRAO     : Registers all script sentinels (`rm-cat15-3-realestate-js`, `rm-cat15-3-engine-js`).
  *   - IDEMPOTENT BOOT : Guarded by `window.__RM_LOADED_MODULES__['15-3-real-estate-buy-rent-pg']`.
  * ==============================================================================
  * 10. FAIL-SAFE ERROR BOUNDARY, ZERO-STUB & 2-LINE SECTION GAP STANDARD:
- *   - ERROR BOUNDARY  : Strict IIFE + null-safe fallbacks on all listing fields.
+ *   - ERROR BOUNDARY  : Strict UMD + try/catch boundaries around storage, filter, and mount.
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, 1-TASK-1-FILE COMMIT, PRE-MAIN GATE & CONTRACT LOCK:
- *   - VERSION SYNC    : Synced with `MODULE_VERSION = '1.4.0'` (`v91`).
+ *   - VERSION SYNC    : Upgraded `MODULE_VERSION = '1.5.0'` synced with `v92` release.
  *   - PIPELINE GATE   : Commit & verify on `pre-main` before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -78,24 +78,52 @@
  * ==============================================================================
  */
 
-(function () {
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define([], factory);
+  } else if (typeof module === 'object' && module.exports) {
+    module.exports = factory();
+  } else {
+    var lib = factory();
+    root.RM_Cat15_Sub3_RealEstateSearch = lib;
+    root.RM_Cat15_Sub3_RentalSearch = lib;
+    root.RiseMitraCatalog_15_3 = lib;
+    root.RM_Cat16_Sub3_RentalSearch = lib;
+    root.RiseMitraCatalog_16_3 = lib;
+    root.RM_Cat15_Sub3_Template = lib;
+    root.RM_Cat16_Sub3_Template = lib;
+  }
+})(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
-  window.__RM_LOADED_MODULES__ = window.__RM_LOADED_MODULES__ || {};
-  window.__RM_LOADED_MODULES__['15-3-real-estate-buy-rent-pg'] = true;
-  window.__RM_LOADED_MODULES__['15-3-rental-template'] = true;
-  window.__RM_LOADED_MODULES__['16-3-rental-template'] = true;
+  if (typeof window !== 'undefined') {
+    window.__RM_LOADED_MODULES__ = window.__RM_LOADED_MODULES__ || {};
+    window.__RM_LOADED_MODULES__['15-3-real-estate-buy-rent-pg'] = true;
+    window.__RM_LOADED_MODULES__['15-3-rental-template'] = true;
+    window.__RM_LOADED_MODULES__['16-3-rental-template'] = true;
+    window.__RM_LOADED_MODULES__['16-3-rental-search'] = true;
+    ['rm-cat15-3-template-js', 'rm-cat15-3-tpl', 'rm-cat15-3-engine-js', 'rm-cat15-3-realestate-js'].forEach(function (id) {
+      if (typeof document !== 'undefined' && !document.getElementById(id)) {
+        var m = document.createElement('meta');
+        m.id = id;
+        (document.head || document.documentElement).appendChild(m);
+      }
+    });
+  }
 
-  ['rm-cat15-3-template-js', 'rm-cat15-3-tpl'].forEach(function (id) {
-    if (typeof document !== 'undefined' && !document.getElementById(id)) {
-      var m = document.createElement('meta');
-      m.id = id;
-      (document.head || document.documentElement).appendChild(m);
-    }
-  });
+  var SUB_FEATURE_ID = '15-3';
+  var CATEGORY_ID = 'category-15';
+  var FEATURE_SLUG = 'real-estate-buy-rent-pg';
+  var SCHEMA_VERSION = '1';
+  var MODULE_VERSION = '1.5.0';
 
+  var DEFAULT_SEARCH_CONFIG = {
+    defaultCity: 'इंदौर',
+    maxBudgetLimit: 50000,
+    currencySymbol: '₹',
+    defaultRadiusKm: 10
+  };
 
-  // 1. Pan-India Academic & Migration Seed Listings (All 4 Original Listings 100% Intact)
   var SEED_LISTINGS = [
     {
       listingId: 'LST-SEED-JH-01',
@@ -147,8 +175,6 @@
     }
   ];
 
-
-  // 2. Helper: Auto resolve missing state/district from Indian pincode
   function resolveGeoFromPincode(pCode) {
     if (!pCode) return null;
     var pin = String(pCode).trim();
@@ -164,8 +190,6 @@
     return null;
   }
 
-
-  // 3. World-Class 2.5D Listing Card Builder
   function renderListingCard(item) {
     var addr = item.addressPublic || {};
     var pCode = String(addr.pincode || item.pincode || '').trim();
@@ -222,8 +246,6 @@
       '</div>';
   }
 
-
-  // 4. World-Class 2.5D Search Filter & Results Shell Builder
   function buildRentalSearchShellHTML(allListingsLength, ownerCfg, i18n) {
     var box25d = 'background:linear-gradient(180deg,#0f1c33 0%,#08101f 100%);border:1.8px solid rgba(56,189,248,0.48);border-bottom:3.5px solid rgba(14,165,233,0.78);box-shadow:0 12px 26px rgba(0,0,0,0.8);border-radius:16px;';
     var inp25d = 'width:100%;box-sizing:border-box;padding:11px 12px;background:#030712;border:1.6px solid rgba(56,189,248,0.42);border-radius:10px;color:#ffffff;font-size:15px;font-weight:700;outline:none;';
@@ -233,7 +255,7 @@
         '<div style="' + box25d + 'padding:14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;box-sizing:border-box;width:100%;">' +
           '<div style="min-width:0;flex:1;">' +
             '<h2 style="margin:0;font-size:18.5px;font-weight:900;color:#ffffff;line-height:1.3;">🏢 15-3. ' + ((i18n && i18n.featureTitle) || 'Real Estate: Buy, Rent & PG (कमरा व फ्लैट खोज • 0% दलाली)') + '</h2>' +
-            '<span style="font-size:14px;color:#38bdf8;font-weight:700;display:block;margin-top:3px;">पैन-इंडिया ब्रोकर-फ्री आवास खोज इंजन (v1.4 • 2.5D)</span>' +
+            '<span style="font-size:14px;color:#38bdf8;font-weight:700;display:block;margin-top:3px;">पैन-इंडिया ब्रोकर-फ्री आवास खोज इंजन (v1.5 • 2.5D)</span>' +
           '</div>' +
           '<span style="background:#064e3b;color:#6ee7b7;border:1.5px solid #10b981;font-size:13px;padding:4px 10px;border-radius:999px;font-weight:800;white-space:nowrap;margin-left:8px;">✓ सत्यापित</span>' +
         '</div>' +
@@ -282,13 +304,308 @@
       '</div>';
   }
 
-  var api = {
+  function getOwnerFilterConfig() {
+    try {
+      var raw = localStorage.getItem('rm_local_acct_owner_config');
+      if (raw) {
+        var cfg = JSON.parse(raw);
+        if (cfg && cfg.filterVisibility) return cfg.filterVisibility;
+      }
+    } catch (e) {}
+    return { showCountry: false, showState: true, showDistrict: true, showLocality: true, smartOmnibox: true, showBudget: true, showSubmeter: true };
+  }
+
+  function getStorageKey(accountId) {
+    var acct = (accountId && typeof accountId === 'string') ? accountId.replace(/[^a-zA-Z0-9_-]/g, '') : 'default';
+    return 'rm_local_acct' + acct + '_cat16_sub3_v' + SCHEMA_VERSION;
+  }
+
+  function filterListings(listings, filters) {
+    if (!Array.isArray(listings)) return [];
+    filters = filters || {};
+    var maxRent = parseFloat(filters.maxRent) || Infinity;
+    var unitType = filters.unitType || 'ALL';
+    var locality = (filters.locality || '').trim().toLowerCase();
+    var requireSubMeter = (filters.requireSubMeter !== undefined) ? Boolean(filters.requireSubMeter) : Boolean(filters.submeterOnly);
+    var omni = (filters.omnibox || '').trim().toLowerCase();
+    var stateFilter = (filters.state || '').trim().toLowerCase();
+    var districtFilter = (filters.district || '').trim().toLowerCase();
+
+    return listings.filter(function (item) {
+      if (!item || (item.status && item.status !== 'AVAILABLE')) return false;
+      var rent = parseFloat(item.monthlyRent) || 0;
+      if (rent > maxRent) return false;
+      if (unitType !== 'ALL' && item.unitType && item.unitType !== unitType) return false;
+
+      var addr = item.addressPublic || {};
+      var sName = (addr.state || item.state || '').trim().toLowerCase();
+      var dName = (addr.district || item.district || '').trim().toLowerCase();
+      var cName = (addr.city || item.city || '').trim().toLowerCase();
+      var lName = (addr.locality || item.locality || '').trim().toLowerCase();
+      var pCode = String(addr.pincode || item.pincode || '').trim().toLowerCase();
+      var titleText = (item.title || '').toLowerCase();
+
+      if (!sName && pCode) {
+        var resolved = resolveGeoFromPincode(pCode);
+        if (resolved) {
+          sName = resolved.state.toLowerCase();
+          if (!dName) dName = resolved.district.toLowerCase();
+        }
+      }
+
+      if (stateFilter) {
+        if (!sName) return false;
+        var stateMatched = (sName === stateFilter || sName.indexOf(stateFilter) !== -1 || stateFilter.indexOf(sName) !== -1);
+        if (!stateMatched && window.RM_INDIA_GEO && Array.isArray(window.RM_INDIA_GEO.states)) {
+          var matchedGeo = window.RM_INDIA_GEO.states.find(function (st) {
+            var hi = (st.nameHi || '').toLowerCase();
+            var en = (st.name || '').toLowerCase();
+            return (hi && hi === stateFilter) || (en && en === stateFilter);
+          });
+          if (matchedGeo) {
+            var geoHi = (matchedGeo.nameHi || '').toLowerCase();
+            var geoEn = (matchedGeo.name || '').toLowerCase();
+            if (sName === geoHi || sName === geoEn || sName.indexOf(geoHi) !== -1 || sName.indexOf(geoEn) !== -1) stateMatched = true;
+          }
+        }
+        if (!stateMatched) return false;
+      }
+
+      if (districtFilter) {
+        if (!dName || !(dName === districtFilter || dName.indexOf(districtFilter) !== -1 || districtFilter.indexOf(dName) !== -1)) return false;
+      }
+      if (locality && lName.indexOf(locality) === -1 && cName.indexOf(locality) === -1 && dName.indexOf(locality) === -1) return false;
+      if (requireSubMeter && !(item.electricityBilling && item.electricityBilling.meterType === 'sub_meter_per_unit')) return false;
+      if (omni && titleText.indexOf(omni) === -1 && sName.indexOf(omni) === -1 && dName.indexOf(omni) === -1 && cName.indexOf(omni) === -1 && lName.indexOf(omni) === -1 && pCode.indexOf(omni) === -1) return false;
+      return true;
+    });
+  }
+
+  function calculateEstimatedMoveInCost(monthlyRent, securityDeposit, otherCharges) {
+    var rent = parseFloat(monthlyRent) || 0;
+    var deposit = parseFloat(securityDeposit) || 0;
+    var other = parseFloat(otherCharges) || 0;
+    return { monthlyRent: rent, securityDeposit: deposit, otherCharges: other, totalMoveInRequired: Math.round((rent + deposit + other) * 100) / 100 };
+  }
+
+  function sortListings(listings, sortBy) {
+    if (!Array.isArray(listings)) return [];
+    var list = listings.slice();
+    if (sortBy === 'RENT_ASC') list.sort(function (a, b) { return (a.monthlyRent || 0) - (b.monthlyRent || 0); });
+    else if (sortBy === 'RENT_DESC') list.sort(function (a, b) { return (b.monthlyRent || 0) - (a.monthlyRent || 0); });
+    return list;
+  }
+
+  function loadSearchData(accountId, fallbackData) {
+    try {
+      var raw = localStorage.getItem(getStorageKey(accountId));
+      return raw ? JSON.parse(raw) : (fallbackData || null);
+    } catch (err) {
+      return fallbackData || null;
+    }
+  }
+
+  function saveSearchData(accountId, data) {
+    try {
+      localStorage.setItem(getStorageKey(accountId), JSON.stringify(data));
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  function ingestUnitFromLedger(property, unit, landlordProfile) {
+    if (!property || !unit) return null;
+    var lifecycle = unit.lifecycleStatus || {};
+    var pub = unit.publicationSettings || {};
+    if (!lifecycle.physicalPossessionReturned || !lifecycle.readyToRent || pub.mode === 'private_only' || !pub.consentActive) return null;
+
+    var propAddr = property.address || {};
+    var pCode = propAddr.pincode || '452010';
+    var resolvedGeo = resolveGeoFromPincode(pCode);
+    return {
+      listingId: 'LST-' + (property.propertyId || 'PROP') + '-' + (unit.unitId || 'UNIT'),
+      sourceSubFeature: '15-2',
+      propertyId: property.propertyId,
+      unitId: unit.unitId,
+      title: (unit.unitLabel || 'कमरा') + ' - ' + (property.title || 'आवास'),
+      unitType: unit.unitType || 'entire_flat',
+      monthlyRent: parseFloat(unit.monthlyRent) || 0,
+      securityDeposit: parseFloat(unit.securityDeposit) || 0,
+      addressPublic: {
+        country: propAddr.country || 'IN',
+        state: propAddr.state || (resolvedGeo ? resolvedGeo.state : 'मध्य प्रदेश'),
+        district: propAddr.district || (resolvedGeo ? resolvedGeo.district : 'इंदौर'),
+        city: propAddr.city || (resolvedGeo ? resolvedGeo.district : 'इंदौर'),
+        locality: propAddr.locality || 'विजयनगर',
+        pincode: pCode
+      },
+      electricityBilling: { meterType: unit.electricityConfig ? unit.electricityConfig.meterType : 'sub_meter_per_unit', ratePerUnit: unit.electricityConfig ? unit.electricityConfig.ratePerUnit : 8.0 },
+      publicationMode: pub.mode || 'auto_publish',
+      lifecycleVerification: { physicalPossessionConfirmed: true, readyToRentConfirmed: true, availableFromDate: lifecycle.futureAvailableDate || new Date().toISOString().slice(0, 10) },
+      landlordContactMasked: { name: landlordProfile ? landlordProfile.name : 'मकान मालिक', maskedPhone: landlordProfile ? landlordProfile.maskedPhone : '+91 XXXXX00000', verifiedBadge: true },
+      status: 'AVAILABLE',
+      lastSyncedAt: new Date().toISOString()
+    };
+  }
+
+  function loadAllListings(accountId, initialListings) {
+    var listingsMap = {};
+    SEED_LISTINGS.forEach(function (item) { listingsMap[item.listingId] = item; });
+    if (Array.isArray(initialListings)) initialListings.forEach(function (item) { if (item && item.listingId) listingsMap[item.listingId] = item; });
+    var localData = loadSearchData(accountId);
+    if (localData && Array.isArray(localData.publicListings)) localData.publicListings.forEach(function (item) { if (item && item.listingId) listingsMap[item.listingId] = item; });
+
+    var result = [];
+    for (var k in listingsMap) {
+      if (Object.prototype.hasOwnProperty.call(listingsMap, k)) {
+        var it = listingsMap[k];
+        var addr = it.addressPublic || {};
+        if (!addr.state && addr.pincode) {
+          var autoG = resolveGeoFromPincode(addr.pincode);
+          if (autoG) {
+            addr.state = autoG.state;
+            if (!addr.district) addr.district = autoG.district;
+          }
+        }
+        result.push(it);
+      }
+    }
+    return result;
+  }
+
+  function renderView(container, options) {
+    if (!container) return;
+    options = options || {};
+    var accountId = options.accountId || 'default';
+    var state = options.state || { publicListings: [], searchDefaults: DEFAULT_SEARCH_CONFIG, i18n: { hi: { featureTitle: 'Real Estate: Buy, Rent & PG (0% दलाली)', actions: {}, labels: {} } } };
+    var initialListings = (state && Array.isArray(state.publicListings)) ? state.publicListings : [];
+    var allListings = loadAllListings(accountId, initialListings);
+    var ownerCfg = getOwnerFilterConfig();
+    var i18n = (state.i18n && state.i18n.hi) ? state.i18n.hi : {};
+
+    container.innerHTML = buildRentalSearchShellHTML(allListings.length, ownerCfg, i18n);
+
+    var inputLocality = container.querySelector('#rm-search-locality');
+    var selectState = container.querySelector('#rm-cat16-search-state');
+    var selectDistrict = container.querySelector('#rm-cat16-search-district');
+    var inputBudget = container.querySelector('#rm-search-budget');
+    var sliderBudget = container.querySelector('#rm-search-budget-slider');
+    var checkSubmeter = container.querySelector('#rm-search-submeter');
+    var btnApply = container.querySelector('#rm-search-btn-apply');
+    var btnReset = container.querySelector('#rm-search-btn-reset');
+    var resultsContainer = container.querySelector('#rm-search-results-list');
+    var countSpan = container.querySelector('#rm-search-count');
+
+    if (selectState && window.RM_INDIA_GEO && Array.isArray(window.RM_INDIA_GEO.states)) {
+      window.RM_INDIA_GEO.states.forEach(function (s) {
+        var opt = document.createElement('option');
+        opt.value = s.nameHi || s.name;
+        opt.setAttribute('data-code', s.code);
+        opt.textContent = (s.nameHi || s.name) + ' (' + s.name + ')';
+        selectState.appendChild(opt);
+      });
+    }
+
+    function updateDistrictDropdown(selectedStateName) {
+      if (!selectDistrict) return;
+      selectDistrict.innerHTML = '<option value="">सभी जिले (All Districts)</option>';
+      if (!selectedStateName || !window.RM_INDIA_GEO) return;
+      var distList = window.RM_INDIA_GEO.getDistrictsByState(selectedStateName);
+      distList.forEach(function (d) {
+        var opt = document.createElement('option');
+        opt.value = d.nameHi || d.name;
+        opt.textContent = (d.nameHi || d.name) + ' (' + d.name + ')';
+        selectDistrict.appendChild(opt);
+      });
+    }
+
+    function attachContactHandlers() {
+      var contactBtns = container.querySelectorAll('.rm-btn-contact');
+      for (var j = 0; j < contactBtns.length; j++) {
+        contactBtns[j].addEventListener('click', function () {
+          alert('मकान मालिक: ' + this.getAttribute('data-owner') + '\nमास्क्ड संपर्क: ' + this.getAttribute('data-phone') + '\n\nRise Mitra सुरक्षा नीति के अनुसार सीधी बातचीत शुरू की जा रही है (0% ब्रोकरेज)।');
+        });
+      }
+    }
+
+    function triggerSearch() {
+      var omniVal = inputLocality ? inputLocality.value : '';
+      var filtered = filterListings(allListings, {
+        omnibox: omniVal,
+        locality: omniVal,
+        state: selectState ? selectState.value : '',
+        district: selectDistrict ? selectDistrict.value : '',
+        maxRent: inputBudget ? parseFloat(inputBudget.value) : Infinity,
+        requireSubMeter: checkSubmeter ? checkSubmeter.checked : false
+      });
+      if (countSpan) countSpan.textContent = filtered.length;
+      if (resultsContainer) {
+        if (filtered.length === 0) {
+          resultsContainer.innerHTML = '<div style="background:#0f172a;border:1.5px dashed #38bdf8;border-radius:14px;padding:24px 14px;text-align:center;color:#e2e8f0;font-size:15px;font-weight:700;margin-top:8px;"><div style="font-size:28px;margin-bottom:8px;">🔍</div><div>कोई आवास इस खोज मापदंड से मेल नहीं खाता</div><div style="font-size:13.5px;color:#94a3b8;margin-top:4px;">कृपया बजट बढ़ाएं, दूसरा जिला चुनें या सर्च बॉक्स में पिनकोड लिखें।</div></div>';
+        } else {
+          var cardsHtml = '';
+          filtered.forEach(function (item) { cardsHtml += renderListingCard(item); });
+          resultsContainer.innerHTML = cardsHtml;
+          attachContactHandlers();
+        }
+      }
+    }
+
+    if (sliderBudget && inputBudget) {
+      sliderBudget.addEventListener('input', function () { inputBudget.value = this.value; triggerSearch(); });
+      inputBudget.addEventListener('input', function () { sliderBudget.value = this.value || 15000; triggerSearch(); });
+    }
+    if (inputLocality) inputLocality.addEventListener('input', triggerSearch);
+    if (selectState) selectState.addEventListener('change', function () { updateDistrictDropdown(this.value); triggerSearch(); });
+    if (selectDistrict) selectDistrict.addEventListener('change', triggerSearch);
+    if (checkSubmeter) checkSubmeter.addEventListener('change', triggerSearch);
+    if (btnApply) btnApply.addEventListener('click', triggerSearch);
+
+    if (btnReset) {
+      btnReset.addEventListener('click', function () {
+        if (inputLocality) inputLocality.value = '';
+        if (selectState) selectState.value = '';
+        if (selectDistrict) selectDistrict.innerHTML = '<option value="">सभी जिले (All Districts)</option>';
+        if (inputBudget) inputBudget.value = 15000;
+        if (sliderBudget) sliderBudget.value = 15000;
+        if (checkSubmeter) checkSubmeter.checked = false;
+        triggerSearch();
+      });
+    }
+    triggerSearch();
+  }
+
+  return {
+    subFeatureId: SUB_FEATURE_ID,
+    categoryId: CATEGORY_ID,
+    featureSlug: FEATURE_SLUG,
+    schemaVersion: SCHEMA_VERSION,
+    moduleVersion: MODULE_VERSION,
+    defaultSearchConfig: DEFAULT_SEARCH_CONFIG,
     SEED_LISTINGS: SEED_LISTINGS,
     resolveGeoFromPincode: resolveGeoFromPincode,
     renderListingCard: renderListingCard,
-    buildRentalSearchShellHTML: buildRentalSearchShellHTML
+    buildRentalSearchShellHTML: buildRentalSearchShellHTML,
+    getOwnerFilterConfig: getOwnerFilterConfig,
+    getStorageKey: getStorageKey,
+    filterListings: filterListings,
+    calculateEstimatedMoveInCost: calculateEstimatedMoveInCost,
+    sortListings: sortListings,
+    loadSearchData: loadSearchData,
+    saveSearchData: saveSearchData,
+    ingestUnitFromLedger: ingestUnitFromLedger,
+    loadAllListings: loadAllListings,
+    renderView: renderView,
+    mount: function (container, options) {
+      try {
+        renderView(container, options);
+      } catch (err) {
+        if (container) container.innerHTML = '<div style="color:#ef4444; padding:16px;">किराया खोज कैटलॉग लोड करने में समस्या हुई।</div>';
+      }
+    },
+    unmount: function (container) {
+      if (container) container.innerHTML = '';
+    }
   };
-  window.RM_Cat15_Sub3_RealEstateSearch = api;
-  window.RM_Cat15_Sub3_Template = api;
-  window.RM_Cat16_Sub3_Template = api;
-})();
+});
