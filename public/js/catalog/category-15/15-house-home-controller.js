@@ -1,19 +1,20 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Category-15 Independent Controller (15-1, 15-2, 15-3 Isolation Lock v90)
+ *   - MODULE NAME    : RM Category-15 Independent Controller (15-1, 15-2, 15-3 Isolation Lock v91)
  *   - REPO TARGET    : public/js/catalog/category-15/15-house-home-controller.js
  *   - SURFACE TARGET : SURFACE-A ONLY (With Surface-B SIVME Pass-Through Guard)
  *   - HOST BINDING   : Surface-A (public/index.html)
- *   - SIZE BUDGET    : <= 235 Logical Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 245 Logical Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
  * ==============================================================================
  * 2. EXISTING MODULAR FILES LOCK (ZERO DUPLICATE IMPLEMENTATION):
  *   - public/js/catalog/category-15/15-house-home-controller.js (This File: Sole Owner of Cat-15 Routing & Mount)
- *   - public/js/catalog/category-15/15-2-rental-template.js (15-2 Rental Ledger 2.5D HTML Template)
- *   - public/js/catalog/category-15/15-3-rental-template.js (15-3 Room & Flat Search 2.5D HTML Template)
+ *   - public/js/catalog/category-15/15-1-home-services-handyman.js (15-1 Home Services & Handyman Pros 2.5D Engine)
+ *   - public/js/catalog/category-15/15-2-smart-meter-rent-billing.js (15-2 Smart Meter & Rent Billing 2.5D Template)
+ *   - public/js/catalog/category-15/15-3-real-estate-buy-rent-pg.js (15-3 Real Estate Buy, Rent & PG 2.5D Template)
  *   - public/js/catalog/category-16/16-2-rental-ledger.js (15-2 Sub-Meter & Ledger State Engine)
  *   - public/js/catalog/category-16/16-3-rental-search.js (15-3 Pan-India Property Filter Engine)
  * ==============================================================================
@@ -28,13 +29,14 @@
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.RM_CAT15_CONTROLLER, window.RM_OPEN_CAT15_SUB
- *   - CALLS EXTERNAL APIs : window.RM_Cat15_Sub2_Template, window.RM_Cat15_Sub3_Template,
- *                           window.RM_Cat15_Sub2_RentalLedger, window.RM_Cat15_Sub3_RentalSearch,
- *                           window.launchOneTapServiceScreen
+ *   - CALLS EXTERNAL APIs : window.RM_Cat15_Sub1_HomeServices, window.RM_Cat15_Sub2_SmartMeterBilling,
+ *                           window.RM_Cat15_Sub3_RealEstateSearch, window.RM_Cat15_Sub2_Template,
+ *                           window.RM_Cat15_Sub3_Template, window.RM_Cat15_Sub2_RentalLedger,
+ *                           window.RM_Cat15_Sub3_RentalSearch, window.launchOneTapServiceScreen
  * ==============================================================================
  * 5. DOM ATTRIBUTE, SELECTOR CONTRACT & WORLD-CLASS 2.5D VISUAL LOCK (ZERO-COLLISION RULE):
  *   - SURFACE-A SELECTORS : [data-cat15-sub], #sub-c15, #rm-fullscreen-view, #fs-module-title,
- *                           #rm-module-container, #rm-cat16-btn-add, #rm-search-results-list
+ *                           #rm-module-container, #rm-cat15-1-root, #rm-cat16-btn-add, #rm-search-results-list
  *   - SURFACE-B SELECTORS : .sivme-notch-pill, #sivme-hud, #sivme-drawer (EXCLUDED)
  *   - WORLD-CLASS 2.5D UI : Guarantees 0ms 2.5D UI on first tap with zero black/blank screen.
  * ==============================================================================
@@ -51,11 +53,12 @@
  * ==============================================================================
  * 8. ONE JOB = ONE FILE, ROOT-ENGINE AUTHORITY, ZERO-GUESSWORK & CANONICAL PATH LOCK:
  *   - SINGLE JOB RULE     : Sole authoritative controller for Main Category 15 (`15. House & Home`).
- *   - ZERO-GUESSWORK LOCK : Verified against `1000303706.png`–`1000303721.png` live DOM structure.
+ *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `v90` (`1000303730.png`) & Play Store ranking files.
  *   - CANONICAL PATH      : Must exist ONLY at `public/js/catalog/category-15/15-house-home-controller.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
- *   - ZERO DOHRAO     : Reuses `15-2-rental-template.js` & `15-3-rental-template.js` when loaded.
+ *   - ZERO DOHRAO     : Loads `15-1-home-services-handyman.js`, `15-2-smart-meter-rent-billing.js`
+ *                       & `15-3-real-estate-buy-rent-pg.js`.
  *   - IDEMPOTENT BOOT : Guarded by `window.__RM_LOADED_MODULES__['15-house-home-controller']`.
  * ==============================================================================
  * 10. FAIL-SAFE ERROR BOUNDARY, ZERO-STUB & 2-LINE SECTION GAP STANDARD:
@@ -63,7 +66,7 @@
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, 1-TASK-1-FILE COMMIT, PRE-MAIN GATE & CONTRACT LOCK:
- *   - VERSION SYNC    : Reads `window.__RM_ACTIVE_CACHE_VER || '20261019_v90'`.
+ *   - VERSION SYNC    : Reads `window.__RM_ACTIVE_CACHE_VER || '20261020_v91'`.
  *   - PIPELINE GATE   : Commit & verify on `pre-main` before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -87,12 +90,12 @@
   var lastCat15TapTs = 0;
 
 
-  // 1. Sequential Script Loader (Ensures Template ALWAYS Loads BEFORE Engine so Blank Screen Never Happens)
+  // 1. Sequential Script Loader (Ensures Official Play Store Templates Load BEFORE Engines so Blank Screen Never Happens)
   function loadCat15ScriptsSequentially(onComplete) {
-    var ver = window.__RM_ACTIVE_CACHE_VER || '20261019_v90';
+    var ver = window.__RM_ACTIVE_CACHE_VER || '20261020_v91';
     var loadOne = function (id, src, cb) {
       var existing = document.getElementById(id);
-      if (existing) { if (cb) cb(); return; }
+      if (existing && existing.tagName === 'SCRIPT') { if (cb) cb(); return; }
       var s = document.createElement('script');
       s.id = id;
       s.src = src + '?v=' + ver;
@@ -102,10 +105,11 @@
       (document.head || document.documentElement).appendChild(s);
     };
 
-    loadOne('rm-cat15-2-template-js', '/js/catalog/category-15/15-2-rental-template.js', function () {
+    loadOne('rm-cat15-1-engine-js', '/js/catalog/category-15/15-1-home-services-handyman.js', null);
+    loadOne('rm-cat15-2-billing-js', '/js/catalog/category-15/15-2-smart-meter-rent-billing.js', function () {
       loadOne('rm-cat15-2-engine-js', '/js/catalog/category-16/16-2-rental-ledger.js', null);
     });
-    loadOne('rm-cat15-3-template-js', '/js/catalog/category-15/15-3-rental-template.js', function () {
+    loadOne('rm-cat15-3-realestate-js', '/js/catalog/category-15/15-3-real-estate-buy-rent-pg.js', function () {
       loadOne('rm-cat15-3-engine-js', '/js/catalog/category-16/16-3-rental-search.js', function () {
         if (typeof onComplete === 'function') onComplete();
       });
@@ -124,9 +128,9 @@
       var el = candidates[i];
       var txt = (el.textContent || '').trim();
       var code = '';
-      if (txt.indexOf('15-1') !== -1 || txt.indexOf('Mistry & Home Repair') !== -1) code = '15-1';
-      else if (txt.indexOf('15-2') !== -1 || txt.indexOf('Rental Ledger') !== -1) code = '15-2';
-      else if (txt.indexOf('15-3') !== -1 || txt.indexOf('Room & Flat Search') !== -1) code = '15-3';
+      if (txt.indexOf('15-1') !== -1 || txt.indexOf('Mistry & Home Repair') !== -1 || txt.indexOf('Home Services') !== -1) code = '15-1';
+      else if (txt.indexOf('15-2') !== -1 || txt.indexOf('Rental Ledger') !== -1 || txt.indexOf('Smart Meter') !== -1) code = '15-2';
+      else if (txt.indexOf('15-3') !== -1 || txt.indexOf('Room & Flat Search') !== -1 || txt.indexOf('Real Estate') !== -1) code = '15-3';
       if (code) {
         el.setAttribute('data-cat15-sub', code);
         el.setAttribute('data-sub-code', code);
@@ -147,14 +151,14 @@
     if (isLedger) {
       return '<div style="padding:14px;color:#f8fafc;font-family:sans-serif;">' +
         '<div style="background:#0f172a;border:1.5px solid #0284c7;border-radius:16px;padding:16px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">' +
-        '<div><h3 style="font-size:19px;font-weight:900;color:#fff;margin:0 0 6px 0;">📒 15-2. किराया व सब-मीटर बहीखाता</h3>' +
+        '<div><h3 style="font-size:19px;font-weight:900;color:#fff;margin:0 0 6px 0;">⚡ 15-2. स्मार्ट मीटर व किराया बहीखाता</h3>' +
         '<p style="font-size:13.5px;color:#38bdf8;margin:0;font-weight:700;">मासिक किराया, बिजली सब-मीटर (@₹8/यूनिट) व एडवांस हिसाब</p></div>' +
         '<span style="background:rgba(16,185,129,0.18);border:1.5px solid #10b981;color:#34d399;padding:6px 12px;border-radius:999px;font-size:12.5px;font-weight:800;">✓ सत्यापित</span></div></div>';
     }
     return '<div style="padding:14px;color:#f8fafc;font-family:sans-serif;">' +
       '<div style="background:#0f172a;border:1.5px solid #0284c7;border-radius:16px;padding:16px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">' +
-      '<div><h3 style="font-size:19px;font-weight:900;color:#fff;margin:0 0 6px 0;">🔍 15-3. कमरा व फ्लैट खोज (0% दलाली)</h3>' +
-      '<p style="font-size:13.5px;color:#38bdf8;margin:0;font-weight:700;">पैन-इंडिया ब्रोकर-फ्री आवास खोज इंजन (v1.2 • 2.5D)</p></div>' +
+      '<div><h3 style="font-size:19px;font-weight:900;color:#fff;margin:0 0 6px 0;">🏢 15-3. Real Estate: Buy, Rent & PG (कमरा व फ्लैट खोज • 0% दलाली)</h3>' +
+      '<p style="font-size:13.5px;color:#38bdf8;margin:0;font-weight:700;">पैन-इंडिया ब्रोकर-फ्री आवास खोज इंजन (v1.4 • 2.5D)</p></div>' +
       '<span style="background:rgba(16,185,129,0.18);border:1.5px solid #10b981;color:#34d399;padding:6px 12px;border-radius:999px;font-size:12.5px;font-weight:800;">✓ सत्यापित</span></div>' +
       '<div style="background:#0f172a;border:1.5px solid #1e3a8a;border-radius:16px;padding:16px;margin-bottom:14px;">' +
       '<p style="color:#38bdf8;font-size:14px;font-weight:800;margin:0 0 10px 0;">🔍 स्मार्ट खोज (इलाका, शहर, जिला या पिनकोड)</p>' +
@@ -166,7 +170,7 @@
   }
 
 
-  // 4. Dedicated 0ms Mounter for 15-2 (Rental Ledger) & 15-3 (Room & Flat Search)
+  // 4. Dedicated 0ms Mounter for 15-2 (Smart Meter & Rent Billing) & 15-3 (Real Estate: Buy, Rent & PG)
   function mountCat15SubApp(subCode) {
     var isLedger = (subCode === '15-2' || subCode === '16-2');
     var normCode = isLedger ? '15-2' : '15-3';
@@ -180,8 +184,8 @@
     if (fsTitle) {
       fsTitle.style.fontSize = '13.5px';
       fsTitle.textContent = isLedger
-        ? '📒 15-2 • Rental Ledger (किराया बहीखाता)'
-        : '🏢 15-3 • Room & Flat Search (कमरा व फ्लैट खोज)';
+        ? '⚡ 15-2 • Smart Meter & Rent Billing (किराया बहीखाता)'
+        : '🏢 15-3 • Real Estate: Buy, Rent & PG (कमरा व फ्लैट खोज)';
     }
     var container = document.getElementById('rm-module-container');
     if (!container) return;
@@ -194,8 +198,8 @@
     var attemptInteractiveMount = function () {
       if (fs && fs.classList.contains('hidden')) return true;
       var tpl = isLedger
-        ? (window.RM_Cat15_Sub2_Template || window.RM_Cat16_Sub2_Template)
-        : (window.RM_Cat15_Sub3_Template || window.RM_Cat16_Sub3_Template);
+        ? (window.RM_Cat15_Sub2_SmartMeterBilling || window.RM_Cat15_Sub2_Template || window.RM_Cat16_Sub2_Template)
+        : (window.RM_Cat15_Sub3_RealEstateSearch || window.RM_Cat15_Sub3_Template || window.RM_Cat16_Sub3_Template);
       var engine = isLedger
         ? (window.RM_Cat15_Sub2_RentalLedger || window.RM_Cat16_Sub2_RentalLedger || window.RiseMitraCatalog_15_2 || window.RiseMitraCatalog_16_2)
         : (window.RM_Cat15_Sub3_RentalSearch || window.RM_Cat16_Sub3_RentalSearch || window.RiseMitraCatalog_15_3 || window.RiseMitraCatalog_16_3);
@@ -240,7 +244,7 @@
   }
 
 
-  // 5. Dedicated 0ms Launcher for 15-1 (Mistry & Home Repair)
+  // 5. Dedicated 0ms Launcher for 15-1 (`15-1-home-services-handyman.js` + Full Legacy Fallback)
   function openCat15Sub1Mistry(target, subCard) {
     var chipEl = target && target.closest ? target.closest('.rm-service-chip') : null;
     var chosenChip = chipEl ? (chipEl.textContent || '').trim() : null;
@@ -248,6 +252,26 @@
     var entry = matrix['15-1'] || null;
     var title = 'Mistry & Home Repair (मिस्त्री व गृह मरम्मत)';
     var sub = 'प्लंबर, इलेक्ट्रीशियन, पेंटर, कारपेंटर व राजमिस्त्री बुकिंग';
+
+    if (window.RM_Cat15_Sub1_HomeServices && typeof window.RM_Cat15_Sub1_HomeServices.mount === 'function') {
+      var fs = document.getElementById('rm-fullscreen-view');
+      if (fs) {
+        fs.classList.remove('hidden');
+        fs.style.setProperty('display', 'flex', 'important');
+        fs.style.setProperty('z-index', '99999', 'important');
+      }
+      var fsTitle = document.getElementById('fs-module-title');
+      if (fsTitle) {
+        fsTitle.style.fontSize = '13.5px';
+        fsTitle.textContent = '🛠️ 15-1 • Home Services & Handyman Pros';
+      }
+      var container = document.getElementById('rm-module-container');
+      if (container) {
+        window.RM_Cat15_Sub1_HomeServices.mount(container, { selectedChip: chosenChip });
+        container.setAttribute('data-rm-cat15-mounted', '15-1');
+        return;
+      }
+    }
     if (typeof window.launchOneTapServiceScreen === 'function') {
       window.launchOneTapServiceScreen(title, sub, '15-1', chosenChip, subCard, entry);
     }
@@ -358,6 +382,7 @@
   window.RM_CAT15_CONTROLLER = {
     loadCat15ScriptsSequentially: loadCat15ScriptsSequentially,
     stampCat15SubCardsInDOM: stampCat15SubCardsInDOM,
+    buildZeroBlankCat15Shell: buildZeroBlankCat15Shell,
     mountCat15SubApp: mountCat15SubApp,
     openCat15Sub1Mistry: openCat15Sub1Mistry,
     detectCat15SubCodeFromTap: detectCat15SubCodeFromTap,
