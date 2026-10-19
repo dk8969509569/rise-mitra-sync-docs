@@ -1,32 +1,35 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-0A Surface-A HTML Shell Bootstrapper & Sentinel Lock (v78)
+ *   - MODULE NAME    : RM Part-0A Surface-A HTML Shell Bootstrapper & Sentinel Lock (v81)
  *   - REPO TARGET    : public/js/index-shell-bootstrap.js
  *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional SIVME Loader for Surface-B)
  *   - HOST BINDING   : Surface-A (public/index.html)
  *   - SIZE BUDGET    : <= 265 Lines (Target <= 300 Logical Lines | 0% Secrets)
- *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
+ *   - GOVERNANCE     : 100% ZEL | Fail-Closed | GATE-25.0 | CoverageRatio >= 1.00
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
  * ==============================================================================
  * 2. EXISTING MODULAR FILES LOCK (ZERO DUPLICATE IMPLEMENTATION):
  *   - public/js/index-shell-bootstrap.js (Part-0A: Shell Boot, Anti-Freeze, Macro Bars & Part-0B Auto-Loader)
- *   - public/js/one-tap-profile-hub-healer.js (Part-0B: Top-Right Profile 1-Tap & Large-Font Healer)
+ *   - public/js/one-tap-profile-hub-healer.js (Part-0B: Top-Right Profile 0ms 1-Tap Opener/Closer Bridge)
+ *   - public/js/profile-hub-data-template.js (Part-1 Template: Profile 2.5D CSS & 9-Section HTML Builder)
+ *   - public/js/profile-hub-engine.js (Part-2 Root Engine: Profile Avatar & Mount Controller)
  *   - public/js/one-tap-accordion-engine.js (Part-1C: 50 Category Cards & Sub-Card Accordion)
  *   - public/js/one-tap-catalog-hydrator.js (Part-1A: Boot Loader & Modal Dispatchers)
  *   - public/js/one-tap-home-css-healer.js (Part-1D: 0ms Home Healer & 18-Games Lock)
  *   - public/js/one-tap-catalog-dom-engine.js (Part-1B: Canonical Catalog DOM Engine)
- *   - public/js/profile-hub-engine.js (Profile Hub Engine — Delegated/Bridged on 1-Tap)
  * ==============================================================================
- * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
+ * 3. TOP-HEADER FILE SCOPE, ROOT-ENGINE-FIRST & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : Anti-freeze MutationObserver shield, Tailwind theme config,
  *                              stale SIVME/cache purge, inline ZEL 1-Tap & Profile Large-Font CSS,
  *                              0ms 1-Tap Macro Bar toggle, Part-0B Profile 1-Tap Auto-Loader,
  *                              modal fallback dispatchers, hydration sentinel.
  *   - ALLOWED ON SURFACE-B   : Conditional loading of /js/sovereign-in-situ-hud.js ONLY when
  *                              ?sivme=owner or ?sov_mode=in_situ is present in URL.
- *   - FORBIDDEN IN THIS FILE : Category card sub-list logic (owned by one-tap-accordion-engine.js).
+ *   - ROOT-ENGINE-FIRST RULE : All Profile 2.5D templates live in `profile-hub-data-template.js` (v81)
+ *                              and 50-category card accordions live in `one-tap-accordion-engine.js`.
+ *   - FORBIDDEN IN THIS FILE : Category card sub-list logic or external DOM band-aid loops.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.__RM_ACTIVE_CACHE_VER, window.tailwind.config,
@@ -38,44 +41,49 @@
  *   - CALLS EXTERNAL APIs : window.lockGames18StatePermanently, window.renderCatalogItems,
  *                           window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog, window.RM_ProfileHub
  * ==============================================================================
- * 5. DOM ATTRIBUTE & SELECTOR CONTRACT (ZERO-COLLISION DOM RULE):
+ * 5. DOM ATTRIBUTE, SELECTOR CONTRACT & WORLD-CLASS 2.5D VISUAL LOCK (ZERO-COLLISION RULE):
  *   - SURFACE-A SELECTORS : #categoryModal, #modal-catalog-count, #tier1-header-text,
  *                           #tier2-header-text, #tier1-list, #tier2-list, #rm-zel-one-tap-lock,
  *                           #rm-top-profile-btn, #profileModal, #rm-fullscreen-view
  *   - SURFACE-B SELECTORS : .sivme-notch-pill, #sivme-hud, [data-sivme] (ISOLATED)
+ *   - WORLD-CLASS 2.5D UI : Enforces 0ms 1-Tap `touch-action: manipulation` & baseline `.rm-prof-*` typography.
  * ==============================================================================
- * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
+ * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, ZERO-REVERT & TIMER OWNERSHIP LOCK:
  *   - CLICK SAFETY  : Enforces touch-action: manipulation !important & 0ms Macro/Profile 1-Tap.
  *   - SCROLL SAFETY : Tracks touchmove delta (>10px) + lightweight sentinels (150ms & 600ms).
  *   - FREEZE SHIELD : Blocks recursive MutationObserver loops when #categoryModal is open.
+ *   - ZERO REVERT   : Synced with `v81` root Profile template so innerHTML never reverts UI.
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (9 CORE SHELL BLOCKS):
  *   0. installMutationObserverFreezeKillSwitch 1. configureTailwindTheme
  *   2. purgeStaleShellCacheAndSivme            3. injectShellOneTapLockStyle
  *   4. toggleMacroBarElementInstantly          5. registerFallbackModalDispatchers
  *   6. ensureCatalogHydratedNow                7. initSwAndConditionalSivmeSentinel
- *   8. bindTopRightProfileOneTap (Direct 0ms 1-Tap Trigger + Auto-Loads Part-0B v78)
+ *   8. bindTopRightProfileOneTap (Direct 0ms 1-Tap Trigger + Auto-Loads Part-0B v81)
  *   + Capture 1-Tap Macro Accordion & Top-Right Profile Listeners
  * ==============================================================================
- * 8. ONE JOB = ONE FILE & CANONICAL PATH LOCK (ANTI-DUPLICATE FILE GUARD):
- *   - SINGLE JOB RULE : Sole owner of extracted inline shell scripts from `public/index.html`.
- *   - CANONICAL PATH  : Must exist ONLY at `public/js/index-shell-bootstrap.js`.
+ * 8. ONE JOB = ONE FILE, ROOT-ENGINE AUTHORITY, ZERO-GUESSWORK & CANONICAL PATH LOCK:
+ *   - SINGLE JOB RULE     : Sole owner of extracted inline shell scripts from `public/index.html`.
+ *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `v78` shell script before `v81` cache upgrade.
+ *   - CANONICAL PATH      : Must exist ONLY at `public/js/index-shell-bootstrap.js`.
+ *   - BANNED ALIASES      : Never create duplicate shell bootstrap files (`*-v2.js`, `*-styles.js`).
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
  *   - ZERO DOHRAO     : Delegates all 50 card accordions to `one-tap-accordion-engine.js`
- *                       and Profile Hub DOM healer to `one-tap-profile-hub-healer.js`.
+ *                       and Profile Hub 1-Tap to `one-tap-profile-hub-healer.js`.
  *   - IDEMPOTENT BOOT : Guarded by `window.__RM_LOADED_MODULES__['index-shell-bootstrap']`.
  * ==============================================================================
  * 10. FAIL-SAFE ERROR BOUNDARY, ZERO-STUB & 2-LINE SECTION GAP STANDARD:
  *   - ERROR BOUNDARY  : Strict IIFE + try/catch boundaries protect boot & cache purge.
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
+ *   - MOBILE EDITING  : Major sections separated by 2 blank lines for thumb-selection safety.
  * ==============================================================================
- * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v78'`.
+ * 11. CACHE-BUSTING VERSION SYNC, 1-TASK-1-FILE COMMIT, PRE-MAIN GATE & CONTRACT LOCK:
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v81'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
- *   - @folder-a-ssot  : 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW (Pure Policy & Specs Only)
+ *   - @folder-a-ssot  : 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW (Pure Policy & Specs Only — No Code)
  *   - @folder-b-mirror: 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH (Auto-Synced via sync_drive.yml)
  *   - @ai-pre-flight  : 12-Point Header + Code auto-indexed in Folder B snapshot.
  * ==============================================================================
@@ -88,7 +96,7 @@
   if (window.__RM_LOADED_MODULES__['index-shell-bootstrap']) return;
   window.__RM_LOADED_MODULES__['index-shell-bootstrap'] = true;
 
-  var CACHE_VER = '20261018_v78';
+  var CACHE_VER = '20261018_v81';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VER;
   var lastMacroToggleTs = 0;
   var lastProfileTapTs = 0;
@@ -186,12 +194,12 @@
       '#profileModal:not(.hidden) { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99998 !important; background-color: rgba(2, 6, 23, 0.86) !important; display: flex !important; align-items: center !important; justify-content: center !important; padding: 12px !important; }' +
       '#rm-fullscreen-view:not(.hidden) { position: fixed !important; inset: 0 !important; z-index: 99999 !important; display: flex !important; }' +
       '.rm-prof-upgraded-root { padding-bottom: 115px !important; }' +
-      '.rm-prof-row-title { font-size: 19px !important; font-weight: 800 !important; line-height: 1.35 !important; color: #ffffff !important; }' +
-      '.rm-prof-row-sub { font-size: 16px !important; font-weight: 600 !important; line-height: 1.45 !important; color: #e2e8f0 !important; margin-top: 3px !important; }' +
-      '.rm-prof-sec-hdr { font-size: 16px !important; font-weight: 900 !important; letter-spacing: 0.4px !important; line-height: 1.4 !important; color: #38bdf8 !important; }' +
-      '.rm-prof-grid-title { font-size: 18px !important; font-weight: 800 !important; line-height: 1.3 !important; color: #ffffff !important; }' +
-      '.rm-prof-grid-sub { font-size: 15px !important; font-weight: 700 !important; line-height: 1.4 !important; margin-top: 3px !important; }' +
-      '.rm-prof-logout-btn { font-size: 12px !important; font-weight: 700 !important; min-height: 32px !important; max-width: 140px !important; padding: 6px 16px !important; margin: 14px auto 20px auto !important; display: block !important; }';
+      '.rm-prof-row-title { font-size: 18px !important; font-weight: 800 !important; line-height: 1.38 !important; color: #ffffff !important; }' +
+      '.rm-prof-row-sub { font-size: 15px !important; font-weight: 700 !important; line-height: 1.46 !important; color: #e2e8f0 !important; margin-top: 3px !important; }' +
+      '.rm-prof-sec-hdr { font-size: 15px !important; font-weight: 900 !important; letter-spacing: 0.3px !important; line-height: 1.4 !important; color: #38bdf8 !important; }' +
+      '.rm-prof-grid-title { font-size: 16px !important; font-weight: 800 !important; line-height: 1.32 !important; color: #ffffff !important; }' +
+      '.rm-prof-grid-sub { font-size: 13.5px !important; font-weight: 700 !important; line-height: 1.4 !important; margin-top: 4px !important; }' +
+      '.rm-prof-logout-btn { font-size: 12px !important; font-weight: 800 !important; min-height: 32px !important; max-width: 140px !important; padding: 6px 18px !important; margin: 14px auto 16px auto !important; display: block !important; }';
     if (!existing) (document.head || document.documentElement).appendChild(s);
   }
 
@@ -326,7 +334,7 @@
   }
 
 
-  // 8. Direct 0ms Top-Right Profile 1-Tap Trigger & Auto-Load Part-0B (public/js/one-tap-profile-hub-healer.js v78)
+  // 8. Direct 0ms Top-Right Profile 1-Tap Trigger & Auto-Load Part-0B (public/js/one-tap-profile-hub-healer.js v81)
   function bindTopRightProfileOneTap() {
     if (typeof window.healProfileHubTypographyAndLayout !== 'function') {
       window.healProfileHubTypographyAndLayout = function () {};
