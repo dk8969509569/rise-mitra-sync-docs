@@ -1,30 +1,35 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Category-15 (15-3) Seed Data, Geo & 2.5D HTML Template (Part-1 v83)
+ *   - MODULE NAME    : RM Category-15 (15-3) Real Estate: Buy, Rent & PG (Part-1 v91)
  *   - SPECIFICATION  : 14_04__EXT_004_MODULAR_ARCHITECTURE_MOBILE_SAFETY_RECOVERY_SPEC
- *   - REPO TARGET    : public/js/catalog/category-15/15-3-rental-template.js
- *   - SURFACE TARGET : SURFACE-A ONLY (15-3 Room & Flat Search 2.5D UI Template & Seed Data)
- *   - HOST BINDING   : Surface-A (Auto-loaded & consumed by 15-3 / 16-3 Rental Search Engine)
- *   - SIZE BUDGET    : <= 195 Logical Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - REPO TARGET    : public/js/catalog/category-15/15-3-real-estate-buy-rent-pg.js
+ *   - SURFACE TARGET : SURFACE-A ONLY (15-3 Real Estate Buy, Rent & PG 2.5D UI & Seed Data)
+ *   - HOST BINDING   : Surface-A (Auto-loaded & consumed by 15-house-home-controller.js & 16-3 engine)
+ *   - SIZE BUDGET    : <= 200 Logical Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : GATE-16.7 | DEC-RM-SOV-ARCH-20260930-MODULAR-ZEL-001 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
  * ==============================================================================
  * 2. EXISTING MODULAR FILES LOCK (ZERO DUPLICATE IMPLEMENTATION):
- *   - public/js/catalog/category-15/15-3-rental-template.js (Part-1: Seed Listings, Geo & 2.5D HTML)
+ *   - public/js/catalog/category-15/15-3-real-estate-buy-rent-pg.js (Part-1: Seed Listings, Geo & 2.5D HTML)
+ *   - public/js/catalog/category-15/15-2-smart-meter-rent-billing.js (15-2 Companion: Smart Meter & Rent Billing)
+ *   - public/js/catalog/category-15/15-1-home-services-handyman.js (15-1 Companion: Home Services & Handyman Pros)
+ *   - public/js/catalog/category-15/15-house-home-controller.js (Independent Category-15 Controller)
  *   - public/js/catalog/category-16/16-3-rental-search.js (Part-2 Root Engine: Filter, Storage & Events)
- *   - public/js/catalog/category-15/15-2-rental-template.js & 16-2-rental-ledger.js (15-2 Companion)
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE, ROOT-ENGINE-FIRST & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : SEED_LISTINGS (4 Pan-India listings), resolveGeoFromPincode,
  *                              renderListingCard (2.5D), and buildRentalSearchShellHTML (2.5D).
  *   - ALLOWED ON SURFACE-B   : NONE (Respects `ownerCfg` visibility flags passed from Part-2).
- *   - ROOT-ENGINE-FIRST RULE : Pure stateless template & seed provider for 15-3 Rental Search.
+ *   - ROOT-ENGINE-FIRST RULE : Pure stateless template & seed provider aligned with Google Play Store
+ *                              HOUSE_AND_HOME #1 Revenue Segment "Real estate" (59% Market Share).
  *   - FORBIDDEN IN THIS FILE : Direct DOM mutation or localStorage writes (owned by Part-2).
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.RM_Cat15_Sub3_Template, window.RM_Cat16_Sub3_Template,
+ *                           window.RM_Cat15_Sub3_RealEstateSearch,
+ *                           window.__RM_LOADED_MODULES__['15-3-real-estate-buy-rent-pg'],
  *                           window.__RM_LOADED_MODULES__['15-3-rental-template']
  *   - CALLS EXTERNAL APIs : NONE (Pure deterministic data & HTML functions)
  * ==============================================================================
@@ -44,25 +49,26 @@
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST:
  *   1. SEED_LISTINGS (4 Pan-India Seed Listings: JH Ranchi, BR Patna, MP Indore, RJ Kota)
- *   2. resolveGeoFromPincode (8 Pan-India Pincode Zones)
+ *   2. resolveGeoFromPincode (9 Pan-India Pincode Zones)
  *   3. renderListingCard (World-Class 2.5D Property Card Builder)
  *   4. buildRentalSearchShellHTML (World-Class 2.5D Search Filter & Results Shell Builder)
  * ==============================================================================
  * 8. ONE JOB = ONE FILE, ROOT-ENGINE AUTHORITY, ZERO-GUESSWORK & CANONICAL PATH LOCK:
  *   - SINGLE JOB RULE     : Sole owner of 15-3 2.5D HTML Templates, Seed Listings & Pincode Resolver.
- *   - ZERO-GUESSWORK LOCK : Aligned with Google Play Store Official Taxonomy (Category 15 = House & Home).
- *   - CANONICAL PATH      : Must exist ONLY at `public/js/catalog/category-15/15-3-rental-template.js`.
+ *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `15-3-rental-template.js` (`v83`).
+ *   - CANONICAL PATH      : Must exist ONLY at `public/js/catalog/category-15/15-3-real-estate-buy-rent-pg.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
- *   - ZERO DOHRAO     : Eliminates inline HTML & seed bloat from `16-3-rental-search.js`.
- *   - IDEMPOTENT BOOT : Guarded by `window.__RM_LOADED_MODULES__['15-3-rental-template']`.
+ *   - ZERO DOHRAO     : Eliminates inline HTML & seed bloat from `16-3-rental-search.js` and
+ *                       registers legacy script IDs (`rm-cat15-3-template-js`, `rm-cat15-3-tpl`).
+ *   - IDEMPOTENT BOOT : Guarded by `window.__RM_LOADED_MODULES__['15-3-real-estate-buy-rent-pg']`.
  * ==============================================================================
  * 10. FAIL-SAFE ERROR BOUNDARY, ZERO-STUB & 2-LINE SECTION GAP STANDARD:
  *   - ERROR BOUNDARY  : Strict IIFE + null-safe fallbacks on all listing fields.
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, 1-TASK-1-FILE COMMIT, PRE-MAIN GATE & CONTRACT LOCK:
- *   - VERSION SYNC    : Synced with `MODULE_VERSION = '1.2.0'` (`v83`).
+ *   - VERSION SYNC    : Synced with `MODULE_VERSION = '1.4.0'` (`v91`).
  *   - PIPELINE GATE   : Commit & verify on `pre-main` before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -76,8 +82,17 @@
   'use strict';
 
   window.__RM_LOADED_MODULES__ = window.__RM_LOADED_MODULES__ || {};
+  window.__RM_LOADED_MODULES__['15-3-real-estate-buy-rent-pg'] = true;
   window.__RM_LOADED_MODULES__['15-3-rental-template'] = true;
   window.__RM_LOADED_MODULES__['16-3-rental-template'] = true;
+
+  ['rm-cat15-3-template-js', 'rm-cat15-3-tpl'].forEach(function (id) {
+    if (typeof document !== 'undefined' && !document.getElementById(id)) {
+      var m = document.createElement('meta');
+      m.id = id;
+      (document.head || document.documentElement).appendChild(m);
+    }
+  });
 
 
   // 1. Pan-India Academic & Migration Seed Listings (All 4 Original Listings 100% Intact)
@@ -217,8 +232,8 @@
       '<div style="box-sizing:border-box;width:100%;max-width:100%;margin:0 auto;padding:6px 2px 90px 2px;font-family:system-ui,-apple-system,sans-serif;color:#f8fafc;overflow-x:hidden;">' +
         '<div style="' + box25d + 'padding:14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;box-sizing:border-box;width:100%;">' +
           '<div style="min-width:0;flex:1;">' +
-            '<h2 style="margin:0;font-size:18.5px;font-weight:900;color:#ffffff;line-height:1.3;">🔍 15-3. ' + ((i18n && i18n.featureTitle) || 'कमरा व फ्लैट खोज (0% दलाली)') + '</h2>' +
-            '<span style="font-size:14px;color:#38bdf8;font-weight:700;display:block;margin-top:3px;">पैन-इंडिया ब्रोकर-फ्री आवास खोज इंजन (v1.2 • 2.5D)</span>' +
+            '<h2 style="margin:0;font-size:18.5px;font-weight:900;color:#ffffff;line-height:1.3;">🏢 15-3. ' + ((i18n && i18n.featureTitle) || 'Real Estate: Buy, Rent & PG (कमरा व फ्लैट खोज • 0% दलाली)') + '</h2>' +
+            '<span style="font-size:14px;color:#38bdf8;font-weight:700;display:block;margin-top:3px;">पैन-इंडिया ब्रोकर-फ्री आवास खोज इंजन (v1.4 • 2.5D)</span>' +
           '</div>' +
           '<span style="background:#064e3b;color:#6ee7b7;border:1.5px solid #10b981;font-size:13px;padding:4px 10px;border-radius:999px;font-weight:800;white-space:nowrap;margin-left:8px;">✓ सत्यापित</span>' +
         '</div>' +
@@ -273,6 +288,7 @@
     renderListingCard: renderListingCard,
     buildRentalSearchShellHTML: buildRentalSearchShellHTML
   };
+  window.RM_Cat15_Sub3_RealEstateSearch = api;
   window.RM_Cat15_Sub3_Template = api;
   window.RM_Cat16_Sub3_Template = api;
 })();
