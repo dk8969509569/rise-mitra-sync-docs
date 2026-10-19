@@ -1,28 +1,30 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-0B-2 Top-Right Profile 0ms 1-Tap Opener & Controller (v79)
+ *   - MODULE NAME    : RM Part-0B-2 Top-Right Profile 0ms 1-Tap Opener & Controller (v81)
  *   - REPO TARGET    : public/js/one-tap-profile-hub-healer.js
  *   - SURFACE TARGET : SURFACE-A ONLY (Public Member Profile & Sovereign Hub UI)
  *   - HOST BINDING   : Surface-A (Auto-loaded by public/js/index-shell-bootstrap.js)
  *   - SIZE BUDGET    : <= 175 Logical Lines (Target <= 300 Logical Lines | 0% Secrets)
- *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
+ *   - GOVERNANCE     : 100% ZEL | Fail-Closed | GATE-25.0 | CoverageRatio >= 1.00
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
  * ==============================================================================
  * 2. EXISTING MODULAR FILES LOCK (ZERO DUPLICATE IMPLEMENTATION):
  *   - public/js/one-tap-profile-hub-healer.js (Part-0B-2: 0ms 1-Tap Opener/Closer & Observer ONLY)
- *   - public/js/profile-hub-25d-styles.js (Part-0B-1: 2.5D CSS & Large-Font DOM Healer ONLY)
+ *   - public/js/profile-hub-data-template.js (Part-1 Template: 2.5D CSS & 9-Section HTML Builder ONLY)
+ *   - public/js/profile-hub-engine.js (Part-2 Root Engine: Avatar Storage, Compression & Mount API)
  *   - public/js/index-shell-bootstrap.js (Part-0A: Core Shell Boot, Anti-Freeze & Macro Bars ONLY)
  *   - public/js/one-tap-accordion-engine.js (Part-1C: 50 Category Cards & Sub-Card Accordion)
- *   - public/js/profile-hub-engine.js (Profile Hub Data/View Engine — Bridged on 1-Tap)
  * ==============================================================================
- * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
+ * 3. TOP-HEADER FILE SCOPE, ROOT-ENGINE-FIRST & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : Top-Right Profile icon (👤) 0ms 1-Tap detection, self-healing
  *                              #profileModal fallback, `< वापस` & `✕` 0ms 1-Tap close, childList
- *                              anti-revert observer, auto-loader for `profile-hub-25d-styles.js`.
+ *                              anti-revert observer, and bridge to `profile-hub-data-template.js`.
  *   - ALLOWED ON SURFACE-B   : NONE (Surface-B Owner Console is strictly isolated).
- *   - FORBIDDEN IN THIS FILE : Large CSS strings or 200-node typography loops (owned by Part-0B-1).
+ *   - ROOT-ENGINE-FIRST RULE : All HTML templates, 2.5D borders & large fonts live directly inside
+ *                              `profile-hub-data-template.js` and `profile-hub-engine.js`.
+ *   - FORBIDDEN IN THIS FILE : Requesting retired `profile-hub-25d-styles.js` or 200-node DOM loops.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.__RM_LOADED_MODULES__['one-tap-profile-hub-healer'],
@@ -33,16 +35,19 @@
  *                           window.RM_ProfileHub.open, window.openProfileHub,
  *                           window.openFullscreenModule, window.openCatalogModal
  * ==============================================================================
- * 5. DOM ATTRIBUTE & SELECTOR CONTRACT (ZERO-COLLISION DOM RULE):
+ * 5. DOM ATTRIBUTE, SELECTOR CONTRACT & WORLD-CLASS 2.5D VISUAL LOCK (ZERO-COLLISION RULE):
  *   - SURFACE-A SELECTORS : #rm-top-profile-btn, [data-rm-profile-trigger="1"], #profileModal,
  *                           #profileHubModal, #userProfileModal, #rm-fullscreen-view, #fs-module-title
  *   - SURFACE-B SELECTORS : .sivme-notch-pill, #sivme-hud, [data-sivme] (NEVER TOUCHED)
+ *   - WORLD-CLASS 2.5D UI : 3-layer distinct color contrast, glowing 2.5D bevel borders, 15px-20px
+ *                           anti-clipping fonts, and compact 12px Log Out via Part-1 template.
  * ==============================================================================
- * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
- *   - ZERO FREEZE   : Never scans document.body; delegates scoped healing to Part-0B-1.
- *   - CLICK SAFETY  : State-verified DOM canary (`.rm-prof-grid-card`) + childList observer ensures
- *                     0ms instant open/close and blocks inner taps from reverting UI back to small fonts.
- *   - ANTI-CLIPPING : Pure CSS rules in Part-0B-1 enforce single outer 2.5D depth & large fonts.
+ * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, ZERO-REVERT & TIMER OWNERSHIP LOCK:
+ *   - CLICK SAFETY  : 0ms 1-Tap execution; suppresses synthetic ghost-clicks within 450ms after touchend.
+ *   - SCROLL SAFETY : Tracks touchmove delta (>12px) so scrolling never triggers accidental taps.
+ *   - DOM SAFETY    : State-verified DOM canary (`.rm-prof-hero-box` / `Sovereign Crown Partner`) ensures
+ *                     0ms instant open/close.
+ *   - ZERO REVERT   : 2.5D CSS & typography are baked directly into Part-1 root template.
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (8 PROFILE CONTROLLER FUNCTIONS):
  *   1. ensurePart0B1StylesLoaded             2. bindTopRightProfileOneTap
@@ -50,24 +55,28 @@
  *   5. openProfileModal / closeProfileModal  6. toggleProfileModal
  *   7. autoTagTopRightProfileIcon            8. findTopRightProfileTarget & handleProfileOneTap
  * ==============================================================================
- * 8. ONE JOB = ONE FILE & CANONICAL PATH LOCK (ANTI-DUPLICATE FILE GUARD):
- *   - SINGLE JOB RULE : Sole authoritative owner of Top-Right Profile 1-Tap Opener & Close Controller.
- *   - CANONICAL PATH  : Must exist ONLY at `public/js/one-tap-profile-hub-healer.js`.
+ * 8. ONE JOB = ONE FILE, ROOT-ENGINE AUTHORITY, ZERO-GUESSWORK & CANONICAL PATH LOCK:
+ *   - SINGLE JOB RULE     : Sole authoritative owner of Top-Right Profile 1-Tap Opener & Close Controller.
+ *   - ZERO-GUESSWORK LOCK : Paired 1:1 with `profile-hub-engine.js` & `profile-hub-data-template.js`.
+ *   - CANONICAL PATH      : Must exist ONLY at `public/js/one-tap-profile-hub-healer.js`.
+ *   - BANNED ALIASES      : `public/js/profile-hub-25d-styles.js` is retired; never load it.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
- *   - ZERO DOHRAO     : Delegates 2.5D CSS & DOM typography loop to `public/js/profile-hub-25d-styles.js`.
+ *   - ZERO DOHRAO     : Delegates 2.5D CSS & template rendering to `public/js/profile-hub-data-template.js`.
  *   - IDEMPOTENT BOOT : Guarded by `window.__RM_LOADED_MODULES__['one-tap-profile-hub-healer']`.
  * ==============================================================================
  * 10. FAIL-SAFE ERROR BOUNDARY, ZERO-STUB & 2-LINE SECTION GAP STANDARD:
  *   - ERROR BOUNDARY  : Strict IIFE + try/catch boundaries around DOM & storage operations.
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
+ *   - MOBILE EDITING  : Major sections separated by 2 blank lines for thumb-selection safety.
  * ==============================================================================
- * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v78'`.
+ * 11. CACHE-BUSTING VERSION SYNC, 1-TASK-1-FILE COMMIT, PRE-MAIN GATE & CONTRACT LOCK:
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v81'`.
+ *   - 1-FILE COMMIT   : Synchronized with root engine Part-1/Part-2 split (`v81`).
  *   - PIPELINE GATE   : Commit & verify on `pre-main` before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
- *   - @folder-a-ssot  : 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW (Pure Policy & Specs Only)
+ *   - @folder-a-ssot  : 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW (Pure Policy & Specs Only — No Code)
  *   - @folder-b-mirror: 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH (Auto-Synced via sync_drive.yml)
  *   - @ai-pre-flight  : 12-Point Header + Code auto-indexed in Folder B snapshot.
  * ==============================================================================
@@ -79,6 +88,7 @@
   window.__RM_LOADED_MODULES__ = window.__RM_LOADED_MODULES__ || {};
   if (window.__RM_LOADED_MODULES__['one-tap-profile-hub-healer']) return;
   window.__RM_LOADED_MODULES__['one-tap-profile-hub-healer'] = true;
+  window.__RM_LOADED_MODULES__['profile-hub-25d-styles'] = true;
 
   var lastProfileTouchTs = 0;
   var lastProfileActionTs = 0;
@@ -87,16 +97,20 @@
   var touchMoved = false;
 
 
-  // 1. Auto-Load Companion Part-0B-1 (`public/js/profile-hub-25d-styles.js`) & Bridge Healer Calls
+  // 1. Auto-Load Part-1 Template (`public/js/profile-hub-data-template.js`) & Bridge Style Lock (Zero 404)
   function ensurePart0B1StylesLoaded() {
     if (typeof window.injectProfileHubLargeFontStyles === 'function') {
       window.injectProfileHubLargeFontStyles();
       return;
     }
-    if (!window.__RM_LOADED_MODULES__['profile-hub-25d-styles'] && !document.getElementById('rm-part0b1-25d-styles-js')) {
+    if (window.RM_PROFILE_HUB_TEMPLATE && typeof window.RM_PROFILE_HUB_TEMPLATE.injectStyles === 'function') {
+      window.RM_PROFILE_HUB_TEMPLATE.injectStyles();
+      return;
+    }
+    if (!window.__RM_LOADED_MODULES__['profile-hub-data-template'] && !document.getElementById('rm-profile-part1-template-js')) {
       var s = document.createElement('script');
-      s.id = 'rm-part0b1-25d-styles-js';
-      s.src = '/js/profile-hub-25d-styles.js?v=' + (window.__RM_ACTIVE_CACHE_VER || '20261018_v79');
+      s.id = 'rm-profile-part1-template-js';
+      s.src = '/js/profile-hub-data-template.js?v=' + (window.__RM_ACTIVE_CACHE_VER || '20261018_v81');
       s.async = false;
       s.onload = function () {
         if (typeof window.injectProfileHubLargeFontStyles === 'function') window.injectProfileHubLargeFontStyles();
@@ -188,7 +202,7 @@
       var fsView = document.getElementById('rm-fullscreen-view');
       var fsContainer = document.getElementById('rm-module-container');
 
-      if (fsView && fsContainer && (fsContainer.textContent || '').indexOf('Sovereign Crown Partner') !== -1) {
+      if (fsView && fsContainer && (fsContainer.querySelector('.rm-prof-hero-box') || (fsContainer.textContent || '').indexOf('Sovereign Crown Partner') !== -1)) {
         fsView.classList.remove('hidden');
         fsView.classList.add('rm-prof-upgraded-root');
         fsView.style.removeProperty('display');
