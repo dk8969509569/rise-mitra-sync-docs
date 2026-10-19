@@ -1,11 +1,11 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-3A Fullscreen Micro-App Viewport & UI Controller (v85)
+ *   - MODULE NAME    : RM Part-3A Fullscreen Micro-App Viewport & UI Controller (v86)
  *   - REPO TARGET    : public/js/fullscreen-microapp-controller.js
  *   - SURFACE TARGET : SURFACE-A ONLY (Universal 150 Sub-Service & Micro-App Renderer)
  *   - HOST BINDING   : Surface-A (public/index.html)
- *   - SIZE BUDGET    : <= 255 Logical Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 265 Logical Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : 100% ZEL | Fail-Closed | GATE-25.0 | CoverageRatio >= 1.00
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -26,7 +26,8 @@
  *   - ROOT-ENGINE-FIRST RULE : Intercepts `handleLaunchCategory` / `openFullscreenModule` and
  *                              eliminates `"मॉड्यूल लोड हो रहा है..."` in 0ms by mounting
  *                              `RM_Cat15_Sub2_RentalLedger` (15-2) & `RM_Cat15_Sub3_RentalSearch` (15-3).
- *   - FORBIDDEN IN THIS FILE : Leaving `#rm-module-container` stuck on `"मॉड्यूल लोड हो रहा है..."`.
+ *   - FORBIDDEN IN THIS FILE : Auto-opening `#rm-fullscreen-view` when it is `.hidden` or leaving
+ *                              `#rm-module-container` stuck on `"मॉड्यूल लोड हो रहा है..."`.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.RM_FULLSCREEN_CONTROLLER,
@@ -44,7 +45,7 @@
  *   - WORLD-CLASS 2.5D UI : Preserves dedicated 2.5D module DOM 100% and normalizes 16-x to 15-x.
  * ==============================================================================
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, ZERO-REVERT & TIMER OWNERSHIP LOCK:
- *   - CLICK SAFETY  : Pure callable controller methods + `handleLaunchCategory` 0ms hook.
+ *   - CLICK SAFETY  : Sentinel runs ONLY when `#rm-fullscreen-view` is open (`!fs.classList.contains('hidden')`).
  *   - DOM SAFETY    : Replaces `"मॉड्यूल लोड हो रहा है..."` immediately with Part-1/Part-2 engine.
  *   - ZERO REVERT   : Preserves #fs-module-title and #rm-module-container structure 100%.
  * ==============================================================================
@@ -57,7 +58,7 @@
  * ==============================================================================
  * 8. ONE JOB = ONE FILE, ROOT-ENGINE AUTHORITY, ZERO-GUESSWORK & CANONICAL PATH LOCK:
  *   - SINGLE JOB RULE     : Sole authoritative owner of Fullscreen Viewport & Generic 4-Chip Launcher.
- *   - ZERO-GUESSWORK LOCK : Verified against live screenshots `1000303555.png` & `1000303558.png`.
+ *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `v85` (`1000303605.png`) and live tests.
  *   - CANONICAL PATH      : Must exist ONLY at `public/js/fullscreen-microapp-controller.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
@@ -69,7 +70,7 @@
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, 1-TASK-1-FILE COMMIT, PRE-MAIN GATE & CONTRACT LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261019_v85'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261019_v86'`.
  *   - PIPELINE GATE   : Commit & verify on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -86,9 +87,11 @@
   if (window.__RM_LOADED_MODULES__['fullscreen-microapp-controller']) return;
   window.__RM_LOADED_MODULES__['fullscreen-microapp-controller'] = true;
 
+  var activePollTimer = null;
+
   // 0. Boot-Time Preloader: Ensure Category 15 Part-1 Templates & Part-2 Engines Load Immediately
   function preloadCat15Scripts() {
-    var ver = window.__RM_ACTIVE_CACHE_VER || '20261019_v85';
+    var ver = window.__RM_ACTIVE_CACHE_VER || '20261019_v86';
     var scripts = [
       { id: 'rm-cat15-2-tpl', src: '/js/catalog/category-15/15-2-rental-template.js?v=' + ver },
       { id: 'rm-cat15-3-tpl', src: '/js/catalog/category-15/15-3-rental-template.js?v=' + ver },
@@ -110,6 +113,10 @@
 
   // 1. Force-close Fullscreen Viewport reliably (clears inline display:flex !important & canary)
   function forceCloseFullscreenViewport() {
+    if (activePollTimer) {
+      clearInterval(activePollTimer);
+      activePollTimer = null;
+    }
     var fs = document.getElementById('rm-fullscreen-view');
     if (fs) {
       fs.classList.add('hidden');
@@ -282,15 +289,16 @@
     var fsTitle = document.getElementById('fs-module-title');
     if (!fs || !fsContainer) return;
 
-    fs.classList.remove('hidden');
-    fs.style.setProperty('display', 'flex', 'important');
-    fs.style.setProperty('z-index', '99999', 'important');
-
     var code = String(subCode || '').trim();
-    if (!code && fsTitle) {
+    if (!code && fsTitle && !fs.classList.contains('hidden')) {
       var titleMatch = (fsTitle.textContent || '').match(/\b(1[56]-[123])\b/);
       if (titleMatch) code = titleMatch[1];
     }
+    if (!code) return;
+
+    fs.classList.remove('hidden');
+    fs.style.setProperty('display', 'flex', 'important');
+    fs.style.setProperty('z-index', '99999', 'important');
 
     if (code === '15-2' || code === '16-2' || code === '15-3' || code === '16-3') {
       var isLedger = (code === '15-2' || code === '16-2');
@@ -298,12 +306,12 @@
       normalizeFullscreenMicroAppDOM(normCode);
 
       var canarySelector = isLedger ? '#rm-cat16-btn-add' : '#rm-search-results-list';
-      if (fsContainer.querySelector(canarySelector)) {
-        fsContainer.setAttribute('data-rm-cat15-mounted', normCode);
+      if (fsContainer.getAttribute('data-rm-cat15-mounted') === normCode && fsContainer.querySelector(canarySelector)) {
         return;
       }
 
       var tryMountAuthoritativeEngine = function () {
+        if (fs.classList.contains('hidden')) return true;
         var eng = isLedger
           ? (window.RM_Cat15_Sub2_RentalLedger || window.RM_Cat16_Sub2_RentalLedger || window.RiseMitraCatalog_15_2 || window.RiseMitraCatalog_16_2)
           : (window.RM_Cat15_Sub3_RentalSearch || window.RM_Cat16_Sub3_RentalSearch || window.RiseMitraCatalog_15_3 || window.RiseMitraCatalog_16_3);
@@ -320,7 +328,7 @@
         if (tpl) {
           if (isLedger && typeof tpl.buildRentalLedgerHTML === 'function') {
             fsContainer.innerHTML = tpl.buildRentalLedgerHTML([], 8);
-            return true;
+            return false;
           } else if (!isLedger && typeof tpl.buildRentalSearchShellHTML === 'function') {
             var seeds = Array.isArray(tpl.SEED_LISTINGS) ? tpl.SEED_LISTINGS : [];
             fsContainer.innerHTML = tpl.buildRentalSearchShellHTML(seeds.length, { smartOmnibox: true, showState: true, showDistrict: true, showBudget: true, showSubmeter: true }, {});
@@ -328,7 +336,7 @@
             if (listEl && typeof tpl.renderListingCard === 'function') {
               listEl.innerHTML = seeds.map(function (it) { return tpl.renderListingCard(it); }).join('');
             }
-            return true;
+            return false;
           }
         }
         return false;
@@ -337,11 +345,13 @@
       if (tryMountAuthoritativeEngine()) return;
 
       preloadCat15Scripts();
+      if (activePollTimer) clearInterval(activePollTimer);
       var attempts = 0;
-      var pollTimer = setInterval(function () {
+      activePollTimer = setInterval(function () {
         attempts++;
-        if (fsContainer.querySelector(canarySelector) || tryMountAuthoritativeEngine() || attempts > 25) {
-          clearInterval(pollTimer);
+        if (fs.classList.contains('hidden') || fsContainer.querySelector(canarySelector) || tryMountAuthoritativeEngine() || attempts > 25) {
+          clearInterval(activePollTimer);
+          activePollTimer = null;
         }
       }, 60);
       return;
@@ -350,15 +360,15 @@
     var htmlNow = (fsContainer.innerHTML || '').trim();
     var isStuckLoading = htmlNow === '' || htmlNow.indexOf('मॉड्यूल लोड हो रहा है') !== -1 || htmlNow.indexOf('लोड हो रहा है') !== -1;
     if (!isStuckLoading) {
-      normalizeFullscreenMicroAppDOM(subCode);
+      normalizeFullscreenMicroAppDOM(code);
       return;
     }
 
     var matrix = window.RM_CANONICAL_SUB_MATRIX || {};
-    var entry = matrix[subCode] || null;
-    var fTitle = titleText || (entry && entry.title) || ('सेवा ' + subCode);
+    var entry = matrix[code] || null;
+    var fTitle = titleText || (entry && entry.title) || ('सेवा ' + code);
     var fSub = subtitleText || (entry && entry.hindiTitle) || 'Rise Mitra सत्यापित सेवा व बुकिंग पोर्टल';
-    launchOneTapServiceScreen(fTitle, fSub, subCode, null, null, entry);
+    launchOneTapServiceScreen(fTitle, fSub, code, null, null, entry);
   }
 
 
@@ -383,7 +393,7 @@
   }
 
 
-  // 6. Hook External Renderers & Intercept handleLaunchCategory / "मॉड्यूल लोड हो रहा है..."
+  // 6. Hook External Renderers & Intercept handleLaunchCategory / "मॉड्यूल लोड हो रहा है..." (Guarded when hidden)
   function hookExternalRenderers() {
     if (window.RM_SUB_CARD_RENDERER) {
       window.RM_SUB_CARD_RENDERER.openSmoothSubServiceScreen = function (entry, subCode, title, subtitle, selectedPill) {
@@ -399,32 +409,36 @@
     if (typeof window.handleLaunchCategory === 'function' && !window.handleLaunchCategory.__rmCat15Hooked) {
       var origLaunch = window.handleLaunchCategory;
       var wrappedLaunch = function (catId, subMod) {
-        var res = origLaunch.apply(this, arguments);
-        var modStr = String(subMod || '');
-        if (modStr === '15-2' || modStr === '16-2' || modStr === '15-3' || modStr === '16-3' || catId === 'c15' || catId === 'c16') {
-          ensureMicroAppRendered(modStr || '15-3');
-          setTimeout(function () { ensureMicroAppRendered(modStr || '15-3'); }, 50);
-          setTimeout(function () { ensureMicroAppRendered(modStr || '15-3'); }, 180);
+        var modStr = String(subMod || '').trim();
+        if (modStr === '15-2' || modStr === '16-2' || modStr === '15-3' || modStr === '16-3') {
+          ensureMicroAppRendered(modStr);
+          setTimeout(function () { ensureMicroAppRendered(modStr); }, 50);
+          setTimeout(function () { ensureMicroAppRendered(modStr); }, 180);
+          return;
         }
-        return res;
+        return origLaunch.apply(this, arguments);
       };
       wrappedLaunch.__rmCat15Hooked = true;
       window.handleLaunchCategory = wrappedLaunch;
     }
 
+    var fs = document.getElementById('rm-fullscreen-view');
     var fsContainer = document.getElementById('rm-module-container');
     var fsTitle = document.getElementById('fs-module-title');
-    if (fsContainer && (fsContainer.innerHTML || '').indexOf('मॉड्यूल लोड हो रहा है') !== -1) {
+    if (fs && !fs.classList.contains('hidden') && fsContainer && (fsContainer.innerHTML || '').indexOf('मॉड्यूल लोड हो रहा है') !== -1) {
       var tMatch = fsTitle && (fsTitle.textContent || '').match(/\b(\d{1,2}-\d)\b/);
-      ensureMicroAppRendered(tMatch ? tMatch[1] : '15-3');
+      if (tMatch) ensureMicroAppRendered(tMatch[1]);
     }
   }
   hookExternalRenderers();
   setTimeout(hookExternalRenderers, 200);
   setTimeout(hookExternalRenderers, 800);
   document.addEventListener('click', function () {
-    setTimeout(hookExternalRenderers, 20);
-    setTimeout(hookExternalRenderers, 120);
+    var fs = document.getElementById('rm-fullscreen-view');
+    if (fs && !fs.classList.contains('hidden')) {
+      setTimeout(hookExternalRenderers, 20);
+      setTimeout(hookExternalRenderers, 120);
+    }
   }, true);
 
   window.closeFullscreenModule = forceCloseFullscreenViewport;
