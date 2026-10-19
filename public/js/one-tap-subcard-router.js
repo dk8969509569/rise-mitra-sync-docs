@@ -1,42 +1,48 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-3B Modular Sub-Card 1-Tap Router & DOM Repair (v67)
+ *   - MODULE NAME    : RM Part-3B Modular Sub-Card 1-Tap Router & DOM Repair (v83)
  *   - REPO TARGET    : public/js/one-tap-subcard-router.js
  *   - SURFACE TARGET : SHARED (Surface-A Public 1-Tap & Surface-B Owner SIVME Guard)
  *   - HOST BINDING   : Surface-A (public/index.html)
- *   - SIZE BUDGET    : <= 290 Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 285 Logical Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
  * ==============================================================================
  * 2. EXISTING MODULAR FILES LOCK (ZERO DUPLICATE IMPLEMENTATION):
  *   - public/js/one-tap-subcard-router.js (This File: Part-3B Sub-Card Router & DOM Repair)
- *   - public/js/fullscreen-microapp-controller.js (Part-3A: Fullscreen Viewport & 15-2/15-3 UI)
+ *   - public/js/catalog/category-15/15-2-rental-template.js & 16-2-rental-ledger.js (15-2 Engine)
+ *   - public/js/catalog/category-15/15-3-rental-template.js & 16-3-rental-search.js (15-3 Engine)
+ *   - public/js/fullscreen-microapp-controller.js (Part-3A: Generic Fullscreen Viewport Shell)
  *   - public/js/one-tap-shell-bridge.js (Part-2: Master 1-Tap Shell Bridge)
- *   - public/js/one-tap-accordion-engine.js (Part-1C: 50 Category Card Accordions)
  * ==============================================================================
- * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
+ * 3. TOP-HEADER FILE SCOPE, ROOT-ENGINE-FIRST & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : forceCloseFullscreenViewport, ensureMicroAppRendered,
  *                              extractSubCardMetaAndChips, repairFullscreenSubServiceDOM,
  *                              handleFullscreenCloseOneTap, routeSubCardOneTap, handleSubCardOneTap.
  *   - ALLOWED ON SURFACE-B   : isSurfaceBOwnerActive & isSurfaceBElementTap pass-through guards.
- *   - FORBIDDEN IN THIS FILE : Large HTML micro-app templates (owned by fullscreen-microapp-controller.js).
+ *   - ROOT-ENGINE-FIRST RULE : Mounts authoritative `RM_Cat15_Sub2_RentalLedger` (15-2) and
+ *                              `RM_Cat15_Sub3_RentalSearch` (15-3) directly into `#rm-module-container`
+ *                              and blocks generic controllers from overwriting their DOM.
+ *   - FORBIDDEN IN THIS FILE : Overwriting 15-2 / 15-3 Pan-India `<select>` dropdowns.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.RM_SUBCARD_ROUTER, window.__RM_LAST_MODAL_OPEN_TS
- *   - CALLS EXTERNAL APIs : window.RM_FULLSCREEN_CONTROLLER.*, window.closeCatalogModal,
- *                           window.handleLaunchCategory, window.openFullscreenModule,
+ *   - CALLS EXTERNAL APIs : window.RM_Cat15_Sub2_RentalLedger, window.RM_Cat15_Sub3_RentalSearch,
+ *                           window.RM_FULLSCREEN_CONTROLLER.*, window.closeCatalogModal,
  *                           window.launchOneTapServiceScreen, window.RM_CANONICAL_SUB_MATRIX
  * ==============================================================================
- * 5. DOM ATTRIBUTE & SELECTOR CONTRACT (ZERO-COLLISION DOM RULE):
+ * 5. DOM ATTRIBUTE, SELECTOR CONTRACT & WORLD-CLASS 2.5D VISUAL LOCK (ZERO-COLLISION RULE):
  *   - SURFACE-A SELECTORS : #rm-fullscreen-view, #categoryModal, #fs-module-title,
  *                           #rm-module-container, [id^="sub-"], .rm-service-chip, [data-fs-chip]
  *   - SURFACE-B SELECTORS : .sivme-notch-pill, #sivme-hud, #sivme-drawer, [data-sivme-id], [id^="sivme-"]
+ *   - WORLD-CLASS 2.5D UI : Preserves 2.5D UI of 15-2/15-3 and 4-chip launcher for 15-1 & all sub-cards.
  * ==============================================================================
- * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
+ * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, ZERO-REVERT & TIMER OWNERSHIP LOCK:
  *   - CLICK SAFETY  : Pure router methods invoked by one-tap-shell-bridge.js (0% listener clash).
- *   - DOM SAFETY    : Restores #categoryModal on ‹ वापस and repairs 32-3 / select dropdowns & 4 chips.
+ *   - DOM SAFETY    : Canary `data-rm-cat15-mounted` prevents `repairFullscreenSubServiceDOM` or
+ *                     generic controllers from overwriting 15-2 / 15-3 Pan-India dropdowns.
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (ALL 10 FUNCTIONS INTACT):
  *   1. isSurfaceBOwnerActive              2. isSurfaceBElementTap
@@ -45,24 +51,25 @@
  *   7. handleFullscreenCloseOneTap        8. routeSubCardOneTap
  *   9. handleSubCardOneTap                10. hookExternalRenderers
  * ==============================================================================
- * 8. ONE JOB = ONE FILE & CANONICAL PATH LOCK (ANTI-DUPLICATE FILE GUARD):
- *   - SINGLE JOB RULE : Sole owner of Sub-Card 1-Tap Routing, Chip Extraction & 32-3 DOM Repair.
- *   - CANONICAL PATH  : Must exist ONLY at `public/js/one-tap-subcard-router.js`.
+ * 8. ONE JOB = ONE FILE, ROOT-ENGINE AUTHORITY, ZERO-GUESSWORK & CANONICAL PATH LOCK:
+ *   - SINGLE JOB RULE     : Sole owner of Sub-Card 1-Tap Routing, Chip Extraction & 32-3 DOM Repair.
+ *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `public/js/one-tap-subcard-router.js` (v67).
+ *   - CANONICAL PATH      : Must exist ONLY at `public/js/one-tap-subcard-router.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
- *   - ZERO DOHRAO     : Delegates Fullscreen HTML rendering to `fullscreen-microapp-controller.js`.
+ *   - ZERO DOHRAO     : Delegates 15-2 and 15-3 rendering directly to their modular engines.
  *   - IDEMPOTENT BOOT : Guarded by `window.__RM_LOADED_MODULES__['one-tap-subcard-router']`.
  * ==============================================================================
  * 10. FAIL-SAFE ERROR BOUNDARY, ZERO-STUB & 2-LINE SECTION GAP STANDARD:
  *   - ERROR BOUNDARY  : Strict IIFE + try/catch boundaries protect all routing calls.
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
- * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v67'`.
- *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
+ * 11. CACHE-BUSTING VERSION SYNC, 1-TASK-1-FILE COMMIT, PRE-MAIN GATE & CONTRACT LOCK:
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261019_v83'`.
+ *   - PIPELINE GATE   : Commit & verify on `pre-main` before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
- *   - @folder-a-ssot  : 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW (Pure Policy & Specs Only)
+ *   - @folder-a-ssot  : 11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW (Pure Policy & Specs Only — No Code)
  *   - @folder-b-mirror: 1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH (Auto-Synced via sync_drive.yml)
  *   - @ai-pre-flight  : 12-Point Header + Code auto-indexed in Folder B snapshot.
  * ==============================================================================
@@ -98,15 +105,67 @@
       fs.classList.add('hidden');
       fs.style.setProperty('display', 'none', 'important');
     }
+    var container = document.getElementById('rm-module-container');
+    if (container) container.removeAttribute('data-rm-cat15-mounted');
     if (window.RM_FULLSCREEN_CONTROLLER && typeof window.RM_FULLSCREEN_CONTROLLER.forceCloseFullscreenViewport === 'function') {
       try { window.RM_FULLSCREEN_CONTROLLER.forceCloseFullscreenViewport(); } catch (e) {}
     }
   }
 
 
-  // 3. Helper: Zero-Hang Micro-App Hydration Guard
+  // 3. Helper: Authoritative Micro-App Mount Guard (Mounts 15-2 & 15-3 Root Engines Directly)
   function ensureMicroAppRendered(subCode, titleText, subtitleText) {
-    if (window.RM_FULLSCREEN_CONTROLLER && typeof window.RM_FULLSCREEN_CONTROLLER.ensureMicroAppRendered === 'function') {
+    var code = String(subCode || '').trim();
+    if (code === '15-2' || code === '16-2' || code === '15-3' || code === '16-3') {
+      var isLedger = (code === '15-2' || code === '16-2');
+      var normCode = isLedger ? '15-2' : '15-3';
+      var fs = document.getElementById('rm-fullscreen-view');
+      if (fs) {
+        fs.classList.remove('hidden');
+        fs.style.setProperty('display', 'flex', 'important');
+      }
+      var catModal = document.getElementById('categoryModal');
+      if (catModal) {
+        catModal.classList.add('hidden');
+        catModal.style.setProperty('display', 'none', 'important');
+      }
+      var fsTitle = document.getElementById('fs-module-title');
+      if (fsTitle) {
+        fsTitle.textContent = isLedger
+          ? '15-2 • Rental Ledger (किराया व सब-मीटर बहीखाता)'
+          : '15-3 • Room & Flat Search (कमरा व फ्लैट खोज • 0% दलाली)';
+      }
+      var container = document.getElementById('rm-module-container');
+      if (!container) return;
+
+      var engine = isLedger
+        ? (window.RM_Cat15_Sub2_RentalLedger || window.RM_Cat16_Sub2_RentalLedger || window.RiseMitraCatalog_15_2 || window.RiseMitraCatalog_16_2)
+        : (window.RM_Cat15_Sub3_RentalSearch || window.RM_Cat16_Sub3_RentalSearch || window.RiseMitraCatalog_15_3 || window.RiseMitraCatalog_16_3);
+
+      var canarySelector = isLedger ? '#rm-cat16-btn-add' : '#rm-search-results-list';
+      if (engine && typeof engine.mount === 'function') {
+        if (container.getAttribute('data-rm-cat15-mounted') !== normCode || !container.querySelector(canarySelector)) {
+          container.setAttribute('data-rm-cat15-mounted', normCode);
+          engine.mount(container, { accountId: 'default' });
+        }
+        return;
+      }
+
+      var scriptId = isLedger ? 'rm-cat15-2-engine-js' : 'rm-cat15-3-engine-js';
+      if (!document.getElementById(scriptId)) {
+        var sc = document.createElement('script');
+        sc.id = scriptId;
+        sc.src = (isLedger ? '/js/catalog/category-16/16-2-rental-ledger.js' : '/js/catalog/category-16/16-3-rental-search.js') + '?v=' + (window.__RM_ACTIVE_CACHE_VER || '20261019_v83');
+        sc.onload = function () { ensureMicroAppRendered(normCode, titleText, subtitleText); };
+        document.head.appendChild(sc);
+      }
+      return;
+    }
+
+    if (window.RM_FULLSCREEN_CONTROLLER && typeof window.RM_FULLSCREEN_CONTROLLER.__origEnsureMicroApp === 'function') {
+      window.RM_FULLSCREEN_CONTROLLER.__origEnsureMicroApp(subCode, titleText, subtitleText);
+    } else if (window.RM_FULLSCREEN_CONTROLLER && typeof window.RM_FULLSCREEN_CONTROLLER.ensureMicroAppRendered === 'function' &&
+               window.RM_FULLSCREEN_CONTROLLER.ensureMicroAppRendered !== ensureMicroAppRendered) {
       window.RM_FULLSCREEN_CONTROLLER.ensureMicroAppRendered(subCode, titleText, subtitleText);
     }
   }
@@ -125,6 +184,16 @@
     var icon = (matrixEntry && matrixEntry.icon) || defaultIcons[catNum] || (catNum >= 33 ? '🎮' : '✨');
     var chips = [];
 
+    if (code === '15-1' || code === '16-1') {
+      icon = '🛠️';
+      chips = [
+        '❄️ AC, फ्रिज, वाशिंग मशीन व RO सर्विस',
+        '⚡ इलेक्ट्रीशियन, इन्वर्टर व वायरिंग फॉल्ट रिपेयर',
+        '🚰 प्लंबर, टंकी, मोटर व पाइप लीकेज फिटिंग',
+        '🪚 कारपेंटर, दरवाज़ा लॉक, पेंटिंग व राजमिस्त्री'
+      ];
+    }
+
     if (!subCardEl) {
       var cands = document.querySelectorAll('#categoryModal [data-sub-code="' + code + '"], #categoryModal [data-rm-sub-rendered^="' + code + '"], #categoryModal [id^="sub-"] > div');
       for (var s = 0; s < cands.length; s++) {
@@ -132,7 +201,7 @@
       }
     }
 
-    if (subCardEl) {
+    if (subCardEl && chips.length === 0) {
       var nodes = subCardEl.querySelectorAll('div, span');
       for (var i = 0; i < nodes.length; i++) {
         var txt = (nodes[i].textContent || '').trim();
@@ -176,8 +245,11 @@
   }
 
 
-  // 5. Helper: Repair Fullscreen Sub-Service DOM on Surface-A (Fixes 32-3 bullet title, Crop Damage text & empty select dropdown)
+  // 5. Helper: Repair Fullscreen Sub-Service DOM on Surface-A (Skips Dedicated 15-2 & 15-3 Engines)
   function repairFullscreenSubServiceDOM(subCard, subCode) {
+    var code = String(subCode || '').trim();
+    if (code === '15-2' || code === '16-2' || code === '15-3' || code === '16-3') return;
+
     var fs = document.getElementById('rm-fullscreen-view');
     if (!fs || fs.classList.contains('hidden')) return;
 
@@ -216,7 +288,7 @@
     }
 
     var container = document.getElementById('rm-module-container');
-    if (!container) return;
+    if (!container || container.getAttribute('data-rm-cat15-mounted')) return;
 
     var innerHeading = container.querySelector('h2, h3, .text-xl, .text-lg, [style*="font-size: 19px"], [style*="font-size: 20px"]');
     if (innerHeading && cleanTitle && (innerHeading.textContent.length > 42 || innerHeading.textContent.indexOf('बुजुर्गों') !== -1)) {
@@ -257,7 +329,7 @@
   }
 
 
-  // 6. PRIORITY 0 Handler: Instant 1-Tap Close on Fullscreen Top-Right ✕, Top-Left ‹ वापस, or ‹ कैटलॉग पर वापस (Surface-A & Surface-B)
+  // 6. PRIORITY 0 Handler: Instant 1-Tap Close on Fullscreen Top-Right ✕, Top-Left ‹ वापस, or ‹ कैटलॉग पर वापस
   function handleFullscreenCloseOneTap(e, target) {
     if (isSurfaceBElementTap(target)) return false;
     var fsView = document.getElementById('rm-fullscreen-view');
@@ -291,29 +363,18 @@
   }
 
 
-  // 7. Sub-Card 1-Tap Router (Routes 15-2/16-2, 15-3/16-3 & All 150 Sub-Cards with 4 Selectable Chips)
+  // 7. Sub-Card 1-Tap Router (Routes 15-2/16-2, 15-3/16-3 to Dedicated Engines & 15-1 + All Sub-Cards to 4-Chip Screen)
   function routeSubCardOneTap(e, target, subCard) {
-    var ctrl = window.RM_FULLSCREEN_CONTROLLER || {};
-    var rawAttr = (subCard.getAttribute('data-rm-sub-rendered') || '').split(':')[0];
+    var rawAttr = (subCard.getAttribute('data-rm-sub-rendered') || subCard.getAttribute('data-sub-code') || '').split(':')[0];
     var subIdMatch = (subCard.textContent || '').match(/\b(\d{1,2}-\d)\b/);
     var subCode = subIdMatch ? subIdMatch[1] : (rawAttr || '01-1');
 
     if (subCode === '15-2' || subCode === '16-2' || subCode === '15-3' || subCode === '16-3') {
-      var targetMod = (subCode === '15-2' || subCode === '16-2') ? '16-2' : '16-3';
       e.stopImmediatePropagation();
       e.stopPropagation();
       if (e.cancelable) e.preventDefault();
-      if (typeof window.handleLaunchCategory === 'function') {
-        try { window.handleLaunchCategory('c16', targetMod); } catch (err) {}
-      } else if (typeof window.openFullscreenModule === 'function') {
-        try { window.openFullscreenModule(targetMod); } catch (err) {}
-      }
       ensureMicroAppRendered(subCode);
-      if (ctrl.normalizeFullscreenMicroAppDOM) ctrl.normalizeFullscreenMicroAppDOM(subCode);
-      setTimeout(function () {
-        ensureMicroAppRendered(subCode);
-        if (ctrl.normalizeFullscreenMicroAppDOM) ctrl.normalizeFullscreenMicroAppDOM(subCode);
-      }, 30);
+      setTimeout(function () { ensureMicroAppRendered(subCode); }, 40);
       return;
     }
 
@@ -324,7 +385,7 @@
     var matrix = window.RM_CANONICAL_SUB_MATRIX || {};
     var matrixEntry = matrix[subCode] || null;
     var domTitle = headingEl ? headingEl.textContent.trim() : '';
-    var cardTitle = (domTitle && !/^\[\d{1,2}-\d\]$/.test(domTitle)) ? domTitle : ((matrixEntry && matrixEntry.title) || 'सत्यापित सेवा');
+    var cardTitle = (domTitle && !/^\[\d{1,2}-\d\]$/.test(domTitle)) ? domTitle : ((matrixEntry && matrixEntry.title) || (subCode === '15-1' ? 'Mistry & Home Repair (मिस्त्री व गृह मरम्मत)' : 'सत्यापित सेवा'));
     var cardSubtitle = (subHeadingEl ? subHeadingEl.textContent.trim() : '') || (matrixEntry && matrixEntry.hindiTitle) || 'Rise Mitra सत्यापित सेवा व बुकिंग पोर्टल';
 
     var isServicePill = Boolean(target.closest('.rm-service-chip')) || (
@@ -357,15 +418,19 @@
     var subCard = target.closest('[id^="sub-"] > div');
     if (!subCard) return false;
 
-    var rawRenderedAttr = (subCard.getAttribute('data-rm-sub-rendered') || '').split(':')[0];
+    var rawRenderedAttr = (subCard.getAttribute('data-rm-sub-rendered') || subCard.getAttribute('data-sub-code') || '').split(':')[0];
     var subIdMatch = (subCard.textContent || '').match(/\b(\d{1,2}-\d)\b/);
     var subCode = subIdMatch ? subIdMatch[1] : (rawRenderedAttr || '15-3');
 
-    // Surface-A Guard: Only pass service chip if explicitly tapped; otherwise pass card heading so bullet lines never become title
     var tappedChip = target.closest('.rm-service-chip');
     var safeHeadingTarget = tappedChip || subCard.querySelector('h3, h4, [style*="font-size: 20px"], .font-black, .font-bold') || subCard;
 
     routeSubCardOneTap(e, safeHeadingTarget, subCard);
+
+    if (subCode === '15-2' || subCode === '16-2' || subCode === '15-3' || subCode === '16-3') {
+      ensureMicroAppRendered(subCode);
+      return true;
+    }
 
     ensureMicroAppRendered(subCode);
     repairFullscreenSubServiceDOM(subCard, subCode);
@@ -381,14 +446,23 @@
   }
 
 
-  // 9. Hook External Renderers so openSmoothSubServiceScreen Always Uses 4-Chip Launcher
+  // 9. Hook External Renderers so 15-2 & 15-3 Never Get Overwritten by Generic Controller
   function hookExternalRenderers() {
     if (window.RM_SUB_CARD_RENDERER && typeof window.launchOneTapServiceScreen === 'function') {
       window.RM_SUB_CARD_RENDERER.openSmoothSubServiceScreen = function (entry, subCode, title, subtitle, selectedPill) {
+        var code = String(subCode || '').trim();
+        if (code === '15-2' || code === '16-2' || code === '15-3' || code === '16-3') {
+          ensureMicroAppRendered(code, title, subtitle);
+          return;
+        }
         window.launchOneTapServiceScreen(title, subtitle, subCode, selectedPill, null, entry);
       };
     }
     if (window.RM_FULLSCREEN_CONTROLLER) {
+      if (!window.RM_FULLSCREEN_CONTROLLER.__origEnsureMicroApp && window.RM_FULLSCREEN_CONTROLLER.ensureMicroAppRendered !== ensureMicroAppRendered) {
+        window.RM_FULLSCREEN_CONTROLLER.__origEnsureMicroApp = window.RM_FULLSCREEN_CONTROLLER.ensureMicroAppRendered;
+      }
+      window.RM_FULLSCREEN_CONTROLLER.ensureMicroAppRendered = ensureMicroAppRendered;
       window.RM_FULLSCREEN_CONTROLLER.extractSubCardMetaAndChips = extractSubCardMetaAndChips;
       window.RM_FULLSCREEN_CONTROLLER.routeSubCardOneTap = routeSubCardOneTap;
     }
