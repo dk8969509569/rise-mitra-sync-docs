@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-0A Surface-A HTML Shell Bootstrapper & Sentinel Lock (v83)
+ *   - MODULE NAME    : RM Part-0A Surface-A HTML Shell Bootstrapper & Sentinel Lock (v87)
  *   - REPO TARGET    : public/js/index-shell-bootstrap.js
  *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional SIVME Loader for Surface-B)
  *   - HOST BINDING   : Surface-A (public/index.html)
@@ -16,8 +16,8 @@
  *   - public/js/profile-hub-data-template.js (Part-1 Template: Profile 2.5D CSS & 9-Section HTML Builder)
  *   - public/js/profile-hub-engine.js (Part-2 Root Engine: Profile Avatar & Mount Controller)
  *   - public/js/one-tap-accordion-engine.js (Part-1C: 50 Category Cards & Sub-Card Accordion)
- *   - public/js/one-tap-subcard-router.js & fullscreen-microapp-controller.js (Part-3A/3B: Cat-15 & 150 Sub-Cards)
- *   - public/js/catalog/category-15/15-2-rental-template.js & 15-3-rental-template.js (Cat-15 2.5D Templates)
+ *   - public/js/one-tap-subcard-router.js & one-tap-subcard-dom-helpers.js (Part-3B/3C: Sub-Card Router & Helpers)
+ *   - public/js/fullscreen-microapp-controller.js (Part-3A: Fullscreen Viewport & Cat-15 Hydrator)
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE, ROOT-ENGINE-FIRST & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : Anti-freeze MutationObserver shield, Tailwind theme config,
@@ -51,19 +51,19 @@
  *   - CLICK SAFETY  : Enforces touch-action: manipulation !important & 0ms Macro/Profile 1-Tap.
  *   - SCROLL SAFETY : Tracks touchmove delta (>10px) + lightweight sentinels (150ms & 600ms).
  *   - FREEZE SHIELD : Blocks recursive MutationObserver loops when #categoryModal is open.
- *   - ZERO REVERT   : Synced with `v83` root templates so innerHTML never reverts UI.
+ *   - ZERO REVERT   : Synced with `v87` root templates so innerHTML never reverts UI.
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (9 CORE SHELL BLOCKS):
  *   0. installMutationObserverFreezeKillSwitch 1. configureTailwindTheme
  *   2. purgeStaleShellCacheAndSivme            3. injectShellOneTapLockStyle
  *   4. toggleMacroBarElementInstantly          5. registerFallbackModalDispatchers
  *   6. ensureCatalogHydratedNow                7. initSwAndConditionalSivmeSentinel
- *   8. bindTopRightProfileOneTap (Direct 0ms 1-Tap Trigger + Auto-Loads Part-0B v83)
+ *   8. bindTopRightProfileOneTap (Direct 0ms 1-Tap Trigger + Auto-Loads Part-0B v87)
  *   + Capture 1-Tap Macro Accordion & Top-Right Profile Listeners
  * ==============================================================================
  * 8. ONE JOB = ONE FILE, ROOT-ENGINE AUTHORITY, ZERO-GUESSWORK & CANONICAL PATH LOCK:
  *   - SINGLE JOB RULE     : Sole owner of extracted inline shell scripts from `public/index.html`.
- *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `v81` shell script before `v83` cache upgrade.
+ *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `v83` shell script (`1000303548.png`).
  *   - CANONICAL PATH      : Must exist ONLY at `public/js/index-shell-bootstrap.js`.
  *   - BANNED ALIASES      : Never create duplicate shell bootstrap files (`*-v2.js`, `*-styles.js`).
  * ==============================================================================
@@ -78,7 +78,7 @@
  *   - MOBILE EDITING  : Major sections separated by 2 blank lines for thumb-selection safety.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, 1-TASK-1-FILE COMMIT, PRE-MAIN GATE & CONTRACT LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261019_v83'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261019_v87'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -95,7 +95,7 @@
   if (window.__RM_LOADED_MODULES__['index-shell-bootstrap']) return;
   window.__RM_LOADED_MODULES__['index-shell-bootstrap'] = true;
 
-  var CACHE_VER = '20261019_v83';
+  var CACHE_VER = '20261019_v87';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VER;
   var lastMacroToggleTs = 0;
   var lastProfileTapTs = 0;
@@ -333,7 +333,7 @@
   }
 
 
-  // 8. Direct 0ms Top-Right Profile 1-Tap Trigger & Auto-Load Part-0B (public/js/one-tap-profile-hub-healer.js v83)
+  // 8. Direct 0ms Top-Right Profile 1-Tap Trigger & Auto-Load Part-0B (public/js/one-tap-profile-hub-healer.js v87)
   function bindTopRightProfileOneTap() {
     if (typeof window.healProfileHubTypographyAndLayout !== 'function') {
       window.healProfileHubTypographyAndLayout = function () {};
