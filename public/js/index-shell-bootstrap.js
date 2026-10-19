@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-0A Surface-A HTML Shell Bootstrapper & Sentinel Lock (v81)
+ *   - MODULE NAME    : RM Part-0A Surface-A HTML Shell Bootstrapper & Sentinel Lock (v83)
  *   - REPO TARGET    : public/js/index-shell-bootstrap.js
  *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional SIVME Loader for Surface-B)
  *   - HOST BINDING   : Surface-A (public/index.html)
@@ -16,9 +16,8 @@
  *   - public/js/profile-hub-data-template.js (Part-1 Template: Profile 2.5D CSS & 9-Section HTML Builder)
  *   - public/js/profile-hub-engine.js (Part-2 Root Engine: Profile Avatar & Mount Controller)
  *   - public/js/one-tap-accordion-engine.js (Part-1C: 50 Category Cards & Sub-Card Accordion)
- *   - public/js/one-tap-catalog-hydrator.js (Part-1A: Boot Loader & Modal Dispatchers)
- *   - public/js/one-tap-home-css-healer.js (Part-1D: 0ms Home Healer & 18-Games Lock)
- *   - public/js/one-tap-catalog-dom-engine.js (Part-1B: Canonical Catalog DOM Engine)
+ *   - public/js/one-tap-subcard-router.js & fullscreen-microapp-controller.js (Part-3A/3B: Cat-15 & 150 Sub-Cards)
+ *   - public/js/catalog/category-15/15-2-rental-template.js & 15-3-rental-template.js (Cat-15 2.5D Templates)
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE, ROOT-ENGINE-FIRST & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : Anti-freeze MutationObserver shield, Tailwind theme config,
@@ -27,8 +26,8 @@
  *                              modal fallback dispatchers, hydration sentinel.
  *   - ALLOWED ON SURFACE-B   : Conditional loading of /js/sovereign-in-situ-hud.js ONLY when
  *                              ?sivme=owner or ?sov_mode=in_situ is present in URL.
- *   - ROOT-ENGINE-FIRST RULE : All Profile 2.5D templates live in `profile-hub-data-template.js` (v81)
- *                              and 50-category card accordions live in `one-tap-accordion-engine.js`.
+ *   - ROOT-ENGINE-FIRST RULE : All Profile 2.5D templates live in `profile-hub-data-template.js`
+ *                              and Category 15 templates live in `public/js/catalog/category-15/`.
  *   - FORBIDDEN IN THIS FILE : Category card sub-list logic or external DOM band-aid loops.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
@@ -52,19 +51,19 @@
  *   - CLICK SAFETY  : Enforces touch-action: manipulation !important & 0ms Macro/Profile 1-Tap.
  *   - SCROLL SAFETY : Tracks touchmove delta (>10px) + lightweight sentinels (150ms & 600ms).
  *   - FREEZE SHIELD : Blocks recursive MutationObserver loops when #categoryModal is open.
- *   - ZERO REVERT   : Synced with `v81` root Profile template so innerHTML never reverts UI.
+ *   - ZERO REVERT   : Synced with `v83` root templates so innerHTML never reverts UI.
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (9 CORE SHELL BLOCKS):
  *   0. installMutationObserverFreezeKillSwitch 1. configureTailwindTheme
  *   2. purgeStaleShellCacheAndSivme            3. injectShellOneTapLockStyle
  *   4. toggleMacroBarElementInstantly          5. registerFallbackModalDispatchers
  *   6. ensureCatalogHydratedNow                7. initSwAndConditionalSivmeSentinel
- *   8. bindTopRightProfileOneTap (Direct 0ms 1-Tap Trigger + Auto-Loads Part-0B v81)
+ *   8. bindTopRightProfileOneTap (Direct 0ms 1-Tap Trigger + Auto-Loads Part-0B v83)
  *   + Capture 1-Tap Macro Accordion & Top-Right Profile Listeners
  * ==============================================================================
  * 8. ONE JOB = ONE FILE, ROOT-ENGINE AUTHORITY, ZERO-GUESSWORK & CANONICAL PATH LOCK:
  *   - SINGLE JOB RULE     : Sole owner of extracted inline shell scripts from `public/index.html`.
- *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `v78` shell script before `v81` cache upgrade.
+ *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `v81` shell script before `v83` cache upgrade.
  *   - CANONICAL PATH      : Must exist ONLY at `public/js/index-shell-bootstrap.js`.
  *   - BANNED ALIASES      : Never create duplicate shell bootstrap files (`*-v2.js`, `*-styles.js`).
  * ==============================================================================
@@ -79,7 +78,7 @@
  *   - MOBILE EDITING  : Major sections separated by 2 blank lines for thumb-selection safety.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, 1-TASK-1-FILE COMMIT, PRE-MAIN GATE & CONTRACT LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v81'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261019_v83'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -96,7 +95,7 @@
   if (window.__RM_LOADED_MODULES__['index-shell-bootstrap']) return;
   window.__RM_LOADED_MODULES__['index-shell-bootstrap'] = true;
 
-  var CACHE_VER = '20261018_v81';
+  var CACHE_VER = '20261019_v83';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VER;
   var lastMacroToggleTs = 0;
   var lastProfileTapTs = 0;
@@ -334,7 +333,7 @@
   }
 
 
-  // 8. Direct 0ms Top-Right Profile 1-Tap Trigger & Auto-Load Part-0B (public/js/one-tap-profile-hub-healer.js v81)
+  // 8. Direct 0ms Top-Right Profile 1-Tap Trigger & Auto-Load Part-0B (public/js/one-tap-profile-hub-healer.js v83)
   function bindTopRightProfileOneTap() {
     if (typeof window.healProfileHubTypographyAndLayout !== 'function') {
       window.healProfileHubTypographyAndLayout = function () {};
