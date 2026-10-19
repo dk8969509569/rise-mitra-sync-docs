@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-2 Modular 1-Tap Shell Bridge & Deterministic Controller (v88)
+ *   - MODULE NAME    : RM Part-2 Modular 1-Tap Shell Bridge & Deterministic Controller (v89)
  *   - REPO TARGET    : public/js/one-tap-shell-bridge.js
  *   - SURFACE TARGET : SHARED (Surface-A Public 1-Tap & Surface-B SIVME Pass-Through)
  *   - HOST BINDING   : Surface-A (public/index.html)
@@ -24,8 +24,8 @@
  *                              capture, touchSeq tracking & 0ms 1-Tap dispatch for Home,
  *                              Tier-1/2 bars, Category 01-50 cards, and 150 Sub-Cards.
  *   - ALLOWED ON SURFACE-B   : Pass-through exclusion for .sivme-notch-pill, #sivme-hud, #sivme-drawer.
- *   - ROOT-ENGINE-FIRST RULE : Syncs `CACHE_VERSION = '20261019_v88'` so stale `v69` scripts never
- *                              block Category 15 (`15-1`, `15-2`, `15-3`) 1-Tap opening.
+ *   - ROOT-ENGINE-FIRST RULE : Syncs `CACHE_VERSION = '20261019_v89'` and uses `findExactSubCardElement`
+ *                              with `24px` thumb tolerance so `15-1`, `15-2`, `15-3` open on 1st tap.
  *   - FORBIDDEN IN THIS FILE : Large HTML card templates or CSS stylesheet injection.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
@@ -42,7 +42,7 @@
  * ==============================================================================
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, ZERO-REVERT & TIMER OWNERSHIP LOCK:
  *   - CLICK SAFETY  : Suppresses synthetic click within 420ms of a handled touchend.
- *   - SCROLL SAFETY : Tracks touchmove (>12px) via touchMoved so scrolling never triggers cards.
+ *   - SCROLL SAFETY : Tracks touchmove (>24px) via touchMoved so natural thumb presses never miss.
  *   - PILL CANARY   : Reads visible `.rm-parent-toggle-pill` ("और देखें ▼" vs "समेटें ▲") and stops
  *                     propagation on CASE 2 (`[id^="sub-"]`) so Category 15 never collapses on sub-tap!
  * ==============================================================================
@@ -55,7 +55,7 @@
  * ==============================================================================
  * 8. ONE JOB = ONE FILE, ROOT-ENGINE AUTHORITY, ZERO-GUESSWORK & CANONICAL PATH LOCK:
  *   - SINGLE JOB RULE     : Sole authoritative owner of Part-2 Deterministic 1-Tap Shell Bridge.
- *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `public/js/one-tap-shell-bridge.js` (`v69` `1000303701.png`).
+ *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `public/js/one-tap-shell-bridge.js` (`v88` `1000303717.png`).
  *   - CANONICAL PATH      : Must exist ONLY at `public/js/one-tap-shell-bridge.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
@@ -67,7 +67,7 @@
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, 1-TASK-1-FILE COMMIT, PRE-MAIN GATE & CONTRACT LOCK:
- *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261019_v88'`.
+ *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261019_v89'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -84,7 +84,7 @@
   if (window.__RM_LOADED_MODULES__['one-tap-shell-bridge']) return;
   window.__RM_LOADED_MODULES__['one-tap-shell-bridge'] = true;
 
-  var CACHE_VERSION = '20261019_v88';
+  var CACHE_VERSION = '20261019_v89';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VERSION;
   var lastActionTs = 0;
   var lastTouchTs = 0;
@@ -367,13 +367,15 @@
       e.stopImmediatePropagation();
       e.stopPropagation();
       if (e.cancelable) e.preventDefault();
-      if (now - lastActionTs < 80) return;
+      if (now - lastActionTs < 40) return;
       if (e.type === 'touchend') lastTouchTs = now;
       lastActionTs = now;
 
-      var subCardNode = target.closest('[data-sub-code], [data-rm-sub-rendered], [id^="sub-"] > div') || subWrapper;
-      var codeMatch = (subCardNode.textContent || '').match(/\b(\d{1,2}-\d)\b/);
-      var detectedCode = codeMatch ? codeMatch[1] : ((subCardNode.getAttribute('data-sub-code') || '').trim());
+      var subCardNode = (window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.findExactSubCardElement === 'function')
+        ? window.RM_SUBCARD_ROUTER.findExactSubCardElement(target, subWrapper)
+        : (target.closest('[data-sub-code], [data-rm-sub-rendered], [id^="sub-"] > div') || subWrapper);
+      var codeMatch = ((subCardNode && subCardNode.textContent) || '').match(/\b(\d{1,2}-[123])\b/);
+      var detectedCode = codeMatch ? codeMatch[1] : ((subCardNode && subCardNode.getAttribute && (subCardNode.getAttribute('data-sub-code') || '').trim()) || '');
 
       if (window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.handleSubCardOneTap === 'function') {
         window.RM_SUBCARD_ROUTER.handleSubCardOneTap(e, target);
@@ -476,7 +478,7 @@
   }
 
 
-  // 5. Capture-Phase Touch & Click Listeners
+  // 5. Capture-Phase Touch & Click Listeners (24px Thumb-Tap Tolerance for Instant First-Tap Response)
   window.addEventListener('touchstart', function (e) {
     if (!e.touches || e.touches.length === 0) return;
     touchSeq++;
@@ -488,7 +490,7 @@
 
   window.addEventListener('touchmove', function (e) {
     if (!e.touches || e.touches.length === 0 || touchMoved) return;
-    if (Math.abs(e.touches[0].clientX - touchStartX) > 12 || Math.abs(e.touches[0].clientY - touchStartY) > 12) {
+    if (Math.abs(e.touches[0].clientX - touchStartX) > 24 || Math.abs(e.touches[0].clientY - touchStartY) > 24) {
       touchMoved = true;
     }
   }, { capture: true, passive: true });
@@ -498,7 +500,7 @@
     var dx = Math.abs(e.changedTouches[0].clientX - touchStartX);
     var dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
     var dt = Date.now() - touchStartTime;
-    if (dx < 36 && dy < 36 && dt < 1200) {
+    if (dx < 42 && dy < 42 && dt < 1400) {
       handleDeterministicOneTap(e);
     }
   }, { capture: true, passive: false });
