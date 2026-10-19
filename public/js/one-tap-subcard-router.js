@@ -1,11 +1,11 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-3B Modular Sub-Card 1-Tap Router & DOM Repair (v83)
+ *   - MODULE NAME    : RM Part-3B Modular Sub-Card 1-Tap Router & DOM Repair (v84)
  *   - REPO TARGET    : public/js/one-tap-subcard-router.js
  *   - SURFACE TARGET : SHARED (Surface-A Public 1-Tap & Surface-B Owner SIVME Guard)
  *   - HOST BINDING   : Surface-A (public/index.html)
- *   - SIZE BUDGET    : <= 285 Logical Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 298 Logical Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -18,19 +18,23 @@
  *   - public/js/one-tap-shell-bridge.js (Part-2: Master 1-Tap Shell Bridge)
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE, ROOT-ENGINE-FIRST & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
- *   - ALLOWED ON SURFACE-A   : forceCloseFullscreenViewport, ensureMicroAppRendered,
- *                              extractSubCardMetaAndChips, repairFullscreenSubServiceDOM,
- *                              handleFullscreenCloseOneTap, routeSubCardOneTap, handleSubCardOneTap.
+ *   - ALLOWED ON SURFACE-A   : preloadCat15ModularEngines, forceCloseFullscreenViewport,
+ *                              ensureMicroAppRendered, extractSubCardMetaAndChips,
+ *                              repairFullscreenSubServiceDOM, handleFullscreenCloseOneTap,
+ *                              routeSubCardOneTap, handleSubCardOneTap, hookExternalRenderers.
  *   - ALLOWED ON SURFACE-B   : isSurfaceBOwnerActive & isSurfaceBElementTap pass-through guards.
- *   - ROOT-ENGINE-FIRST RULE : Mounts authoritative `RM_Cat15_Sub2_RentalLedger` (15-2) and
- *                              `RM_Cat15_Sub3_RentalSearch` (15-3) directly into `#rm-module-container`
- *                              and blocks generic controllers from overwriting their DOM.
+ *   - ROOT-ENGINE-FIRST RULE : Preloads Part-1 templates (`15-2-rental-template.js` &
+ *                              `15-3-rental-template.js`) and Part-2 engines (`16-2-rental-ledger.js`
+ *                              & `16-3-rental-search.js`) at boot and mounts them directly into
+ *                              `#rm-module-container` with zero blank/black screen.
  *   - FORBIDDEN IN THIS FILE : Overwriting 15-2 / 15-3 Pan-India `<select>` dropdowns.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.RM_SUBCARD_ROUTER, window.__RM_LAST_MODAL_OPEN_TS
  *   - CALLS EXTERNAL APIs : window.RM_Cat15_Sub2_RentalLedger, window.RM_Cat15_Sub3_RentalSearch,
+ *                           window.RM_Cat15_Sub2_Template, window.RM_Cat15_Sub3_Template,
  *                           window.RM_FULLSCREEN_CONTROLLER.*, window.closeCatalogModal,
+ *                           window.handleLaunchCategory, window.openFullscreenModule,
  *                           window.launchOneTapServiceScreen, window.RM_CANONICAL_SUB_MATRIX
  * ==============================================================================
  * 5. DOM ATTRIBUTE, SELECTOR CONTRACT & WORLD-CLASS 2.5D VISUAL LOCK (ZERO-COLLISION RULE):
@@ -41,19 +45,20 @@
  * ==============================================================================
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, ZERO-REVERT & TIMER OWNERSHIP LOCK:
  *   - CLICK SAFETY  : Pure router methods invoked by one-tap-shell-bridge.js (0% listener clash).
- *   - DOM SAFETY    : Canary `data-rm-cat15-mounted` prevents `repairFullscreenSubServiceDOM` or
- *                     generic controllers from overwriting 15-2 / 15-3 Pan-India dropdowns.
+ *   - DOM SAFETY    : Canary `data-rm-cat15-mounted` is set ONLY after `#rm-cat16-btn-add` or
+ *                     `#rm-search-results-list` is confirmed inside `#rm-module-container`.
  * ==============================================================================
- * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (ALL 10 FUNCTIONS INTACT):
- *   1. isSurfaceBOwnerActive              2. isSurfaceBElementTap
- *   3. forceCloseFullscreenViewport       4. ensureMicroAppRendered
- *   5. extractSubCardMetaAndChips         6. repairFullscreenSubServiceDOM
- *   7. handleFullscreenCloseOneTap        8. routeSubCardOneTap
- *   9. handleSubCardOneTap                10. hookExternalRenderers
+ * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (ALL 11 FUNCTIONS INTACT):
+ *   0. preloadCat15ModularEngines         1. isSurfaceBOwnerActive
+ *   2. isSurfaceBElementTap               3. forceCloseFullscreenViewport
+ *   4. ensureMicroAppRendered             5. extractSubCardMetaAndChips
+ *   6. repairFullscreenSubServiceDOM      7. handleFullscreenCloseOneTap
+ *   8. routeSubCardOneTap                 9. handleSubCardOneTap
+ *   10. hookExternalRenderers
  * ==============================================================================
  * 8. ONE JOB = ONE FILE, ROOT-ENGINE AUTHORITY, ZERO-GUESSWORK & CANONICAL PATH LOCK:
  *   - SINGLE JOB RULE     : Sole owner of Sub-Card 1-Tap Routing, Chip Extraction & 32-3 DOM Repair.
- *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `public/js/one-tap-subcard-router.js` (v67).
+ *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `public/js/one-tap-subcard-router.js` (v83).
  *   - CANONICAL PATH      : Must exist ONLY at `public/js/one-tap-subcard-router.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
@@ -81,6 +86,27 @@
   window.__RM_LOADED_MODULES__ = window.__RM_LOADED_MODULES__ || {};
   if (window.__RM_LOADED_MODULES__['one-tap-subcard-router']) return;
   window.__RM_LOADED_MODULES__['one-tap-subcard-router'] = true;
+
+  // 0. Boot-Time Preloader: Load Part-1 Templates FIRST, then Part-2 Engines (Zero Blank Screen)
+  function preloadCat15ModularEngines() {
+    var ver = window.__RM_ACTIVE_CACHE_VER || '20261019_v83';
+    var files = [
+      { id: 'rm-cat15-2-template-js', src: '/js/catalog/category-15/15-2-rental-template.js?v=' + ver },
+      { id: 'rm-cat15-3-template-js', src: '/js/catalog/category-15/15-3-rental-template.js?v=' + ver },
+      { id: 'rm-cat15-2-engine-js', src: '/js/catalog/category-16/16-2-rental-ledger.js?v=' + ver },
+      { id: 'rm-cat15-3-engine-js', src: '/js/catalog/category-16/16-3-rental-search.js?v=' + ver }
+    ];
+    files.forEach(function (f) {
+      if (!document.getElementById(f.id)) {
+        var s = document.createElement('script');
+        s.id = f.id;
+        s.src = f.src;
+        s.async = false;
+        (document.head || document.documentElement).appendChild(s);
+      }
+    });
+  }
+  preloadCat15ModularEngines();
 
 
   // 1. Surface-B (Owner In-Situ SIVME Mode) Detector & Pass-Through Guard
@@ -113,7 +139,7 @@
   }
 
 
-  // 3. Helper: Authoritative Micro-App Mount Guard (Mounts 15-2 & 15-3 Root Engines Directly)
+  // 3. Helper: Authoritative Micro-App Mount Guard (Mounts 15-2 & 15-3 Root Engines Directly with 0ms Fallback)
   function ensureMicroAppRendered(subCode, titleText, subtitleText) {
     var code = String(subCode || '').trim();
     if (code === '15-2' || code === '16-2' || code === '15-3' || code === '16-3') {
@@ -123,12 +149,10 @@
       if (fs) {
         fs.classList.remove('hidden');
         fs.style.setProperty('display', 'flex', 'important');
+        fs.style.setProperty('z-index', '99999', 'important');
       }
-      var catModal = document.getElementById('categoryModal');
-      if (catModal) {
-        catModal.classList.add('hidden');
-        catModal.style.setProperty('display', 'none', 'important');
-      }
+      window.closeFullscreenModule = forceCloseFullscreenViewport;
+
       var fsTitle = document.getElementById('fs-module-title');
       if (fsTitle) {
         fsTitle.textContent = isLedger
@@ -138,27 +162,52 @@
       var container = document.getElementById('rm-module-container');
       if (!container) return;
 
+      var canarySelector = isLedger ? '#rm-cat16-btn-add' : '#rm-search-results-list';
+      if (container.getAttribute('data-rm-cat15-mounted') === normCode && container.querySelector(canarySelector)) {
+        return;
+      }
+
       var engine = isLedger
         ? (window.RM_Cat15_Sub2_RentalLedger || window.RM_Cat16_Sub2_RentalLedger || window.RiseMitraCatalog_15_2 || window.RiseMitraCatalog_16_2)
         : (window.RM_Cat15_Sub3_RentalSearch || window.RM_Cat16_Sub3_RentalSearch || window.RiseMitraCatalog_15_3 || window.RiseMitraCatalog_16_3);
 
-      var canarySelector = isLedger ? '#rm-cat16-btn-add' : '#rm-search-results-list';
       if (engine && typeof engine.mount === 'function') {
-        if (container.getAttribute('data-rm-cat15-mounted') !== normCode || !container.querySelector(canarySelector)) {
+        engine.mount(container, { accountId: 'default' });
+        if (container.querySelector(canarySelector)) {
           container.setAttribute('data-rm-cat15-mounted', normCode);
-          engine.mount(container, { accountId: 'default' });
+          return;
         }
-        return;
       }
 
-      var scriptId = isLedger ? 'rm-cat15-2-engine-js' : 'rm-cat15-3-engine-js';
-      if (!document.getElementById(scriptId)) {
-        var sc = document.createElement('script');
-        sc.id = scriptId;
-        sc.src = (isLedger ? '/js/catalog/category-16/16-2-rental-ledger.js' : '/js/catalog/category-16/16-3-rental-search.js') + '?v=' + (window.__RM_ACTIVE_CACHE_VER || '20261019_v83');
-        sc.onload = function () { ensureMicroAppRendered(normCode, titleText, subtitleText); };
-        document.head.appendChild(sc);
+      // Instant Part-1 Template Render so container is NEVER blank while Part-2 loads
+      var tpl = isLedger
+        ? (window.RM_Cat15_Sub2_Template || window.RM_Cat16_Sub2_Template)
+        : (window.RM_Cat15_Sub3_Template || window.RM_Cat16_Sub3_Template);
+      if (tpl) {
+        if (isLedger && typeof tpl.buildRentalLedgerHTML === 'function') {
+          container.innerHTML = tpl.buildRentalLedgerHTML([], 8);
+        } else if (!isLedger && typeof tpl.buildRentalSearchShellHTML === 'function') {
+          var seeds = Array.isArray(tpl.SEED_LISTINGS) ? tpl.SEED_LISTINGS : [];
+          container.innerHTML = tpl.buildRentalSearchShellHTML(seeds.length, { smartOmnibox: true, showState: true, showDistrict: true, showBudget: true, showSubmeter: true }, {});
+          var resBox = container.querySelector('#rm-search-results-list');
+          if (resBox && typeof tpl.renderListingCard === 'function') {
+            var cardsHtml = '';
+            seeds.forEach(function (it) { cardsHtml += tpl.renderListingCard(it); });
+            resBox.innerHTML = cardsHtml;
+          }
+        }
       }
+
+      preloadCat15ModularEngines();
+      setTimeout(function () {
+        var engRetry = isLedger
+          ? (window.RM_Cat15_Sub2_RentalLedger || window.RM_Cat16_Sub2_RentalLedger)
+          : (window.RM_Cat15_Sub3_RentalSearch || window.RM_Cat16_Sub3_RentalSearch);
+        if (engRetry && typeof engRetry.mount === 'function' && container.getAttribute('data-rm-cat15-mounted') !== normCode) {
+          engRetry.mount(container, { accountId: 'default' });
+          if (container.querySelector(canarySelector)) container.setAttribute('data-rm-cat15-mounted', normCode);
+        }
+      }, 90);
       return;
     }
 
@@ -245,7 +294,7 @@
   }
 
 
-  // 5. Helper: Repair Fullscreen Sub-Service DOM on Surface-A (Skips Dedicated 15-2 & 15-3 Engines)
+  // 5. Helper: Repair Fullscreen Sub-Service DOM on Surface-A (Skips Dedicated 15-2 & 15-3 Engines; 100% ZEL Intact)
   function repairFullscreenSubServiceDOM(subCard, subCode) {
     var code = String(subCode || '').trim();
     if (code === '15-2' || code === '16-2' || code === '15-3' || code === '16-3') return;
@@ -370,11 +419,18 @@
     var subCode = subIdMatch ? subIdMatch[1] : (rawAttr || '01-1');
 
     if (subCode === '15-2' || subCode === '16-2' || subCode === '15-3' || subCode === '16-3') {
+      var targetMod = (subCode === '15-2' || subCode === '16-2') ? '16-2' : '16-3';
       e.stopImmediatePropagation();
       e.stopPropagation();
       if (e.cancelable) e.preventDefault();
+      if (typeof window.handleLaunchCategory === 'function') {
+        try { window.handleLaunchCategory('c16', targetMod); } catch (err) {}
+      } else if (typeof window.openFullscreenModule === 'function') {
+        try { window.openFullscreenModule(targetMod); } catch (err) {}
+      }
       ensureMicroAppRendered(subCode);
       setTimeout(function () { ensureMicroAppRendered(subCode); }, 40);
+      setTimeout(function () { ensureMicroAppRendered(subCode); }, 140);
       return;
     }
 
@@ -452,6 +508,10 @@
       window.RM_SUB_CARD_RENDERER.openSmoothSubServiceScreen = function (entry, subCode, title, subtitle, selectedPill) {
         var code = String(subCode || '').trim();
         if (code === '15-2' || code === '16-2' || code === '15-3' || code === '16-3') {
+          var targetMod = (code === '15-2' || code === '16-2') ? '16-2' : '16-3';
+          if (typeof window.handleLaunchCategory === 'function') {
+            try { window.handleLaunchCategory('c16', targetMod); } catch (err) {}
+          }
           ensureMicroAppRendered(code, title, subtitle);
           return;
         }
@@ -472,6 +532,7 @@
   setTimeout(hookExternalRenderers, 800);
 
   window.RM_SUBCARD_ROUTER = {
+    preloadCat15ModularEngines: preloadCat15ModularEngines,
     isSurfaceBOwnerActive: isSurfaceBOwnerActive,
     isSurfaceBElementTap: isSurfaceBElementTap,
     extractSubCardMetaAndChips: extractSubCardMetaAndChips,
