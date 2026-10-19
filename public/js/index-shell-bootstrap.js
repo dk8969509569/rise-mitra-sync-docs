@@ -1,26 +1,29 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-0 Surface-A HTML Shell Bootstrapper & Sentinel Lock (v65)
+ *   - MODULE NAME    : RM Part-0A Surface-A HTML Shell Bootstrapper & Sentinel Lock (v78)
  *   - REPO TARGET    : public/js/index-shell-bootstrap.js
  *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional SIVME Loader for Surface-B)
  *   - HOST BINDING   : Surface-A (public/index.html)
- *   - SIZE BUDGET    : <= 230 Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 265 Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
  * ==============================================================================
  * 2. EXISTING MODULAR FILES LOCK (ZERO DUPLICATE IMPLEMENTATION):
- *   - public/js/index-shell-bootstrap.js (Part-0: Shell Boot, Anti-Freeze & Macro Bars ONLY)
+ *   - public/js/index-shell-bootstrap.js (Part-0A: Shell Boot, Anti-Freeze, Macro Bars & Part-0B Auto-Loader)
+ *   - public/js/one-tap-profile-hub-healer.js (Part-0B: Top-Right Profile 1-Tap & Large-Font Healer)
  *   - public/js/one-tap-accordion-engine.js (Part-1C: 50 Category Cards & Sub-Card Accordion)
  *   - public/js/one-tap-catalog-hydrator.js (Part-1A: Boot Loader & Modal Dispatchers)
  *   - public/js/one-tap-home-css-healer.js (Part-1D: 0ms Home Healer & 18-Games Lock)
  *   - public/js/one-tap-catalog-dom-engine.js (Part-1B: Canonical Catalog DOM Engine)
+ *   - public/js/profile-hub-engine.js (Profile Hub Engine — Delegated/Bridged on 1-Tap)
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : Anti-freeze MutationObserver shield, Tailwind theme config,
- *                              stale SIVME/cache purge, inline ZEL 1-Tap CSS lock, 0ms 1-Tap
- *                              Macro Bar toggle, modal fallback dispatchers, hydration sentinel.
+ *                              stale SIVME/cache purge, inline ZEL 1-Tap & Profile Large-Font CSS,
+ *                              0ms 1-Tap Macro Bar toggle, Part-0B Profile 1-Tap Auto-Loader,
+ *                              modal fallback dispatchers, hydration sentinel.
  *   - ALLOWED ON SURFACE-B   : Conditional loading of /js/sovereign-in-situ-hud.js ONLY when
  *                              ?sivme=owner or ?sov_mode=in_situ is present in URL.
  *   - FORBIDDEN IN THIS FILE : Category card sub-list logic (owned by one-tap-accordion-engine.js).
@@ -29,33 +32,38 @@
  *   - WRITES GLOBAL STATE : window.__RM_ACTIVE_CACHE_VER, window.tailwind.config,
  *                           window.openCatalogModal, window.closeCatalogModal,
  *                           window.toggleMenuDrawer, window.toggleMacroBarElementInstantly,
- *                           window.ensureCatalogHydratedNow, window.__RM_MODAL_INTERACTION_LOCK__
+ *                           window.ensureCatalogHydratedNow, window.__RM_MODAL_INTERACTION_LOCK__,
+ *                           window.openProfileModal, window.closeProfileModal, window.toggleProfileModal,
+ *                           window.healProfileHubTypographyAndLayout
  *   - CALLS EXTERNAL APIs : window.lockGames18StatePermanently, window.renderCatalogItems,
- *                           window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog
+ *                           window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog, window.RM_ProfileHub
  * ==============================================================================
  * 5. DOM ATTRIBUTE & SELECTOR CONTRACT (ZERO-COLLISION DOM RULE):
  *   - SURFACE-A SELECTORS : #categoryModal, #modal-catalog-count, #tier1-header-text,
- *                           #tier2-header-text, #tier1-list, #tier2-list, #rm-zel-one-tap-lock
+ *                           #tier2-header-text, #tier1-list, #tier2-list, #rm-zel-one-tap-lock,
+ *                           #rm-top-profile-btn, #profileModal, #rm-fullscreen-view
  *   - SURFACE-B SELECTORS : .sivme-notch-pill, #sivme-hud, [data-sivme] (ISOLATED)
  * ==============================================================================
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
- *   - CLICK SAFETY  : Enforces touch-action: manipulation !important & 0ms Macro Bar toggle.
+ *   - CLICK SAFETY  : Enforces touch-action: manipulation !important & 0ms Macro/Profile 1-Tap.
  *   - SCROLL SAFETY : Tracks touchmove delta (>10px) + lightweight sentinels (150ms & 600ms).
  *   - FREEZE SHIELD : Blocks recursive MutationObserver loops when #categoryModal is open.
  * ==============================================================================
- * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (8 CORE SHELL BLOCKS):
+ * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (9 CORE SHELL BLOCKS):
  *   0. installMutationObserverFreezeKillSwitch 1. configureTailwindTheme
  *   2. purgeStaleShellCacheAndSivme            3. injectShellOneTapLockStyle
  *   4. toggleMacroBarElementInstantly          5. registerFallbackModalDispatchers
  *   6. ensureCatalogHydratedNow                7. initSwAndConditionalSivmeSentinel
- *   + Capture 1-Tap Macro Accordion Listener (Delegates Card Taps to Part-1C)
+ *   8. bindTopRightProfileOneTap (Direct 0ms 1-Tap Trigger + Auto-Loads Part-0B v78)
+ *   + Capture 1-Tap Macro Accordion & Top-Right Profile Listeners
  * ==============================================================================
  * 8. ONE JOB = ONE FILE & CANONICAL PATH LOCK (ANTI-DUPLICATE FILE GUARD):
  *   - SINGLE JOB RULE : Sole owner of extracted inline shell scripts from `public/index.html`.
  *   - CANONICAL PATH  : Must exist ONLY at `public/js/index-shell-bootstrap.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
- *   - ZERO DOHRAO     : Delegates all 50 card accordions to `one-tap-accordion-engine.js`.
+ *   - ZERO DOHRAO     : Delegates all 50 card accordions to `one-tap-accordion-engine.js`
+ *                       and Profile Hub DOM healer to `one-tap-profile-hub-healer.js`.
  *   - IDEMPOTENT BOOT : Guarded by `window.__RM_LOADED_MODULES__['index-shell-bootstrap']`.
  * ==============================================================================
  * 10. FAIL-SAFE ERROR BOUNDARY, ZERO-STUB & 2-LINE SECTION GAP STANDARD:
@@ -63,7 +71,7 @@
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v65'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v78'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -80,9 +88,10 @@
   if (window.__RM_LOADED_MODULES__['index-shell-bootstrap']) return;
   window.__RM_LOADED_MODULES__['index-shell-bootstrap'] = true;
 
-  var CACHE_VER = '20261018_v65';
+  var CACHE_VER = '20261018_v78';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VER;
   var lastMacroToggleTs = 0;
+  var lastProfileTapTs = 0;
   var touchStartX = 0;
   var touchStartY = 0;
   var touchMoved = false;
@@ -161,19 +170,28 @@
   }
 
 
-  // 3. ZEL 1-Tap Instant Touch & Sub-Container Visibility Lock Styles
+  // 3. ZEL 1-Tap Instant Touch, Sub-Container Visibility Lock & Profile Hub Large-Font Styles
   function injectShellOneTapLockStyle() {
     var existing = document.getElementById('rm-zel-one-tap-lock');
     var s = existing || document.createElement('style');
     s.id = 'rm-zel-one-tap-lock';
     s.textContent =
-      'button, a, [onclick], .tactile-25d, .rm-parent-toggle-pill, #categoryModal [data-cat-id], #categoryModal [id^="sub-"] > div, .rm-service-chip { touch-action: manipulation !important; -webkit-tap-highlight-color: transparent !important; cursor: pointer !important; user-select: none !important; transition: none !important; }' +
+      'button, a, [onclick], .tactile-25d, .rm-parent-toggle-pill, #rm-top-profile-btn, [data-rm-profile-trigger="1"], #categoryModal [data-cat-id], #categoryModal [id^="sub-"] > div, .rm-service-chip { touch-action: manipulation !important; -webkit-tap-highlight-color: transparent !important; cursor: pointer !important; user-select: none !important; transition: none !important; outline: none !important; }' +
+      '#rm-top-profile-btn *, [data-rm-profile-trigger="1"] * { pointer-events: none !important; }' +
       '.tactile-25d:active { transform: none !important; }' +
-      '#categoryModal.hidden, #rm-fullscreen-view.hidden, #playStoreInstallBanner.hidden, #categoryModal [id^="sub-"]:not([data-rm-collapsed="false"]):not(.rm-acc-open).hidden, #categoryModal [id^="sub-"][data-rm-collapsed="true"]:not(.rm-acc-open) { display: none !important; }' +
+      '#categoryModal.hidden, #profileModal.hidden, #rm-fullscreen-view.hidden, #playStoreInstallBanner.hidden, #categoryModal [id^="sub-"]:not([data-rm-collapsed="false"]):not(.rm-acc-open).hidden, #categoryModal [id^="sub-"][data-rm-collapsed="true"]:not(.rm-acc-open) { display: none !important; }' +
       '#categoryModal [id^="sub-"][data-rm-collapsed="false"], #categoryModal .rm-acc-open { display: block !important; visibility: visible !important; opacity: 1 !important; height: auto !important; max-height: none !important; }' +
       '#categoryModal:not(.hidden) { position: fixed !important; inset: 0 !important; width: 100vw !important; max-width: 100vw !important; z-index: 50 !important; background-color: #0b0f19 !important; display: flex !important; justify-content: center !important; -webkit-overflow-scrolling: touch !important; }' +
       '#categoryModal > div { width: 100% !important; max-width: 100% !important; }' +
-      '#rm-fullscreen-view:not(.hidden) { position: fixed !important; inset: 0 !important; z-index: 99999 !important; display: flex !important; }';
+      '#profileModal:not(.hidden) { position: fixed !important; inset: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99998 !important; background-color: rgba(2, 6, 23, 0.86) !important; display: flex !important; align-items: center !important; justify-content: center !important; padding: 12px !important; }' +
+      '#rm-fullscreen-view:not(.hidden) { position: fixed !important; inset: 0 !important; z-index: 99999 !important; display: flex !important; }' +
+      '.rm-prof-upgraded-root { padding-bottom: 115px !important; }' +
+      '.rm-prof-row-title { font-size: 19px !important; font-weight: 800 !important; line-height: 1.35 !important; color: #ffffff !important; }' +
+      '.rm-prof-row-sub { font-size: 16px !important; font-weight: 600 !important; line-height: 1.45 !important; color: #e2e8f0 !important; margin-top: 3px !important; }' +
+      '.rm-prof-sec-hdr { font-size: 16px !important; font-weight: 900 !important; letter-spacing: 0.4px !important; line-height: 1.4 !important; color: #38bdf8 !important; }' +
+      '.rm-prof-grid-title { font-size: 18px !important; font-weight: 800 !important; line-height: 1.3 !important; color: #ffffff !important; }' +
+      '.rm-prof-grid-sub { font-size: 15px !important; font-weight: 700 !important; line-height: 1.4 !important; margin-top: 3px !important; }' +
+      '.rm-prof-logout-btn { font-size: 12px !important; font-weight: 700 !important; min-height: 32px !important; max-width: 140px !important; padding: 6px 16px !important; margin: 14px auto 20px auto !important; display: block !important; }';
     if (!existing) (document.head || document.documentElement).appendChild(s);
   }
 
@@ -307,10 +325,81 @@
     }
   }
 
+
+  // 8. Direct 0ms Top-Right Profile 1-Tap Trigger & Auto-Load Part-0B (public/js/one-tap-profile-hub-healer.js v78)
+  function bindTopRightProfileOneTap() {
+    if (typeof window.healProfileHubTypographyAndLayout !== 'function') {
+      window.healProfileHubTypographyAndLayout = function () {};
+    }
+    if (typeof window.openProfileModal !== 'function') {
+      window.openProfileModal = function (trigEl) {
+        var fs = document.getElementById('rm-fullscreen-view');
+        if (fs) {
+          fs.classList.remove('hidden');
+          fs.style.removeProperty('display');
+          fs.style.setProperty('display', 'flex', 'important');
+        }
+        if (window.RM_ProfileHub && typeof window.RM_ProfileHub.open === 'function') {
+          try { window.RM_ProfileHub.open(); } catch (e) {}
+        } else if (typeof window.openProfileHub === 'function') {
+          try { window.openProfileHub(); } catch (e) {}
+        } else if (trigEl && typeof trigEl.onclick === 'function') {
+          try { trigEl.onclick(); } catch (e) {}
+        } else if (typeof window.openFullscreenModule === 'function') {
+          try { window.openFullscreenModule('profile'); } catch (e) {}
+        }
+        var m = document.getElementById('profileModal') || document.getElementById('profileHubModal') || document.getElementById('userProfileModal');
+        if (m) { m.classList.remove('hidden'); m.style.setProperty('display', 'flex', 'important'); }
+        if (typeof window.healProfileHubTypographyAndLayout === 'function') {
+          setTimeout(window.healProfileHubTypographyAndLayout, 20);
+        }
+      };
+    }
+    if (typeof window.closeProfileModal !== 'function') {
+      window.closeProfileModal = function () {
+        var fs = document.getElementById('rm-fullscreen-view');
+        if (fs) { fs.classList.add('hidden'); fs.style.setProperty('display', 'none', 'important'); }
+        var m = document.getElementById('profileModal') || document.getElementById('profileHubModal') || document.getElementById('userProfileModal');
+        if (m) { m.classList.add('hidden'); m.style.setProperty('display', 'none', 'important'); }
+      };
+    }
+    if (typeof window.toggleProfileModal !== 'function') {
+      window.toggleProfileModal = function (trigEl) { window.openProfileModal(trigEl); };
+    }
+
+    function handleDirectProfileTap(e) {
+      if (window.__RM_LOADED_MODULES__['one-tap-profile-hub-healer']) return;
+      if (e.type === 'touchend' && touchMoved) return;
+      var el = e.target && e.target.nodeType === 1 ? e.target : (e.target ? e.target.parentElement : null);
+      if (!el || !el.closest || el.closest('#categoryModal, #profileModal, #rm-fullscreen-view')) return;
+      var btn = el.closest('#rm-top-profile-btn, [data-rm-profile-trigger="1"], #profileBtn, #userProfileBtn, #openProfileBtn, [onclick*="Profile"], [onclick*="profile"], header button, header .rounded-full, button.rounded-full, div.rounded-full');
+      if (!btn) return;
+      var r = btn.getBoundingClientRect ? btn.getBoundingClientRect() : null;
+      var t = (btn.textContent || '').trim();
+      if (!r || r.top > 120 || r.right < window.innerWidth - 115 || t.indexOf('सिंक') !== -1 || t.indexOf('खोलें') !== -1 || t.indexOf('RM') !== -1) return;
+      var now = Date.now();
+      if (now - lastProfileTapTs < 380) return;
+      lastProfileTapTs = now;
+      window.openProfileModal(btn);
+    }
+    window.addEventListener('touchend', handleDirectProfileTap, { capture: true, passive: true });
+    window.addEventListener('click', handleDirectProfileTap, { capture: true, passive: true });
+
+    if (!window.__RM_LOADED_MODULES__['one-tap-profile-hub-healer'] && !document.getElementById('rm-part0b-profile-healer-js')) {
+      var p = document.createElement('script');
+      p.id = 'rm-part0b-profile-healer-js';
+      p.src = '/js/one-tap-profile-hub-healer.js?v=' + CACHE_VER;
+      p.async = false;
+      (document.head || document.documentElement).appendChild(p);
+    }
+  }
+
+
   configureTailwindTheme();
   purgeStaleShellCacheAndSivme();
   injectShellOneTapLockStyle();
   registerFallbackModalDispatchers();
+  bindTopRightProfileOneTap();
   window.addEventListener('RM_CATALOG_DATA_READY', ensureCatalogHydratedNow);
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { ensureCatalogHydratedNow(); initSwAndConditionalSivmeSentinel(); });
   else { ensureCatalogHydratedNow(); initSwAndConditionalSivmeSentinel(); }
