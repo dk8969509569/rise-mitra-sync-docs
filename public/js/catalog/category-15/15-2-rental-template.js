@@ -1,31 +1,31 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Category-15 (15-2 / 16-2) Geo Resolver & 2.5D HTML Template (Part-1 v83)
+ *   - MODULE NAME    : RM Category-15 (15-2) Geo Resolver & 2.5D HTML Template (Part-1 v83)
  *   - SPECIFICATION  : 14_04__EXT_004_MODULAR_ARCHITECTURE_MOBILE_SAFETY_RECOVERY_SPEC
- *   - REPO TARGET    : public/js/catalog/category-16/16-2-rental-template.js
+ *   - REPO TARGET    : public/js/catalog/category-15/15-2-rental-template.js
  *   - SURFACE TARGET : SURFACE-A ONLY (15-2 Rental Ledger 2.5D UI Template & Pincode Resolver)
- *   - HOST BINDING   : Surface-A (Auto-loaded & consumed by 16-2-rental-ledger.js)
+ *   - HOST BINDING   : Surface-A (Auto-loaded & consumed by 15-2-rental-ledger.js)
  *   - SIZE BUDGET    : <= 180 Logical Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : GATE-16.7 | DEC-RM-SOV-ARCH-20260930-MODULAR-ZEL-001 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
  * ==============================================================================
  * 2. EXISTING MODULAR FILES LOCK (ZERO DUPLICATE IMPLEMENTATION):
- *   - public/js/catalog/category-16/16-2-rental-template.js (Part-1: Pincode Geo, Slip Text & 2.5D HTML)
- *   - public/js/catalog/category-16/16-2-rental-ledger.js (Part-2 Root Engine: Math, Storage & DOM Events)
- *   - public/js/catalog/category-16/16-3-rental-search.js (15-3 Companion: 0% Brokerage Room Search)
+ *   - public/js/catalog/category-15/15-2-rental-template.js (Part-1: Pincode Geo, Slip Text & 2.5D HTML)
+ *   - public/js/catalog/category-15/15-2-rental-ledger.js (Part-2 Root Engine: Math, Storage & DOM Events)
+ *   - public/js/catalog/category-15/15-3-rental-search.js (15-3 Companion: 0% Brokerage Room Search)
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE, ROOT-ENGINE-FIRST & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : resolveGeoFromPincode (21 Pan-India rules), formatDigitalSlipText,
  *                              and buildRentalLedgerHTML (World-Class 2.5D HTML builder).
  *   - ALLOWED ON SURFACE-B   : NONE (Surface-B Owner Console is strictly isolated).
- *   - ROOT-ENGINE-FIRST RULE : Pure stateless template & geo helper for `16-2-rental-ledger.js`.
+ *   - ROOT-ENGINE-FIRST RULE : Pure stateless template & geo helper for `15-2-rental-ledger.js`.
  *   - FORBIDDEN IN THIS FILE : Direct DOM mutation or localStorage writes (owned by Part-2).
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
- *   - WRITES GLOBAL STATE : window.RM_Cat16_Sub2_Template,
- *                           window.__RM_LOADED_MODULES__['16-2-rental-template']
+ *   - WRITES GLOBAL STATE : window.RM_Cat15_Sub2_Template, window.RM_Cat16_Sub2_Template,
+ *                           window.__RM_LOADED_MODULES__['15-2-rental-template']
  *   - CALLS EXTERNAL APIs : NONE (Pure deterministic functions)
  * ==============================================================================
  * 5. DOM ATTRIBUTE, SELECTOR CONTRACT & WORLD-CLASS 2.5D VISUAL LOCK (ZERO-COLLISION RULE):
@@ -40,7 +40,7 @@
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, ZERO-REVERT & TIMER OWNERSHIP LOCK:
  *   - CLICK SAFETY  : Zero event listeners or timers in this pure template module.
  *   - DOM SAFETY    : Preserves 100% of `#rm-cat16-*` IDs required by Part-2 & SIVME adapters.
- *   - ZERO REVERT   : Bakes 2.5D CSS & `15-2`/`15-3` labels directly into HTML template string.
+ *   - ZERO REVERT   : Bakes 2.5D CSS & Play Store `15-2`/`15-3` labels directly into HTML string.
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (3 CORE TEMPLATE & GEO FUNCTIONS):
  *   1. resolveGeoFromPincode (21 Pan-India Pincode Rules: JH, BR, MP, RJ, DL, UP, MH, TN)
@@ -48,13 +48,13 @@
  *   3. buildRentalLedgerHTML (World-Class 2.5D HTML Builder for Header, PubMode, Form & Vouchers)
  * ==============================================================================
  * 8. ONE JOB = ONE FILE, ROOT-ENGINE AUTHORITY, ZERO-GUESSWORK & CANONICAL PATH LOCK:
- *   - SINGLE JOB RULE     : Sole owner of 15-2 (16-2) 2.5D HTML Template & Pincode Geo Resolver.
- *   - ZERO-GUESSWORK LOCK : Extracted 1:1 from `16-2-rental-ledger.js` to keep both files <= 300 lines.
- *   - CANONICAL PATH      : Must exist ONLY at `public/js/catalog/category-16/16-2-rental-template.js`.
+ *   - SINGLE JOB RULE     : Sole owner of 15-2 2.5D HTML Template & Pincode Geo Resolver.
+ *   - ZERO-GUESSWORK LOCK : Aligned with Google Play Store Official Taxonomy (Category 15 = House & Home).
+ *   - CANONICAL PATH      : Must exist ONLY at `public/js/catalog/category-15/15-2-rental-template.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
- *   - ZERO DOHRAO     : Eliminates inline HTML bloat from `16-2-rental-ledger.js`.
- *   - IDEMPOTENT BOOT : Guarded by `window.__RM_LOADED_MODULES__['16-2-rental-template']`.
+ *   - ZERO DOHRAO     : Eliminates inline HTML bloat from `15-2-rental-ledger.js`.
+ *   - IDEMPOTENT BOOT : Guarded by `window.__RM_LOADED_MODULES__['15-2-rental-template']`.
  * ==============================================================================
  * 10. FAIL-SAFE ERROR BOUNDARY, ZERO-STUB & 2-LINE SECTION GAP STANDARD:
  *   - ERROR BOUNDARY  : Strict IIFE + null-safe fallbacks on all voucher fields.
@@ -75,6 +75,7 @@
   'use strict';
 
   window.__RM_LOADED_MODULES__ = window.__RM_LOADED_MODULES__ || {};
+  window.__RM_LOADED_MODULES__['15-2-rental-template'] = true;
   window.__RM_LOADED_MODULES__['16-2-rental-template'] = true;
 
 
@@ -236,9 +237,11 @@
     return html;
   }
 
-  window.RM_Cat16_Sub2_Template = {
+  var api = {
     resolveGeoFromPincode: resolveGeoFromPincode,
     formatDigitalSlipText: formatDigitalSlipText,
     buildRentalLedgerHTML: buildRentalLedgerHTML
   };
+  window.RM_Cat15_Sub2_Template = api;
+  window.RM_Cat16_Sub2_Template = api;
 })();
