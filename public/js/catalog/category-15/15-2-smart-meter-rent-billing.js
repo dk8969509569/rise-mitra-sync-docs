@@ -1,30 +1,35 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Category-15 (15-2) Geo Resolver & 2.5D HTML Template (Part-1 v83)
+ *   - MODULE NAME    : RM Category-15 (15-2) Smart Meter, Rent & Utility Billing (Part-1 v91)
  *   - SPECIFICATION  : 14_04__EXT_004_MODULAR_ARCHITECTURE_MOBILE_SAFETY_RECOVERY_SPEC
- *   - REPO TARGET    : public/js/catalog/category-15/15-2-rental-template.js
- *   - SURFACE TARGET : SURFACE-A ONLY (15-2 Rental Ledger 2.5D UI Template & Pincode Resolver)
- *   - HOST BINDING   : Surface-A (Auto-loaded & consumed by 15-2-rental-ledger.js)
- *   - SIZE BUDGET    : <= 180 Logical Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - REPO TARGET    : public/js/catalog/category-15/15-2-smart-meter-rent-billing.js
+ *   - SURFACE TARGET : SURFACE-A ONLY (15-2 Smart Meter & Rent Billing 2.5D UI & Pincode Resolver)
+ *   - HOST BINDING   : Surface-A (Auto-loaded & consumed by 15-house-home-controller.js & 16-2 engine)
+ *   - SIZE BUDGET    : <= 190 Logical Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : GATE-16.7 | DEC-RM-SOV-ARCH-20260930-MODULAR-ZEL-001 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
  * ==============================================================================
  * 2. EXISTING MODULAR FILES LOCK (ZERO DUPLICATE IMPLEMENTATION):
- *   - public/js/catalog/category-15/15-2-rental-template.js (Part-1: Pincode Geo, Slip Text & 2.5D HTML)
- *   - public/js/catalog/category-15/15-2-rental-ledger.js (Part-2 Root Engine: Math, Storage & DOM Events)
- *   - public/js/catalog/category-15/15-3-rental-search.js (15-3 Companion: 0% Brokerage Room Search)
+ *   - public/js/catalog/category-15/15-2-smart-meter-rent-billing.js (Part-1: Pincode Geo, Slip Text & 2.5D HTML)
+ *   - public/js/catalog/category-15/15-3-real-estate-buy-rent-pg.js (15-3 Companion: 0% Brokerage Property Search)
+ *   - public/js/catalog/category-15/15-1-home-services-handyman.js (15-1 Companion: Home Services & Handyman Pros)
+ *   - public/js/catalog/category-15/15-house-home-controller.js (Independent Category-15 Controller)
+ *   - public/js/catalog/category-16/16-2-rental-ledger.js (Part-2 Root Engine: Math, Storage & DOM Events)
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE, ROOT-ENGINE-FIRST & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : resolveGeoFromPincode (21 Pan-India rules), formatDigitalSlipText,
  *                              and buildRentalLedgerHTML (World-Class 2.5D HTML builder).
  *   - ALLOWED ON SURFACE-B   : NONE (Surface-B Owner Console is strictly isolated).
- *   - ROOT-ENGINE-FIRST RULE : Pure stateless template & geo helper for `15-2-rental-ledger.js`.
+ *   - ROOT-ENGINE-FIRST RULE : Pure stateless template & geo helper aligned with Google Play Store
+ *                              HOUSE_AND_HOME Top Ranking Smart Meter & Rent Billing segment.
  *   - FORBIDDEN IN THIS FILE : Direct DOM mutation or localStorage writes (owned by Part-2).
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.RM_Cat15_Sub2_Template, window.RM_Cat16_Sub2_Template,
+ *                           window.RM_Cat15_Sub2_SmartMeterBilling,
+ *                           window.__RM_LOADED_MODULES__['15-2-smart-meter-rent-billing'],
  *                           window.__RM_LOADED_MODULES__['15-2-rental-template']
  *   - CALLS EXTERNAL APIs : NONE (Pure deterministic functions)
  * ==============================================================================
@@ -49,19 +54,19 @@
  * ==============================================================================
  * 8. ONE JOB = ONE FILE, ROOT-ENGINE AUTHORITY, ZERO-GUESSWORK & CANONICAL PATH LOCK:
  *   - SINGLE JOB RULE     : Sole owner of 15-2 2.5D HTML Template & Pincode Geo Resolver.
- *   - ZERO-GUESSWORK LOCK : Aligned with Google Play Store Official Taxonomy (Category 15 = House & Home).
- *   - CANONICAL PATH      : Must exist ONLY at `public/js/catalog/category-15/15-2-rental-template.js`.
+ *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `15-2-rental-template.js` (`v83` `1000303727.png`).
+ *   - CANONICAL PATH      : Must exist ONLY at `public/js/catalog/category-15/15-2-smart-meter-rent-billing.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
- *   - ZERO DOHRAO     : Eliminates inline HTML bloat from `15-2-rental-ledger.js`.
- *   - IDEMPOTENT BOOT : Guarded by `window.__RM_LOADED_MODULES__['15-2-rental-template']`.
+ *   - ZERO DOHRAO     : Eliminates inline HTML bloat and registers legacy script IDs (`rm-cat15-2-template-js`).
+ *   - IDEMPOTENT BOOT : Guarded by `window.__RM_LOADED_MODULES__['15-2-smart-meter-rent-billing']`.
  * ==============================================================================
  * 10. FAIL-SAFE ERROR BOUNDARY, ZERO-STUB & 2-LINE SECTION GAP STANDARD:
  *   - ERROR BOUNDARY  : Strict IIFE + null-safe fallbacks on all voucher fields.
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, 1-TASK-1-FILE COMMIT, PRE-MAIN GATE & CONTRACT LOCK:
- *   - VERSION SYNC    : Synced with `MODULE_VERSION = '1.2.0'` (`v83`).
+ *   - VERSION SYNC    : Synced with `MODULE_VERSION = '1.4.0'` (`v91`).
  *   - PIPELINE GATE   : Commit & verify on `pre-main` before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -75,8 +80,17 @@
   'use strict';
 
   window.__RM_LOADED_MODULES__ = window.__RM_LOADED_MODULES__ || {};
+  window.__RM_LOADED_MODULES__['15-2-smart-meter-rent-billing'] = true;
   window.__RM_LOADED_MODULES__['15-2-rental-template'] = true;
   window.__RM_LOADED_MODULES__['16-2-rental-template'] = true;
+
+  ['rm-cat15-2-template-js', 'rm-cat15-2-tpl'].forEach(function (id) {
+    if (typeof document !== 'undefined' && !document.getElementById(id)) {
+      var m = document.createElement('meta');
+      m.id = id;
+      (document.head || document.documentElement).appendChild(m);
+    }
+  });
 
 
   // 1. Pincode to State & District Auto-Resolver (All 21 Pan-India Rules Intact)
@@ -140,7 +154,7 @@
   }
 
 
-  // 3. World-Class 2.5D HTML Builder for 15-2 Rental Ledger
+  // 3. World-Class 2.5D HTML Builder for 15-2 Smart Meter & Rent Billing
   function buildRentalLedgerHTML(vouchers) {
     var list = Array.isArray(vouchers) ? vouchers : [];
     var box25d = 'background:linear-gradient(180deg,#0f1c33 0%,#08101f 100%);border:1.8px solid rgba(56,189,248,0.48);border-bottom:3.5px solid rgba(14,165,233,0.78);box-shadow:0 12px 26px rgba(0,0,0,0.8);border-radius:16px;';
@@ -150,8 +164,8 @@
       '<div style="box-sizing:border-box;width:100%;max-width:100%;margin:0 auto;padding:6px 2px 90px 2px;font-family:system-ui,-apple-system,sans-serif;color:#f8fafc;overflow-x:hidden;">' +
       '  <div style="' + box25d + 'padding:14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;box-sizing:border-box;width:100%;">' +
       '    <div style="min-width:0;flex:1;">' +
-      '      <h2 style="margin:0;font-size:18.5px;font-weight:900;color:#ffffff;line-height:1.3;">🏠 15-2. किराया बहीखाता (Rental Ledger)</h2>' +
-      '      <span style="font-size:14px;color:#34d399;font-weight:700;display:block;margin-top:3px;">पैन-इंडिया सब-मीटर पर्ची व सॉवरेन लेज़र (v1.2 • 2.5D)</span>' +
+      '      <h2 style="margin:0;font-size:18.5px;font-weight:900;color:#ffffff;line-height:1.3;">⚡ 15-2. स्मार्ट मीटर व किराया बहीखाता (Smart Meter & Rent Billing)</h2>' +
+      '      <span style="font-size:14px;color:#34d399;font-weight:700;display:block;margin-top:3px;">पैन-इंडिया सब-मीटर पर्ची व सॉवरेन लेज़र (v1.4 • 2.5D)</span>' +
       '    </div>' +
       '    <span style="background:#064e3b;color:#6ee7b7;border:1.5px solid #10b981;font-size:13px;padding:4px 10px;border-radius:999px;font-weight:800;white-space:nowrap;margin-left:8px;">● सक्रिय</span>' +
       '  </div>' +
@@ -242,6 +256,7 @@
     formatDigitalSlipText: formatDigitalSlipText,
     buildRentalLedgerHTML: buildRentalLedgerHTML
   };
+  window.RM_Cat15_Sub2_SmartMeterBilling = api;
   window.RM_Cat15_Sub2_Template = api;
   window.RM_Cat16_Sub2_Template = api;
 })();
