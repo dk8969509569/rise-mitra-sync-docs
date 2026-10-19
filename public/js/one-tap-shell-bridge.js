@@ -1,11 +1,11 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-2 Modular 1-Tap Shell Bridge & Deterministic Controller (v69)
+ *   - MODULE NAME    : RM Part-2 Modular 1-Tap Shell Bridge & Deterministic Controller (v88)
  *   - REPO TARGET    : public/js/one-tap-shell-bridge.js
  *   - SURFACE TARGET : SHARED (Surface-A Public 1-Tap & Surface-B SIVME Pass-Through)
  *   - HOST BINDING   : Surface-A (public/index.html)
- *   - SIZE BUDGET    : <= 295 Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 298 Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -17,12 +17,15 @@
  *   - public/js/one-tap-accordion-engine.js (Part-1C: 50-Category Accordion & Subcard Engine)
  *   - public/js/fullscreen-microapp-controller.js (Part-3A: Fullscreen Micro-App Viewport UI)
  *   - public/js/one-tap-subcard-router.js (Part-3B: Priority 0 Close, Case 2 & 4-Chip Router)
+ *   - public/js/one-tap-subcard-dom-helpers.js (Part-3C: Sub-Card Chip Extractor & DOM Helpers)
  * ==============================================================================
- * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
+ * 3. TOP-HEADER FILE SCOPE, ROOT-ENGINE-FIRST & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : Parallel module bootstrapping, touchstart/touchmove/touchend/click
  *                              capture, touchSeq tracking & 0ms 1-Tap dispatch for Home,
  *                              Tier-1/2 bars, Category 01-50 cards, and 150 Sub-Cards.
  *   - ALLOWED ON SURFACE-B   : Pass-through exclusion for .sivme-notch-pill, #sivme-hud, #sivme-drawer.
+ *   - ROOT-ENGINE-FIRST RULE : Syncs `CACHE_VERSION = '20261019_v88'` so stale `v69` scripts never
+ *                              block Category 15 (`15-1`, `15-2`, `15-3`) 1-Tap opening.
  *   - FORBIDDEN IN THIS FILE : Large HTML card templates or CSS stylesheet injection.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
@@ -30,17 +33,18 @@
  *                           window.__RM_LAST_MODAL_OPEN_TS, window.__RM_MODAL_INTERACTION_LOCK__
  *   - CALLS EXTERNAL APIs : window.RM_CATALOG_DOM_ENGINE.*, window.RM_CATALOG_HYDRATOR.*,
  *                           window.RM_ACCORDION_ENGINE.*, window.RM_SUBCARD_ROUTER.*,
- *                           window.RM_UNIVERSAL_CARD_ENGINE.*
+ *                           window.RM_FULLSCREEN_CONTROLLER.*, window.RM_UNIVERSAL_CARD_ENGINE.*
  * ==============================================================================
- * 5. DOM ATTRIBUTE & SELECTOR CONTRACT (ZERO-COLLISION DOM RULE):
+ * 5. DOM ATTRIBUTE, SELECTOR CONTRACT & WORLD-CLASS 2.5D VISUAL LOCK (ZERO-COLLISION RULE):
  *   - SURFACE-A SELECTORS : #categoryModal, [data-cat-id], [id^="sub-"], .rm-parent-toggle-pill
  *   - SURFACE-B SELECTORS : .sivme-notch-pill, #sivme-hud, #sivme-drawer (EXCLUDED)
+ *   - WORLD-CLASS 2.5D UI : Preserves 0ms 1-Tap sub-card launch without collapsing parent card.
  * ==============================================================================
- * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
+ * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, ZERO-REVERT & TIMER OWNERSHIP LOCK:
  *   - CLICK SAFETY  : Suppresses synthetic click within 420ms of a handled touchend.
  *   - SCROLL SAFETY : Tracks touchmove (>12px) via touchMoved so scrolling never triggers cards.
- *   - PILL CANARY   : Reads visible `.rm-parent-toggle-pill` ("और देखें ▼" vs "समेटें ▲") so
- *                     stale `data-rm-collapsed="false"` attributes never freeze Category 15!
+ *   - PILL CANARY   : Reads visible `.rm-parent-toggle-pill` ("और देखें ▼" vs "समेटें ▲") and stops
+ *                     propagation on CASE 2 (`[id^="sub-"]`) so Category 15 never collapses on sub-tap!
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (8 MANDATORY FUNCTIONS + 5 LISTENERS):
  *   1. ensureFullscreenControllerLoaded  2. forceCloseFullscreenViewport
@@ -49,9 +53,10 @@
  *   7. window.closeCatalogModal          8. handleDeterministicOneTap
  *   + Listeners: touchstart, touchmove, touchend, window.click, document.click
  * ==============================================================================
- * 8. ONE JOB = ONE FILE & CANONICAL PATH LOCK (ANTI-DUPLICATE FILE GUARD):
- *   - SINGLE JOB RULE : Sole authoritative owner of Part-2 Deterministic 1-Tap Shell Bridge.
- *   - CANONICAL PATH  : Must exist ONLY at `public/js/one-tap-shell-bridge.js`.
+ * 8. ONE JOB = ONE FILE, ROOT-ENGINE AUTHORITY, ZERO-GUESSWORK & CANONICAL PATH LOCK:
+ *   - SINGLE JOB RULE     : Sole authoritative owner of Part-2 Deterministic 1-Tap Shell Bridge.
+ *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `public/js/one-tap-shell-bridge.js` (`v69` `1000303701.png`).
+ *   - CANONICAL PATH      : Must exist ONLY at `public/js/one-tap-shell-bridge.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
  *   - ZERO DOHRAO     : Delegates DOM hydration to Part-1B/1C and sub-card routing to Part-3B.
@@ -61,8 +66,8 @@
  *   - ERROR BOUNDARY  : Strict IIFE + try/catch boundaries protect all 1-Tap operations.
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
- * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261018_v69'`.
+ * 11. CACHE-BUSTING VERSION SYNC, 1-TASK-1-FILE COMMIT, PRE-MAIN GATE & CONTRACT LOCK:
+ *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261019_v88'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -79,7 +84,7 @@
   if (window.__RM_LOADED_MODULES__['one-tap-shell-bridge']) return;
   window.__RM_LOADED_MODULES__['one-tap-shell-bridge'] = true;
 
-  var CACHE_VERSION = '20261018_v69';
+  var CACHE_VERSION = '20261019_v88';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VERSION;
   var lastActionTs = 0;
   var lastTouchTs = 0;
@@ -97,7 +102,7 @@
   window.__RM_OPEN_CAT_STATE = openStateMap;
 
 
-  // 1. Auto-load decoupled Fullscreen Controller, Part-1 Hydrator, Part-1B DOM Engine, Sub-Matrix & Part-3 SubCard Router
+  // 1. Auto-load decoupled Fullscreen Controller, Part-1 Hydrator, Part-1B DOM Engine, Sub-Matrix & Part-3B/3C Router
   (function ensureFullscreenControllerLoaded() {
     var modules = [
       { id: 'rm-canonical-sub-matrix-script', src: '/js/universal-catalog/canonical-sub-matrix.js' },
@@ -105,6 +110,7 @@
       { id: 'rm-fs-microapp-controller-script', src: '/js/fullscreen-microapp-controller.js' },
       { id: 'rm-catalog-dom-engine-script', src: '/js/one-tap-catalog-dom-engine.js' },
       { id: 'rm-catalog-hydrator-script', src: '/js/one-tap-catalog-hydrator.js' },
+      { id: 'rm-part3c-dom-helpers-js', src: '/js/one-tap-subcard-dom-helpers.js' },
       { id: 'rm-subcard-router-script', src: '/js/one-tap-subcard-router.js' }
     ];
     for (var i = 0; i < modules.length; i++) {
@@ -131,6 +137,9 @@
   function ensureMicroAppRendered(subCode, titleText, subtitleText) {
     if (window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.ensureMicroAppRendered === 'function') {
       return window.RM_SUBCARD_ROUTER.ensureMicroAppRendered(subCode, titleText, subtitleText);
+    }
+    if (window.RM_FULLSCREEN_CONTROLLER && typeof window.RM_FULLSCREEN_CONTROLLER.ensureMicroAppRendered === 'function') {
+      return window.RM_FULLSCREEN_CONTROLLER.ensureMicroAppRendered(subCode, titleText, subtitleText);
     }
   }
 
@@ -344,22 +353,35 @@
       return;
     }
 
-    // CASE 2 FIRST: Sub-Category Card 1-Tap via Part-3 Router
-    var subWrapper = target.closest('[id^="sub-"]');
+    // CASE 2 FIRST: Sub-Category Card 1-Tap via Part-3 Router (Stops Propagation so Parent Never Collapses!)
+    var subWrapper = target.closest('[id^="sub-"], [data-sub-container], .rm-sub-container');
     if (subWrapper) {
-      if (target.closest('.rm-act-pin, .rm-act-vid, .rm-act-video')) return;
-      e.__rmHandled = true;
-      handledTouchSeq = touchSeq;
-      if (now - lastActionTs < 80) {
-        e.stopImmediatePropagation();
+      var actBtn = target.closest('button, a');
+      var actTxt = actBtn ? (actBtn.textContent || '').trim() : '';
+      if (target.closest('.rm-act-pin, .rm-act-vid, .rm-act-video, .rm-clean-pin') || actTxt.indexOf('पिन') !== -1 || actTxt.indexOf('वीडियो') !== -1) {
         e.stopPropagation();
-        if (e.cancelable) e.preventDefault();
         return;
       }
+      e.__rmHandled = true;
+      handledTouchSeq = touchSeq;
+      e.stopImmediatePropagation();
+      e.stopPropagation();
+      if (e.cancelable) e.preventDefault();
+      if (now - lastActionTs < 80) return;
       if (e.type === 'touchend') lastTouchTs = now;
       lastActionTs = now;
+
+      var subCardNode = target.closest('[data-sub-code], [data-rm-sub-rendered], [id^="sub-"] > div') || subWrapper;
+      var codeMatch = (subCardNode.textContent || '').match(/\b(\d{1,2}-\d)\b/);
+      var detectedCode = codeMatch ? codeMatch[1] : ((subCardNode.getAttribute('data-sub-code') || '').trim());
+
       if (window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.handleSubCardOneTap === 'function') {
         window.RM_SUBCARD_ROUTER.handleSubCardOneTap(e, target);
+      } else if (detectedCode) {
+        ensureMicroAppRendered(detectedCode);
+      }
+      if (detectedCode === '15-2' || detectedCode === '16-2' || detectedCode === '15-3' || detectedCode === '16-3') {
+        ensureMicroAppRendered(detectedCode);
       }
       return;
     }
