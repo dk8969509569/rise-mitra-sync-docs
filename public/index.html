@@ -2,11 +2,11 @@
 <html lang="hi" class="dark" data-theme="dark">
 <!-- ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Surface-A Master Modular HTML Shell & 18-Games SSOT Lock (v60)
+ *   - MODULE NAME    : RM Surface-A Master Modular HTML Shell & 18-Games SSOT Lock (v96)
  *   - REPO TARGET    : public/index.html
  *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional SIVME Loader via Bootstrap)
  *   - HOST BINDING   : Surface-A Primary Entry Point (https://rmworld.vercel.app)
- *   - SIZE BUDGET    : <= 290 Lines (Target <= 300 Lines | 100% Decoupled CSS & JS)
+ *   - SIZE BUDGET    : <= 298 Lines (Target <= 300 Lines | 100% Decoupled CSS & JS)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -15,13 +15,12 @@
  *   - /js/index-shell-bootstrap.js (Part-0: Extracted Inline Shell Scripts & Sentinels)
  *   - /js/one-tap-catalog-hydrator.js (Part-1A), /js/one-tap-home-css-healer.js (Part-1D)
  *   - /js/one-tap-accordion-engine.js (Part-1C), /js/one-tap-catalog-dom-engine.js (Part-1B)
- *   - /js/one-tap-shell-bridge.js, /js/data/india-geo-data.js, /js/home-grid-engine.js
- *   - /js/profile-hub-engine.js, /js/categories-data.js, /js/catalog-sivme-core-engine.js
- *   - /js/catalog-sivme-render-engine.js, /js/catalog-sivme-engine.js, /js/shell-controller.js
- *   - /js/sivme-adapters/cat16-adapter.js, /js/favorites-engine.js
- *   - /js/universal-catalog/ (catalog-metadata-registry, canonical-sub-matrix,
- *     sub-card-renderer, universal-card-engine, universal-search-engine, ext-*,
- *     games-entertainment-bridge.js), /js/core/sovereign-in-situ-registry.js
+ *   - /js/one-tap-shell-bridge.js, /js/one-tap-subcard-router.js, /js/one-tap-subcard-dom-helpers.js
+ *   - /js/fullscreen-microapp-controller.js, /js/catalog/category-15/*, /js/catalog/category-16/*
+ *   - /js/data/india-geo-data.js, /js/home-grid-engine.js, /js/profile-hub-engine.js
+ *   - /js/categories-data.js, /js/catalog-sivme-core-engine.js, /js/catalog-sivme-render-engine.js
+ *   - /js/catalog-sivme-engine.js, /js/shell-controller.js, /js/sivme-adapters/cat16-adapter.js
+ *   - /js/favorites-engine.js, /js/universal-catalog/*, /js/core/sovereign-in-situ-registry.js
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : Sticky Header, Circular Profile Avatar, Directory Button,
@@ -31,10 +30,10 @@
  *                              • 18 Games Active), Fullscreen Micro-App Viewport & Bottom Nav.
  *   - ALLOWED ON SURFACE-B   : Conditional loading of /js/sovereign-in-situ-hud.js via
  *                              /js/index-shell-bootstrap.js ONLY when ?sivme=owner.
- *   - FORBIDDEN IN THIS FILE : Inline script bloat (>300L) or stale cache versions (<v60).
+ *   - FORBIDDEN IN THIS FILE : Inline script bloat (>300L) or stale cache versions (<v96).
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
- *   - WRITES GLOBAL STATE : Delegated to /js/index-shell-bootstrap.js & Part-1A..1D
+ *   - WRITES GLOBAL STATE : Delegated to /js/index-shell-bootstrap.js & Part-1A..3C
  *   - CALLS EXTERNAL APIs : openCatalogModal, closeCatalogModal, triggerPWAInstall,
  *                           dismissPlayBanner, filterQuickTiles, closeFullscreenModule
  * ==============================================================================
@@ -46,15 +45,15 @@
  * ==============================================================================
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
  *   - CLICK SAFETY  : 1-Tap manipulation lock injected by /js/index-shell-bootstrap.js.
- *   - SCROLL SAFETY : Non-blocking deferred modular scripts synced to ?v=20261018_v60.
+ *   - SCROLL SAFETY : Non-blocking deferred modular scripts synced to ?v=20261020_v96.
  *   - DOM SAFETY    : Native HTML locks "32 Categories • 18 Games Active" & "18 श्रेणियां".
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) SHELL MANIFEST:
- *   1. Head Meta, Icons & app.css (?v=v60)    2. Part-0 Bootstrap (/js/index-shell-bootstrap.js)
+ *   1. Head Meta, Icons & app.css (?v=v96)    2. Part-0 Bootstrap (/js/index-shell-bootstrap.js)
  *   3. Sticky Header & Circular Avatar        4. Main Content (Blocks 1 to 5 + console link)
  *   5. Play Store Install Banner              6. Universal Catalog Modal (#categoryModal)
  *   7. Fullscreen Viewport (#rm-fullscreen-view) 8. Bottom Navigation Bar (4 Tabs)
- *   9. All 24 Modular Script Tags (?v=20261018_v60)
+ *   9. All Modular Script Tags (?v=20261020_v96) including Isolated Category-15 & Category-16
  * ==============================================================================
  * 8. ONE JOB = ONE FILE & CANONICAL PATH LOCK (ANTI-DUPLICATE FILE GUARD):
  *   - SINGLE JOB RULE : Sole authoritative Surface-A HTML markup shell.
@@ -62,14 +61,14 @@
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
  *   - ZERO DOHRAO     : Inline scripts extracted to `public/js/index-shell-bootstrap.js`.
- *   - ANTI-OVERWRITE  : Part-0 + Part-1D lock 18 Games (33-50) after legacy renderers.
+ *   - ANTI-OVERWRITE  : Part-0 + Part-1D lock 18 Games (33-50) & Category-15 isolation.
  * ==============================================================================
  * 10. FAIL-SAFE ERROR BOUNDARY, ZERO-STUB & 2-LINE SECTION GAP STANDARD:
  *   - ERROR BOUNDARY  : All runtime logic guarded inside modular IIFE scripts.
  *   - ZERO-STUB RULE  : 100% production-complete HTML shell; zero placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : All CSS/JS assets synced to `?v=20261018_v60`.
+ *   - VERSION SYNC    : All CSS/JS assets synced to `?v=20261020_v96`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -90,10 +89,10 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  <link rel="stylesheet" href="/css/app.css?v=20261018_v60">
+  <link rel="stylesheet" href="/css/app.css?v=20261020_v96">
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Part-0 Modular Shell Bootstrapper (Tailwind Config, Cache Purge, 1-Tap Style Lock & Sentinels) -->
-  <script src="/js/index-shell-bootstrap.js?v=20261018_v60"></script>
+  <script src="/js/index-shell-bootstrap.js?v=20261020_v96"></script>
 </head>
 
 <body class="bg-[#030712] text-slate-100 min-h-screen pb-36 antialiased select-none font-sans">
@@ -320,31 +319,40 @@
   </nav>
 
 
-  <!-- MODULAR CONTROLLERS & V60 DEFERRED CACHE-BUSTED SCRIPT REGISTRY -->
-  <script defer src="/js/one-tap-shell-bridge.js?v=20261018_v60"></script>
-  <script defer src="/js/data/india-geo-data.js?v=20261018_v60"></script>
-  <script defer src="/js/home-grid-engine.js?v=20261018_v60"></script>
-  <script defer src="/js/profile-hub-engine.js?v=20261018_v60"></script>
-  <script defer src="/js/categories-data.js?v=20261018_v60"></script>
-  <script defer src="/js/catalog-sivme-core-engine.js?v=20261018_v60"></script>
-  <script defer src="/js/catalog-sivme-render-engine.js?v=20261018_v60"></script>
-  <script defer src="/js/catalog-sivme-engine.js?v=20261018_v60"></script>
-  <script defer src="/js/shell-controller.js?v=20261018_v60"></script>
-  <script defer src="/js/sivme-adapters/cat16-adapter.js?v=20261018_v60"></script>
-  <script defer src="/js/universal-catalog/catalog-metadata-registry.js?v=20261018_v60"></script>
-  <script defer src="/js/universal-catalog/canonical-sub-matrix.js?v=20261018_v60"></script>
-  <script defer src="/js/universal-catalog/sub-card-renderer.js?v=20261018_v60"></script>
-  <script defer src="/js/universal-catalog/universal-card-engine.js?v=20261018_v60"></script>
-  <script defer src="/js/universal-catalog/universal-search-engine.js?v=20261018_v60"></script>
-  <script defer src="/js/universal-catalog/extensions/ext-batch-11-15.js?v=20261018_v60"></script>
-  <script defer src="/js/universal-catalog/extensions/ext-batch-16-20.js?v=20261018_v60"></script>
-  <script defer src="/js/universal-catalog/games-entertainment-bridge.js?v=20261018_v60"></script>
-  <script defer src="/js/favorites-engine.js?v=20261018_v60"></script>
-  <script defer src="/js/core/sovereign-in-situ-registry.js?v=20261018_v60"></script>
-  <script defer src="/js/one-tap-home-css-healer.js?v=20261018_v60"></script>
-  <script defer src="/js/one-tap-accordion-engine.js?v=20261018_v60"></script>
-  <script defer src="/js/one-tap-catalog-dom-engine.js?v=20261018_v60"></script>
-  <script defer src="/js/one-tap-catalog-hydrator.js?v=20261018_v60"></script>
+  <!-- MODULAR CONTROLLERS & V96 DEFERRED CACHE-BUSTED SCRIPT REGISTRY -->
+  <script defer src="/js/one-tap-shell-bridge.js?v=20261020_v96"></script>
+  <script defer src="/js/data/india-geo-data.js?v=20261020_v96"></script>
+  <script defer src="/js/home-grid-engine.js?v=20261020_v96"></script>
+  <script defer src="/js/profile-hub-engine.js?v=20261020_v96"></script>
+  <script defer src="/js/categories-data.js?v=20261020_v96"></script>
+  <script defer src="/js/catalog-sivme-core-engine.js?v=20261020_v96"></script>
+  <script defer src="/js/catalog-sivme-render-engine.js?v=20261020_v96"></script>
+  <script defer src="/js/catalog-sivme-engine.js?v=20261020_v96"></script>
+  <script defer src="/js/shell-controller.js?v=20261020_v96"></script>
+  <script defer src="/js/sivme-adapters/cat16-adapter.js?v=20261020_v96"></script>
+  <script defer src="/js/universal-catalog/catalog-metadata-registry.js?v=20261020_v96"></script>
+  <script defer src="/js/universal-catalog/canonical-sub-matrix.js?v=20261020_v96"></script>
+  <script defer src="/js/universal-catalog/sub-card-renderer.js?v=20261020_v96"></script>
+  <script defer src="/js/universal-catalog/universal-card-engine.js?v=20261020_v96"></script>
+  <script defer src="/js/universal-catalog/universal-search-engine.js?v=20261020_v96"></script>
+  <script defer src="/js/universal-catalog/extensions/ext-batch-11-15.js?v=20261020_v96"></script>
+  <script defer src="/js/universal-catalog/extensions/ext-batch-16-20.js?v=20261020_v96"></script>
+  <script defer src="/js/universal-catalog/games-entertainment-bridge.js?v=20261020_v96"></script>
+  <script defer src="/js/favorites-engine.js?v=20261020_v96"></script>
+  <script defer src="/js/core/sovereign-in-situ-registry.js?v=20261020_v96"></script>
+  <script defer src="/js/one-tap-home-css-healer.js?v=20261020_v96"></script>
+  <script defer src="/js/one-tap-accordion-engine.js?v=20261020_v96"></script>
+  <script defer src="/js/one-tap-catalog-dom-engine.js?v=20261020_v96"></script>
+  <script defer src="/js/one-tap-catalog-hydrator.js?v=20261020_v96"></script>
+  <script defer src="/js/fullscreen-microapp-controller.js?v=20261020_v96"></script>
+  <script defer src="/js/one-tap-subcard-dom-helpers.js?v=20261020_v96"></script>
+  <script defer src="/js/one-tap-subcard-router.js?v=20261020_v96"></script>
+  <script defer src="/js/catalog/category-15/15-1-home-services-handyman.js?v=20261020_v96"></script>
+  <script defer src="/js/catalog/category-15/15-2-smart-meter-rent-billing.js?v=20261020_v96"></script>
+  <script defer src="/js/catalog/category-15/15-3-real-estate-buy-rent-pg.js?v=20261020_v96"></script>
+  <script defer src="/js/catalog/category-15/15-house-home-controller.js?v=20261020_v96"></script>
+  <script defer src="/js/catalog/category-16/16-2-sdk-api-code-sandbox.js?v=20261020_v96"></script>
+  <script defer src="/js/catalog/category-16/16-3-ai-ui-hardware-demos.js?v=20261020_v96"></script>
 
 </body>
 </html>
