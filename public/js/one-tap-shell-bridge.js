@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-2 Modular 1-Tap Shell Bridge & Deterministic Controller (v89)
+ *   - MODULE NAME    : RM Part-2 Modular 1-Tap Shell Bridge & Deterministic Controller (v96)
  *   - REPO TARGET    : public/js/one-tap-shell-bridge.js
  *   - SURFACE TARGET : SHARED (Surface-A Public 1-Tap & Surface-B SIVME Pass-Through)
  *   - HOST BINDING   : Surface-A (public/index.html)
@@ -18,22 +18,23 @@
  *   - public/js/fullscreen-microapp-controller.js (Part-3A: Fullscreen Micro-App Viewport UI)
  *   - public/js/one-tap-subcard-router.js (Part-3B: Priority 0 Close, Case 2 & 4-Chip Router)
  *   - public/js/one-tap-subcard-dom-helpers.js (Part-3C: Sub-Card Chip Extractor & DOM Helpers)
+ *   - public/js/catalog/category-15/15-house-home-controller.js (Independent Category-15 Controller)
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE, ROOT-ENGINE-FIRST & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
  *   - ALLOWED ON SURFACE-A   : Parallel module bootstrapping, touchstart/touchmove/touchend/click
  *                              capture, touchSeq tracking & 0ms 1-Tap dispatch for Home,
  *                              Tier-1/2 bars, Category 01-50 cards, and 150 Sub-Cards.
  *   - ALLOWED ON SURFACE-B   : Pass-through exclusion for .sivme-notch-pill, #sivme-hud, #sivme-drawer.
- *   - ROOT-ENGINE-FIRST RULE : Syncs `CACHE_VERSION = '20261019_v89'` and uses `findExactSubCardElement`
- *                              with `24px` thumb tolerance so `15-1`, `15-2`, `15-3` open on 1st tap.
- *   - FORBIDDEN IN THIS FILE : Large HTML card templates or CSS stylesheet injection.
+ *   - ROOT-ENGINE-FIRST RULE : Syncs `CACHE_VERSION = '20261020_v96'` across all modules so mobile
+ *                              browsers immediately load the isolated Category-15/16 controllers.
+ *   - FORBIDDEN IN THIS FILE : Large HTML card templates or stale `v89` cache version strings.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.__RM_ACTIVE_CACHE_VER, window.__RM_OPEN_CAT_STATE,
  *                           window.__RM_LAST_MODAL_OPEN_TS, window.__RM_MODAL_INTERACTION_LOCK__
- *   - CALLS EXTERNAL APIs : window.RM_CATALOG_DOM_ENGINE.*, window.RM_CATALOG_HYDRATOR.*,
- *                           window.RM_ACCORDION_ENGINE.*, window.RM_SUBCARD_ROUTER.*,
- *                           window.RM_FULLSCREEN_CONTROLLER.*, window.RM_UNIVERSAL_CARD_ENGINE.*
+ *   - CALLS EXTERNAL APIs : window.RM_CAT15_CONTROLLER.*, window.RM_CATALOG_DOM_ENGINE.*,
+ *                           window.RM_CATALOG_HYDRATOR.*, window.RM_ACCORDION_ENGINE.*,
+ *                           window.RM_SUBCARD_ROUTER.*, window.RM_FULLSCREEN_CONTROLLER.*
  * ==============================================================================
  * 5. DOM ATTRIBUTE, SELECTOR CONTRACT & WORLD-CLASS 2.5D VISUAL LOCK (ZERO-COLLISION RULE):
  *   - SURFACE-A SELECTORS : #categoryModal, [data-cat-id], [id^="sub-"], .rm-parent-toggle-pill
@@ -55,11 +56,11 @@
  * ==============================================================================
  * 8. ONE JOB = ONE FILE, ROOT-ENGINE AUTHORITY, ZERO-GUESSWORK & CANONICAL PATH LOCK:
  *   - SINGLE JOB RULE     : Sole authoritative owner of Part-2 Deterministic 1-Tap Shell Bridge.
- *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `public/js/one-tap-shell-bridge.js` (`v88` `1000303717.png`).
+ *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `public/js/one-tap-shell-bridge.js` (`v89` `1000303805.png`).
  *   - CANONICAL PATH      : Must exist ONLY at `public/js/one-tap-shell-bridge.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
- *   - ZERO DOHRAO     : Delegates DOM hydration to Part-1B/1C and sub-card routing to Part-3B.
+ *   - ZERO DOHRAO     : Delegates DOM hydration to Part-1B/1C and sub-card routing to Part-3B & Cat-15.
  *   - IDEMPOTENT BOOT : Guarded by `window.__RM_LOADED_MODULES__['one-tap-shell-bridge']`.
  * ==============================================================================
  * 10. FAIL-SAFE ERROR BOUNDARY, ZERO-STUB & 2-LINE SECTION GAP STANDARD:
@@ -67,7 +68,7 @@
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, 1-TASK-1-FILE COMMIT, PRE-MAIN GATE & CONTRACT LOCK:
- *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261019_v89'`.
+ *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261020_v96'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -84,7 +85,7 @@
   if (window.__RM_LOADED_MODULES__['one-tap-shell-bridge']) return;
   window.__RM_LOADED_MODULES__['one-tap-shell-bridge'] = true;
 
-  var CACHE_VERSION = '20261019_v89';
+  var CACHE_VERSION = '20261020_v96';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VERSION;
   var lastActionTs = 0;
   var lastTouchTs = 0;
@@ -102,8 +103,17 @@
   window.__RM_OPEN_CAT_STATE = openStateMap;
 
 
-  // 1. Auto-load decoupled Fullscreen Controller, Part-1 Hydrator, Part-1B DOM Engine, Sub-Matrix & Part-3B/3C Router
+  // 1. Auto-load decoupled Fullscreen Controller, Part-1 Hydrator, Part-1B DOM Engine, Sub-Matrix, Part-3B/3C & Cat-15 Controller
   (function ensureFullscreenControllerLoaded() {
+    try {
+      if (localStorage.getItem('rm_bridge_cache_ver') !== CACHE_VERSION && 'caches' in window) {
+        caches.keys().then(function (names) {
+          for (var c = 0; c < names.length; c++) caches.delete(names[c]);
+        });
+        localStorage.setItem('rm_bridge_cache_ver', CACHE_VERSION);
+      }
+    } catch (e) {}
+
     var modules = [
       { id: 'rm-canonical-sub-matrix-script', src: '/js/universal-catalog/canonical-sub-matrix.js' },
       { id: 'rm-sub-card-renderer-script', src: '/js/universal-catalog/sub-card-renderer.js' },
@@ -111,10 +121,16 @@
       { id: 'rm-catalog-dom-engine-script', src: '/js/one-tap-catalog-dom-engine.js' },
       { id: 'rm-catalog-hydrator-script', src: '/js/one-tap-catalog-hydrator.js' },
       { id: 'rm-part3c-dom-helpers-js', src: '/js/one-tap-subcard-dom-helpers.js' },
-      { id: 'rm-subcard-router-script', src: '/js/one-tap-subcard-router.js' }
+      { id: 'rm-subcard-router-script', src: '/js/one-tap-subcard-router.js' },
+      { id: 'rm-cat15-independent-controller-js', src: '/js/catalog/category-15/15-house-home-controller.js' }
     ];
     for (var i = 0; i < modules.length; i++) {
-      if (!document.getElementById(modules[i].id)) {
+      var existing = document.getElementById(modules[i].id);
+      if (existing && existing.tagName !== 'SCRIPT') {
+        if (existing.parentNode) existing.parentNode.removeChild(existing);
+        existing = null;
+      }
+      if (!existing) {
         var s = document.createElement('script');
         s.id = modules[i].id;
         s.src = modules[i].src + '?v=' + CACHE_VERSION;
@@ -135,6 +151,10 @@
   }
 
   function ensureMicroAppRendered(subCode, titleText, subtitleText) {
+    var code = String(subCode || '').trim();
+    if ((code === '15-1' || code === '15-2' || code === '15-3') && window.RM_CAT15_CONTROLLER && typeof window.RM_CAT15_CONTROLLER.openSubCategory === 'function') {
+      return window.RM_CAT15_CONTROLLER.openSubCategory(code, null, null, null);
+    }
     if (window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.ensureMicroAppRendered === 'function') {
       return window.RM_SUBCARD_ROUTER.ensureMicroAppRendered(subCode, titleText, subtitleText);
     }
@@ -353,7 +373,7 @@
       return;
     }
 
-    // CASE 2 FIRST: Sub-Category Card 1-Tap via Part-3 Router (Stops Propagation so Parent Never Collapses!)
+    // CASE 2 FIRST: Sub-Category Card 1-Tap via Dedicated Category Controller or Part-3 Router
     var subWrapper = target.closest('[id^="sub-"], [data-sub-container], .rm-sub-container');
     if (subWrapper) {
       var actBtn = target.closest('button, a');
@@ -373,16 +393,18 @@
 
       var subCardNode = (window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.findExactSubCardElement === 'function')
         ? window.RM_SUBCARD_ROUTER.findExactSubCardElement(target, subWrapper)
-        : (target.closest('[data-sub-code], [data-rm-sub-rendered], [id^="sub-"] > div') || subWrapper);
+        : (target.closest('[data-cat15-sub], [data-sub-code], [data-rm-sub-rendered], [id^="sub-"] > div') || subWrapper);
       var codeMatch = ((subCardNode && subCardNode.textContent) || '').match(/\b(\d{1,2}-[123])\b/);
-      var detectedCode = codeMatch ? codeMatch[1] : ((subCardNode && subCardNode.getAttribute && (subCardNode.getAttribute('data-sub-code') || '').trim()) || '');
+      var detectedCode = codeMatch ? codeMatch[1] : ((subCardNode && subCardNode.getAttribute && (subCardNode.getAttribute('data-cat15-sub') || subCardNode.getAttribute('data-sub-code') || '').trim()) || '');
+
+      if ((detectedCode === '15-1' || detectedCode === '15-2' || detectedCode === '15-3') && window.RM_CAT15_CONTROLLER && typeof window.RM_CAT15_CONTROLLER.openSubCategory === 'function') {
+        window.RM_CAT15_CONTROLLER.openSubCategory(detectedCode, e, target, subCardNode);
+        return;
+      }
 
       if (window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.handleSubCardOneTap === 'function') {
         window.RM_SUBCARD_ROUTER.handleSubCardOneTap(e, target);
       } else if (detectedCode) {
-        ensureMicroAppRendered(detectedCode);
-      }
-      if (detectedCode === '15-2' || detectedCode === '16-2' || detectedCode === '15-3' || detectedCode === '16-3') {
         ensureMicroAppRendered(detectedCode);
       }
       return;
