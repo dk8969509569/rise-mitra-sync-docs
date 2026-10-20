@@ -1,11 +1,11 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Category-15 Independent Controller (15-1, 15-2, 15-3 Isolation Lock v91)
+ *   - MODULE NAME    : RM Category-15 Independent Controller (15-1, 15-2, 15-3 Isolation Lock v92)
  *   - REPO TARGET    : public/js/catalog/category-15/15-house-home-controller.js
  *   - SURFACE TARGET : SURFACE-A ONLY (With Surface-B SIVME Pass-Through Guard)
  *   - HOST BINDING   : Surface-A (public/index.html)
- *   - SIZE BUDGET    : <= 245 Logical Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 260 Logical Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -13,19 +13,17 @@
  * 2. EXISTING MODULAR FILES LOCK (ZERO DUPLICATE IMPLEMENTATION):
  *   - public/js/catalog/category-15/15-house-home-controller.js (This File: Sole Owner of Cat-15 Routing & Mount)
  *   - public/js/catalog/category-15/15-1-home-services-handyman.js (15-1 Home Services & Handyman Pros 2.5D Engine)
- *   - public/js/catalog/category-15/15-2-smart-meter-rent-billing.js (15-2 Smart Meter & Rent Billing 2.5D Template)
- *   - public/js/catalog/category-15/15-3-real-estate-buy-rent-pg.js (15-3 Real Estate Buy, Rent & PG 2.5D Template)
- *   - public/js/catalog/category-16/16-2-rental-ledger.js (15-2 Sub-Meter & Ledger State Engine)
- *   - public/js/catalog/category-16/16-3-rental-search.js (15-3 Pan-India Property Filter Engine)
+ *   - public/js/catalog/category-15/15-2-smart-meter-rent-billing.js (15-2 Complete Smart Meter & Rent Billing Engine)
+ *   - public/js/catalog/category-15/15-3-real-estate-buy-rent-pg.js (15-3 Complete Real Estate Buy, Rent & PG Engine)
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE, ROOT-ENGINE-FIRST & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
- *   - ALLOWED ON SURFACE-A   : Sequential loading of Cat-15 templates before engines, direct DOM
- *                              stamping (`data-cat15-sub="15-1|15-2|15-3"`), 0ms zero-blank 2.5D
- *                              instant rendering, and isolated 1-Tap opening for 15-1, 15-2, 15-3.
+ *   - ALLOWED ON SURFACE-A   : Loading of self-contained Cat-15 engines (`15-1`, `15-2`, `15-3`),
+ *                              direct DOM stamping (`data-cat15-sub="15-1|15-2|15-3"`), 0ms zero-blank
+ *                              2.5D rendering, and anti-wipeout re-mount protection.
  *   - ALLOWED ON SURFACE-B   : Pass-through exclusion for .sivme-notch-pill, #sivme-hud, #sivme-drawer.
- *   - ROOT-ENGINE-FIRST RULE : Completely isolates Category 15 from Categories 01-14 and 16-50 so
- *                              debugging or updating Category 15 never requires editing global files.
- *   - FORBIDDEN IN THIS FILE : Touching or intercepting any category other than Category 15.
+ *   - ROOT-ENGINE-FIRST RULE : Completely isolates Category 15 from Categories 01-14 and 16-50;
+ *                              zero calls to `public/js/catalog/category-16/` (reserved for Libraries & Demo).
+ *   - FORBIDDEN IN THIS FILE : Loading deleted legacy `category-16/16-2-rental-ledger.js` or `16-3-rental-search.js`.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.RM_CAT15_CONTROLLER, window.RM_OPEN_CAT15_SUB
@@ -43,7 +41,8 @@
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, ZERO-REVERT & TIMER OWNERSHIP LOCK:
  *   - CLICK SAFETY  : Direct `data-cat15-sub` attribute lookup (0% regex ambiguity between 15-1 & 15-3).
  *   - SCROLL SAFETY : 24px thumb-move tolerance so mobile thumb taps on `खोलें ➔` never fail.
- *   - DOM SAFETY    : Renders instant 2.5D shell at 0ms, then upgrades to interactive engine once loaded.
+ *   - DOM SAFETY    : Renders instant 2.5D shell at 0ms and re-verifies DOM at 30ms/90ms/180ms/320ms
+ *                     so generic controllers can NEVER leave `#rm-module-container` blank.
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (8 ISOLATED CAT-15 FUNCTIONS):
  *   1. loadCat15ScriptsSequentially      2. stampCat15SubCardsInDOM
@@ -53,11 +52,11 @@
  * ==============================================================================
  * 8. ONE JOB = ONE FILE, ROOT-ENGINE AUTHORITY, ZERO-GUESSWORK & CANONICAL PATH LOCK:
  *   - SINGLE JOB RULE     : Sole authoritative controller for Main Category 15 (`15. House & Home`).
- *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `v90` (`1000303730.png`) & Play Store ranking files.
+ *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `v91` (`1000303769.png`) & `v92` merged engines.
  *   - CANONICAL PATH      : Must exist ONLY at `public/js/catalog/category-15/15-house-home-controller.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
- *   - ZERO DOHRAO     : Loads `15-1-home-services-handyman.js`, `15-2-smart-meter-rent-billing.js`
+ *   - ZERO DOHRAO     : Loads ONLY `15-1-home-services-handyman.js`, `15-2-smart-meter-rent-billing.js`
  *                       & `15-3-real-estate-buy-rent-pg.js`.
  *   - IDEMPOTENT BOOT : Guarded by `window.__RM_LOADED_MODULES__['15-house-home-controller']`.
  * ==============================================================================
@@ -66,7 +65,7 @@
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, 1-TASK-1-FILE COMMIT, PRE-MAIN GATE & CONTRACT LOCK:
- *   - VERSION SYNC    : Reads `window.__RM_ACTIVE_CACHE_VER || '20261020_v91'`.
+ *   - VERSION SYNC    : Reads `window.__RM_ACTIVE_CACHE_VER || '20261020_v92'`.
  *   - PIPELINE GATE   : Commit & verify on `pre-main` before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -90,29 +89,62 @@
   var lastCat15TapTs = 0;
 
 
-  // 1. Sequential Script Loader (Ensures Official Play Store Templates Load BEFORE Engines so Blank Screen Never Happens)
+  // 1. Self-Contained Category-15 Script Loader (Loads 15-1, 15-2, 15-3 Directly; Zero Category-16 404 Calls)
   function loadCat15ScriptsSequentially(onComplete) {
-    var ver = window.__RM_ACTIVE_CACHE_VER || '20261020_v91';
-    var loadOne = function (id, src, cb) {
-      var existing = document.getElementById(id);
-      if (existing && existing.tagName === 'SCRIPT') { if (cb) cb(); return; }
-      var s = document.createElement('script');
-      s.id = id;
-      s.src = src + '?v=' + ver;
-      s.async = false;
-      s.onload = function () { if (cb) cb(); };
-      s.onerror = function () { if (cb) cb(); };
-      (document.head || document.documentElement).appendChild(s);
+    var ver = window.__RM_ACTIVE_CACHE_VER || '20261020_v92';
+    var items = [
+      {
+        id: 'rm-cat15-1-engine-js',
+        src: '/js/catalog/category-15/15-1-home-services-handyman.js',
+        isReady: function () { return Boolean(window.RM_Cat15_Sub1_HomeServices && typeof window.RM_Cat15_Sub1_HomeServices.mount === 'function'); }
+      },
+      {
+        id: 'rm-cat15-2-billing-js',
+        src: '/js/catalog/category-15/15-2-smart-meter-rent-billing.js',
+        isReady: function () {
+          var m = window.RM_Cat15_Sub2_SmartMeterBilling || window.RM_Cat15_Sub2_RentalLedger;
+          return Boolean(m && (typeof m.mount === 'function' || typeof m.buildRentalLedgerHTML === 'function'));
+        }
+      },
+      {
+        id: 'rm-cat15-3-realestate-js',
+        src: '/js/catalog/category-15/15-3-real-estate-buy-rent-pg.js',
+        isReady: function () {
+          var m = window.RM_Cat15_Sub3_RealEstateSearch || window.RM_Cat15_Sub3_RentalSearch;
+          return Boolean(m && (typeof m.mount === 'function' || typeof m.buildRentalSearchShellHTML === 'function'));
+        }
+      }
+    ];
+
+    var remaining = items.length;
+    var finishOne = function () {
+      remaining--;
+      if (remaining <= 0 && typeof onComplete === 'function') onComplete();
     };
 
-    loadOne('rm-cat15-1-engine-js', '/js/catalog/category-15/15-1-home-services-handyman.js', null);
-    loadOne('rm-cat15-2-billing-js', '/js/catalog/category-15/15-2-smart-meter-rent-billing.js', function () {
-      loadOne('rm-cat15-2-engine-js', '/js/catalog/category-16/16-2-rental-ledger.js', null);
-    });
-    loadOne('rm-cat15-3-realestate-js', '/js/catalog/category-15/15-3-real-estate-buy-rent-pg.js', function () {
-      loadOne('rm-cat15-3-engine-js', '/js/catalog/category-16/16-3-rental-search.js', function () {
-        if (typeof onComplete === 'function') onComplete();
-      });
+    items.forEach(function (item) {
+      if (item.isReady()) {
+        finishOne();
+        return;
+      }
+      var existing = document.getElementById(item.id);
+      if (existing && existing.tagName !== 'SCRIPT') {
+        if (existing.parentNode) existing.parentNode.removeChild(existing);
+        existing = null;
+      }
+      if (existing && existing.tagName === 'SCRIPT') {
+        existing.addEventListener('load', finishOne);
+        existing.addEventListener('error', finishOne);
+        setTimeout(finishOne, 180);
+        return;
+      }
+      var s = document.createElement('script');
+      s.id = item.id;
+      s.src = item.src + '?v=' + ver;
+      s.async = false;
+      s.onload = finishOne;
+      s.onerror = finishOne;
+      (document.head || document.documentElement).appendChild(s);
     });
   }
   loadCat15ScriptsSequentially();
@@ -146,27 +178,45 @@
   }
 
 
-  // 3. Built-In 0ms Zero-Blank 2.5D UI Shell (Prevents `1000303719.png` Blank Screen While Scripts Load)
+  // 3. Built-In 0ms Zero-Blank 2.5D UI Shell (Prevents `1000303766.png` & `1000303765.png` Blank Screen)
   function buildZeroBlankCat15Shell(isLedger) {
+    var box25d = 'background:linear-gradient(180deg,#0f1c33 0%,#08101f 100%);border:1.8px solid rgba(56,189,248,0.48);border-bottom:3.5px solid rgba(14,165,233,0.78);box-shadow:0 12px 26px rgba(0,0,0,0.8);border-radius:16px;';
+    var inp25d = 'width:100%;box-sizing:border-box;padding:11px 12px;background:#030712;border:1.6px solid rgba(56,189,248,0.42);border-radius:10px;color:#ffffff;font-size:15px;font-weight:700;outline:none;display:block;';
+
     if (isLedger) {
-      return '<div style="padding:14px;color:#f8fafc;font-family:sans-serif;">' +
-        '<div style="background:#0f172a;border:1.5px solid #0284c7;border-radius:16px;padding:16px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">' +
-        '<div><h3 style="font-size:19px;font-weight:900;color:#fff;margin:0 0 6px 0;">⚡ 15-2. स्मार्ट मीटर व किराया बहीखाता</h3>' +
-        '<p style="font-size:13.5px;color:#38bdf8;margin:0;font-weight:700;">मासिक किराया, बिजली सब-मीटर (@₹8/यूनिट) व एडवांस हिसाब</p></div>' +
-        '<span style="background:rgba(16,185,129,0.18);border:1.5px solid #10b981;color:#34d399;padding:6px 12px;border-radius:999px;font-size:12.5px;font-weight:800;">✓ सत्यापित</span></div></div>';
+      return '<div style="padding:8px 2px 80px 2px;color:#f8fafc;font-family:system-ui,-apple-system,sans-serif;">' +
+        '<div style="' + box25d + 'padding:14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">' +
+        '<div><h3 style="font-size:18.5px;font-weight:900;color:#fff;margin:0 0 4px 0;">⚡ 15-2. स्मार्ट मीटर व किराया बहीखाता (Smart Meter & Rent Billing)</h3>' +
+        '<p style="font-size:13.5px;color:#34d399;margin:0;font-weight:700;">पैन-इंडिया सब-मीटर पर्ची व सॉवरेन लेज़र (v1.5 • 2.5D)</p></div>' +
+        '<span style="background:#064e3b;border:1.5px solid #10b981;color:#6ee7b7;padding:4px 10px;border-radius:999px;font-size:12.5px;font-weight:800;">● सक्रिय</span></div>' +
+        '<div style="' + box25d + 'padding:15px;margin-bottom:14px;">' +
+        '<h4 style="margin:0 0 12px 0;font-size:16.5px;font-weight:900;color:#fff;">📝 नया किराया व सब-मीटर पर्ची दर्ज करें</h4>' +
+        '<div style="display:flex;flex-direction:column;gap:10px;">' +
+        '<input type="text" id="rm-cat16-unit" placeholder="कमरा / फ्लैट संख्या (उदा. 202 या फ्लैट 2B)" style="' + inp25d + '" />' +
+        '<input type="number" id="rm-cat16-rent" placeholder="मासिक किराया (₹ उदा. 7000)" style="' + inp25d + '" />' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">' +
+        '<input type="number" id="rm-cat16-pincode" placeholder="पिनकोड (822101)" style="' + inp25d + 'border-color:#10b981;" />' +
+        '<input type="text" id="rm-cat16-locality" placeholder="मोहल्ला / इलाका" style="' + inp25d + '" /></div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">' +
+        '<input type="number" id="rm-cat16-prev-meter" placeholder="पिछली रीडिंग (Unit)" style="' + inp25d + '" />' +
+        '<input type="number" id="rm-cat16-curr-meter" placeholder="वर्तमान रीडिंग (Unit)" style="' + inp25d + '" /></div>' +
+        '<button type="button" id="rm-cat16-btn-add" style="width:100%;min-height:48px;background:linear-gradient(180deg,#10b981 0%,#059669 100%);color:#022c22;border:1.5px solid #6ee7b7;border-radius:12px;font-weight:900;font-size:16px;cursor:pointer;">+ रसीद बनाएं व हिसाब जोड़ें</button>' +
+        '</div></div></div>';
     }
-    return '<div style="padding:14px;color:#f8fafc;font-family:sans-serif;">' +
-      '<div style="background:#0f172a;border:1.5px solid #0284c7;border-radius:16px;padding:16px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">' +
-      '<div><h3 style="font-size:19px;font-weight:900;color:#fff;margin:0 0 6px 0;">🏢 15-3. Real Estate: Buy, Rent & PG (कमरा व फ्लैट खोज • 0% दलाली)</h3>' +
-      '<p style="font-size:13.5px;color:#38bdf8;margin:0;font-weight:700;">पैन-इंडिया ब्रोकर-फ्री आवास खोज इंजन (v1.4 • 2.5D)</p></div>' +
-      '<span style="background:rgba(16,185,129,0.18);border:1.5px solid #10b981;color:#34d399;padding:6px 12px;border-radius:999px;font-size:12.5px;font-weight:800;">✓ सत्यापित</span></div>' +
-      '<div style="background:#0f172a;border:1.5px solid #1e3a8a;border-radius:16px;padding:16px;margin-bottom:14px;">' +
-      '<p style="color:#38bdf8;font-size:14px;font-weight:800;margin:0 0 10px 0;">🔍 स्मार्ट खोज (इलाका, शहर, जिला या पिनकोड)</p>' +
-      '<div style="padding:12px;border-radius:12px;background:#020617;border:1.5px solid #1e293b;color:#94a3b8;font-size:14px;">उदा. लालपुर, बोरिंग रोड, डाल्टनगंज, विजयनगर...</div></div>' +
-      '<div style="background:#0f172a;border:1.5px solid #1e3a8a;border-radius:16px;padding:16px;">' +
-      '<div style="display:flex;justify-content:space-between;"><strong style="font-size:17px;color:#fff;">सिंगल रूम (छात्र व अध्ययन विशेष)</strong><span style="color:#34d399;font-weight:900;font-size:17px;">₹3500/माह</span></div>' +
-      '<p style="color:#38bdf8;font-size:13.5px;font-weight:700;margin:6px 0;">📍 लालपुर (सर्कुलर रोड कोचिंग हब), रांची, झारखंड - 834001</p>' +
-      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;"><span style="background:rgba(16,185,129,0.15);border:1px solid #10b981;color:#34d399;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:800;">⚡ सब-मीटर (@₹8/यूनिट)</span><span style="background:rgba(16,185,129,0.15);border:1px solid #10b981;color:#fde047;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:800;">🔑 0% ब्रोकरेज</span></div></div></div>';
+
+    return '<div style="padding:8px 2px 80px 2px;color:#f8fafc;font-family:system-ui,-apple-system,sans-serif;">' +
+      '<div style="' + box25d + 'padding:14px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">' +
+      '<div><h3 style="font-size:18.5px;font-weight:900;color:#fff;margin:0 0 4px 0;">🏢 15-3. Real Estate: Buy, Rent & PG (कमरा व फ्लैट खोज • 0% दलाली)</h3>' +
+      '<p style="font-size:13.5px;color:#38bdf8;margin:0;font-weight:700;">पैन-इंडिया ब्रोकर-फ्री आवास खोज इंजन (v1.5 • 2.5D)</p></div>' +
+      '<span style="background:#064e3b;border:1.5px solid #10b981;color:#6ee7b7;padding:4px 10px;border-radius:999px;font-size:12.5px;font-weight:800;">✓ सत्यापित</span></div>' +
+      '<div style="' + box25d + 'padding:14px;margin-bottom:14px;">' +
+      '<p style="color:#38bdf8;font-size:14.5px;font-weight:800;margin:0 0 8px 0;">🔍 स्मार्ट खोज (इलाका, शहर, जिला या पिनकोड)</p>' +
+      '<input type="text" id="rm-search-locality" placeholder="उदा. लालपुर, बोरिंग रोड, डाल्टनगंज, विजयनगर, 834001..." style="' + inp25d + '" /></div>' +
+      '<div id="rm-search-results-list">' +
+      '<div style="' + box25d + 'padding:14px;margin-bottom:12px;">' +
+      '<div style="display:flex;justify-content:space-between;"><strong style="font-size:17px;color:#fff;">सिंगल रूम (छात्र व अध्ययन विशेष)</strong><span style="color:#34d399;font-weight:900;font-size:18px;">₹3500/माह</span></div>' +
+      '<p style="color:#38bdf8;font-size:14px;font-weight:700;margin:6px 0;">📍 लालपुर (सर्कुलर रोड कोचिंग हब), रांची, झारखंड - 834001</p>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;"><span style="background:#064e3b;border:1px solid #10b981;color:#6ee7b7;padding:4px 10px;border-radius:8px;font-size:12.5px;font-weight:800;">⚡ सब-मीटर (@₹8/यूनिट)</span><span style="background:#022c22;border:1px solid #059669;color:#6ee7b7;padding:4px 10px;border-radius:8px;font-size:12.5px;font-weight:800;">🔑 0% ब्रोकरेज</span></div></div></div></div>';
   }
 
 
@@ -189,58 +239,66 @@
     }
     var container = document.getElementById('rm-module-container');
     if (!container) return;
+    container.style.setProperty('display', 'block', 'important');
+    container.style.setProperty('visibility', 'visible', 'important');
+    container.style.setProperty('opacity', '1', 'important');
 
     var canary = isLedger ? '#rm-cat16-btn-add' : '#rm-search-results-list';
-    if (container.getAttribute('data-rm-cat15-mounted') === normCode && container.querySelector(canary)) {
-      return;
-    }
 
     var attemptInteractiveMount = function () {
       if (fs && fs.classList.contains('hidden')) return true;
-      var tpl = isLedger
-        ? (window.RM_Cat15_Sub2_SmartMeterBilling || window.RM_Cat15_Sub2_Template || window.RM_Cat16_Sub2_Template)
-        : (window.RM_Cat15_Sub3_RealEstateSearch || window.RM_Cat15_Sub3_Template || window.RM_Cat16_Sub3_Template);
-      var engine = isLedger
-        ? (window.RM_Cat15_Sub2_RentalLedger || window.RM_Cat16_Sub2_RentalLedger || window.RiseMitraCatalog_15_2 || window.RiseMitraCatalog_16_2)
-        : (window.RM_Cat15_Sub3_RentalSearch || window.RM_Cat16_Sub3_RentalSearch || window.RiseMitraCatalog_15_3 || window.RiseMitraCatalog_16_3);
+      var mod = isLedger
+        ? (window.RM_Cat15_Sub2_SmartMeterBilling || window.RM_Cat15_Sub2_RentalLedger || window.RiseMitraCatalog_15_2 || window.RM_Cat16_Sub2_RentalLedger || window.RM_Cat15_Sub2_Template)
+        : (window.RM_Cat15_Sub3_RealEstateSearch || window.RM_Cat15_Sub3_RentalSearch || window.RiseMitraCatalog_15_3 || window.RM_Cat16_Sub3_RentalSearch || window.RM_Cat15_Sub3_Template);
 
-      if (tpl && engine && typeof engine.mount === 'function') {
-        try { engine.mount(container, { accountId: 'default' }); } catch (e) {}
+      if (mod && typeof mod.mount === 'function') {
+        if (container.getAttribute('data-rm-cat15-mounted') !== normCode || !container.querySelector(canary)) {
+          try { mod.mount(container, { accountId: 'default' }); } catch (e) {}
+        }
         if (container.querySelector(canary)) {
           container.setAttribute('data-rm-cat15-mounted', normCode);
           return true;
         }
       }
-      if (tpl) {
-        if (isLedger && typeof tpl.buildRentalLedgerHTML === 'function') {
-          container.innerHTML = tpl.buildRentalLedgerHTML([], 8);
-        } else if (!isLedger && typeof tpl.buildRentalSearchShellHTML === 'function') {
-          var seeds = Array.isArray(tpl.SEED_LISTINGS) ? tpl.SEED_LISTINGS : [];
-          container.innerHTML = tpl.buildRentalSearchShellHTML(seeds.length, { smartOmnibox: true, showState: true, showDistrict: true, showBudget: true, showSubmeter: true }, {});
+
+      if (mod) {
+        if (isLedger && typeof mod.buildRentalLedgerHTML === 'function' && !container.querySelector(canary)) {
+          container.innerHTML = mod.buildRentalLedgerHTML([], 8);
+        } else if (!isLedger && typeof mod.buildRentalSearchShellHTML === 'function' && !container.querySelector(canary)) {
+          var seeds = Array.isArray(mod.SEED_LISTINGS) ? mod.SEED_LISTINGS : [];
+          container.innerHTML = mod.buildRentalSearchShellHTML(seeds.length, { smartOmnibox: true, showState: true, showDistrict: true, showBudget: true, showSubmeter: true }, {});
           var resBox = container.querySelector('#rm-search-results-list');
-          if (resBox && typeof tpl.renderListingCard === 'function') {
-            resBox.innerHTML = seeds.map(function (it) { return tpl.renderListingCard(it); }).join('');
+          if (resBox && typeof mod.renderListingCard === 'function') {
+            resBox.innerHTML = seeds.map(function (it) { return mod.renderListingCard(it); }).join('');
           }
         }
-        return false;
       }
-      if (!container.innerHTML || container.innerHTML.trim() === '' || container.getAttribute('data-rm-cat15-mounted') !== normCode) {
+
+      if (!container.querySelector(canary)) {
         container.innerHTML = buildZeroBlankCat15Shell(isLedger);
       }
       return false;
     };
 
-    if (attemptInteractiveMount()) return;
+    attemptInteractiveMount();
+
+    // Anti-Wipeout Re-Mount Guards (Protects against generic controller wiping #rm-module-container after tap)
+    setTimeout(attemptInteractiveMount, 30);
+    setTimeout(attemptInteractiveMount, 90);
+    setTimeout(attemptInteractiveMount, 180);
+    setTimeout(attemptInteractiveMount, 320);
+
     loadCat15ScriptsSequentially(attemptInteractiveMount);
+
     if (cat15PollTimer) clearInterval(cat15PollTimer);
     var tries = 0;
     cat15PollTimer = setInterval(function () {
       tries++;
-      if ((fs && fs.classList.contains('hidden')) || attemptInteractiveMount() || tries > 35) {
+      if ((fs && fs.classList.contains('hidden')) || (attemptInteractiveMount() && tries > 8) || tries > 35) {
         clearInterval(cat15PollTimer);
         cat15PollTimer = null;
       }
-    }, 45);
+    }, 50);
   }
 
 
@@ -253,28 +311,40 @@
     var title = 'Mistry & Home Repair (मिस्त्री व गृह मरम्मत)';
     var sub = 'प्लंबर, इलेक्ट्रीशियन, पेंटर, कारपेंटर व राजमिस्त्री बुकिंग';
 
-    if (window.RM_Cat15_Sub1_HomeServices && typeof window.RM_Cat15_Sub1_HomeServices.mount === 'function') {
-      var fs = document.getElementById('rm-fullscreen-view');
-      if (fs) {
-        fs.classList.remove('hidden');
-        fs.style.setProperty('display', 'flex', 'important');
-        fs.style.setProperty('z-index', '99999', 'important');
-      }
-      var fsTitle = document.getElementById('fs-module-title');
-      if (fsTitle) {
-        fsTitle.style.fontSize = '13.5px';
-        fsTitle.textContent = '🛠️ 15-1 • Home Services & Handyman Pros';
-      }
-      var container = document.getElementById('rm-module-container');
-      if (container) {
-        window.RM_Cat15_Sub1_HomeServices.mount(container, { selectedChip: chosenChip });
-        container.setAttribute('data-rm-cat15-mounted', '15-1');
-        return;
-      }
+    var fs = document.getElementById('rm-fullscreen-view');
+    if (fs) {
+      fs.classList.remove('hidden');
+      fs.style.setProperty('display', 'flex', 'important');
+      fs.style.setProperty('z-index', '99999', 'important');
     }
+    var fsTitle = document.getElementById('fs-module-title');
+    if (fsTitle) {
+      fsTitle.style.fontSize = '13.5px';
+      fsTitle.textContent = '🛠️ 15-1 • Home Services & Handyman Pros';
+    }
+    var container = document.getElementById('rm-module-container');
+
+    var tryMount15_1 = function () {
+      if (container && window.RM_Cat15_Sub1_HomeServices && typeof window.RM_Cat15_Sub1_HomeServices.mount === 'function') {
+        if (!container.querySelector('#rm-cat15-1-root')) {
+          window.RM_Cat15_Sub1_HomeServices.mount(container, { selectedChip: chosenChip });
+          container.setAttribute('data-rm-cat15-mounted', '15-1');
+        }
+        return true;
+      }
+      return false;
+    };
+
+    if (tryMount15_1()) {
+      setTimeout(tryMount15_1, 40);
+      setTimeout(tryMount15_1, 120);
+      return;
+    }
+
     if (typeof window.launchOneTapServiceScreen === 'function') {
       window.launchOneTapServiceScreen(title, sub, '15-1', chosenChip, subCard, entry);
     }
+    loadCat15ScriptsSequentially(tryMount15_1);
   }
 
 
