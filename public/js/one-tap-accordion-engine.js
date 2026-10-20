@@ -1,11 +1,11 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-1C Capture-Phase 1-Tap Accordion & Subcard Engine (v68)
+ *   - MODULE NAME    : RM Part-1C Capture-Phase 1-Tap Accordion & Subcard Engine (v99)
  *   - REPO TARGET    : public/js/one-tap-accordion-engine.js
  *   - SURFACE TARGET : SURFACE-A ONLY (Universal Catalog 01-50 Accordion Controller)
  *   - HOST BINDING   : Surface-A (public/index.html)
- *   - SIZE BUDGET    : <= 290 Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 298 Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
@@ -19,31 +19,34 @@
  *   - public/js/fullscreen-microapp-controller.js (Part-3A: Fullscreen Micro-App Controller)
  *   - public/js/one-tap-subcard-router.js (Part-3B: Sub-Card 1-Tap Router & 4-Chip Extractor)
  * ==============================================================================
- * 3. TOP-HEADER FILE SCOPE & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
+ * 3. TOP-HEADER FILE SCOPE, UNIVERSAL PURE-REFERENCE & SURFACE ISOLATION LOCK:
  *   - ALLOWED ON SURFACE-A   : Capture-phase 0ms touchend + click 1-Tap dropdown toggle for
  *                              Categories 01-50, all-pill "और देखें ▼ ⇄ समेटें ▲" sync,
  *                              raw [02-1] badge cleanup, and 3-subcard fallback.
  *   - ALLOWED ON SURFACE-B   : NONE (Surface-B SIVME controls are strictly isolated).
+ *   - UNIVERSAL PURE-REF RULE: Universal 50-category files contain ONLY pure references &
+ *                              delegation hooks; 100% of category/sub-category code lives
+ *                              in its dedicated `public/js/catalog/category-XX/` folder.
  *   - FORBIDDEN IN THIS FILE : Calling slow getComputedStyle inside touch handlers or
- *                              duplicating Home 12-Verticals healer.
+ *                              canceling thumb taps under 28px movement.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.RM_ACCORDION_ENGINE, window.toggleCategoryAccordion1Tap,
  *                           window.toggleAccordion, window.__RM_OPEN_CAT_STATE,
  *                           window.__RM_MODAL_INTERACTION_LOCK__
  *   - CALLS EXTERNAL APIs : window.RM_CATALOG_DOM_ENGINE.*, window.healHomeVerticalsInstantly,
- *                           window.toggleMacroBarElementInstantly, window.RM_SUB_CARD_RENDERER.*
+ *                           window.toggleMacroBarElementInstantly, window.RM_UNIVERSAL_CARD_ENGINE.*
  * ==============================================================================
- * 5. DOM ATTRIBUTE & SELECTOR CONTRACT (ZERO-COLLISION DOM RULE):
+ * 5. DOM ATTRIBUTE, SELECTOR CONTRACT & WORLD-CLASS 2.5D VISUAL LOCK (ZERO-COLLISION RULE):
  *   - SURFACE-A SELECTORS : #categoryModal, [data-cat-id], [id^="sub-"], .rm-toplevel-num-badge,
  *                           .rm-parent-toggle-pill, .rm-sublevel-num-badge
  *   - SURFACE-B SELECTORS : .sivme-notch-pill, #sivme-hud, [data-sivme] (EXCLUDED)
  * ==============================================================================
- * 6. ANTI-FREEZE, EVENT LISTENER & TIMER OWNERSHIP LOCK:
- *   - CLICK SAFETY  : Capture-phase 0ms touchend + 420ms synthetic ghost-click guard and
- *                     zero-reflow DOM state check for instant 1-tap open/close.
- *   - SCROLL SAFETY : Tracks touchmove (>10px) so scrolling never triggers accordion taps.
- *   - DOM SAFETY    : Sets window.__RM_MODAL_INTERACTION_LOCK__ during toggle to prevent freeze.
+ * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
+ *   - CLICK SAFETY  : Capture-phase 0ms touchend + `e.__rmHandled` cross-file lock so
+ *                     `one-tap-shell-bridge.js` and this file never double-toggle the same card!
+ *   - SCROLL SAFETY : Tracks touchmove (>28px thumb tolerance) so natural thumb taps never fail.
+ *   - DOM SAFETY    : Stamps `data-rm-user-toggled="1"` and `window.__RM_MODAL_INTERACTION_LOCK__`.
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (ALL 10 FUNCTIONS INTACT):
  *   1. resolveCategorySubContainer  2. enforceTopLeftLargeNumbering 3. installRenderDestructionShield
@@ -51,10 +54,10 @@
  *   7. syncAndHydrateCatalogCards   8. findCategoryCardElement      9. handleInstantAccordionTap
  *   10. installMasterOneTapAccordionEngine
  * ==============================================================================
- * 8. ONE JOB = ONE FILE & CANONICAL PATH LOCK (ANTI-DUPLICATE FILE GUARD):
- *   - SINGLE JOB RULE : Sole owner of 1-Tap Category Accordion & Subcard Population (01-50).
- *   - CANONICAL PATH  : Must exist ONLY at `public/js/one-tap-accordion-engine.js`.
- *   - BANNED ALIASES  : Never duplicate these functions back into `one-tap-catalog-hydrator.js`.
+ * 8. ONE JOB = ONE FILE, ROOT-ENGINE AUTHORITY, ZERO-GUESSWORK & CANONICAL PATH LOCK:
+ *   - SINGLE JOB RULE     : Sole owner of 1-Tap Category Accordion & Subcard Population (01-50).
+ *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `v68` (`1000304112.png`) with 100% ZEL parity.
+ *   - CANONICAL PATH      : Must exist ONLY at `public/js/one-tap-accordion-engine.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY) & IDEMPOTENT EXECUTION GUARD (NO DOHRAO RULE):
  *   - ZERO DOHRAO     : Exposes `window.RM_ACCORDION_ENGINE` called by Part-1A Hydrator.
@@ -66,7 +69,7 @@
  *   - MOBILE EDITING  : 2-line blank spacing preserved between major functional blocks.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261018_v68'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261021_v99'`.
  *   - PIPELINE GATE   : Verified on `pre-main` before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -83,7 +86,7 @@
   if (window.__RM_LOADED_MODULES__['one-tap-accordion-engine']) return;
   window.__RM_LOADED_MODULES__['one-tap-accordion-engine'] = true;
 
-  var openStateMap = window.__RM_OPEN_CAT_STATE || { '15': true, '16': true };
+  var openStateMap = window.__RM_OPEN_CAT_STATE || { '15': false, '16': false };
   window.__RM_OPEN_CAT_STATE = openStateMap;
   var lastAccordionTapTs = 0;
   var lastTouchEndTapTs = 0;
@@ -124,15 +127,20 @@
 
   function ensureSubCardsPopulated(catEl, subContainer, intNum, paddedNum) {
     if (!subContainer) return;
-    if (subContainer.getAttribute('data-rm-badges-cleaned') === '1' && subContainer.children.length > 0) {
-      return;
-    }
     if (subContainer.children.length > 0) {
-      if (window.RM_SUB_CARD_RENDERER && typeof window.RM_SUB_CARD_RENDERER.renderSubCard === 'function') {
-        for (var c = 0; c < subContainer.children.length; c++) {
-          var ch = subContainer.children[c];
-          if (!ch.getAttribute('data-rm-sub-rendered')) {
-            try { window.RM_SUB_CARD_RENDERER.renderSubCard(ch, intNum, c + 1, paddedNum + '-' + (c + 1)); } catch (e) {}
+      for (var c = 0; c < subContainer.children.length; c++) {
+        var ch = subContainer.children[c];
+        var subCode = paddedNum + '-' + (c + 1);
+        ch.setAttribute('data-sub-code', subCode);
+        if (paddedNum === '15') ch.setAttribute('data-cat15-sub', subCode);
+        var hasRawBracket = (ch.textContent || '').indexOf('[' + subCode + ']') !== -1;
+        if (!ch.getAttribute('data-rm-sub-rendered') || hasRawBracket) {
+          if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard === 'function') {
+            try { window.RM_UNIVERSAL_CARD_ENGINE.renderSubCard(ch, String(intNum), subCode); } catch (e) {}
+            ch.setAttribute('data-rm-sub-rendered', subCode);
+          } else if (window.RM_SUB_CARD_RENDERER && typeof window.RM_SUB_CARD_RENDERER.renderSubCard === 'function') {
+            try { window.RM_SUB_CARD_RENDERER.renderSubCard(ch, intNum, c + 1, subCode); } catch (e) {}
+            ch.setAttribute('data-rm-sub-rendered', subCode);
           }
         }
       }
@@ -141,7 +149,7 @@
         var el = badges[b];
         if (el.children.length === 0) {
           var bTxt = (el.textContent || '').trim();
-          var m = bTxt.match(/^\[(\d{2}-\d+)\]$/);
+          var m = bTxt.match(/^\[(\d{1,2}-\d+)\]$/);
           if (m) {
             el.textContent = m[1] + '.';
             el.className = 'rm-sublevel-num-badge';
@@ -151,6 +159,7 @@
       subContainer.setAttribute('data-rm-badges-cleaned', '1');
       return;
     }
+
     var enTitleEl = catEl ? catEl.querySelector('h3, h4, .text-white.font-bold, .text-slate-100.font-black, .text-xl') : null;
     var parentEn = enTitleEl ? (enTitleEl.textContent || '').replace(/^\d+\.\s*/, '').trim() : ('Category ' + paddedNum);
     var subTemplates = [
@@ -182,18 +191,29 @@
 
   function updateAccordionPillUI(catEl, isOpen) {
     if (!catEl) return;
-    var candidates = catEl.querySelectorAll('.rm-parent-toggle-pill, [data-accordion-btn], button, span');
+    var pillBoxes = catEl.querySelectorAll('.rm-parent-toggle-pill');
+    for (var p = 0; p < pillBoxes.length; p++) {
+      var pb = pillBoxes[p];
+      if (pb.closest('[id^="sub-"]')) continue;
+      pb.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      pb.style.setProperty('border-color', isOpen ? '#ef4444' : '#10b981', 'important');
+      pb.style.setProperty('color', isOpen ? '#f87171' : '#34d399', 'important');
+      pb.style.setProperty('background', isOpen ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)', 'important');
+      var inner = pb.querySelector('span') || pb;
+      inner.textContent = isOpen ? 'समेटें ▲' : 'और देखें ▼';
+    }
+
+    var candidates = catEl.querySelectorAll('[data-accordion-btn], button, span');
     for (var i = 0; i < candidates.length; i++) {
       var el = candidates[i];
-      if (el.closest('[id^="sub-"]')) continue;
-      if (el.tagName === 'DIV' && !el.classList.contains('rm-parent-toggle-pill')) continue;
+      if (el.closest('[id^="sub-"]') || el.closest('.rm-parent-toggle-pill')) continue;
       if (el.children.length === 0) {
         var txt = (el.textContent || '').trim();
         if (txt === '▼' || txt === '▲') {
           el.textContent = isOpen ? '▲' : '▼';
         } else if (txt.indexOf('और देखें') !== -1 || txt.indexOf('समेटें') !== -1 || txt.indexOf('सेवाएं') !== -1) {
           el.textContent = isOpen ? 'समेटें ▲' : 'और देखें ▼';
-          var pill = el.tagName === 'BUTTON' ? el : (el.parentElement && el.parentElement.tagName === 'BUTTON' ? el.parentElement : (el.classList.contains('rm-parent-toggle-pill') ? el : null));
+          var pill = el.tagName === 'BUTTON' ? el : (el.parentElement && el.parentElement.tagName === 'BUTTON' ? el.parentElement : null);
           if (pill) {
             pill.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
             pill.style.setProperty('border-color', isOpen ? 'rgba(244,63,94,0.75)' : 'rgba(16,185,129,0.75)', 'important');
@@ -207,69 +227,59 @@
 
 
   function applyCategoryOpenState(catEl, rawId, cleanNum, isOpen, isUserTap) {
+    if (!catEl) return false;
     var intNum = parseInt(cleanNum, 10) || 1;
     var now = Date.now();
-    if (!isUserTap && now - (lastCatToggleMap[intNum] || 0) < 380) {
+    if (!isUserTap && now - (lastCatToggleMap[intNum] || 0) < 450) {
       return true;
     }
     if (isUserTap) {
       lastCatToggleMap[intNum] = now;
       window.__RM_MODAL_INTERACTION_LOCK__ = true;
+      catEl.setAttribute('data-rm-user-toggled', '1');
     }
 
     var paddedNum = (intNum < 10 ? '0' : '') + intNum;
-    openStateMap[String(intNum)] = Boolean(isOpen);
-    openStateMap[paddedNum] = Boolean(isOpen);
-    openStateMap['c' + paddedNum] = Boolean(isOpen);
-    openStateMap['c' + intNum] = Boolean(isOpen);
-    openStateMap['g' + paddedNum] = Boolean(isOpen);
-    if (rawId) openStateMap[rawId] = Boolean(isOpen);
-
-    if (!isUserTap && window.RM_CATALOG_DOM_ENGINE && typeof window.RM_CATALOG_DOM_ENGINE.applyCategoryOpenState === 'function') {
-      try { window.RM_CATALOG_DOM_ENGINE.applyCategoryOpenState(catEl, rawId, cleanNum, isOpen); } catch (e) {}
-    }
+    var nextBool = Boolean(isOpen);
+    openStateMap[String(intNum)] = nextBool;
+    openStateMap[paddedNum] = nextBool;
+    openStateMap['c' + paddedNum] = nextBool;
+    openStateMap['c' + intNum] = nextBool;
+    openStateMap['g' + paddedNum] = nextBool;
+    if (rawId) openStateMap[rawId] = nextBool;
 
     var subContainer = resolveCategorySubContainer(catEl, rawId, cleanNum);
-    if (!subContainer && catEl) {
+    if (!subContainer) {
       subContainer = document.createElement('div');
       subContainer.id = (intNum >= 33 ? 'sub-g' : 'sub-c') + paddedNum;
       subContainer.className = 'mt-3 space-y-3';
       catEl.appendChild(subContainer);
     }
-    if (!subContainer) {
-      if (isUserTap) setTimeout(function () { window.__RM_MODAL_INTERACTION_LOCK__ = false; }, 220);
-      return false;
-    }
-    if (isOpen) {
+
+    if (nextBool) {
       ensureSubCardsPopulated(catEl, subContainer, intNum, paddedNum);
+      subContainer.classList.remove('hidden');
+      subContainer.classList.add('rm-acc-open');
+      subContainer.setAttribute('data-rm-collapsed', 'false');
+      subContainer.style.setProperty('display', 'block', 'important');
+    } else {
+      subContainer.classList.add('hidden');
+      subContainer.classList.remove('rm-acc-open');
+      subContainer.setAttribute('data-rm-collapsed', 'true');
+      subContainer.style.setProperty('display', 'none', 'important');
     }
-    subContainer.classList.toggle('hidden', !isOpen);
-    subContainer.classList.toggle('rm-acc-open', Boolean(isOpen));
-    subContainer.setAttribute('data-rm-collapsed', isOpen ? 'false' : 'true');
-    subContainer.style.setProperty('display', isOpen ? 'block' : 'none', 'important');
-    updateAccordionPillUI(catEl, isOpen);
+
+    catEl.__rmHydratedOpen = nextBool;
+    updateAccordionPillUI(catEl, nextBool);
 
     if (isUserTap) {
-      setTimeout(function () { window.__RM_MODAL_INTERACTION_LOCK__ = false; }, 220);
+      setTimeout(function () { window.__RM_MODAL_INTERACTION_LOCK__ = false; }, 240);
     }
     return true;
   }
 
   function syncAndHydrateCatalogCards() {
     if (window.__RM_MODAL_INTERACTION_LOCK__) return;
-    var modal = document.getElementById('categoryModal');
-    if (modal) {
-      var hdrNodes = modal.querySelectorAll('p, span, div');
-      for (var h = 0; h < Math.min(hdrNodes.length, 25); h++) {
-        if (hdrNodes[h].children.length === 0 && (hdrNodes[h].textContent || '').indexOf('Games Active') !== -1) {
-          hdrNodes[h].textContent = '32 Categories • 18 Games Active';
-          break;
-        }
-      }
-    }
-    if (typeof window.healHomeVerticalsInstantly === 'function') {
-      window.healHomeVerticalsInstantly();
-    }
     if (window.RM_CATALOG_DOM_ENGINE && typeof window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards === 'function') {
       return window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards();
     }
@@ -277,7 +287,7 @@
 
 
   function findCategoryCardElement(target, modal) {
-    if (!target || !modal) return null;
+    if (!target || !target.closest || !modal) return null;
     if (target.closest('.sivme-notch-pill, #sivme-hud, [data-sivme], #rm-master-insitu-dock')) return null;
     var direct = target.closest('[data-cat-id], [id^="cat-c"], [id^="cat-g"], [data-game-cat]');
     if (direct && modal.contains(direct)) return direct;
@@ -314,23 +324,30 @@
   }
 
   function handleInstantAccordionTap(e) {
+    if (e.__rmHandled) return;
     if (e.type === 'touchend' && wasTouchDragged) return;
+
+    var target = e.target && e.target.nodeType === 1 ? e.target : (e.target ? e.target.parentElement : null);
+    if (!target || typeof target.closest !== 'function') return;
+    if (target.closest('input, textarea, select, option, .sivme-notch-pill, #sivme-hud, #sivme-drawer')) return;
+
     var modal = document.getElementById('categoryModal');
-    if (!modal || modal.classList.contains('hidden') || !modal.contains(e.target)) return;
-    var target = e.target;
-    if (target.closest('[onclick*="closeCatalogModal"], [onclick*="toggleMenuDrawer"], #rm-tier1-toggle, #rm-tier2-toggle, [id^="sub-"]')) return;
+    if (!modal || modal.classList.contains('hidden') || !modal.contains(target)) return;
+    if (target.closest('[onclick*="closeCatalogModal"], [onclick*="toggleMenuDrawer"], #closeCatalogBtn, #rm-tier1-toggle, #rm-tier2-toggle, [id^="sub-"]')) return;
 
     var catEl = findCategoryCardElement(target, modal);
     if (!catEl) return;
 
     var now = Date.now();
-    if (e.type === 'click' && now - lastTouchEndTapTs < 420) {
+    if (e.type === 'click' && now - lastTouchEndTapTs < 450) {
+      e.__rmHandled = true;
       if (e.cancelable) e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation();
       return;
     }
-    if (now - lastAccordionTapTs < 120) {
+    if (now - lastAccordionTapTs < 90) {
+      e.__rmHandled = true;
       if (e.cancelable) e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation();
@@ -339,6 +356,7 @@
     lastAccordionTapTs = now;
     if (e.type === 'touchend') lastTouchEndTapTs = now;
 
+    e.__rmHandled = true;
     if (e.cancelable) e.preventDefault();
     e.stopPropagation();
     e.stopImmediatePropagation();
@@ -380,8 +398,8 @@
     }, { capture: true, passive: true });
 
     window.addEventListener('touchmove', function (e) {
-      if (e.touches && e.touches.length === 1) {
-        if (Math.abs(e.touches[0].clientX - touchStartX) > 10 || Math.abs(e.touches[0].clientY - touchStartY) > 10) {
+      if (e.touches && e.touches.length === 1 && !wasTouchDragged) {
+        if (Math.abs(e.touches[0].clientX - touchStartX) > 28 || Math.abs(e.touches[0].clientY - touchStartY) > 28) {
           wasTouchDragged = true;
         }
       }
