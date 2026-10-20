@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-1A Modular Catalog Hydrator & Modal Dispatcher (v88)
+ *   - MODULE NAME    : RM Part-1A Modular Catalog Hydrator & Modal Dispatcher (v96)
  *   - REPO TARGET    : public/js/one-tap-catalog-hydrator.js
  *   - SURFACE TARGET : SURFACE-A ONLY (With Conditional Loader for Surface-B SIVME)
  *   - HOST BINDING   : Surface-A (public/index.html) | Surface-B (public/owner-console.html)
@@ -18,19 +18,20 @@
  *   - public/js/home-grid-engine.js (Companion 12 Core Cashflow Verticals Grid Engine)
  *   - public/js/fullscreen-microapp-controller.js (Part-3A: Fullscreen Micro-App Controller)
  *   - public/js/one-tap-subcard-router.js & one-tap-subcard-dom-helpers.js (Part-3B/3C: Sub-Card Router)
+ *   - public/js/catalog/category-15/15-house-home-controller.js (Independent Category-15 Controller)
  *   - public/js/one-tap-shell-bridge.js (Part-2: Master 1-Tap Event Router)
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE, ROOT-ENGINE-FIRST & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
- *   - ALLOWED ON SURFACE-A   : Parallel script preloader (v88 cache-busted),
+ *   - ALLOWED ON SURFACE-A   : Parallel script preloader (v96 cache-busted),
  *                              0ms synchronous "32 Categories • 18 Games Active" & "18 श्रेणियां
  *                              उपलब्ध" anti-regression lock, 0ms rAF modal open/close dispatchers,
  *                              install popup auto-dismissal, fullscreen micro-app bridges,
  *                              and Part-1B/1C/1D API bridges.
  *   - ALLOWED ON SURFACE-B   : Conditional loading of /js/sovereign-in-situ-hud.js ONLY when
  *                              ?sivme=owner or ?sov_mode=in_situ is present in URL.
- *   - ROOT-ENGINE-FIRST RULE : Syncs `CACHE_VERSION = '20261019_v88'` so stale `v71` scripts never
+ *   - ROOT-ENGINE-FIRST RULE : Syncs `CACHE_VERSION = '20261020_v96'` so stale `v88` scripts never
  *                              overwrite Category 15 (`15-1`, `15-2`, `15-3`) modular engines.
- *   - FORBIDDEN IN THIS FILE : Cross-surface DOM leakage or dropping any v39-v71 ZEL function.
+ *   - FORBIDDEN IN THIS FILE : Cross-surface DOM leakage or dropping any v39-v88 ZEL function.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.__RM_ACTIVE_CACHE_VER, window.__RM_OPEN_CAT_STATE,
@@ -39,10 +40,9 @@
  *                           window.closeFullscreenModule, window.dismissPlayBanner,
  *                           window.launchOneTapServiceScreen, window.healHomeVerticalsInstantly,
  *                           window.toggleCategoryAccordion1Tap, window.RM_CATALOG_HYDRATOR
- *   - CALLS EXTERNAL APIs : window.RM_HOME_CSS_HEALER.*, window.RM_ACCORDION_ENGINE.*,
- *                           window.RM_CATALOG_DOM_ENGINE.*, window.RM_FULLSCREEN_CONTROLLER.*,
- *                           window.RM_SUBCARD_ROUTER.*, window.RM_HomeGrid.render,
- *                           window.renderHomeMacroGrid, window.renderFavorites, window.updatePinButtonsUI
+ *   - CALLS EXTERNAL APIs : window.RM_CAT15_CONTROLLER.*, window.RM_HOME_CSS_HEALER.*,
+ *                           window.RM_ACCORDION_ENGINE.*, window.RM_CATALOG_DOM_ENGINE.*,
+ *                           window.RM_FULLSCREEN_CONTROLLER.*, window.RM_SUBCARD_ROUTER.*
  * ==============================================================================
  * 5. DOM ATTRIBUTE, SELECTOR CONTRACT & WORLD-CLASS 2.5D VISUAL LOCK (ZERO-COLLISION RULE):
  *   - SURFACE-A SELECTORS : #verticalTilesGrid, #categoryModal, #rm-fullscreen-view,
@@ -67,7 +67,7 @@
  * ==============================================================================
  * 8. ONE JOB = ONE FILE, ROOT-ENGINE AUTHORITY, ZERO-GUESSWORK & CANONICAL PATH LOCK:
  *   - SINGLE JOB RULE     : Sole owner of Part-1A Boot Orchestrator, Modal Dispatchers & API Bridge.
- *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `public/js/one-tap-catalog-hydrator.js` (`v71` `1000303703.png`).
+ *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `public/js/one-tap-catalog-hydrator.js` (`v88` `1000303809.png`).
  *   - CANONICAL PATH      : Must exist ONLY at `public/js/one-tap-catalog-hydrator.js`.
  *   - BANNED ALIASES      : Never create duplicate hydrator files or exceed 300 logical lines.
  * ==============================================================================
@@ -81,7 +81,7 @@
  *   - MOBILE EDITING  : 2-line blank spacing preserved between major functional blocks.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, 1-TASK-1-FILE COMMIT, PRE-MAIN GATE & CONTRACT LOCK:
- *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261019_v88'`.
+ *   - VERSION SYNC    : Publishes `window.__RM_ACTIVE_CACHE_VER = '20261020_v96'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -98,7 +98,7 @@
   if (window.__RM_LOADED_MODULES__['one-tap-catalog-hydrator']) return;
   window.__RM_LOADED_MODULES__['one-tap-catalog-hydrator'] = true;
 
-  var CACHE_VERSION = '20261019_v88';
+  var CACHE_VERSION = '20261020_v96';
   window.__RM_ACTIVE_CACHE_VER = CACHE_VERSION;
   var isSyncingDOM = false;
   var hasRenderedCatalogOnce = false;
@@ -110,7 +110,7 @@
   window.__RM_LAST_MODAL_OPEN_TS = window.__RM_LAST_MODAL_OPEN_TS || 0;
 
 
-  // 1. Non-Blocking Parallel Script Loader (v88 Cache-Busted so Stale v69/v71 Scripts Never Load)
+  // 1. Non-Blocking Parallel Script Loader (v96 Cache-Busted so Stale v88 Scripts Never Load)
   (function ensureFullscreenControllerLoaded() {
     var head = document.head || document.documentElement;
     var modules = [
@@ -120,11 +120,17 @@
       { id: 'rm-fs-microapp-controller-script', src: '/js/fullscreen-microapp-controller.js' },
       { id: 'rm-part3c-dom-helpers-js', src: '/js/one-tap-subcard-dom-helpers.js' },
       { id: 'rm-subcard-router-script', src: '/js/one-tap-subcard-router.js' },
+      { id: 'rm-cat15-independent-controller-js', src: '/js/catalog/category-15/15-house-home-controller.js' },
       { id: 'rm-catalog-dom-engine-script', src: '/js/one-tap-catalog-dom-engine.js' },
       { id: 'rm-games-ent-bridge-script', src: '/js/universal-catalog/games-entertainment-bridge.js' }
     ];
     for (var i = 0; i < modules.length; i++) {
-      if (!document.getElementById(modules[i].id)) {
+      var existing = document.getElementById(modules[i].id);
+      if (existing && existing.tagName !== 'SCRIPT') {
+        if (existing.parentNode) existing.parentNode.removeChild(existing);
+        existing = null;
+      }
+      if (!existing) {
         var s = document.createElement('script');
         s.id = modules[i].id;
         s.src = modules[i].src + '?v=' + CACHE_VERSION;
@@ -198,12 +204,17 @@
   window.healHomeVerticalsInstantly = healHomeVerticalsInstantly;
 
 
-  // 3. Fullscreen Viewport Helpers (100% ZEL Intact; Normalizes 16-x to 15-x)
+  // 3. Fullscreen Viewport Helpers (100% ZEL Intact)
   function forceCloseFullscreenViewport() {
     var fs = document.getElementById('rm-fullscreen-view');
     if (fs) {
       fs.classList.add('hidden');
       fs.style.setProperty('display', 'none', 'important');
+    }
+    var c = document.getElementById('rm-module-container');
+    if (c) {
+      c.removeAttribute('data-rm-cat15-mounted');
+      c.removeAttribute('data-rm-cat15-engine-live');
     }
     document.body.style.overflowY = 'auto';
     if (window.RM_FULLSCREEN_CONTROLLER && typeof window.RM_FULLSCREEN_CONTROLLER.forceCloseFullscreenViewport === 'function') {
@@ -217,12 +228,16 @@
     }
     var fsTitle = document.getElementById('fs-module-title');
     if (!fsTitle) return;
-    if (displayCode === '15-2' || displayCode === '16-2') fsTitle.textContent = '📒 15-2 • Rental Ledger (किराया बहीखाता)';
-    else if (displayCode === '15-3' || displayCode === '16-3') fsTitle.textContent = '🏢 15-3 • Room & Flat Search (कमरा व फ्लैट खोज)';
-    else if (displayCode === '15-1' || displayCode === '16-1') fsTitle.textContent = '🛠️ 15-1 • Mistry & Home Repair (मिस्त्री व गृह मरम्मत)';
+    if (displayCode === '15-2') fsTitle.textContent = '⚡ 15-2 • Smart Meter & Rent Billing (किराया बहीखाता)';
+    else if (displayCode === '15-3') fsTitle.textContent = '🏢 15-3 • Real Estate: Buy, Rent & PG (कमरा व फ्लैट खोज)';
+    else if (displayCode === '15-1') fsTitle.textContent = '🛠️ 15-1 • Home Services & Handyman Pros';
   }
 
   function ensureMicroAppRendered(subCode, titleText, subtitleText) {
+    var code = String(subCode || '').trim();
+    if ((code === '15-1' || code === '15-2' || code === '15-3') && window.RM_CAT15_CONTROLLER && typeof window.RM_CAT15_CONTROLLER.openSubCategory === 'function') {
+      return window.RM_CAT15_CONTROLLER.openSubCategory(code, null, null, null);
+    }
     if (window.RM_SUBCARD_ROUTER && typeof window.RM_SUBCARD_ROUTER.ensureMicroAppRendered === 'function') {
       return window.RM_SUBCARD_ROUTER.ensureMicroAppRendered(subCode, titleText, subtitleText);
     }
