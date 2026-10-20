@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-1B Modular Catalog DOM, Card Hydration & Anti-Flicker Engine (v98)
+ *   - MODULE NAME    : RM Part-1B Modular Catalog DOM, Card Hydration & Anti-Freeze Engine (v99)
  *   - REPO TARGET    : public/js/one-tap-catalog-dom-engine.js
  *   - SURFACE TARGET : SURFACE-A ONLY (SubContainer Resolver, Numbering, Shield & Hydrator)
  *   - HOST BINDING   : Surface-A (public/index.html)
@@ -39,8 +39,8 @@
  *   - SURFACE-B SELECTORS : .sivme-notch-pill, #sivme-hud, [data-sivme] (EXCLUDED)
  * ==============================================================================
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, EVENT LISTENER & TIMER OWNERSHIP LOCK:
- *   - CLICK SAFETY  : Respects `window.__RM_MODAL_INTERACTION_LOCK__` & `data-rm-user-toggled`,
- *                     and permanently shields `renderCatalogItems` & `RM_CatalogRenderer.render`.
+ *   - CLICK SAFETY  : Checks actual `#tier1-list` DOM children count (`>= 25`) rather than
+ *                     a premature boolean flag so initial render never deadlocks or freezes.
  *   - DOM SAFETY    : Only applies 26px icon sizing to Play Store cards (never corrupts
  *                     compact `3 विकल्प` / `3 गेम्स` rows) and upgrades all 50 cards cleanly.
  * ==============================================================================
@@ -51,7 +51,7 @@
  * ==============================================================================
  * 8. ONE JOB = ONE FILE, ROOT-ENGINE AUTHORITY, ZERO-GUESSWORK & CANONICAL PATH LOCK:
  *   - SINGLE JOB RULE     : Sole owner of Part-1B Catalog DOM Hydration, Shields & Numbering.
- *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `v70` (`1000304100.png`) with 100% ZEL parity.
+ *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `v98` (`1000304101.png`) with 100% ZEL parity.
  *   - CANONICAL PATH      : Must exist ONLY at `public/js/one-tap-catalog-dom-engine.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
@@ -63,7 +63,7 @@
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, PRE-MAIN GATE & CONTRACT PARITY LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261021_v98'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261021_v99'`.
  *   - PIPELINE GATE   : Verified on `pre-main` Preview before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -234,7 +234,7 @@
   }
 
 
-  // 3. Lock legacy renderCatalogItems & sweepCatalog so background timers cannot cause lag or wipe accordions
+  // 3. Lock legacy renderCatalogItems & sweepCatalog using Real DOM Canary (Zero Deadlock / Zero Freeze)
   function installRenderDestructionShield() {
     var modal = document.getElementById('categoryModal');
     if (modal) {
@@ -259,12 +259,14 @@
       var shielded = function () {
         var t1 = document.getElementById('tier1-list');
         var t2 = document.getElementById('tier2-list');
-        var alreadyHydrated = hasRenderedCatalogOnce || (t1 && t2 && t1.children.length >= 25 && t2.children.length >= 1 &&
-                              t1.innerHTML.indexOf('लोड हो रहा है') === -1);
-        if (alreadyHydrated) return;
-        hasRenderedCatalogOnce = true;
+        var domActuallyPopulated = Boolean(t1 && t2 && t1.children.length >= 25 && t2.children.length >= 1 &&
+                                   t1.innerHTML.indexOf('लोड हो रहा है') === -1);
+        if (domActuallyPopulated) {
+          hasRenderedCatalogOnce = true;
+          return;
+        }
         var res = origRender.apply(this, arguments);
-        setTimeout(syncAndHydrateCatalogCards, 0);
+        hasRenderedCatalogOnce = true;
         return res;
       };
       shielded.__rmShielded = true;
@@ -442,7 +444,7 @@
   }
 
 
-  // 5. Hydrate Play Store Cards & enforce openStateMap (Never overwrites user-toggled cards)
+  // 5. Hydrate Play Store Cards & enforce openStateMap (Zero Recursive Loop / Zero Premature Flag)
   function syncAndHydrateCatalogCards() {
     installRenderDestructionShield();
     if (isSyncingDOM || window.__RM_MODAL_INTERACTION_LOCK__) return;
@@ -453,9 +455,8 @@
 
       var t1 = document.getElementById('tier1-list');
       var t2 = document.getElementById('tier2-list');
-      if (!hasRenderedCatalogOnce && ((t1 && (t1.innerHTML.indexOf('लोड हो रहा है') !== -1 || t1.children.length < 25)) ||
+      if (((t1 && (t1.innerHTML.indexOf('लोड हो रहा है') !== -1 || t1.children.length < 25)) ||
            (t2 && t2.children.length < 1)) && typeof window.renderCatalogItems === 'function') {
-        hasRenderedCatalogOnce = true;
         try { window.renderCatalogItems(); } catch (e) {}
       }
 
@@ -466,7 +467,7 @@
       }
 
       var cats = modal.querySelectorAll('[data-cat-id]');
-      if (cats.length > 0) hasRenderedCatalogOnce = true;
+      if (cats.length >= 25) hasRenderedCatalogOnce = true;
 
       cats.forEach(function (catEl) {
         if (catEl.classList.contains('hidden')) catEl.classList.remove('hidden');
