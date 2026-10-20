@@ -1,18 +1,19 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Part-3C Sub-Card Chip Extractor & DOM Repair Helpers (v86)
+ *   - MODULE NAME    : RM Part-3C Sub-Card Chip Extractor & DOM Repair Helpers (v95)
  *   - REPO TARGET    : public/js/one-tap-subcard-dom-helpers.js
  *   - SURFACE TARGET : SHARED (Surface-A Chip/DOM Repair & Surface-B Owner SIVME Guard)
  *   - HOST BINDING   : Surface-A (public/index.html)
- *   - SIZE BUDGET    : <= 170 Logical Lines (Target <= 300 Logical Lines | 0% Secrets)
+ *   - SIZE BUDGET    : <= 175 Logical Lines (Target <= 300 Logical Lines | 0% Secrets)
  *   - GOVERNANCE     : RM-SPEC-ARCH-MODULAR-ZEL-MOBILE-SAFETY-001 | GATE-25.0 | 100% ZEL
  *   - SOURCE REFS    : Folder A SSOT (11xhCALIgDjUIZU33HkLEJ5J6vViDEAPW) &
  *                      Folder B Mirror (1LjFDeDFLyZ-HvrEKMY_9sjDWvTwH-LjH)
  * ==============================================================================
  * 2. EXISTING MODULAR FILES LOCK (ZERO DUPLICATE IMPLEMENTATION):
  *   - public/js/one-tap-subcard-dom-helpers.js (This File: Part-3C Chip Extractor & 32-3 DOM Repair)
- *   - public/js/one-tap-subcard-router.js (Part-3B: Core Sub-Card 1-Tap Router & 15-2/15-3 Mounter)
+ *   - public/js/one-tap-subcard-router.js (Part-3B: Core Sub-Card 1-Tap Router & Controller Bridge)
+ *   - public/js/catalog/category-15/15-house-home-controller.js (Independent Category-15 Controller)
  *   - public/js/fullscreen-microapp-controller.js (Part-3A: Generic Fullscreen Viewport Shell)
  * ==============================================================================
  * 3. TOP-HEADER FILE SCOPE, ROOT-ENGINE-FIRST & SURFACE ISOLATION LOCK (ANTI-COLLISION RULE):
@@ -20,7 +21,9 @@
  *                              forceCloseFullscreenViewport, extractSubCardMetaAndChips,
  *                              repairFullscreenSubServiceDOM.
  *   - ALLOWED ON SURFACE-B   : Surface-B owner mode detection & SIVME element tap guard.
- *   - ROOT-ENGINE-FIRST RULE : Never overwrites dedicated 15-2 / 15-3 Pan-India `<select>` dropdowns.
+ *   - ROOT-ENGINE-FIRST RULE : Strictly skips all isolated Category 15 (`15-1`, `15-2`, `15-3`) and
+ *                              Category 16 (`16-1`, `16-2`, `16-3`) modules so dedicated engines are
+ *                              never overwritten by generic DOM repair.
  *   - FORBIDDEN IN THIS FILE : Event listeners or routing loops (owned by `one-tap-subcard-router.js`).
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
@@ -35,7 +38,7 @@
  * ==============================================================================
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, ZERO-REVERT & TIMER OWNERSHIP LOCK:
  *   - CLICK SAFETY  : Pure stateless helper functions (0% event listeners or timers).
- *   - DOM SAFETY    : Skips `15-2`, `16-2`, `15-3`, `16-3` and `[data-rm-cat15-mounted]` containers.
+ *   - DOM SAFETY    : Skips `15-*`, `16-*` and `[data-rm-cat15-mounted]` containers completely.
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (ALL 5 HELPER FUNCTIONS INTACT):
  *   1. isSurfaceBOwnerActive              2. isSurfaceBElementTap
@@ -44,7 +47,7 @@
  * ==============================================================================
  * 8. ONE JOB = ONE FILE, ROOT-ENGINE AUTHORITY, ZERO-GUESSWORK & CANONICAL PATH LOCK:
  *   - SINGLE JOB RULE     : Sole owner of Sub-Card 4-Chip Extraction & Generic Fullscreen DOM Repair.
- *   - ZERO-GUESSWORK LOCK : Extracted 1:1 from 546-line `one-tap-subcard-router.js` (`v84`).
+ *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `v86` (`1000303792.png`) with 100% ZEL parity.
  *   - CANONICAL PATH      : Must exist ONLY at `public/js/one-tap-subcard-dom-helpers.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
@@ -56,7 +59,7 @@
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, 1-TASK-1-FILE COMMIT, PRE-MAIN GATE & CONTRACT LOCK:
- *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261019_v86'`.
+ *   - VERSION SYNC    : Synced with `window.__RM_ACTIVE_CACHE_VER = '20261020_v95'`.
  *   - PIPELINE GATE   : Commit & verify on `pre-main` before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -97,7 +100,10 @@
       fs.style.setProperty('display', 'none', 'important');
     }
     var container = document.getElementById('rm-module-container');
-    if (container) container.removeAttribute('data-rm-cat15-mounted');
+    if (container) {
+      container.removeAttribute('data-rm-cat15-mounted');
+      container.removeAttribute('data-rm-cat15-engine-live');
+    }
     if (window.RM_FULLSCREEN_CONTROLLER && typeof window.RM_FULLSCREEN_CONTROLLER.forceCloseFullscreenViewport === 'function') {
       try { window.RM_FULLSCREEN_CONTROLLER.forceCloseFullscreenViewport(); } catch (e) {}
     }
@@ -178,13 +184,16 @@
   }
 
 
-  // 4. Helper: Repair Fullscreen Sub-Service DOM on Surface-A (Skips Dedicated 15-2 & 15-3 Engines; 100% ZEL Intact)
+  // 4. Helper: Repair Fullscreen Sub-Service DOM on Surface-A (Skips ALL Category 15 & 16 Dedicated Engines; 100% ZEL Intact)
   function repairFullscreenSubServiceDOM(subCard, subCode) {
     var code = String(subCode || '').trim();
-    if (code === '15-2' || code === '16-2' || code === '15-3' || code === '16-3') return;
+    if (code.indexOf('15-') === 0 || code.indexOf('16-') === 0) return;
 
     var fs = document.getElementById('rm-fullscreen-view');
     if (!fs || fs.classList.contains('hidden')) return;
+
+    var container = document.getElementById('rm-module-container');
+    if (!container || container.getAttribute('data-rm-cat15-mounted') || container.getAttribute('data-rm-cat15-engine-live')) return;
 
     var cleanTitle = '';
     var cleanSub = '';
@@ -219,9 +228,6 @@
     if (fsTitle && cleanTitle) {
       fsTitle.textContent = subCode + ' • ' + cleanTitle;
     }
-
-    var container = document.getElementById('rm-module-container');
-    if (!container || container.getAttribute('data-rm-cat15-mounted')) return;
 
     var innerHeading = container.querySelector('h2, h3, .text-xl, .text-lg, [style*="font-size: 19px"], [style*="font-size: 20px"]');
     if (innerHeading && cleanTitle && (innerHeading.textContent.length > 42 || innerHeading.textContent.indexOf('बुजुर्गों') !== -1)) {
