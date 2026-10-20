@@ -1,7 +1,7 @@
 /**
  * ==============================================================================
  * 1. FILE IDENTITY, SURFACE BINDING, SIZE LIMIT & DUAL-FOLDER SSOT LOCK:
- *   - MODULE NAME    : RM Catalog SIVME Render Engine & Pure-Reference Delegator (v98)
+ *   - MODULE NAME    : RM Catalog SIVME Render Engine & Pure-Reference Delegator (v99)
  *   - REPO TARGET    : public/js/catalog-sivme-render-engine.js
  *   - SURFACE TARGET : SHARED (Surface-A Initial Seed & Surface-B SIVME In-Situ Controls)
  *   - HOST BINDING   : Surface-A (public/index.html) | Surface-B (public/owner-console.html)
@@ -23,8 +23,8 @@
  *   - UNIVERSAL PURE-REF RULE: Universal 50-category files contain ONLY pure references &
  *                              delegation hooks; 100% of category/sub-category code lives
  *                              in its dedicated `public/js/catalog/category-XX/` folder.
- *   - FORBIDDEN IN THIS FILE : Re-rendering `#tier1-list` / `#tier2-list` on click after initial
- *                              hydration, or running 350ms timers that cause `3 विकल्प` flicker.
+ *   - FORBIDDEN IN THIS FILE : Synchronous cross-calls into `syncAndHydrateCatalogCards` that
+ *                              cause recursive main-thread freezes, or 350ms re-render timers.
  * ==============================================================================
  * 4. GLOBAL WINDOW API & SHARED STATE CONTRACT (NAMESPACE LOCK):
  *   - WRITES GLOBAL STATE : window.RM_SivmeRender, window.RM_CatalogRenderer,
@@ -40,9 +40,9 @@
  *   - SURFACE-B SELECTORS : .sivme-live-notch, [data-sivme-urn]
  * ==============================================================================
  * 6. ANTI-FREEZE, ANTI-OVERWRITE CANARY, ZERO-REVERT & TIMER OWNERSHIP LOCK:
- *   - CLICK SAFETY  : Never re-runs `renderCatalogItems` on button clicks once hydrated.
- *   - DOM SAFETY    : Immediately upgrades freshly seeded rows via `RM_CATALOG_DOM_ENGINE`
- *                     so `3 विकल्प` / `3 गेम्स` rows never flash on screen.
+ *   - CLICK SAFETY  : Guarded by `isRenderingCatalog` lock so zero recursive loop can ever occur.
+ *   - DOM SAFETY    : Seeds `#tier1-list` & `#tier2-list` exactly once and schedules a single
+ *                     non-blocking Play Store card upgrade pass.
  * ==============================================================================
  * 7. 100% ZERO-ELEMENT-LOSS (ZEL) FUNCTION MANIFEST (ALL 13 FUNCTIONS INTACT):
  *   1. getCore                        2. purgeMarketingDuplicates
@@ -55,19 +55,19 @@
  * ==============================================================================
  * 8. ONE JOB = ONE FILE, ROOT-ENGINE AUTHORITY, ZERO-GUESSWORK & CANONICAL PATH LOCK:
  *   - SINGLE JOB RULE     : Sole owner of SIVME Module-2 Initial Catalog Seed & Owner Sync.
- *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `1000304102.png` with 100% ZEL parity.
+ *   - ZERO-GUESSWORK LOCK : Verified 1:1 against `v98` (`1000304103.png`) with 100% ZEL parity.
  *   - CANONICAL PATH      : Must exist ONLY at `public/js/catalog-sivme-render-engine.js`.
  * ==============================================================================
  * 9. ZERO-REDUNDANCY (DRY), IDEMPOTENT EXECUTION & ANTI-OVERWRITE GUARD:
  *   - ZERO DOHRAO     : Delegates Category 15 launches strictly to `window.RM_CAT15_CONTROLLER`.
- *   - IDEMPOTENT BOOT : Tracks `lastRenderedInSituState` so public cards never re-render twice.
+ *   - IDEMPOTENT BOOT : Tracks `lastRenderedInSituState` & `isRenderingCatalog` anti-freeze guard.
  * ==============================================================================
  * 10. FAIL-SAFE ERROR BOUNDARY, ZERO-STUB & 2-LINE SECTION GAP STANDARD:
  *   - ERROR BOUNDARY  : Strict IIFE + try/catch boundaries protect all catalog operations.
  *   - ZERO-STUB RULE  : 100% production-complete code; zero `// TODO` or placeholders.
  * ==============================================================================
  * 11. CACHE-BUSTING VERSION SYNC, 1-TASK-1-FILE COMMIT, PRE-MAIN GATE & CONTRACT LOCK:
- *   - VERSION SYNC    : Reads `window.__RM_ACTIVE_CACHE_VER || '20261021_v98'`.
+ *   - VERSION SYNC    : Reads `window.__RM_ACTIVE_CACHE_VER || '20261021_v99'`.
  *   - PIPELINE GATE   : Commit & verify on `pre-main` before merging to `main`.
  * ==============================================================================
  * 12. GITHUB ACTIONS FOLDER-B MIRROR SYNC & AI PRE-FLIGHT AUDIT TAGS:
@@ -81,6 +81,7 @@
   'use strict';
 
   var lastRenderedInSituState = null;
+  var isRenderingCatalog = false;
 
   function getCore() {
     return window.RM_CatalogCore || window.RM_SivmeCore || {
@@ -263,7 +264,7 @@
   }
 
 
-  // SECTION 3: UNIFIED DRY CATEGORY BUILDER (ONE-TIME SEED + INSTANT PLAY STORE HYDRATION)
+  // SECTION 3: UNIFIED DRY CATEGORY BUILDER (ONE-TIME SEED + NON-BLOCKING PLAY STORE HYDRATION)
   function buildCategoryCard(item, isGame, isInSitu, core) {
     var isLive = core.isCategoryLive(item.id, item.num);
     var stateClass = isLive ? 'is-live' : 'is-hidden';
@@ -314,49 +315,54 @@
   }
 
   function renderCatalogItems() {
-    var core = getCore();
-    if (core.ensureFailOpenRegistry) core.ensureFailOpenRegistry();
-    if (core.injectSingleDashedStyles) core.injectSingleDashedStyles();
-    purgeMarketingDuplicates();
+    if (isRenderingCatalog) return;
+    isRenderingCatalog = true;
+    try {
+      var core = getCore();
+      if (core.ensureFailOpenRegistry) core.ensureFailOpenRegistry();
+      if (core.injectSingleDashedStyles) core.injectSingleDashedStyles();
+      purgeMarketingDuplicates();
 
-    var services = window.RM_SERVICES_DATA || [];
-    var games = window.RM_GAMES_DATA || [];
-    if (!services.length && !games.length) return;
+      var services = window.RM_SERVICES_DATA || [];
+      var games = window.RM_GAMES_DATA || [];
+      if (!services.length && !games.length) return;
 
-    var isInSitu = Boolean(core.isOwnerInSituActive());
-    var t1 = document.getElementById('tier1-list');
-    var t2 = document.getElementById('tier2-list');
+      var isInSitu = Boolean(core.isOwnerInSituActive());
+      var t1 = document.getElementById('tier1-list');
+      var t2 = document.getElementById('tier2-list');
 
-    // ANTI-FLICKER LOCK: Never wipe & re-create #tier1-list / #tier2-list once already populated unless SIVME mode changed!
-    var alreadyPopulated = Boolean(t1 && t1.dataset.rendered === 'true' && t1.children.length >= 25 && t1.innerHTML.indexOf('लोड हो रहा है') === -1);
-    if (alreadyPopulated && lastRenderedInSituState === isInSitu) {
-      syncCategoryVisibilityFromOwner();
-      if (window.RM_CATALOG_DOM_ENGINE && typeof window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards === 'function') {
-        window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards();
+      // ANTI-FLICKER & ANTI-FREEZE LOCK: Never wipe & re-create #tier1-list / #tier2-list once already populated!
+      var alreadyPopulated = Boolean(t1 && t1.dataset.rendered === 'true' && t1.children.length >= 25 && t1.innerHTML.indexOf('लोड हो रहा है') === -1);
+      if (alreadyPopulated && lastRenderedInSituState === isInSitu) {
+        syncCategoryVisibilityFromOwner();
+        return;
       }
-      return;
-    }
-    lastRenderedInSituState = isInSitu;
+      lastRenderedInSituState = isInSitu;
 
-    if (t1) {
-      t1.innerHTML = services.map(function (it) { return buildCategoryCard(it, false, isInSitu, core); }).join('\n');
-      t1.dataset.rendered = 'true';
-    }
-    if (t2) {
-      t2.innerHTML = games.map(function (it) { return buildCategoryCard(it, true, isInSitu, core); }).join('\n');
-      t2.dataset.rendered = 'true';
-    }
+      if (t1) {
+        t1.innerHTML = services.map(function (it) { return buildCategoryCard(it, false, isInSitu, core); }).join('\n');
+        t1.dataset.rendered = 'true';
+      }
+      if (t2) {
+        t2.innerHTML = games.map(function (it) { return buildCategoryCard(it, true, isInSitu, core); }).join('\n');
+        t2.dataset.rendered = 'true';
+      }
 
-    syncCategoryVisibilityFromOwner();
-    if (core.enforceSingleSivmeOutline) {
-      core.enforceSingleSivmeOutline();
-    }
+      syncCategoryVisibilityFromOwner();
+      if (core.enforceSingleSivmeOutline) {
+        core.enforceSingleSivmeOutline();
+      }
 
-    // Immediately upgrade seeded containers into full Play Store cards in the SAME frame (Zero `3 विकल्प` flash!)
-    if (window.RM_CATALOG_DOM_ENGINE && typeof window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards === 'function') {
-      window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards();
-    } else if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
-      window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog();
+      // Schedule non-blocking Play Store card upgrade (prevents recursive call freeze!)
+      setTimeout(function () {
+        if (window.RM_CATALOG_DOM_ENGINE && typeof window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards === 'function') {
+          window.RM_CATALOG_DOM_ENGINE.syncAndHydrateCatalogCards();
+        } else if (window.RM_UNIVERSAL_CARD_ENGINE && typeof window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog === 'function') {
+          window.RM_UNIVERSAL_CARD_ENGINE.sweepCatalog();
+        }
+      }, 0);
+    } finally {
+      isRenderingCatalog = false;
     }
   }
 
